@@ -20,6 +20,7 @@ Connaisseur is an admission controller for Kubernetes that integrates Image Sign
   * [(2) Connaisseur Service](#-2--connaisseur-service)
   * [(3) Notary Server](#-3--notary-server)
   * [(4) Registry](#-4--registry)
+- [Additional Information](#additional-information)
 
 ## Introduction
 
@@ -123,3 +124,7 @@ The STRIDE threat model has been used as a reference for threat modeling. Each o
 | Spoofing | An attacker could mount a Monster-in-the-Middle attack between the registry and the Kubernetes cluster and act as a fake registry, sending back malicious images. | **TLS:** A TLS connection between the Kubernetes cluster and the registry ensures that the registry is authentic. |
 | Tampering | With full control over the registry, an attacker may introduce malicious images or change the layers of existing ones and thus inject malicious content. | **Image Digests:** Introducing new images does not work as Connaisseur selects them by digest. An attacker would have to change the content of the corresponding digest layer, while the changes need to produce the same digest. Such a hash collision is consider practically impossible. If digests differ, the docker daemon underlying the cluster will deny the image. |
 | Denial of service | An extraordinary amount of requests to the registry could bring it down, so that no images can be pulled from it. | **Out of scope:** This threat is specific to registries, not Connaisseur. |
+
+## Additional Information
+
+Also checkout our [Medium article](https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce), giving a short introduction to Connaisseur and a demo!
