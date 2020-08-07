@@ -1,0 +1,120 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Chart.Name }}-install-webhook-job
+  namespace: {{ .Release.namespace }}
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: hook-succeeded, hook-failed
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  template:
+    metadata:
+      name: {{ .Chart.Name }}-install-webhook
+      labels:
+        app.kubernetes.io/name: {{ include "helm.name" . }}
+        helm.sh/chart: {{ include "helm.chart" . }}
+        app.kubernetes.io/instance: {{ .Chart.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+      serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
+      containers:
+        - name: {{ .Chart.Name }}-install-webhook
+          image: "securesystemsengineering/connaisseur:helm-hook"
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          command:
+            - ash
+            - /helm_hook.sh
+            - install
+          volumeMounts:
+            - mountPath: "/data"
+              name: webhook-data
+      volumes:
+        - name: webhook-data
+          configMap:
+            name: {{ .Chart.Name }}-script
+      restartPolicy: OnFailure
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Chart.Name }}-delete-webhook-job
+  namespace: {{ .Release.namespace }}
+  annotations:
+    helm.sh/hook: pre-delete, pre-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: hook-succeeded, hook-failed
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  template:
+    metadata:
+      name: {{ .Chart.Name }}-delete-webhook
+      labels:
+        app.kubernetes.io/name: {{ include "helm.name" . }}
+        helm.sh/chart: {{ include "helm.chart" . }}
+        app.kubernetes.io/instance: {{ .Chart.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+      serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
+      containers:
+        - name: {{ .Chart.Name }}-delete-webhook
+          image: "securesystemsengineering/connaisseur:helm-hook"
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          command:
+            - ash
+            - /helm_hook.sh
+            - delete
+      restartPolicy: OnFailure
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Chart.Name }}-upgrade-webhook-job
+  namespace: {{ .Release.namespace }}
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: hook-succeeded, hook-failed
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  template:
+    metadata:
+      name: {{ .Chart.Name }}-upgrade-webhook
+      labels:
+        app.kubernetes.io/name: {{ include "helm.name" . }}
+        helm.sh/chart: {{ include "helm.chart" . }}
+        app.kubernetes.io/instance: {{ .Chart.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+      serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
+      containers:
+        - name: {{ .Chart.Name }}-upgrade-webhook
+          image: "securesystemsengineering/connaisseur:helm-hook"
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          command:
+            - ash
+            - /helm_hook.sh
+            - upgrade
+          volumeMounts:
+            - mountPath: "/data"
+              name: webhook-data
+      volumes:
+        - name: webhook-data
+          configMap:
+            name: {{ .Chart.Name }}-script
+      restartPolicy: OnFailure

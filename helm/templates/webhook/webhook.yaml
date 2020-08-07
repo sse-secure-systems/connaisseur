@@ -1,0 +1,25 @@
+{{ define "webhooks.yaml.tpl" }}
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ .Chart.Name }}-webhook
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+webhooks:
+  - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: {{ .Chart.Name }}-svc
+        namespace: {{ .Release.Namespace }}
+        path: /mutate
+      caBundle: {{ .Files.Get "certs/tls-crt.pem" | b64enc | quote }}
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
+{{ end }}

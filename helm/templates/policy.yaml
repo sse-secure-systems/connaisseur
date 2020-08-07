@@ -1,0 +1,14 @@
+apiVersion: "connaisseur.policy/v1"
+kind: ImagePolicy
+metadata:
+  name: {{ .Chart.Name }}-policy
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  rules:
+    {{- range $k,$v := .Values.policy }}
+     - {{ toJson $v }}
+    {{- end }}

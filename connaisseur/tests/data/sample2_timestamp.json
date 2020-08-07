@@ -1,0 +1,23 @@
+{
+    "signed": {
+        "_type": "Timestamp",
+        "expires": "2020-04-22T08:09:03.148905976Z",
+        "meta": {
+            "snapshot": {
+                "hashes": {
+                    "sha256": "IBErfKzLekBPNoZVF/av72j4WdCcNwwmU5kwhVIk1N8=",
+                    "sha512": "t6EnX3liOQSMA7fQw0BAafXDEeBahSyURcQPoilp5K2v/jtp7paVr53ftGfEIqX6aJY3xdjQxZlVl5/ltLduOA=="
+                },
+                "length": 683
+            }
+        },
+        "version": 1
+    },
+    "signatures": [
+        {
+            "keyid": "124fb5b9019d58eeac7d41e2725ea4e5d80bfa9d161c87422fe52c5d8c17616a",
+            "method": "ecdsa",
+            "sig": "MfjjTZZi+QnQyq8Q5KQAKxC4x8B0WzfyI6Oci2lvftdZLupc0AUQ5psZ3B1mZXBvZYzd0kd5bNhmb3cSQkpjTg=="
+        }
+    ]
+}

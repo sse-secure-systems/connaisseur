@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.deployment.replicasCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "helm.name" . }}
+      app.kubernetes.io/instance: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "helm.name" . }}
+        app.kubernetes.io/instance: {{ .Chart.Name }}
+    spec:
+      serviceAccountName: {{ .Chart.Name }}-serviceaccount
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.deployment.image }}"
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+              scheme: HTTPS
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+              scheme: HTTPS
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          volumeMounts:
+            - name: {{ .Chart.Name }}-certs
+              mountPath: /etc/certs
+              readOnly: true
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-env
+            {{- if .Values.notary.auth.enabled }}
+            - secretRef:
+              {{- if default false .Values.notary.auth.secretName}}
+                name: {{ .Values.notary.auth.secretName}}
+              {{- else }}
+                name: {{ .Chart.Name }}-secret-env
+              {{- end }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.deployment.resources | nindent 12 }}
+      {{- with .Values.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.deployment.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.deployment.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+        - name: {{ .Chart.Name }}-certs
+          secret:
+            secretName: {{ .Chart.Name }}-tls

@@ -1,0 +1,110 @@
+name: cicd
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  RELEASE_VERSION: v0.3
+  RELEASE_IMAGE: securesystemsengineering/connaisseur
+
+jobs:
+  pylint:
+    runs-on: ubuntu-latest
+    container:
+      image: python:alpine
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        run: pip3 install -r requirements.txt
+      - name: Lint
+        run: cd connaisseur && pylint --ignore-patterns=tests,coverage *.*
+
+  hadolint:
+    runs-on: ubuntu-latest
+    container:
+      image: hadolint/hadolint:latest-debian
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint
+        run: hadolint docker/Dockerfile
+
+  pytest:
+    runs-on: ubuntu-latest
+    container:
+      image: python:slim
+    needs: [pylint, hadolint]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        run: pip3 install -r requirements.txt && pip3 install .
+      - name: Test
+        run: cd connaisseur && pytest --cov=connaisseur --cov-report=xml tests/
+      # - name: Upload code coverage
+      #   uses: codecov/codecov-action@v1
+      #   with:
+      #     file: coverage.xml
+
+  bandit:
+    runs-on: ubuntu-latest
+    container:
+      image: python:alpine
+    needs: [pytest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install bandit
+        run: pip3 install bandit
+      - name: Run bandit
+        run: bandit -r -x tests/ -f html -o report.html .
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bandit-report
+          path: report.html
+
+  safety:
+    runs-on: ubuntu-latest
+    container:
+      image: python:alpine
+    needs: [pytest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        run: pip3 install -r requirements.txt
+      - name: Freeze packages
+        run: pip3 freeze > actual_package_versions.txt
+      - name: Install safety
+        run: pip3 install safety
+      - name: Run safety
+        run: safety check -r ./actual_package_versions.txt --full-report -o report.txt
+      - uses: actions/upload-artifact@v2
+        with:
+          name: safety-report
+          path: report.txt
+
+  trivy:
+    runs-on: ubuntu-latest
+    container:
+      image: docker:stable
+    needs: [pytest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install trivy
+        run: |
+          apk update
+          apk add curl
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin
+      - name: Build image
+        run: docker build -t $GITHUB_SHA -f docker/Dockerfile .
+      - name: Save image
+        run: docker save $GITHUB_SHA -o $GITHUB_SHA.tar
+      - name: Scan
+        run: trivy image --input $GITHUB_SHA.tar -o trivy-report.json --exit-code 1 --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
+      - uses: actions/upload-artifact@v2
+        with:
+           name: trivy-report
+           path: trivy-report.json
+  

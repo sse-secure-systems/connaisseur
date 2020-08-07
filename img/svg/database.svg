@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 48 60"
+   x="0px"
+   y="0px"
+   version="1.1"
+   id="svg878"
+   sodipodi:docname="database.svg"
+   width="48"
+   height="60"
+   inkscape:version="0.92.5 (0.92.5+68)">
+  <metadata
+     id="metadata884">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>database-data-hardest-harddrive</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs882" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2560"
+     inkscape:window-height="1375"
+     id="namedview880"
+     showgrid="false"
+     inkscape:zoom="14.8375"
+     inkscape:cx="24"
+     inkscape:cy="0.43302443"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg878" />
+  <title
+     id="title868">database-data-hardest-harddrive</title>
+  <g
+     id="g872"
+     transform="translate(-8,-2)">
+    <path
+       d="M 56,50 V 14 C 56,7.27 45.46,2 32,2 18.54,2 8,7.27 8,14 v 36 c 0,6.73 10.54,12 24,12 13.46,0 24,-5.27 24,-12 z M 32,4 C 43.93,4 54,8.58 54,14 54,19.42 43.93,24 32,24 20.07,24 10,19.42 10,14 10,8.58 20.07,4 32,4 Z M 10,18.87 C 13.67,23.11 22,26 32,26 42,26 50.33,23.11 54,18.87 V 23 C 54,28.42 43.93,33 32,33 20.07,33 10,28.42 10,23 Z m 0,9 C 13.67,32.11 22,35 32,35 42,35 50.33,32.11 54,27.87 V 32 C 54,37.42 43.93,42 32,42 20.07,42 10,37.42 10,32 Z m 0,9 C 13.67,41.11 22,44 32,44 42,44 50.33,41.11 54,36.87 V 41 C 54,46.42 43.93,51 32,51 20.07,51 10,46.42 10,41 Z M 10,50 V 45.87 C 13.67,50.11 22,53 32,53 42,53 50.33,50.11 54,45.87 V 50 C 54,55.42 43.93,60 32,60 20.07,60 10,55.42 10,50 Z"
+       id="path870"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

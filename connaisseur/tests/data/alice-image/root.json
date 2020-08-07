@@ -1,0 +1,71 @@
+{
+    "signed": {
+        "_type": "Root",
+        "consistent_snapshot": false,
+        "expires": "2029-09-22T15:56:45.874265778+02:00",
+        "keys": {
+            "3170eec1aebe704e7d48bb929d595225480419276ca0154ca379f0d3037147d8": {
+                "keytype": "ecdsa",
+                "keyval": {
+                    "private": null,
+                    "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESjiFJygZjmoeWtg9qOqiAlrx781txh6TJn30yo17Kuxp/gqI422RHC6R+oeEluPCf/j7oyZ5K9JvJXfWeAcByg=="
+                }
+            },
+            "811e8c978dfde411ab4c467883f639554f11de18a5ce099e0ef61b6754ee9bb2": {
+                "keytype": "ecdsa",
+                "keyval": {
+                    "private": null,
+                    "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE/aPZNRAFK3LY+Zpkq5jofZ61u+A15SKIrjjubLhvZt0IaJ1an6Pr/+ANoq7n1t+wium40YWr8mkTxsxsXDSoEg=="
+                }
+            },
+            "a873ab3f157cfd51c9ccdc445caac92e8aef9f57881169d3bc3cc4868a20add2": {
+                "keytype": "ecdsa-x509",
+                "keyval": {
+                    "private": null,
+                    "public": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJoakNDQVN1Z0F3SUJBZ0lRWUhQRnplc253bElmUUpUUmNvK01pREFLQmdncWhrak9QUVFEQWpBcE1TY3cKSlFZRFZRUURFeDVrYjJOclpYSXVhVzh2Y0doaVpXeHBkSG92WVd4cFkyVXRhVzFoWjJVd0hoY05NVGt3T1RJMQpNVE0xTmpNeldoY05Namt3T1RJeU1UTTFOak16V2pBcE1TY3dKUVlEVlFRREV4NWtiMk5yWlhJdWFXOHZjR2hpClpXeHBkSG92WVd4cFkyVXRhVzFoWjJVd1dUQVRCZ2NxaGtqT1BRSUJCZ2dxaGtqT1BRTUJCd05DQUFTMUhtVEMKc01yYlpMSUs3dFl3WHkwS05XQjQ1RUJMWTlacHhGd0UzOVZCMVVyZzlXVFhEaWt4YVhQMEFkQzJFTWFYNWJhVApkNlVlUTl0SDZBMlFyWThJb3pVd016QU9CZ05WSFE4QkFmOEVCQU1DQmFBd0V3WURWUjBsQkF3d0NnWUlLd1lCCkJRVUhBd013REFZRFZSMFRBUUgvQkFJd0FEQUtCZ2dxaGtqT1BRUURBZ05KQURCR0FpRUE5dkg1TDJTclRyZ3QKa1lXRVFWZGRYb2JGZU9DWGoyY3owSEdqakpJcThZSUNJUUNwTUJPa1hpYTVzQkNuM0svUDdYZjdiRHZIMW5UUQpZN3dGQVAzMjBXckhiUT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+                }
+            },
+            "b52018edd4186326ee6c8217709869885f338d0d25a83dde4eb6d87dd796745c": {
+                "keytype": "ecdsa",
+                "keyval": {
+                    "private": null,
+                    "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEPInBMblhxdOQBdPqo9Nzw1TxE/76wobRskpODraOP2ApFjCqtY4G+bfK2uuK0VZROI4zCyFSX9IMuxf+3KAM5Q=="
+                }
+            }
+        },
+        "roles": {
+            "root": {
+                "keyids": [
+                    "a873ab3f157cfd51c9ccdc445caac92e8aef9f57881169d3bc3cc4868a20add2"
+                ],
+                "threshold": 1
+            },
+            "snapshot": {
+                "keyids": [
+                    "3170eec1aebe704e7d48bb929d595225480419276ca0154ca379f0d3037147d8"
+                ],
+                "threshold": 1
+            },
+            "targets": {
+                "keyids": [
+                    "811e8c978dfde411ab4c467883f639554f11de18a5ce099e0ef61b6754ee9bb2"
+                ],
+                "threshold": 1
+            },
+            "timestamp": {
+                "keyids": [
+                    "b52018edd4186326ee6c8217709869885f338d0d25a83dde4eb6d87dd796745c"
+                ],
+                "threshold": 1
+            }
+        },
+        "version": 1
+    },
+    "signatures": [
+        {
+            "keyid": "a873ab3f157cfd51c9ccdc445caac92e8aef9f57881169d3bc3cc4868a20add2",
+            "method": "ecdsa",
+            "sig": "wSygV0zdec7P1cxvvbJ06lU3S20qs5dratMfNmIIx8KmOV8r+OETiS98JXJjzjPmt4taXtyYeXAmc/wttsSdvA=="
+        }
+    ]
+}

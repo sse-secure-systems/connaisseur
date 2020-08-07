@@ -1,0 +1,51 @@
+{
+    "signed": {
+        "_type": "Snapshot",
+        "expires": "2023-01-12T15:56:06.862260431Z",
+        "meta": {
+            "root": {
+                "hashes": {
+                    "sha256": "wlaYz21+0NezlHjqkldQQBf3KWtifimy07A+fOEyCTo=",
+                    "sha512": "4SIpGMdFn0Qsmoj0lzRTUm3g/KXn6UfUhyC+y/FJEqB2lUQt4d9kb9ZfFnlxRzdvEo32afJnIDLZGYoCYAbB6g=="
+                },
+                "length": 2401
+            },
+            "targets": {
+                "hashes": {
+                    "sha256": "QGNOSBnOmZHpn8uefASR1xw9ZrPpr0SMW+xWvY4nSAc=",
+                    "sha512": "XvK3cyEnTJ5URKl3lL8GYZXrtpk/yxpfZrnBq0IVVNh/OG+mfHMn9N4umNEqVSSNNjfOXd1bsgdvlAknsDXVvQ=="
+                },
+                "length": 1307
+            },
+            "targets/chamsen": {
+                "hashes": {
+                    "sha256": "ESFkhp4/3VgYQ4otmcgwLaR4IsmvLIGfo7VJMIxZCwY=",
+                    "sha512": "FMJYFG6Ub4LQiB8eDF+uFNhEjHQd389F70rFLtek6K22NW0WGYJ/9W6ckWB/aqBnlI9h3ydMHlUcfc5xlHVNDg=="
+                },
+                "length": 521
+            },
+            "targets/phbelitz": {
+                "hashes": {
+                    "sha256": "ADiBf7StE9k0mqdAXp0o8SGQuJtXbufSZxNTKZ8hDZc=",
+                    "sha512": "LWoqYC+44e69zluqZo5V+M77iNDycEejX/5u8FUbvibGeXDFo9UnjFHspN+kDZ3xEoDqUSq8a1J3Gew+AOn9UQ=="
+                },
+                "length": 521
+            },
+            "targets/releases": {
+                "hashes": {
+                    "sha256": "pNjHgtwOrSZB5l0bzHZt9u3dUdFpKsPBhWPiVrIMm88=",
+                    "sha512": "w4IIp9GNVS1bbVRnp9T7JlMbopvuwcPYboVRe9gJWMt0C2wUB/LWEgeKjZLyUR/4SmCwqJ4Cw+pYVqVZQycGQA=="
+                },
+                "length": 712
+            }
+        },
+        "version": 4
+    },
+    "signatures": [
+        {
+            "keyid": "7dbacd611d5933ca3f0fad581ed233881c501229343613f63f2d4b5771ee4299",
+            "method": "ecdsa",
+            "sig": "49rrdCRsb3ioBqOmr3vsHzgeyUJqswWJcq6WNUjaYL5Rr9m7krTqVjWcWQpG6nVDPw/TuxIxsbyeXUaknVF/Wg=="
+        }
+    ]
+}

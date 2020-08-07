@@ -1,0 +1,51 @@
+{
+    "signed": {
+        "_type": "Snapshot",
+        "expires": "2022-09-24T14:10:17.017464275Z",
+        "meta": {
+            "root": {
+                "hashes": {
+                    "sha256": "unOZW1pKL2Gy3PW81mg7twa25kIkhi0RAJjn0qYUfE4=",
+                    "sha512": "vsG09XfnETEPag4gQS8zui6hnmhOXyCaDvHoSyc0+ak9UJPFUiEhAvIZ+WdRvwO71mxuX37z3kxdW384fxwXXg=="
+                },
+                "length": 2421
+            },
+            "targets": {
+                "hashes": {
+                    "sha256": "/VwvIlwM2d7Pe0kv1v1vS7HAIpiova/1l9uj17KKv3Q=",
+                    "sha512": "nQgkbTZrHDGL3dpU50isREQrdJquM6+d4Fv7aHE1qdsiB8/un18pF998yAGEu1sSLTrZAZQbcrFoCvUOoj7dOQ=="
+                },
+                "length": 1307
+            },
+            "targets/chamsen": {
+                "hashes": {
+                    "sha256": "Oyi7jLd06uweWNXgNGfPLhn+sA4+Kxf/eWQiJxOUTDo=",
+                    "sha512": "BKjVUj+ny3uYizzXkKtjPBk+hoiVJFCDl4rBYW6dpawzIqQmKyFIkxTImsvJx1ZPQhuq9eSAPiqrlmJ8apyKJg=="
+                },
+                "length": 435
+            },
+            "targets/phbelitz": {
+                "hashes": {
+                    "sha256": "b0Azjoall61P924nP4Yh7grk4KVLOp3gGss+XL5CsJ0=",
+                    "sha512": "f4tSODQKM33cbzpKwnkeEH/7qun87PNYjFPnYI/BxY1VCtxjLdqoGY84xrsZ3aCxsKU9M9iZXVjZVKUmD3HJyw=="
+                },
+                "length": 435
+            },
+            "targets/releases": {
+                "hashes": {
+                    "sha256": "7CffxbCKFoRtSY8I3l2uwNlBiEWDPMRAB20KgWL3JyA=",
+                    "sha512": "tMYEjqTlxKFN8QVXe3tmmNEjOrsKmE0rkDpf9QOQ/1UuEF0FayiMHQDPeZoj1dVC7FFDrXaAazIWDGPLzranxA=="
+                },
+                "length": 626
+            }
+        },
+        "version": 3
+    },
+    "signatures": [
+        {
+            "keyid": "3170eec1aebe704e7d48bb929d595225480419276ca0154ca379f0d3037147d8",
+            "method": "ecdsa",
+            "sig": "zNk/zuuY8I8hNiHOreAYMsdyfqZMFgcPjixgF5ZzJi7XSGGhIm+wSARsyS5qlg7cgwuEGfyZXnNLnM7c7Ma4ag=="
+        }
+    ]
+}

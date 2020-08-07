@@ -1,0 +1,107 @@
+{
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1beta1",
+    "request": {
+      "uid": "f8c8b687-fe68-48e2-8e2b-329567556307",
+      "kind": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "ReplicaSet"
+      },
+      "resource": {
+        "group": "apps",
+        "version": "v1",
+        "resource": "replicasets"
+      },
+      "requestKind": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "ReplicaSet"
+      },
+      "requestResource": {
+        "group": "apps",
+        "version": "v1",
+        "resource": "replicasets"
+      },
+      "namespace": "test-connaisseur",
+      "operation": "CREATE",
+      "userInfo": {
+        "username": "system:serviceaccount:kube-system:deployment-controller",
+        "uid": "2f246d60-3a30-4cca-b5a1-b196f6206be1",
+        "groups": ["system:serviceaccounts", "system:serviceaccounts:kube-system", "system:authenticated"]
+      },
+      "object": {
+        "kind": "ReplicaSet",
+        "apiVersion": "apps/v1",
+        "metadata": {
+          "name": "charlie-deployment-558576bf6c",
+          "namespace": "test-connaisseur",
+          "creationTimestamp": "",
+          "labels": {
+            "app": "test-connaisseur",
+            "pod-template-hash": "558576bf6c"
+          },
+          "annotations": {
+            "deployment.kubernetes.io/desired-replicas": "1",
+            "deployment.kubernetes.io/max-replicas": "2",
+            "deployment.kubernetes.io/revision": "1"
+          },
+          "ownerReferences": [{
+            "apiVersion": "apps/v1",
+            "kind": "Deployment",
+            "name": "charlie-deployment",
+            "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
+            "controller": true,
+            "blockOwnerDeletion": true
+          }]
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "test-connaisseur",
+              "pod-template-hash": "558576bf6c"
+            }
+          },
+          "template": {
+            "metadata": {
+              "creationTimestamp": "",
+              "labels": {
+                "app": "test-connaisseur",
+                "pod-template-hash": "558576bf6c"
+              }
+            },
+            "spec": {
+              "containers": [{
+                "name": "test-connaisseur",
+                "image": "phbelitz/sample-san-sama:hai",
+                "ports": [{
+                  "containerPort": 5000,
+                  "protocol": "TCP"
+                }],
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "imagePullPolicy": "Always"
+              }],
+              "restartPolicy": "Always",
+              "terminationGracePeriodSeconds": 30,
+              "dnsPolicy": "ClusterFirst",
+              "securityContext": {},
+              "schedulerName": "default-scheduler"
+            }
+          }
+        },
+        "status": {
+          "replicas": 0
+        }
+      },
+      "oldObject": {},
+      "dryRun": false,
+      "options": {
+        "kind": "CreateOptions",
+        "apiVersion": "meta.k8s.io/v1"
+      }
+    }
+  }
+  

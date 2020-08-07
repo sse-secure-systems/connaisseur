@@ -1,0 +1,66 @@
+{
+    "signed": {
+        "_type": "Targets",
+        "delegations": {
+            "keys": {
+                "6984a67934a29955b3f969835c58ee0dd09158f5bec43726d319515b56b0a878": {
+                    "keytype": "ecdsa",
+                    "keyval": {
+                        "private": null,
+                        "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEchQNiJJt4PTaEeAzaztL+TQZqTa0iM0YSf+w0LjSElobVsYgnqIbCWe6pGX3UvcCngNw7N4uGkdVNVMS2Tslg=="
+                    }
+                },
+                "70aa109003a93131c63499c70dcfc8db3ba33ca81bdd1abcd52c067a8acc0492": {
+                    "keytype": "ecdsa",
+                    "keyval": {
+                        "private": null,
+                        "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEM0xl8F5nwIV3IAru1Pf85WCo4cfTOQ91jhxVaQ3xHMeW430q7R4H/tJmAXUZBe+nOTX8pgtmrLpT+Hu/H7pUhw=="
+                    }
+                }
+            },
+            "roles": [
+                {
+                    "keyids": [
+                        "70aa109003a93131c63499c70dcfc8db3ba33ca81bdd1abcd52c067a8acc0492"
+                    ],
+                    "name": "targets/phbelitz",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                },
+                {
+                    "keyids": [
+                        "70aa109003a93131c63499c70dcfc8db3ba33ca81bdd1abcd52c067a8acc0492",
+                        "6984a67934a29955b3f969835c58ee0dd09158f5bec43726d319515b56b0a878"
+                    ],
+                    "name": "targets/releases",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                },
+                {
+                    "keyids": [
+                        "6984a67934a29955b3f969835c58ee0dd09158f5bec43726d319515b56b0a878"
+                    ],
+                    "name": "targets/chamsen",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                }
+            ]
+        },
+        "expires": "2023-01-12T16:55:17.056146761+01:00",
+        "targets": {},
+        "version": 3
+    },
+    "signatures": [
+        {
+            "keyid": "7c62922e6be165f1ea08252f77410152b9e4ec0d7bf4e69c1cc43f0e6c73da20",
+            "method": "ecdsa",
+            "sig": "ayUgIwW4LmtW+kuzHuyU7lkn8awoXlymBcXeO8j++JSAUpU3BSuFsBe7yx3SOOsxh57u+vWkCOzPdLEYVyQrqg=="
+        }
+    ]
+}

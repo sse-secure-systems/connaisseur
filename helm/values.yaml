@@ -1,0 +1,59 @@
+# configure connaisser deployment
+deployment:
+  replicasCount: 3
+  image: securesystemsengineering/connaisseur:v0.3
+  imagePullPolicy: Always
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# configure connaisseur service
+service:
+  type: ClusterIP
+  port: 443
+
+# configure access to the notary server
+notary:
+  # domain to the notary server. can be `null`, to use the public docker hub
+  # notary server
+  host: notary.docker.io
+  # only for insecure notary instances with selfsigned certificates.
+  selfsigned: false
+  # selfsignedCert: |
+  #   -----BEGIN CERTIFICATE-----
+  #   -----END CERTIFICATE-----
+
+  # if notary uses an authentication server, give a user and password
+  # with pull rights
+  auth:
+    enabled: true
+    # enter user/pass directly
+    # these are placeholders and should be changed!
+    user: notaryuser
+    password: Password123
+    # or use a predefined secret, which needs the fields 'NOTARY_USER'
+    # and 'NOTARY_PASS'
+    secretName: null
+  # the public part of the root key, for verifying notary's signatures
+  rootPubKey: |
+    -----BEGIN PUBLIC KEY-----
+    -----END PUBLIC KEY-----
+
+# the image policy, which defines all repositories that need to be
+# verified. more detail in the git repo README.md
+policy:
+  - pattern: "*:*"
+    verify: true
+  - pattern: "k8s.gcr.io/*:*"
+    verify: false
+  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
+    verify: false
+
+# debug: true
