@@ -44,10 +44,14 @@ jobs:
         run: pip3 install -r requirements.txt && pip3 install .
       - name: Test
         run: cd connaisseur && pytest --cov=connaisseur --cov-report=xml tests/
-      # - name: Upload code coverage
-      #   uses: codecov/codecov-action@v1
-      #   with:
-      #     file: coverage.xml
+      - name: Install curl
+        run: |
+          apt update
+          apt install -y curl
+      - name: Upload code coverage
+        uses: codecov/codecov-action@v1
+        with:
+          file: connaisseur/coverage.xml
 
   bandit:
     runs-on: ubuntu-latest
