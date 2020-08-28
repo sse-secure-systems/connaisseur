@@ -66,7 +66,7 @@ Second install the certificate, both locally and in the cluster. For the local i
 mkdir -p /etc/docker/certs.d/core.harbor.domain
 mkdir -p ~/.docker/tls/notary.harbor.domain
 
-cp harbor-ca.crt /etc/docker/certs.d//core.harbor.domain
+cp harbor-ca.crt /etc/docker/certs.d/core.harbor.domain
 cp harbor-ca.crt ~/.docker/tls/notary.harbor.domain
 ```
 
@@ -372,7 +372,7 @@ spec:
     spec:
       containers:
       - name: sample
-        image: core.harbor.domain/sample/unsigned-image
+        image: core.harbor.domain/sample/signed-image:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
