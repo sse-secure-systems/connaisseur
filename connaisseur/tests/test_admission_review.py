@@ -4,7 +4,11 @@ import connaisseur.admission_review
 admission_review_plain = {
     "apiVersion": "admission.k8s.io/v1beta1",
     "kind": "AdmissionReview",
-    "response": {"uid": 1, "allowed": True},
+    "response": {
+        "uid": 1,
+        "allowed": True,
+        "status": {"code": 202},
+    },
 }
 admission_review_msg = {
     "apiVersion": "admission.k8s.io/v1beta1",
@@ -15,12 +19,23 @@ admission_review_msg = {
         "status": {"code": 202, "message": "Well hello there."},
     },
 }
+admission_review_msg_dm = {
+    "apiVersion": "admission.k8s.io/v1beta1",
+    "kind": "AdmissionReview",
+    "response": {
+        "uid": 1,
+        "allowed": True,
+        "status": {"code": 202, "message": "Well hello there."},
+        "warnings": ["Well hello there."],
+    },
+}
 admission_review_patch = {
     "apiVersion": "admission.k8s.io/v1beta1",
     "kind": "AdmissionReview",
     "response": {
         "uid": 1,
         "allowed": True,
+        "status": {"code": 202},
         "patchType": "JSONPatch",
         "patch": (
             "W3sib3AiOiAiYWRkIiwgInBhdGgiOiAi"
@@ -50,32 +65,38 @@ def adm_rev():
 
 
 @pytest.mark.parametrize(
-    "uid, allowed, patch, status_id, msg, review",
+    "uid, allowed, patch, msg, dm, review",
     [
-        (1, True, None, None, None, admission_review_plain),
-        (1, True, None, None, "Well hello there.", admission_review_msg),
+        (1, True, None, None, False, admission_review_plain),
+        (1, True, None, "Well hello there.", False, admission_review_msg),
         (
             1,
             True,
             [{"op": "add", "path": "/spec/replicas", "value": 3}],
             None,
-            None,
+            False,
             admission_review_patch,
         ),
         (
             1,
             False,
             [{"op": "add", "path": "/spec/replicas", "value": 3}],
-            None,
             "Well hello there.",
+            False,
             admission_review_msg_patch,
         ),
+        (1, False, None, "Well hello there.", True, admission_review_msg_dm),
+        (1, True, None, "Well hello there.", True, admission_review_msg),
     ],
 )
-def test_get_admission_review(adm_rev, uid, allowed, patch, status_id, msg, review):
+def test_get_admission_review(adm_rev, uid, allowed, patch, msg, dm, review):
     assert (
         adm_rev.get_admission_review(
-            uid, allowed, patch=patch, status_id=status_id, msg=msg
+            uid,
+            allowed,
+            patch=patch,
+            msg=msg,
+            detection_mode=dm,
         )
         == review
     )

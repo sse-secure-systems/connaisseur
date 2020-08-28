@@ -7,6 +7,8 @@ from connaisseur.mutate import admit, validate
 from connaisseur.notary_api import health_check
 from connaisseur.admission_review import get_admission_review
 
+DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
+
 APP = Flask(__name__)
 """
 Flask Server that admits the request send to the k8s cluster, validates it and
@@ -26,15 +28,22 @@ def mutate():
         response = admit(admission_request)
     except BaseConnaisseurException as err:
         logging.error(str(err))
-        msg = err.message
         return jsonify(
-            get_admission_review(admission_request["request"]["uid"], False, msg=msg)
+            get_admission_review(
+                admission_request["request"]["uid"],
+                False,
+                msg=err.user_msg,
+                detection_mode=DETECTION_MODE,
+            )
         )
     except UnknownVersionError as err:
         logging.error(str(err))
         return jsonify(
             get_admission_review(
-                admission_request["request"]["uid"], False, msg=str(err)
+                admission_request["request"]["uid"],
+                False,
+                msg=str(err),
+                detection_mode=DETECTION_MODE,
             )
         )
     except Exception:
@@ -44,6 +53,7 @@ def mutate():
                 admission_request["request"]["uid"],
                 False,
                 msg="unknown error. please check the logs.",
+                detection_mode=DETECTION_MODE,
             )
         )
     return jsonify(response)

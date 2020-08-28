@@ -12,7 +12,9 @@ if __name__ == "__main__":
         {
             "version": 1,
             "formatters": {
-                "default": {"format": "[%(asctime)s] %(levelname)s: %(message)s",}
+                "default": {
+                    "format": "[%(asctime)s] %(levelname)s: %(message)s",
+                }
             },
             "handlers": {
                 "wsgi": {

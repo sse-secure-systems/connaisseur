@@ -3,7 +3,11 @@ import json
 
 
 def get_admission_review(
-    uid: str, allowed: bool, patch: list = None, status_id: int = None, msg: str = None
+    uid: str,
+    allowed: bool,
+    patch: list = None,
+    msg: str = None,
+    detection_mode: bool = False,
 ):
     """
     Get a standardized response object with patching instructions for the
@@ -19,8 +23,6 @@ def get_admission_review(
         A list with JSON patch instruction, that will modify the original
         request, send to the Admission Controller. The list is Base64
         encoded.
-    status_id : int (optional)
-        The HTTP status code send back with the response.
     msg : str (optional)
         The error message, which will be displayed, should allowed be
         'False'.
@@ -40,6 +42,7 @@ def get_admission_review(
                 "code": 200,
                 "message": "All gucci, my boi."
             },
+            "warnings": ["detection_mode ON"]
             "patchType": "JSONPatch",
             "patch":
                 "W3sib3AiOiAiYWRkIiwgInBhdGgiOiAiL3NwZWMvcmVwbGljYXMiLCAidmFsdWUiOiAzfV0="
@@ -49,16 +52,17 @@ def get_admission_review(
     review = {
         "apiVersion": "admission.k8s.io/v1beta1",
         "kind": "AdmissionReview",
-        "response": {"uid": uid, "allowed": allowed},
+        "response": {
+            "uid": uid,
+            "allowed": allowed or detection_mode,
+            "status": {"code": 202 if allowed or detection_mode else 403},
+        },
     }
 
-    if status_id or msg:
-        if not status_id:
-            status_id = 202 if allowed else 403
-        status = {"code": status_id}
-        if msg:
-            status["message"] = msg
-        review["response"]["status"] = status
+    if msg:
+        review["response"]["status"]["message"] = msg
+        if detection_mode and not allowed:
+            review["response"]["warnings"] = [msg]
 
     if patch:
         review["response"]["patchType"] = "JSONPatch"

@@ -1,7 +1,7 @@
 # configure connaisser deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v0.3
+  image: securesystemsengineering/connaisseur:v0.4
   imagePullPolicy: Always
   resources: {}
   # limits:
@@ -55,5 +55,10 @@ policy:
     verify: false
   - pattern: "docker.io/securesystemsengineering/connaisseur:*"
     verify: false
+
+# in detection mode, deployment will not be denied, but only prompted
+# and logged. This allows testing the functionality without
+# interrupting operation.
+detection_mode: false
 
 # debug: true

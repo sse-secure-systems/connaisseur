@@ -14,6 +14,7 @@ Connaisseur is an admission controller for Kubernetes that integrates Image Sign
 - [How it works](#how-it-works)
 - [Getting Started](#getting-started)
   * [Image Policy](#image-policy)
+  * [Detection Mode](#detection-mode)
 - [Threat Model](#threat-model)
   * [(1) Developer/User](#-1--developer-user)
   * [(2) Connaisseur Service](#-2--connaisseur-service)
@@ -57,7 +58,7 @@ git clone git@github.com:sse-secure-systems/connaisseur.git
 If your Notary uses a self-signed certificate, `.notary.selfsigned` should be set to `true` and the certificate has to be added to `.notary.selfsignedCert`. In case your Notary instance is authenticated (which it should), set the `.notary.auth.enabled` to `true` and enter the credentials either directly or as a predefined secret. Lastly enter the public root key in `.notary.rootPubKey`, which is used for verifying the image signatures. For further details, please checkout the [setup guide](setup/README.md).
 4. **Deploy**: Switch to the cluster where you would like to install Connaisseur, and run `make install`.
 
-> :warning: **WARNING!** Be careful when installing Connaisseur in minikube and restarting the cluster!  ​When stopping the cluster with `minikube stop` while Connaisseur is still installed and running, restarting it with `minikube start` will not work. The command will freeze at some point, as long as Connaisseur is running, since Connaisseur per default will block some resources from staring up. At that point you can still access the cluster and delete Connaisseur manually, then the `minikube start` process will finish.
+> :warning: **WARNING!** Be careful when installing Connaisseur in minikube and restarting the cluster!  ​When stopping the cluster with `minikube stop` while Connaisseur is still installed and running, restarting it with `minikube start` will not work. The command will freeze at some point, as long as Connaisseur is running, since Connaisseur per default will block some resources from staring up. At that point you can still access the cluster and delete Connaisseur manually, then the `minikube start` process will finish. You can use [Detection Mode](#detection-mode) to avoid interruptions during testing.
 
 ### Image Policy
 
@@ -84,6 +85,11 @@ The policy consists of a set of rules. Each rule starts with a pattern that need
 3. Return the most specific rule.
 
 In addition to the pattern, rules can also contain a `verify` flag which specifies whether the image requires a signature or can skip verification. If `verify` is set to `true`, a valid signature is required; otherwise, the image is admitted. Additionally, a rule can have `delegations` which correspond to Notary delegation roles. These are to be understood as specific signers that need to be present in the Notary trust data in order for signature verification to be successful.
+
+### Detection Mode
+A detection mode is available in order to avoid interruptions of a running cluster, to support initial rollout or for testing purposes. In detection mode, Connaisseur will admit all images to the cluster, but logs an error message for images that do not comply with the policy or in case of other unexpected failures.
+
+To activate the detection mode, set the `detection_mode` flag to `true` in `helm/values.yaml`.
 
 ## Threat Model
 

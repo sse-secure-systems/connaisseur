@@ -82,6 +82,7 @@ ad_review1 = {
     "response": {
         "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
         "allowed": True,
+        "status": {"code": 202},
         "patchType": "JSONPatch",
         "patch": (
             "W3sib3AiOiAicmVwbGFjZSIsICJwYXRoIjogIi9zcGVjL3RlbXBsYXRlL3NwZWMvY29udGFpbmVy"
@@ -94,7 +95,11 @@ ad_review1 = {
 ad_review2 = {
     "apiVersion": "admission.k8s.io/v1beta1",
     "kind": "AdmissionReview",
-    "response": {"uid": "f8c8b687-fe68-48e2-8e2b-329567556307", "allowed": True},
+    "response": {
+        "uid": "f8c8b687-fe68-48e2-8e2b-329567556307",
+        "allowed": True,
+        "status": {"code": 202},
+    },
 }
 policy = {
     "rules": [
