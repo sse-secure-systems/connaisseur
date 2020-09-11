@@ -16,5 +16,4 @@ testing-env/aks/k8s/deployment.yaml
 .scannerwork/
 samples/*
 demo/
-ca.conf
-tls.conf
+tls-*.conf

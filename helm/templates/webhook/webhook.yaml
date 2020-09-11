@@ -16,7 +16,7 @@ webhooks:
         name: {{ .Chart.Name }}-svc
         namespace: {{ .Release.Namespace }}
         path: /mutate
-      caBundle: {{ .Files.Get "certs/tls-crt.pem" | b64enc | quote }}
+      caBundle: {{ .Files.Get "certs/tls.crt" | b64enc | quote }}
     rules:
       - operations: ["CREATE", "UPDATE"]
         apiGroups: ["*"]
