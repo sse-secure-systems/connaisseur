@@ -40,6 +40,7 @@ def im():
         ),
         ("registry.io/image:tag", "image", "tag", None, "", "registry.io"),
         ("path/to/repo/image:tag", "image", "tag", None, "path/to/repo", "docker.io"),
+        ("reg.com:12345/path/to/repo/image:tag", "image", "tag", None, "path/to/repo", "reg.com:12345"),
         ("image:tag", "image", "tag", None, "", "docker.io"),
         (
             "sub.registry.io/path/image:tag",
@@ -63,7 +64,12 @@ def test_image(
 
 
 @pytest.mark.parametrize(
-    "image, error", [("image/", '"image/" is not a valid image format.')]
+    "image, error",
+    [
+        ("image/", '"image/" is not a valid image format.'),
+        ("registry:", '"registry:" is not a valid image format.'),
+        ("registry:123456789/repo/image:tag", '"registry:123456789/repo/image:tag" is not a valid image format.')
+    ]
 )
 def test_image_error(im, image: str, error: str):
     with pytest.raises(BaseConnaisseurException) as err:
@@ -106,6 +112,9 @@ def test_has_digest(im, image: str, digest: bool):
         ("registry.io/image:tag", "registry.io/image:tag"),
         ("reg.io/path/image:tag", "reg.io/path/image:tag"),
         ("image", "docker.io/image:latest"),
+        ("registry.io:42358/path/image:1", "registry.io:42358/path/image:1"),
+        ("registry:12", "docker.io/registry:12"),
+        ("registry.io:8080/image", "registry.io:8080/image:latest"),
         (
             (
                 "image@sha256:859b5aada817b3eb53410222"
