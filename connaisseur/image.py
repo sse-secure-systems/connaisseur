@@ -26,8 +26,8 @@ class Image:
     digest: str
 
     def __init__(self, image: str):
-        # e.g. example.com, super.example.com
-        domain_re = r"(?:[a-z0-9-]{1,63}\.){1,62}[a-z0-9-]{1,63}"
+        # e.g. example.com, super.example.com:3498
+        domain_re = r"(?:[a-z0-9-]{1,63}\.){1,62}[a-z0-9-]{1,63}(?::[0-9]{1,5})?"
         # e.g. library/, library/alpine/,
         repo_re = r"(?:[\w-]+\/)+"
         # e.g. alpine, nginx, hello-world
