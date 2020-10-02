@@ -21,6 +21,9 @@ Connaisseur is an admission controller for Kubernetes that integrates Image Sign
   * [(3) Notary Server](#-3--notary-server)
   * [(4) Registry](#-4--registry)
 - [Additional Information](#additional-information)
+- [Contributing](#contributing)
+- [Security Policy](#security-policy)
+- [Contact](#contact)
 
 ## Introduction
 
@@ -135,3 +138,12 @@ The STRIDE threat model has been used as a reference for threat modeling. Each o
 ## Additional Information
 
 Also checkout our [Medium article](https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce), giving a short introduction to Connaisseur and a demo!
+
+## Contributing
+We hope to steer development of Connaisseur from demand of the community and are excited about direct contributions to improve the tool! Please refer to our [contributing guide](CONTRIBUTING.md) to learn how to contribute to Connaisseur.
+
+## Security Policy
+We are grateful for any community support reporting vulnerabilities! How to submit a report is described in our [Security Policy](SECURITY.md).
+
+## Contact
+You can reach us via email under [connaisseur@securesystems.de](mailto:connaisseur@securesystems.de).
