@@ -7,6 +7,7 @@ import pytz
 from dateutil import parser
 from jsonschema import validate as json_validate
 from jsonschema import ValidationError as JValidationError
+from jsonschema import FormatChecker as JFormatChecker
 from connaisseur.key_store import KeyStore
 from connaisseur.crypto import verify_signature
 from connaisseur.exceptions import NotFoundException, ValidationError, NoSuchClassError
@@ -57,7 +58,7 @@ class TrustData:
             schema = json.load(schema_file)
 
         try:
-            json_validate(instance=data, schema=schema)
+            json_validate(instance=data, schema=schema, format_checker=JFormatChecker())
         except JValidationError:
             raise ValidationError(
                 "trust data has invalid format.", {"trust_data_type": self.kind}
