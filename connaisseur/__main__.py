@@ -27,6 +27,4 @@ if __name__ == "__main__":
         }
     )
 
-    APP.run(
-        host="0.0.0.0", ssl_context=("/etc/certs/tls.crt", "/etc/certs/tls.key")
-    )
+    APP.run(host="0.0.0.0", ssl_context=("/etc/certs/tls.crt", "/etc/certs/tls.key"))

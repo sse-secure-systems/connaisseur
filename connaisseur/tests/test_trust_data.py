@@ -63,6 +63,63 @@ root_keys = {
         },
     },
 }
+root_keys_sample5 = {
+    "59752a99a56142b0d0af030ed78768f313946fcfe17f153b31f6a4c3e95ba778": {
+        "keytype": "ecdsa",
+        "keyval": {
+            "private": None,
+            "public": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEnvvEn/Y3CG9ZqPxKdnPPmM"
+                "LsLwc4d7+qIU6gYNC0782kyRZYm8rG2NMi45UsZm+fgrRolBezbPGrmTGT"
+                "2j5EbA=="
+            ),
+        },
+    },
+    "654647b9543690aafc97f608ec604f265f01fdf05d2d488d4b3cd332a2db9d43": {
+        "keytype": "ecdsa-x509",
+        "keyval": {
+            "private": None,
+            "public": (
+                "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJqRENDQVRHZ0F3SU"
+                "JBZ0lRU3FrTnV5Zk91RGkybzZ6KzJNTVAvekFLQmdncWhrak9QUVFEQWpB"
+                "c01Tb3cKS0FZRFZRUURFeUZ5WldkcGMzUnllUzVsZUdGdGNHeGxMbXh2WT"
+                "JGc09qVXdNREF2YzI1aGEyVXdIaGNOTVRjeApNREF4TWpJd01UUTNXaGNO"
+                "TWpjd09USTVNakl3TVRRM1dqQXNNU293S0FZRFZRUURFeUZ5WldkcGMzUn"
+                "llUzVsCmVHRnRjR3hsTG14dlkyRnNPalV3TURBdmMyNWhhMlV3V1RBVEJn"
+                "Y3Foa2pPUFFJQkJnZ3Foa2pPUFFNQkJ3TkMKQUFRTHZpdU5raVFETzNjMU"
+                "w4TDlVVU9Xajk3bGRJcEEyaVYzN3dMbFFaQk5YaHNiL0o5Z3MrVWd3aytI"
+                "aHFjSApRYk13MlhxYzN0eFZkcWxhby85QzdlTDFvelV3TXpBT0JnTlZIUT"
+                "hCQWY4RUJBTUNCYUF3RXdZRFZSMGxCQXd3CkNnWUlLd1lCQlFVSEF3TXdE"
+                "QVlEVlIwVEFRSC9CQUl3QURBS0JnZ3Foa2pPUFFRREFnTkpBREJHQWlFQX"
+                "lhUHYKcjgzNTBwNzJsQlNrM0dyOTlqTXBOUzczc2UrMlFHQ0pKemtMQTdv"
+                "Q0lRRDlwUmt3YnFzemVxNVl4U2Y2YTg4ZQp5aHRXSEpmQ2lkVXFKb3pWSn"
+                "diaWV3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="
+            ),
+        },
+    },
+    "a2ebe51f9399e25ce14fd40a1fde6e2508542d0443b3954bdb4ca5283d1cda6f": {
+        "keytype": "ecdsa",
+        "keyval": {
+            "private": None,
+            "public": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQEg7Lk6JgVgweEaxq4Kebqkh"
+                "H7QD65GKdST5I8+mJZyIpPVL+nQGOb2DX6W1Q0AN8Z3Ny/+n5oGqQfWCaXw3"
+                "Zw=="
+            ),
+        },
+    },
+    "fe3d087fbca4a9f9edd21813e5eb464e7c0dcb3814a5fe21b968744a0f45f027": {
+        "keytype": "ecdsa",
+        "keyval": {
+            "private": None,
+            "public": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEN3ILa0E1/P6QB/cauouggwlZ"
+                "ZwuvnOBAzAnSLJjyOZnvwIzrfrSp/E0OpoiPcKMhlVQbFQyEkhb874On6Dl1"
+                "dQ=="
+            ),
+        },
+    },
+}
 targets_keys = {
     "6984a67934a29955b3f969835c58ee0dd09158f5bec43726d319515b56b0a878": {
         "keytype": "ecdsa",
@@ -199,6 +256,14 @@ def mock_keystore(monkeypatch):
                 "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEM0xl8F5nwIV3IAru1Pf85WCo4cf"
                 "TOQ91jhxVaQ3xHMeW430q7R4H/tJmAXUZBe+nOTX8pgtmrLpT+Hu/H7pUhw=="
             ),
+            "a2ebe51f9399e25ce14fd40a1fde6e2508542d0443b3954bdb4ca5283d1cda6f": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQEg7Lk6JgVgweEaxq4KebqkhH7Q"
+                "D65GKdST5I8+mJZyIpPVL+nQGOb2DX6W1Q0AN8Z3Ny/+n5oGqQfWCaXw3Zw=="
+            ),
+            "fb77b27209b581031fa11e548a56bcacb617ce3ca9b15846fb146d786a6ce29c": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExK/3GbTTNE6qG3/rByaDurVQ41D"
+                "PqkYN4ge13exMeGZzRtv5fcaEHEyt4zK/bPyXpc2laxLiIHEZMU6WQYVD2A=="
+            ),
         }
         self.hashes = {
             "root": ("wlaYz21+0NezlHjqkldQQBf3KWtifimy07A+fOEyCTo=", 2401),
@@ -244,13 +309,31 @@ def test_trust_data_error(td):
     assert str(err.value) == "could not find class with name trust."
 
 
-def test_validate_schema_error(td, mock_schema_path):
-    data = trust_data("tests/data/sample_root.json")
-    del data["signed"]["keys"]
-
+@pytest.mark.parametrize(
+    "trustdata, role",
+    [
+        (trust_data("tests/data/sample6_root.json"), "root"),
+        (trust_data("tests/data/sample3_timestamp.json"), "timestamp"),
+    ],
+)
+def test_validate_schema_error(td, mock_schema_path, trustdata: dict, role: str):
     with pytest.raises(ValidationError) as err:
-        td.TrustData(data, "root")
+        td.TrustData(trustdata, role)
     assert "trust data has invalid format." in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "trustdata, role",
+    [
+        (trust_data("tests/data/sample_root.json"), "root"),
+        (trust_data("tests/data/sample_snapshot.json"), "snapshot"),
+        (trust_data("tests/data/sample_timestamp.json"), "timestamp"),
+        (trust_data("tests/data/sample3_targets.json"), "targets"),
+        (trust_data("tests/data/sample4_targets.json"), "targets"),
+    ],
+)
+def test_validate_schema(td, mock_schema_path, trustdata: dict, role: str):
+    data = td.TrustData(trustdata, role)
 
 
 @pytest.mark.parametrize(
@@ -312,6 +395,7 @@ def test_validate_hash_error(td, mock_schema_path, mock_keystore):
     [
         (trust_data("tests/data/sample_snapshot.json"), "snapshot"),
         (trust_data("tests/data/sample_timestamp.json"), "timestamp"),
+        (trust_data("tests/data/sample4_targets.json"), "targets"),
     ],
 )
 def test_validate_trust_data_expiry(td, mock_schema_path, data: dict, role: str):
@@ -323,9 +407,12 @@ def test_validate_trust_data_expiry(td, mock_schema_path, data: dict, role: str)
     assert trust_data_._validate_expiry() is None
 
 
-def test_validate_trust_data_expiry_error(td, mock_schema_path):
-    data = trust_data("tests/data/sample_timestamp.json")
-    trust_data_ = td.TrustData(data, "timestamp")
+@pytest.mark.parametrize(
+    "data, role",
+    [(trust_data("tests/data/sample_timestamp.json"), "timestamp")],
+)
+def test_validate_trust_data_expiry_error(td, mock_schema_path, data: dict, role: str):
+    trust_data_ = td.TrustData(data, role)
     time = dt.datetime.now(pytz.utc) - dt.timedelta(hours=1)
     time_format = "%Y-%m-%dT%H:%M:%S.%f%z"
     trust_data_.signed["expires"] = time.strftime(time_format)
@@ -343,6 +430,7 @@ def test_validate_trust_data_expiry_error(td, mock_schema_path):
         (trust_data("tests/data/sample_timestamp.json"), "timestamp", {}),
         (trust_data("tests/data/sample_targets.json"), "targets", targets_keys),
         (trust_data("tests/data/sample_releases.json"), "targets/releases", {}),
+        (trust_data("tests/data/sample5_root.json"), "root", root_keys_sample5),
     ],
 )
 def test_get_keys(td, mock_schema_path, data: dict, role: str, keys: dict):
@@ -397,6 +485,10 @@ def test_get_delegations(td, mock_schema_path, data: dict, out: list):
     [
         (trust_data("tests/data/sample_targets.json"), []),
         (trust_data("tests/data/sample2_targets.json"), ["hai"]),
+        (
+            trust_data("tests/data/sample3_targets.json"),
+            ["v1.0.9", "v1.0.9-slim-fat_image", "v382"],
+        ),
     ],
 )
 def test_get_tags(td, mock_schema_path, data: dict, out: list):
@@ -422,6 +514,11 @@ def test_get_tags(td, mock_schema_path, data: dict, out: list):
             "v2",
             "uKOFIodqniVQ1YLOUaHYfr3GxXDl5YXQhWC/1kb3+AQ=",
         ),
+        (
+            trust_data("tests/data/sample3_targets.json"),
+            "v1.0.9-slim-fat_image",
+            "VI55/vvzrpsAqPDn1nClK32rr5DYwz41SF7TsoFnGbQ=",
+        ),
     ],
 )
 def test_get_digest(td, mock_schema_path, data: dict, tag: str, digest: str):
@@ -434,3 +531,57 @@ def test_get_digest_error(td, mock_schema_path):
     with pytest.raises(NotFoundException) as err:
         _trust_data.get_digest("hurr")
     assert 'could not find digest for tag "hurr".' in str(err.value)
+
+
+# This test will fail in January 2023 due to the expiry date in the test data
+# TODO: Autogenerate test data with "up-to-date" expiry dates
+@pytest.mark.parametrize(
+    "data, role", [(trust_data("tests/data/sample_snapshot.json"), "snapshot")]
+)
+def test_validate(td, mock_schema_path, mock_keystore, data: dict, role: str):
+    ks = KeyStore()
+    _trust_data = td.TrustData(data, role)
+    _trust_data.validate(ks)
+
+
+@pytest.mark.parametrize(
+    "data, role",
+    [
+        (trust_data("tests/data/sample_timestamp.json"), "timestamp"),
+        (trust_data("tests/data/sample5_targets.json"), "targets"),
+    ],
+)
+def test_validate_for_expiry_error(
+    td, mock_schema_path, mock_keystore, data: dict, role: str
+):
+    ks = KeyStore()
+    _trust_data = td.TrustData(data, role)
+    with pytest.raises(ValidationError) as err:
+        _trust_data.validate(ks)
+    assert "trust data expired." in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "data, role", [(trust_data("tests/data/sample4_targets.json"), "targets")]
+)
+def test_validation_for_missing_key_error(
+    td, mock_schema_path, mock_keystore, data: dict, role: str
+):
+    ks = KeyStore()
+    _trust_data = td.TrustData(data, role)
+    with pytest.raises(NotFoundException) as err:
+        _trust_data.validate(ks)
+    assert "could not find key id" in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "data, role", [(trust_data("tests/data/sample3_targets.json"), "targets")]
+)
+def test_validation_for_signature_validation_error(
+    td, mock_schema_path, mock_keystore, data: dict, role: str
+):
+    ks = KeyStore()
+    _trust_data = td.TrustData(data, role)
+    with pytest.raises(ValidationError) as err:
+        _trust_data.validate(ks)
+    assert "failed to verify signature of trust data." in str(err.value)
