@@ -19,7 +19,7 @@ We are happy you made it here! If you want to raise any bugs you found, discuss 
 
 While issues are a great way to discuss problems, bugs and new features, a direct proposal via a pull request can sometimes say more than a thousand words. So be bold and contribute to the code as described in the [next section](#contribute-to-source-code)!
 
-In case you require a more private communication, you can reach us via [connaisseur@securesystems.de](mailto:connaisseur@securesystems.de).
+In case you require a more private communication, you can reach us via [connaisseur@securesystems.dev](mailto:connaisseur@securesystems.dev).
 
 ## Contribute to Source Code
 The following steps will help you make code contributions to Connaisseur and ensure good code quality and workflow. This includes the following steps:

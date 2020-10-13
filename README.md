@@ -31,7 +31,7 @@ In the last few years, deploying applications became increasingly easy, thanks t
 
 However, as one might have already guessed, this convenience has its drawbacks. The contents of an image are not always evident at a glance, and could include rather unwanted or even malicious components. This holds true for images from public registries, but also for self-built ones (from your pipelines). Obviously, there is a need for protecting one's images from malicious modifications, and luckily, there is!
 
-Enter *Docker Content Trust (DCT)*, a solution that offers a way to digitally sign images. It uses *Notary*, an implementation of *The Update Framework*, to store a manifest file linking the latest image digest with its tag, which then is signed with a private key. As the digest uniquely identifies an image with specific contents, this allows making a cryptographic guarantee about the integrity of an image based on its tag. DCT can be used on Docker Hub to sign images and overall offers a good experience with Docker. Sadly, it does not work with Kubernetes out of the box, even though Kubernetes uses Docker. Kubernetes is unaware whether the underlying Docker daemon has DCT enabled or not, and deploys any kind of images, regardless of their signature status.
+Enter [*Docker Content Trust (DCT)*](https://docs.docker.com/engine/security/trust/), a solution that offers a way to digitally sign images. It uses *Notary*, an implementation of *The Update Framework*, to store a manifest file linking the latest image digest with its tag, which then is signed with a private key. As the digest uniquely identifies an image with specific contents, this allows making a cryptographic guarantee about the integrity of an image based on its tag. DCT can be used on Docker Hub to sign images and overall offers a good experience with Docker. Sadly, it does not work with Kubernetes out of the box, even though Kubernetes uses Docker. Kubernetes is unaware whether the underlying Docker daemon has DCT enabled or not, and deploys any kind of images, regardless of their signature status.
 
 **Connaisseur** solves this problem by bringing image signature verification into Kubernetes. It uses the already existing Docker Content Trust solution and adds it to the cluster as a mutating admission controller. It pulls trust data from *Notary* and verifies it before any commitment to Kubernetes happens.
 
@@ -146,4 +146,4 @@ We hope to steer development of Connaisseur from demand of the community and are
 We are grateful for any community support reporting vulnerabilities! How to submit a report is described in our [Security Policy](SECURITY.md).
 
 ## Contact
-You can reach us via email under [connaisseur@securesystems.de](mailto:connaisseur@securesystems.de).
+You can reach us via email under [connaisseur@securesystems.dev](mailto:connaisseur@securesystems.dev).
