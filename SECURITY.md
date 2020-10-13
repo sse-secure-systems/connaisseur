@@ -6,4 +6,4 @@ At the current stage of the project, we are not working with actual releases. Pl
 
 ## Reporting a Vulnerability
 
-We are very grateful for reports on vulnerabilities discovered in the project, specifically as it is intended to increase security for the community. We aim to investigate and fix these as soon as possible. Please submit vulnerabilities to [connaisseur@securesystems.de](mailto:connaisseur@securesystems.de).
+We are very grateful for reports on vulnerabilities discovered in the project, specifically as it is intended to increase security for the community. We aim to investigate and fix these as soon as possible. Please submit vulnerabilities to [connaisseur@securesystems.dev](mailto:connaisseur@securesystems.dev).
