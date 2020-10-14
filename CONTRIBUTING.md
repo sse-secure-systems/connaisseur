@@ -34,7 +34,7 @@ To start contributing, you will need to setup your local environment. First step
 ```bash
 git clone git@github.com:sse-secure-systems/connaisseur.git
 ```
-In order to review the effects of your changes, you should create your local Kubernetes cluster and install Connaisseur. This is described in the [setup guide](setup/README.md). A simple starting point may be a Minikube cluster with e.g. a [Docker Hub](https://hub.docker.com/) repository for maintaining your test images and trust data.
+In order to review the effects of your changes, you should create your own Kubernetes cluster and install Connaisseur. This is described in the [setup guide](setup/README.md). A simple starting point may be a Minikube cluster with e.g. a [Docker Hub](https://hub.docker.com/) repository for maintaining your test images and trust data.
 
 ### Test Changes
 Tests and linting are important to ensure code quality, functionality and security. We therefore aim to keep the code coverage high. We are running several automated tests in the [CI pipeline](https://github.com/sse-secure-systems/connaisseur/blob/master/.github/workflows/cicd.yaml). Application code is tested via [pytest](https://docs.pytest.org/) and linted via [pylint](https://pylint.org/). When making changes to the application code, please directly provide tests for your changes.
