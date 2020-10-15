@@ -1,0 +1,51 @@
+{
+    "apiVersion": "admissionregistration.k8s.io/v1beta1",
+    "kind": "MutatingWebhookConfiguration",
+    "metadata": {
+        "name": "conny-webhook",
+        "labels": {
+            "app.kubernetes.io/name": "conny",
+            "helm.sh/chart": "conny",
+            "app.kubernetes.io/instance": "conny",
+            "app.kubernetes.io/managed-by": "conny"
+        }
+    },
+    "webhooks": [
+        {
+            "name": "conny.svc",
+            "failurePolicy": "Fail",
+            "clientConfig": {
+                "service": {
+                    "name": "conny-svc",
+                    "namespace": "conny",
+                    "path": "/mutate"
+                },
+                "caBundle": "conny"
+            },
+            "rules": [
+                {
+                    "operations": [
+                        "CREATE",
+                        "UPDATE"
+                    ],
+                    "apiGroups": [
+                        "*"
+                    ],
+                    "apiVersions": [
+                        "*"
+                    ],
+                    "resources": [
+                        "pods",
+                        "deployments",
+                        "replicationcontrollers",
+                        "replicasets",
+                        "daemonsets",
+                        "statefulsets",
+                        "jobs",
+                        "cronjobs"
+                    ]
+                }
+            ]
+        }
+    ]
+}
