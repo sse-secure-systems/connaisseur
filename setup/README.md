@@ -250,6 +250,6 @@ For removing Connaisseur, run `make uninstall`.
 
 ## The end
 
-Congratulations, you have successfully deployed Connaisseur. When testing further with it, should you be missing features or run into bugs, do not hesitate to open either a Pull Request (see our [Contributing Guidelines](../../CONTRIBUTING.md)) or [create an Issue](https://github.com/sse-secure-systems/connaisseur/issues/new) to let us know.
+Congratulations, you have successfully deployed Connaisseur. When testing further with it, should you be missing features or run into bugs, do not hesitate to open either a Pull Request (see our [Contributing Guidelines](../CONTRIBUTING.md)) or [create an Issue](https://github.com/sse-secure-systems/connaisseur/issues/new) to let us know.
 
 Stay safe!
