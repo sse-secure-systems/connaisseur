@@ -10,5 +10,5 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 rules:
 - apiGroups: ["*"]
-  resources: ["deployments", "pods", "replicacontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs", "imagepolicies"]
+  resources: ["deployments", "pods", "replicacontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs", "imagepolicies", "mutatingwebhookconfigurations"]
   verbs: ["get"]

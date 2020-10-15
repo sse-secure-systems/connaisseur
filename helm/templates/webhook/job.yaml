@@ -34,6 +34,9 @@ spec:
           volumeMounts:
             - mountPath: "/data"
               name: webhook-data
+          envFrom:
+          - configMapRef:
+              name: {{ .Chart.Name }}-env
       volumes:
         - name: webhook-data
           configMap:
@@ -74,6 +77,9 @@ spec:
             - ash
             - /helm_hook.sh
             - delete
+          envFrom:
+          - configMapRef:
+              name: {{ .Chart.Name }}-env
       restartPolicy: OnFailure
 ---
 
@@ -113,6 +119,9 @@ spec:
           volumeMounts:
             - mountPath: "/data"
               name: webhook-data
+          envFrom:
+          - configMapRef:
+              name: {{ .Chart.Name }}-env
       volumes:
         - name: webhook-data
           configMap:

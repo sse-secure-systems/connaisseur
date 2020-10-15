@@ -1,8 +1,7 @@
 NAMESPACE = connaisseur
 IMAGE = $(IMAGE_NAME):$(TAG)
 IMAGE_NAME = securesystemsengineering/connaisseur
-TAG = v1.1.4
-POD = not-smooth-app
+TAG = v1.1.5
 
 .PHONY: all docker certs install unistall upgrade annihilate
 

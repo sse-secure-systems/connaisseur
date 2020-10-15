@@ -7,22 +7,24 @@ fi
 if [ "$1" == "install" ]
 then
     echo "installing ..."
-    DEPLOYMENT=$(kubectl -n connaisseur get deployments.apps -lapp.kubernetes.io/instance=connaisseur -o=jsonpath='{.items[*].metadata.name}')
-    kubectl wait --for=condition=available --timeout=600s deployments.apps/$DEPLOYMENT -n connaisseur
+    DEPLOYMENT=$(kubectl -n ${CONNAISSEUR_NAMESPACE} get deployments.apps -lapp.kubernetes.io/instance=connaisseur -o=jsonpath='{.items[*].metadata.name}')
+    kubectl wait --for=condition=available --timeout=600s deployments.apps/${DEPLOYMENT} -n ${CONNAISSEUR_NAMESPACE}
     kubectl apply -f /data/webhook.yaml
+    kubectl delete pod -lapp.kubernetes.io/service=bootstrap -n ${CONNAISSEUR_NAMESPACE} --force=true
     echo "done."
 elif [ "$1" == "upgrade" ]
 then
     echo "upgrading ..."
-    DEPLOYMENT=$(kubectl -n connaisseur get deployments.apps -lapp.kubernetes.io/instance=connaisseur -o=jsonpath='{.items[*].metadata.name}')
-    kubectl rollout status $DEPLOYMENT
+    DEPLOYMENT=$(kubectl -n ${CONNAISSEUR_NAMESPACE} get deployments.apps -lapp.kubernetes.io/instance=connaisseur -o=jsonpath='{.items[*].metadata.name}')
+    kubectl rollout status ${DEPLOYMENT} -n ${CONNAISSEUR_NAMESPACE}
     kubectl apply -f /data/webhook.yaml
+    kubectl delete pod -lapp.kubernetes.io/service=bootstrap -n ${CONNAISSEUR_NAMESPACE} --force=true
     echo "done."
 elif [ "$1" == "delete" ]
 then 
     echo "deleting ..."
-    WEBHOOK=$(kubectl -n connaisseur get mutatingwebhookconfigurations.admissionregistration.k8s.io -lapp.kubernetes.io/instance=connaisseur -o=jsonpath='{.items[*].metadata.name}')
-    kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io $WEBHOOK
+    WEBHOOK=$(kubectl -n ${CONNAISSEUR_NAMESPACE} get mutatingwebhookconfigurations.admissionregistration.k8s.io -lapp.kubernetes.io/instance=connaisseur -o=jsonpath='{.items[*].metadata.name}')
+    kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io ${WEBHOOK}
     echo "done."
 else 
     echo "Command not supported: $1"

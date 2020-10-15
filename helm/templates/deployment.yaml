@@ -30,15 +30,15 @@ spec:
               path: /health
               port: 5000
               scheme: HTTPS
-            initialDelaySeconds: 15
-            periodSeconds: 30
+            initialDelaySeconds: 10
+            periodSeconds: 5
           readinessProbe:
             httpGet:
-              path: /health
+              path: /ready
               port: 5000
               scheme: HTTPS
-            initialDelaySeconds: 2
-            periodSeconds: 10
+            initialDelaySeconds: 5
+            periodSeconds: 5
           volumeMounts:
             - name: {{ .Chart.Name }}-certs
               mountPath: /etc/certs
