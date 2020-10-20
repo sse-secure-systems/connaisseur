@@ -62,7 +62,15 @@ targets2 = [
 
 @pytest.fixture
 def napi():
+    os.environ["IS_ACR"] = "0"
     os.environ["SELFSIGNED_NOTARY"] = "1"
+    return notary_api
+
+
+@pytest.fixture
+def acrapi():
+    os.environ["SELFSIGNED_NOTARY"] = "1"
+    os.environ["IS_ACR"] = "1"
     return notary_api
 
 
@@ -100,8 +108,14 @@ def mock_request(monkeypatch):
                 m.group(5),
             )
 
+        if "unhealthy" in kwargs["url"]:
+            return MockResponse({}, status_code=500)
+
         if "health" in kwargs["url"]:
             return MockResponse(None)
+
+        if "azurecr.io" in kwargs["url"]:
+            return MockResponse({"access_token": "d.e.f"})
 
         if "token" in kwargs["url"]:
             if "bad" in kwargs["url"]:
@@ -172,9 +186,18 @@ def trust_data(path: str):
         return json.load(file)
 
 
-@pytest.mark.parametrize("host, out", [("host", True), ("", False)])
+@pytest.mark.parametrize(
+    "host, out", [("host", True), ("", False), ("https://unhealthy.registry", False)]
+)
 def test_health_check(napi, mock_request, host: str, out: bool):
     assert napi.health_check(host) == out
+
+
+@pytest.mark.parametrize(
+    "host, out", [("host", True), ("", False), ("https://unhealthy.registry", True)]
+)
+def test_health_check_acr(acrapi, mock_request, host: str, out: bool):
+    assert acrapi.health_check(host) == out
 
 
 @pytest.mark.parametrize("slfsig, out", [("1", True), ("0", False), ("", False)])
@@ -361,6 +384,11 @@ def test_get_auth_token(napi, mock_request):
     assert napi.get_auth_token(url) == "a.b.c"
 
 
+def test_get_auth_token_acr(acrapi, mock_request):
+    url = "https://myregistry.azurecr.io/auth/oauth2?scope=someId"
+    assert acrapi.get_auth_token(url) == "d.e.f"
+
+
 @pytest.mark.parametrize(
     "url, error",
     [
@@ -376,11 +404,34 @@ def test_get_auth_token(napi, mock_request):
             "https://auth.server.bad/token/it/aint/there/token",
             "unable to get auth token, likely because of missing trust data.",
         ),
+        (
+            "https://myregistry.azurecr.io/auth/oauth2?scope=someId",
+            "no token in authentication server response.",
+        ),
     ],
 )
 def test_get_auth_token_error(napi, mock_request, url: str, error: str):
     with pytest.raises(BaseConnaisseurException) as err:
         napi.get_auth_token(url)
+    assert error in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "url, error",
+    [
+        (
+            "https://auth.server.bad/token/very/bad/very",
+            "no token in authentication server response.",
+        ),
+        (
+            "https://auth.server.good/token/very/good",
+            "no token in authentication server response.",
+        ),
+    ],
+)
+def test_get_auth_token_error_acr(acrapi, mock_request, url: str, error: str):
+    with pytest.raises(BaseConnaisseurException) as err:
+        acrapi.get_auth_token(url)
     assert error in str(err.value)
 
 
