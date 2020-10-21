@@ -63,11 +63,15 @@ jobs:
       - name: Install bandit
         run: pip3 install bandit
       - name: Run bandit
-        run: bandit -r -x tests/ -f html -o report.html .
+        run: bandit -r -x tests/ -f txt -o report.txt .
+      - name: Print report
+        if: ${{ success() || failure() }}
+        run: cat report.txt
       - uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: bandit-report
-          path: report.html
+          path: report.txt
 
   safety:
     runs-on: ubuntu-latest
@@ -84,7 +88,11 @@ jobs:
         run: pip3 install safety
       - name: Run safety
         run: safety check -r ./actual_package_versions.txt --full-report -o report.txt
+      - name: Print report
+        if: ${{ success() || failure() }}
+        run: cat report.txt
       - uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: safety-report
           path: report.txt
@@ -108,6 +116,7 @@ jobs:
       - name: Scan
         run: trivy image --input $GITHUB_SHA.tar -o trivy-report.json --exit-code 1 --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
       - uses: actions/upload-artifact@v2
+        if: failure()
         with:
            name: trivy-report
            path: trivy-report.json
