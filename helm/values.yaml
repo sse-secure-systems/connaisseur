@@ -1,7 +1,7 @@
 # configure connaisser deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v1.1.3
+  image: securesystemsengineering/connaisseur:v1.1.4
   imagePullPolicy: Always
   resources: {}
   # limits:
@@ -21,8 +21,8 @@ service:
 
 # configure access to the notary server
 notary:
-  # domain to the notary server. can be `null`, to use the public docker hub
-  # notary server
+  # domain to the notary server. can be `null` or non-existant to use
+  # the public Docker Hub notary server
   host: notary.docker.io
   # only for insecure notary instances with selfsigned certificates.
   selfsigned: false
