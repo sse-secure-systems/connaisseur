@@ -12,7 +12,7 @@ The guide below offers a simple default configuration for setting up Connaisseur
 
 Two further specialized guides exist:
 1. **Local setup ([Minikube](https://github.com/kubernetes/minikube) & [Harbor](https://github.com/goharbor/harbor))**: Connaisseur can be run completely locally with a minikube instance paired with a local Harbor installation that combines registry and notary servers. This setup is a bit more cumbersome since it does not use existing public infrastructure such as PKI. However, it is entirely based on open-source solutions, does not require continuous access to the internet and you control every part of the installation. This makes it specifically suited e.g. for security researchers and users interested in the inner workings of DCT and Connaisseur. Head over to [the respective README](local/README.md) to try it out.
-2. TODO: **[Azure Kubernetes Services](https://docs.microsoft.com/en-us/azure/aks/) with [Azure Container Registry (ACR)](https://docs.microsoft.com/en-us/azure/container-registry/)**: Microsoft Azure is currently the only one of the big cloud providers with a managed Kubernetes and container registry that supports DCT.
+2. **[Azure Kubernetes Services](https://docs.microsoft.com/en-us/azure/aks/) with [Azure Container Registry (ACR)](https://docs.microsoft.com/en-us/azure/container-registry/)**: Microsoft Azure is currently the only one of the big cloud providers with a managed Kubernetes and container registry that supports DCT. If you want to set up Connaisseur with ACR, head over to [the specialized setup guide](acr/README.md).
 
 
 ## Requirements
@@ -190,7 +190,7 @@ service/sample created
 Error from server: error when creating "STDIN": admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/testingconny/testimage:unsigned" in trust data.
 ```
 
-> Note that while the container is blocked Kubernetes still creates the service, because it does not reference an image and is thus not denied by Connaisseur. You can clean it up by calling `kubectl delete service sample`.
+> Note that while the container is blocked Kubernetes still creates the service, because it does not reference an image and is thus not denied by Connaisseur. You can clean it up by executing `kubectl delete service sample`.
 
 Finally, make sure that Connaisseur will deploy the signed image and isn't just rejecting all images:
 
@@ -242,6 +242,8 @@ This deployment should be accepted with
 deployment.apps/sample-deployment created
 service/sample created
 ```
+
+Your signed images were allowed through, in contrast to those unsigned ones with unknown content. DCT, not in a nutshell, but in Kubernetes!
 
 ### 2. Cleanup
 

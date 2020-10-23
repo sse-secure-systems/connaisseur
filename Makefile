@@ -1,7 +1,7 @@
 NAMESPACE = connaisseur
 IMAGE = $(IMAGE_NAME):$(TAG)
 IMAGE_NAME = securesystemsengineering/connaisseur
-TAG = v1.1.5
+TAG = v1.2.0
 
 .PHONY: all docker certs install unistall upgrade annihilate
 
