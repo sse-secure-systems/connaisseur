@@ -3,6 +3,7 @@
 Setting up Connaisseur for the first time can be a bit of a hassle, especially if you are not familiar with Docker Content Trust (DCT). Furthermore, Connaisseur requires/links several other services (Kubernetes cluster, container registry, notary server) for which many common providers exist. Hence, we've created multiple guides for various environments to help you on the way.
 
 The guide below offers a simple default configuration for setting up Connaisseur using public infrastructure and is aimed at quick testing. It uses [Docker Hub](https://hub.docker.com/) as both container registry and notary, but is expected to work for other solutions as well. It has been tested for the following Kubernetes services:
+- [x] [MicroK8s](https://github.com/ubuntu/microk8s)
 - [x] [minikube](https://github.com/kubernetes/minikube)
 - [x] [Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/)
 - [x] [Amazon Elastic Kubernetes Service (EKS)](https://docs.aws.amazon.com/eks/)
@@ -17,6 +18,8 @@ Two further specialized guides exist:
 ## Requirements
 
 We assume you have a running Kubernetes cluster already. Since this tutorial works with the CLI, we furthermore assume you have the `docker`, `git`, `helm`, `kubectl`, `make` binaries installed and usable, i.e. having run `docker login` and having switched to the appropriate `kubectl` context.
+
+> **MicroK8s**: DNS addon must be activated using `sudo microk8s enable dns`.
 
 > This tutorial was tested on a machine running Ubuntu 20.04. It worked an Azure Kubernetes Service (AKS) cluster, an Elastic Kubernetes Service (EKS) cluster based on EC2 instances and with a local minikube cluster.
 
