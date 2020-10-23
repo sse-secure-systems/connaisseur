@@ -3,7 +3,7 @@ We hope to steer development of Connaisseur from demand of the community and are
 
 The following guide is meant to help you get started with contributing to Connaisseur. In case of questions, feel free to reach out to us.
 
-We are committed to positive interactions between all contributors of the project. To ensure this, please follow the [Berlin Code of Conduct](https://berlincodeofconduct.org/) in all communications.
+We are committed to positive interactions between all contributors of the project. To ensure this, please follow the [Code of Conduct](CODE_OF_CONDUCT.md) in all communications.
 
 ## Contents
 - [Discuss Problems, Raise Bugs and Propose Feature Ideas](#discuss-problems-raise-bugs-and-propose-feature-ideas)
