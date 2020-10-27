@@ -7,10 +7,7 @@ on:
   pull_request:
     branches:
       - master
-
-env:
-  RELEASE_VERSION: v1.3.1
-  RELEASE_IMAGE: securesystemsengineering/connaisseur
+      - develop
 
 jobs:
   black:
@@ -149,10 +146,7 @@ jobs:
           sudo apt install bash -y
 
       - name: Build Connaisseur image
-        run: |
-          sed -i "s+TAG =.*+TAG = ${RELEASE_VERSION}+" Makefile
-          sed -i "s+IMAGE_NAME =.*+IMAGE_NAME = ${RELEASE_IMAGE}+" Makefile
-          make docker
+        run: make docker
 
       - name: Create KinD cluster
         run: |
@@ -160,14 +154,12 @@ jobs:
           kind create cluster --wait 120s
 
       - name: Check KinD cluster
-        run: |
-          kubectl get nodes
+        run: kubectl get nodes
 
       - name: Add images to KinD
         run: |
-          kind load docker-image ${RELEASE_IMAGE}:${RELEASE_VERSION}
-          kind load docker-image ${RELEASE_IMAGE}:helm-hook
+          kind load docker-image $(yq r helm/values.yaml 'deployment.image')
+          kind load docker-image $(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f1):helm-hook
 
       - name: Run actual integration test
-        run: |
-          bash connaisseur/tests/integration/integration-test.sh
+        run: bash connaisseur/tests/integration/integration-test.sh

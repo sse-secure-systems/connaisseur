@@ -4,7 +4,7 @@
       value: Never
     - command: update
       path: deployment.image
-      value: ${RELEASE_IMAGE}:${RELEASE_VERSION}
+      value: ${RELEASE_IMAGE}
     - command: update
       path: notary.host
       value: notary.docker.io
