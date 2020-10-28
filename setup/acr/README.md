@@ -19,7 +19,7 @@ For the most part, this tutorial will be the same as [for a regular Kubernetes c
 
 ### 1. Get Connaisseur
 
-First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate:
+First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate (ideally use lowercase letters for compatibility with Docker):
 
 ```bash
 # You can/have to change these values to match your environment
