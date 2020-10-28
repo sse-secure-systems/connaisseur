@@ -27,7 +27,7 @@ We assume you have a running Kubernetes cluster already. Since this tutorial wor
 
 ### 1. Set up environment
 
-First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate:
+First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate (ideally use lowercase letters for compatibility with Docker):
 
 ```bash
 IMAGE_PATH=docker.io/testingconny/testimage
