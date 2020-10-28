@@ -73,7 +73,7 @@ openssl ec -in root-priv.key -pubout -out root-pub.pem
 After entering your password, do further
 
 ```bash
-sed -i "${FIRST_LINE}s/.*/  rootPubKey: |\n    $(sed ':a;N;$!ba;s/\n/\\n    /g' root-pub.pem)/" ${OLDPWD}/helm/values.yaml
+sed -i "${FIRST_LINE}s?.*?  rootPubKey: |\n    $(sed ':a;N;$!ba;s/\n/\\n    /g' root-pub.pem)?" ${OLDPWD}/helm/values.yaml
 rm root-priv.key root-pub.pem
 cd -
 ```
