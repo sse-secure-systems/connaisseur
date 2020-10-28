@@ -7,7 +7,7 @@ The guide below offers a simple default configuration for setting up Connaisseur
 - [x] [minikube](https://github.com/kubernetes/minikube)
 - [x] [Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/)
 - [x] [Amazon Elastic Kubernetes Service (EKS)](https://docs.aws.amazon.com/eks/)
-- [ ] [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/)
+- [x] [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/)
 - [ ] [SysEleven MetaKube](https://docs.syseleven.de/metakube/de)
 
 Two further specialized guides exist:
@@ -21,7 +21,7 @@ We assume you have a running Kubernetes cluster already. Since this tutorial wor
 
 > **MicroK8s**: DNS addon must be activated using `sudo microk8s enable dns`.
 
-> This tutorial was tested on a machine running Ubuntu 20.04. It worked an Azure Kubernetes Service (AKS) cluster, an Elastic Kubernetes Service (EKS) cluster based on EC2 instances and with a local minikube cluster.
+> This tutorial was tested on a machine running Ubuntu 20.04.
 
 ## Configuration and installation of Connaisseur
 
