@@ -8,7 +8,7 @@ The guide below offers a simple default configuration for setting up Connaisseur
 - [x] [Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/)
 - [x] [Amazon Elastic Kubernetes Service (EKS)](https://docs.aws.amazon.com/eks/)
 - [x] [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs/)
-- [ ] [SysEleven MetaKube](https://docs.syseleven.de/metakube/de)
+- [x] [SysEleven MetaKube](https://docs.syseleven.de/metakube)
 
 Two further specialized guides exist:
 1. **Local setup ([Minikube](https://github.com/kubernetes/minikube) & [Harbor](https://github.com/goharbor/harbor))**: Connaisseur can be run completely locally with a minikube instance paired with a local Harbor installation that combines registry and notary servers. This setup is a bit more cumbersome since it does not use existing public infrastructure such as PKI. However, it is entirely based on open-source solutions, does not require continuous access to the internet and you control every part of the installation. This makes it specifically suited e.g. for security researchers and users interested in the inner workings of DCT and Connaisseur. Head over to [the respective README](local/README.md) to try it out.
