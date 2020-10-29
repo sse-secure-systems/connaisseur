@@ -9,6 +9,7 @@ all: docker install
 
 docker:
 	docker build -f docker/Dockerfile -t $(IMAGE) .
+	docker build -f docker/Dockerfile.hook -t $(IMAGE_NAME):helm-hook .
 
 certs:
 	bash helm/certs/gen_certs.sh
@@ -28,4 +29,4 @@ upgrade:
 	helm upgrade connaisseur helm --wait
 
 annihilate:
-	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,imagepolicies -lapp.kubernetes.io/instance=connaisseur
+	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies -lapp.kubernetes.io/instance=connaisseur

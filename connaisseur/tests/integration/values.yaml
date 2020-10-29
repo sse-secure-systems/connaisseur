@@ -1,0 +1,72 @@
+# configure connaisser deployment
+deployment:
+  replicasCount: 3
+  image: ${RELEASE_IMAGE}:${RELEASE_VERSION}
+  imagePullPolicy: Never
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# configure connaisseur service
+service:
+  type: ClusterIP
+  port: 443
+
+# configure access to the notary server
+notary:
+  # domain to the notary server. can be `null` or non-existant to use
+  # the public Docker Hub notary server
+  host: notary.docker.io
+  # only for insecure notary instances with selfsigned certificates.
+  selfsigned: false
+  # selfsignedCert: |
+  #   -----BEGIN CERTIFICATE-----
+  #   -----END CERTIFICATE-----
+
+  # if notary uses an authentication server, give a user and password
+  # with pull rights
+  auth:
+    enabled: false
+    # enter user/pass directly
+    # these are placeholders and should be changed!
+    user: notaryuser
+    password: Password123
+    # or use a predefined secret, which needs the fields 'NOTARY_USER'
+    # and 'NOTARY_PASS'
+    secretName: null
+  # the public part of the root key, for verifying notary's signatures
+  rootPubKey: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+    BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+    -----END PUBLIC KEY-----
+  # if you use Azure Container Registry (ACR) for your notary
+  # changes some behaviour, such as health probes and how to retrieve auth tokens
+  # for compatibility with ACR set to `true`
+  isAcr: false
+
+# the image policy, which defines all repositories that need to be
+# verified. more detail in the git repo README.md
+policy:
+  - pattern: "*:*"
+    verify: true
+  - pattern: "k8s.gcr.io/*:*"
+    verify: false
+  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
+    verify: true
+  - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook"
+    verify: false
+
+# in detection mode, deployment will not be denied, but only prompted
+# and logged. This allows testing the functionality without
+# interrupting operation.
+detection_mode: false
+
+# debug: true
