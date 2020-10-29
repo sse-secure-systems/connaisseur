@@ -68,13 +68,14 @@ This helps identify bugs in changes before pushing.
 
 > :information_source: **INFO** We believe that testing should not only ensure functionality, but also aim to test for expected security issues like injections and appreciate if security tests are added with new functionalities.
 
-Besides the unit testing and before any PR can be merged, an integration test should be carried out whereby:
+Besides the unit testing and before any PR can be merged, an integration test is carried out whereby:
 - Connaisseur is successfully installed in a test cluster
 - a non-signed image is deployed to the cluster and denied
+- an image signed with an unrelated key is denied
 - a signed image is deployed to the cluster and passed
 - Connaisseur is successfully uninstalled
 
-We hope to automate these tests in the future and also provide a test script for local testing with minikube.
+You can also run this integration test on a local cluster after setting the necessary environment variables.
 
 ### Signed Commits and Pull Requests
 All changes to the `master` branch must be signed which is enforced via [branch protection](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing). This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor. Consequently, while we appreciate signed commits in PRs, we do not require it.
