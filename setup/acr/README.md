@@ -19,16 +19,13 @@ For the most part, this tutorial will be the same as [for a regular Kubernetes c
 
 ### 1. Get Connaisseur
 
-First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate (ideally use lowercase letters for compatibility with Docker):
+First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate:
 
 ```bash
 # You can/have to change these values to match your environment
 REGISTRY_NAME=connyregistry
-REPOSITORY_NAME=test
-IMAGE_NAME=testimage
 
 REGISTRY_URL=$(echo "${REGISTRY_NAME}.azurecr.io")
-IMAGE_PATH=$(echo "${REGISTRY_URL}/${REPOSITORY_NAME}/${IMAGE_NAME}")
 NOTARY_URL=$(echo "${REGISTRY_NAME}.azurecr.io")
 
 git clone https://github.com/sse-secure-systems/connaisseur.git

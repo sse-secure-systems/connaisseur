@@ -27,11 +27,9 @@ We assume you have a running Kubernetes cluster already. Since this tutorial wor
 
 ### 1. Set up environment
 
-First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate (ideally use lowercase letters for compatibility with Docker):
+First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate:
 
 ```bash
-IMAGE_PATH=docker.io/testingconny/testimage
-
 NOTARY_URL=notary.docker.io
 NOTARY_USER=<YOUR-NOTARY-USERNAME/DOCKER-HUB-ID>
 NOTARY_PASSWORD=<YOUR-NOTARY-PASSWORD>
@@ -126,9 +124,11 @@ If you were just trusting everything someone told you, you wouldn't be here look
 
 ### 1. Deploy (un)signed images
 
-To test Connaisseur's capabilities go ahead and build both an unsigned and a signed image:
+To test Connaisseur's capabilities go ahead and build both an unsigned and a signed image. Below, substitute the `IMAGE_PATH` variable as appropriate:
 
 ```bash
+IMAGE_PATH=<YOUR-REGISTRY-USUALLY-docker.io>/<REPOSITORY-NAME-USUALLY-YOUR-DOCKER-HUB-ID>/testimage
+
 cd setup
 DOCKER_CONTENT_TRUST=0 docker build -f Dockerfile.unsigned -t ${IMAGE_PATH}:unsigned .
 DOCKER_CONTENT_TRUST=0 docker push ${IMAGE_PATH}:unsigned
