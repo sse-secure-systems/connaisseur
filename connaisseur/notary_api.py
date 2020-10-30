@@ -291,9 +291,11 @@ def get_auth_token(url: str):
 
     Raises an exception if a HTTP error status code occurs.
     """
-    user = os.environ.get("NOTARY_USER")
-    password = os.environ.get("NOTARY_PASS")
-    request_kwargs = {"url": url, "auth": requests.auth.HTTPBasicAuth(user, password)}
+    user = os.environ.get("NOTARY_USER", False)
+    password = os.environ.get("NOTARY_PASS", "")
+    request_kwargs = {"url": url}
+    if user:
+        request_kwargs["auth"] = requests.auth.HTTPBasicAuth(user, password)
 
     if is_notary_selfsigned():
         request_kwargs["verify"] = "/etc/certs/notary.crt"
