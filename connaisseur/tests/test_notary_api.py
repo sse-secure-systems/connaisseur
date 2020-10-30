@@ -69,8 +69,8 @@ def napi():
 
 @pytest.fixture
 def acrapi():
-    os.environ["SELFSIGNED_NOTARY"] = "1"
     os.environ["IS_ACR"] = "1"
+    os.environ["SELFSIGNED_NOTARY"] = "1"
     return notary_api
 
 
@@ -118,13 +118,16 @@ def mock_request(monkeypatch):
             return MockResponse({"access_token": "d.e.f"})
 
         if "token" in kwargs["url"]:
+            auth = kwargs.get("auth")
             if "bad" in kwargs["url"]:
                 if "no" in kwargs["url"]:
                     return MockResponse({"nay": "butwhy"})
                 if "aint" in kwargs["url"]:
                     return MockResponse({}, status_code=500)
                 return MockResponse({"token": "token"})
-            return MockResponse({"token": "a.b.c"})
+            elif auth:
+                return MockResponse({"token": f"BA.{auth.username}.{auth.password}a"})
+            return MockResponse({"token": "no.BA.no"})
         elif registry == "auth.io" and not kwargs.get("headers"):
             return MockResponse(
                 {},
@@ -378,10 +381,22 @@ def test_parse_auth_error(napi, header: str, error: str):
         napi.parse_auth(header)
     assert error in str(err.value)
 
-
-def test_get_auth_token(napi, mock_request):
+@pytest.mark.parametrize(
+    "user, password, out",
+    [
+        (None, None, "no.BA.no"),
+        (None, 'password123', "no.BA.no"),
+        ("myname", "password456", "BA.myname.password456a"),
+        ("myname", None, "BA.myname.a"),
+    ],
+)
+def test_get_auth_token(napi, mock_request, monkeypatch, user, password, out):
+    if user:
+        monkeypatch.setenv("NOTARY_USER", user)
+    if password is not None:
+        monkeypatch.setenv("NOTARY_PASS", password)
     url = "https://auth.server.good/token/very/good"
-    assert napi.get_auth_token(url) == "a.b.c"
+    assert napi.get_auth_token(url) == out
 
 
 def test_get_auth_token_acr(acrapi, mock_request):
