@@ -36,6 +36,13 @@ git clone git@github.com:sse-secure-systems/connaisseur.git
 ```
 In order to review the effects of your changes, you should create your own Kubernetes cluster and install Connaisseur. This is described in the [setup guide](setup/README.md). A simple starting point may be a Minikube cluster with e.g. a [Docker Hub](https://hub.docker.com/) repository for maintaining your test images and trust data.
 
+In case you make changes to the Connaisseur Docker image itself or code for that matter, you need to re-build the image and install it locally for testing. This requires a few steps:
+
+1. In `helm/values.yaml`, set `imagePullPolicy` to `IfNotPresent`.
+2. Configure your local environment to use the Kubernetes docker daemen. In Minikube, this can be done via `eval (minikube docker-env)`.
+3. Build the Connaisseur Docker image via `make docker`.
+4. Install Connaisseur as usual via `make install`.
+
 ### Test Changes
 Tests and linting are important to ensure code quality, functionality and security. We therefore aim to keep the code coverage high. We are running several automated tests in the [CI pipeline](https://github.com/sse-secure-systems/connaisseur/blob/master/.github/workflows/cicd.yaml). Application code is tested via [pytest](https://docs.pytest.org/) and linted via [pylint](https://pylint.org/). When making changes to the application code, please directly provide tests for your changes.
 
@@ -50,7 +57,7 @@ black <path-to-repository>/connaisseur
 
 Changes can also be tested locally. We recommend the following approach for running pytest in a docker container:
 ```
-docker run -it --rm -v <path-to-repository>/connaisseur:/data --entrypoint=ash python:alpine
+docker run -it --rm -v <path-to-repository>:/data --entrypoint=ash python:alpine
 cd data
 pip3 install -r requirements.txt
 pip3 install .
