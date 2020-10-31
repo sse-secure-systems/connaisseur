@@ -13,13 +13,15 @@ The guide below offers a simple default configuration for setting up Connaisseur
 - [x] [SysEleven MetaKube](https://docs.syseleven.de/metakube)
 
 Two further specialized guides exist:
+
 1. **Local setup ([Minikube](https://github.com/kubernetes/minikube) & [Harbor](https://github.com/goharbor/harbor))**: Connaisseur can be run completely locally with a minikube instance paired with a local Harbor installation that combines registry and notary servers. This setup is a bit more cumbersome since it does not use existing public infrastructure such as PKI. However, it is entirely based on open-source solutions, does not require continuous access to the internet and you control every part of the installation. This makes it specifically suited e.g. for security researchers and users interested in the inner workings of DCT and Connaisseur. Head over to [the respective README](local/README.md) to try it out.
+
 2. **[Azure Kubernetes Services](https://docs.microsoft.com/en-us/azure/aks/) with [Azure Container Registry (ACR)](https://docs.microsoft.com/en-us/azure/container-registry/)**: Microsoft Azure is currently the only one of the big cloud providers with a managed Kubernetes and container registry that supports DCT. If you want to set up Connaisseur with ACR, head over to [the specialized setup guide](acr/README.md).
 
 
 ## Requirements
 
-We assume you have a running Kubernetes cluster already. Since this tutorial works with the CLI, we furthermore assume you have the `docker`, `git`, `helm`, `kubectl`, `make` binaries installed and usable, i.e. having run `docker login` and having switched to the appropriate `kubectl` context.
+We assume you have a running Kubernetes cluster already. Since this tutorial works with the CLI, we furthermore assume you have the `docker`, `git`, `helm`, `kubectl`, `make`, `openssl` and `yq` binaries installed and usable, i.e. having run `docker login` and having switched to the appropriate `kubectl` context.
 
 > **MicroK8s**: DNS addon must be activated using `sudo microk8s enable dns`.
 
@@ -29,15 +31,9 @@ We assume you have a running Kubernetes cluster already. Since this tutorial wor
 
 ### 1. Set up environment
 
-First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate (ideally use lowercase letters for compatibility with Docker):
+Let's get started by cloning this repository:
 
 ```bash
-IMAGE_PATH=docker.io/testingconny/testimage
-
-NOTARY_URL=notary.docker.io
-NOTARY_USER=<YOUR-NOTARY-USERNAME/DOCKER-HUB-ID>
-NOTARY_PASSWORD=<YOUR-NOTARY-PASSWORD>
-
 git clone https://github.com/sse-secure-systems/connaisseur.git
 cd connaisseur
 ```
@@ -46,45 +42,97 @@ cd connaisseur
 
 If you already have a root key configured on your system, you can skip this step (you can check whether there is already a root key file with `grep -iRl "role: root$" ~/.docker/trust/`).
 
-Otherwise, generate a public-private root key pair with
- `docker trust key generate root`.
+Otherwise, generate a public-private root key pair with `docker trust key generate root`.
 
 >  If you want to stick to only signed images, you can either run `export DOCKER_CONTENT_TRUST=1` or add it to your `.bashrc` (or equivalent) to (permanently) configure `docker` to _only ever_ use signed images. If you do so, you can selectively disable DCT by prefixing a single command by `DOCKER_CONTENT_TRUST=0`.
 
 ### 3. Configure Connaisseur
 
-Before you can finally set up Connaisseur, you will need to configure its connection to the notary server provided by Docker Hub (or your notary server of choice).
+Before you can finally set up Connaisseur, you will need to configure its connection to the notary server provided by Docker Hub (or your notary server of choice) and specify the public key used as trust anchor. These — like all configurations — are done in the `helm/values.yaml`. It is _the_ config file for Connaisseur. If you have some time to spare, have a look :)
+
+> For example, you can turn on detection mode by setting `detection_mode: true`, which will allow your deployments to pass, but will log the violation. This might be useful when rolling out Connaisseur to an existing Kubernetes installation in order to first get a grasp on remaining obstacles before turning on (the default) blocking mode.
+
+#### Configure Notary
+
+In `helm/values.yaml`, we first need to specify the location of our notary under `notary.host`:
+
+```yaml
+notary:
+  # domain to the notary server. can be `null` or non-existant to use
+  # the public Docker Hub notary server
+  host: notary.docker.io
+```
+
+If you use a public Docker Hub repository, you can keep `notary.auth.enabled` at `false`, skip the following and directly go to the next step [configuring your public key](#set-your-public-key-as-trust-anchor). In case you use a notary server that requires authorization or decide to use a private repository on Docker Hub, you need to pass your credentials to Connaisseur. For simplicity in a test environment, you can just set `notary.auth.enabled` to `true`, `notary.auth.user` to your username or Docker Hub ID and `notary.auth.password` to your password:
+
+```yaml
+  # if notary uses an authentication server, give a user and password
+  # with pull rights
+  auth:
+    enabled: true
+    # enter user/pass directly
+    # these are placeholders and should be changed!
+    user: notaryuser
+    password: Password123
+    # or use a predefined secret, which needs the fields 'NOTARY_USER'
+    # and 'NOTARY_PASS'
+    secretName: null
+```
+
+For security in a real environment, you should first setup and then reference a [Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/) via `secretName`.
 
 > At this point, Connaisseur only supports BasicAuth for connecting to the notary.
 
-Below is a list of commands to programmatically do the changes to the `values.yaml` file in the `helm` folder. However, you can also do these changes manually if you want. They are comprised of setting the notary server, notary credentials and the root public key for verification.
+#### Set your public key as trust anchor
+
+> What is being done at this point is to set your personal root key as Connaisseur's trust anchor. If used in production, you may wish to go for [setting up delegation keys](https://docs-stage.docker.com/engine/security/trust/trust_delegation/#creating-delegation-keys) and keep the root key away from everyday-signing.
+
+Lastly, we need to configure the `notary.rootPubKey` that serves as a trust anchor and pins all signatures of deployed images to this public key. There is two different ways to get the required key:
+
+1. In case you just setup DCT and created your root keys, you should have a `root.pub` file in your folder. Remove the `role` and empty line and copy the contents to `notary.rootPubKey` in `helm/values.yaml`. The result should look similar to this (except for the different key value):
+
+```yaml
+  # the public part of the root key, for verifying notary's signatures
+  rootPubKey: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+    BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+    -----END PUBLIC KEY-----
+```
+
+2. In case you already had DCT setup or cannot find the file, we need to retrieve and convert the key manually from your previously created root key. For bash users, there is a short script below. Otherwise, just follow the manual steps:
+
+##### manual
+
+- Go to your private docker trust folder `~/.docker/trust/private` and identify the root key. To do so, you can either go through the files and search for the one with `role: root` or `grep -r 'role: root'`.
+- Copy this file to a new file `root-priv.key` and remove line with `role: root` and the following empty line.
+- Generate the corresponding public key via `openssl ec -in root-priv.key -pubout -out root.pub`. You will be asked to enter your root password.
+- The new `root.pub` contains your public which you copy and set for `notary.rootPubKey` in `connaisseur/helm/values.yaml`. The result should look similar as for the first case above.
+- To clean up, remove the `root-priv.key` and `root.pub` in `~/.docker/trust/private`.
+
+##### bash
+
+- Run the script below from the Connaisseur repository to generate your root public key. You will be asked to enter your root password set above:
 
 ```bash
-sed -i "s/host: notary.docker.io/host: ${NOTARY_URL}/" helm/values.yaml
-sed -i "s/user: notaryuser/user: ${NOTARY_USER}/" helm/values.yaml
-sed -i "s/password: Password123/password: ${NOTARY_PASSWORD}/" helm/values.yaml
-
 FIRST_LINE=$(grep -n rootPubKey: helm/values.yaml | sed s/:.*//)
 LAST_LINE=$(grep -nF -- '-----END PUBLIC KEY-----' helm/values.yaml | sed s/:.*//)
 sed -i $((${FIRST_LINE} + 1)),${LAST_LINE}d helm/values.yaml
 
 cd ~/.docker/trust/private
 sed '/^role:\sroot$/d' $(grep -iRl "role: root$" .) > root-priv.key
-openssl ec -in root-priv.key -pubout -out root-pub.pem
+openssl ec -in root-priv.key -pubout -out root.pub
 ```
-After entering your password, do further
+
+- After entering your password, copy the public key to the `helm/values.yaml`: 
 
 ```bash
-sed -i "${FIRST_LINE}s?.*?  rootPubKey: |\n    $(sed ':a;N;$!ba;s/\n/\\n    /g' root-pub.pem)?" ${OLDPWD}/helm/values.yaml
-rm root-priv.key root-pub.pem
+sed -i "${FIRST_LINE}s?.*?  rootPubKey: |\n    $(sed ':a;N;$!ba;s/\n/\\n    /g' root.pub)?" ${OLDPWD}/helm/values.yaml
+rm root-priv.key root.pub
 cd -
 ```
 
-> The `values.yaml` file in the `helm` folder is _the_ config file for Connaisseur. If you have some time to spare, have a look :)
->
-> For example, you can turn on detection mode by running `sed -i "s/detection_mode: false/detection_mode: true/" helm/values.yaml`, which will allow your deployments to pass, but will log the violation. This might be useful when rolling out Connaisseur to an existing Kubernetes installation in order to first get a grasp on remaining obstacles before turning on (the default) blocking mode.
-
-> What is being done at this point is to set your personal root key as Connaisseur's trust anchor. If used in production, you may wish to go for [setting up delegation keys](https://docs-stage.docker.com/engine/security/trust/trust_delegation/#creating-delegation-keys) and keep the root key away from everyday-signing.
+- The resulting `/helm/values.yaml` should have an excerpt looking similar to what is shown in the first case above.
 
 ### 4. Deploy Connaisseur
 
@@ -126,134 +174,85 @@ If you were just trusting everything someone told you, you wouldn't be here look
 
 `kubectl get all -n connaisseur` will show you most* of what you deployed (ConfigMaps, Secrets and MutatingWebhookConfiguration are not shown).
 
-### 1. Deploy (un)signed images
+### Deploy (un)signed images
 
-To test Connaisseur's capabilities go ahead and build both an unsigned and a signed image:
+Let's test if our configuration works. We need to prepare a signed and an unsigned image and push these to a remote repository. For simplicity, we define an image path variable (host, repository and image). Below, substitute `IMAGE_PATH` with your own the values as appropriate:
+
+```bash
+# Typically, IMAGE_PATH=<YOUR-REGISTRY>/<YOUR-REPOSITORY-NAME-/-DOCKER-HUB-ID>/<IMAGE-NAME>
+IMAGE_PATH=docker.io/connytest/testimage
+```
+
+We start with the signed image and use the `Dockerfile` in `connaisseur/setup` as sample:
 
 ```bash
 cd setup
-DOCKER_CONTENT_TRUST=0 docker build -f Dockerfile.unsigned -t ${IMAGE_PATH}:unsigned .
-DOCKER_CONTENT_TRUST=0 docker push ${IMAGE_PATH}:unsigned
-DOCKER_CONTENT_TRUST=0 docker build -f Dockerfile.signed -t ${IMAGE_PATH}:signed .
+DOCKER_CONTENT_TRUST=0 docker build -f Dockerfile -t ${IMAGE_PATH}:signed .
 DOCKER_CONTENT_TRUST=1 docker push ${IMAGE_PATH}:signed
-cd -
 ```
 
-During the second push, you will be asked to create repository key (unless you already pushed signed images to the repository in the past).
+> You can also use the `--disable-content-trust` flag in Docker in exchange for the environment variable.
 
-Then see what happens when you attempt deploying the images. First try the unsigned image:
+During the push step, you will be asked to create repository key (unless you already pushed signed images to the repository in the past). We disabled DCT in the first step to not validate the signature of the base image. This will ultimately depend on whether you use signed or unsigned base images when building yours and is independent of Connaisseur. Next we build and push the unsigned image. Optionally, you might want to edit the `Dockerfile`, e.g. the text in the `echo`, to also confirm that the different digests are validated.
 
 ```bash
-kubectl create -f - << EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sample-deployment
-  labels:
-    app: sample
-spec:
-  selector:
-    matchLabels:
-      app: sample
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: sample
-    spec:
-      containers:
-      - name: sample
-        image: ${IMAGE_PATH}:unsigned
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: sample
-  labels:
-    app: sample
-spec:
-  ports:
-  - name: port
-    port: 8080
-    targetPort: 5000
-  selector:
-    app: sample
-  type: LoadBalancer
-EOF
+DOCKER_CONTENT_TRUST=0 docker build -f Dockerfile -t ${IMAGE_PATH}:unsigned .
+DOCKER_CONTENT_TRUST=0 docker push ${IMAGE_PATH}:unsigned
 ```
 
-You should see the deployment being rejected with an error similar to
+We can check if everything works via `docker trust inspect --pretty ${IMAGE_PATH}` and should get something like:
 
 ```bash
-service/sample created
-Error from server: error when creating "STDIN": admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/testingconny/testimage:unsigned" in trust data.
+Signatures for docker.io/connytest/testimage
+
+SIGNED TAG          DIGEST                                                             SIGNERS
+signed              0c5d7013f91c03a2e87c29439ecfd093527266d92bfb051cab2103b80791193a   (Repo Admin)
+
+Administrative keys for docker.io/connytest/testimage
+
+  Repository Key:   130b5abbea417fea7e2a0acd2cc0a3a84f81d5b763ed82dcfaad8dceebac0b75
+  Root Key:   6b35860633a0cf852670fd9b5c12ba068875f3804d6711feb16fcd74c723c816
 ```
 
-> Note that while the container is blocked Kubernetes still creates the service, because it does not reference an image and is thus not denied by Connaisseur. You can clean it up by executing `kubectl delete service sample`.
-
-Finally, make sure that Connaisseur will deploy the signed image and isn't just rejecting all images:
+Note that there is only trust data for the `signed` tag, not for `unsigned`. Let's try to deploy our fresh images to the cluster. We start with the signed image:
 
 ```bash
-kubectl create -f - << EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sample-deployment
-  labels:
-    app: sample
-spec:
-  selector:
-    matchLabels:
-      app: sample
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: sample
-    spec:
-      containers:
-      - name: sample
-        image: ${IMAGE_PATH}:signed
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: sample
-  labels:
-    app: sample
-spec:
-  ports:
-  - name: port
-    port: 8080
-    targetPort: 5000
-  selector:
-    app: sample
-  type: LoadBalancer
-EOF
+kubectl run signed --image=${IMAGE_PATH}:signed
 ```
 
-This deployment should be accepted with
+You should be prompted that the deployment was successful:
 
 ```bash
-deployment.apps/sample-deployment created
-service/sample created
+pod/signed created
 ```
+
+Finally, let's make sure that Connaisseur will not just allow deployment of any image:
+
+```bash
+kubectl run unsigned --image=${IMAGE_PATH}:unsigned
+```
+
+You should see the deployment being rejected with an error similar to:
+
+```bash
+Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/connytest/testimage:unsigned" in trust data.
+```
+
+or if you pushed the unsigned image to another registry altogether:
+
+```bash
+Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: no trust data for image "docker.io/connytest/testimage:unsigned".
+```
+
+> Note that while deployment of containers is blocked, Kubernetes will still create services or other resources you might specify in a `deployment.yaml` because those do not reference an image and are thus not denied by Connaisseur. You might have to clean up denied deployments.
 
 Your signed images were allowed through, in contrast to those unsigned ones with unknown content. DCT, not in a nutshell, but in Kubernetes!
 
-### 2. Cleanup
+## Cleanup
 
-If you want to remove the test deployment of step 1, run `kubectl delete all -lapp=sample`.
+If you want to remove Connaisseur, run `make uninstall`.
 
-## Uninstall Connaisseur
-
-For removing Connaisseur, run `make uninstall`.
+In case you deployed the `signed` image above, you might want to clean that up by `kubectl delete pod signed`.
 
 ## The end
 

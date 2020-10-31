@@ -14,6 +14,7 @@ Connaisseur is an admission controller for Kubernetes that integrates Image Sign
 - [Demo](#demo)
 - [How it works](#how-it-works)
 - [Getting Started](#getting-started)
+  * [Makefile and Helm](#makefile-and-helm)
   * [Image Policy](#image-policy)
   * [Detection Mode](#detection-mode)
 - [Threat Model](#threat-model)
@@ -77,21 +78,24 @@ Notary trust data includes some auxiliary information on the freshness of each i
 
 ## Getting Started
 
-Connaisseur can be integrated into a multitude of different systems, with a few requirements and a bit of configurational effort. It was tested on a Linux Mint 19.2, but other distributions should work just fine.  
+Connaisseur can be integrated into a multitude of different systems, with a few requirements and a bit of configurational effort. It was tested on a Linux Mint 19.2, but other distributions should work just fine. We provide a [full setup guide](setup/README.md) with detailed instructions for various environments. In short: 
 
 1. **Requirements**: A few tools are needed in advance. You'll need `git` for getting the source code and `make` for a convenient setup. Since Connaisseur will be deployed as a container to a Kubernetes cluster, [docker](https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/), [helm](https://helm.sh/docs/intro/install/) and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) are required for building the image, generating a Deployment file and deploying it to the cluster. During the deployment, some certificates need to be created, which requires `openssl`. To install everything except docker, helm and kubectl, use
+
 ```bash
 sudo apt install git make openssl yq
 ```
-2. **Getting the code**: Clone this repository to your favorite location:
+
+2. **Getting the code**: Clone this repository to your favorite location.
+
 ```bash
 git clone git@github.com:sse-secure-systems/connaisseur.git
 ```
-3. **Configure deployment**: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. The `helm/values.yaml` file is a good start. In there, the `.notary.host` field specifies the hostname and port of the Notary server.
-If your Notary uses a self-signed certificate, `.notary.selfsigned` should be set to `true` and the certificate has to be added to `.notary.selfsignedCert`. In case your Notary instance is authenticated (which it should), set the `.notary.auth.enabled` to `true` and enter the credentials either directly or as a predefined secret. Lastly enter the public root key in `.notary.rootPubKey`, which is used for verifying the image signatures. For further details, please checkout the [setup guide](setup/README.md).
+
+3. **Configure deployment**: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. The `helm/values.yaml` file is a good start. In there, the `.notary.host` field specifies the hostname and port of the Notary server. If your Notary uses a self-signed certificate, `.notary.selfsigned` should be set to `true` and the certificate has to be added to `.notary.selfsignedCert`. In case your Notary instance is authenticated (which it should), set the `.notary.auth.enabled` to `true` and enter the credentials either directly or as a predefined secret. Lastly enter the public root key in `.notary.rootPubKey`, which is used for verifying the image signatures.
 4. **Deploy**: Switch to the cluster where you would like to install Connaisseur, and run `make install`. This may take some seconds, as the installation order of the Connaisseur components is critical. Only when the Connaisseur pods are ready and running, the Admission Webhook can be applied for intercepting requests.
 
-> :warning: **WARNING!** Be careful when installing Connaisseur in minikube and restarting the cluster!  ​When stopping the cluster with `minikube stop` while Connaisseur is still installed and running, restarting it with `minikube start` will not work. The command will freeze at some point, as long as Connaisseur is running, since Connaisseur per default will block some resources from staring up. At that point you can still access the cluster and delete Connaisseur manually, then the `minikube start` process will finish. You can use [Detection Mode](#detection-mode) to avoid interruptions during testing.
+> :warning: **WARNING!** Be careful when installing Connaisseur, as it will block unsigned images and may for example even block some resources during a restart of `minikube`! In such a situation you should still be able to fix it by deleting Connaisseur manually. You can use [Detection Mode](#detection-mode) to avoid interruptions during testing.
 
 ### Makefile and Helm
 

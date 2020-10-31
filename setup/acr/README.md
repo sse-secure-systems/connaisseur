@@ -19,47 +19,34 @@ For the most part, this tutorial will be the same as [for a regular Kubernetes c
 
 ### 1. Get Connaisseur
 
-First off, we'll export the variables used in this tutorial to allow you to immediately use your own names/URLs instead of relying on our default names. Below, substitute your own values as appropriate (ideally use lowercase letters for compatibility with Docker):
+Let's get started by cloning this repository:
 
 ```bash
-# You can/have to change these values to match your environment
-REGISTRY_NAME=connyregistry
-REPOSITORY_NAME=test
-IMAGE_NAME=testimage
-
-REGISTRY_URL=$(echo "${REGISTRY_NAME}.azurecr.io")
-IMAGE_PATH=$(echo "${REGISTRY_URL}/${REPOSITORY_NAME}/${IMAGE_NAME}")
-NOTARY_URL=$(echo "${REGISTRY_NAME}.azurecr.io")
-
 git clone https://github.com/sse-secure-systems/connaisseur.git
 cd connaisseur
 ```
 
-### 2. Configure specifcs for the ACR
+### 2. Configure specifics to ACR
 
-First we want to tell Connaisseur that the notary it connects to is the ACR. Unfortunately, the notary API exposed by ACR is slightly different from other notaries, so Connaisseur needs to know in order to adapt:
+First we want to tell Connaisseur that the notary it connects to is the ACR. Unfortunately, the notary API exposed by ACR is slightly different from other notaries, so Connaisseur needs to know in order to adapt. You can either manually set `notary.isAcr` to `true` in `helm/values.yaml` or use the bash script below:
 
 ```bash
 sed -i "s/isAcr: false/isAcr: true/" helm/values.yaml
 ```
 
-The second specific change to be done when deploying Connaisseur in an environment with the ACR is to create a Service Principal (SP) that gives Connaisseur a username/password combination to retrieve an access token via BasicAuth:
+The second specific change to be done when deploying Connaisseur in an environment with the ACR is to create a Service Principal (SP) that gives Connaisseur a username/password combination to retrieve an access token via BasicAuth. Below set `<ACR-NAME>` to your registry's name and choose `<SERVICE-PRINCIPLE-NAME>` as you like:
 
 ```bash
-# As above, you can change this to your liking
-CONNAISSEUR_SP_NAME=connaisseur-registry-sp
-
 # Retrieve the ID of your registry
-REGISTRY_ID=$(az acr show --name ${REGISTRY_NAME} | jq -r '.id')
+REGISTRY_ID=$(az acr show --name <ACR-NAME> | jq -r '.id')
 
 # Create a service principal with the Reader role on your registry
-SP_CREDENTIALS=$(az ad sp create-for-rbac --name "${CONNAISSEUR_SP_NAME}" --role Reader --scopes ${REGISTRY_ID})
-
-NOTARY_USER=$(echo ${SP_CREDENTIALS} | jq -r '.appId')
-NOTARY_PASSWORD=$(echo ${SP_CREDENTIALS} | jq -r '.password')
+az ad sp create-for-rbac --name "<SERVICE-PRINCIPLE-NAME>" --role Reader --scopes ${REGISTRY_ID}
 ```
 
 > If something goes wrong with the creation of the Service Principal, check that you actually have sufficient privileges to create a Service Principal.
+
+Note down the `.appId` and `.password` values. These are your notary username and password, respectively. You will need them later in the setup when [configuring Notary](../README.md#configure-notary). Use the `.appId` value as your Notary username and `.password` as password.
 
 At this point, the adaptations specific to AKS and ACR are complete and you can continue with the [second step of the general Kubernetes guide](../README.md#2-set-up-docker-content-trust).
 

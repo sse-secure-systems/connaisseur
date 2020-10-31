@@ -1,6 +1,0 @@
-FROM python:3.7-alpine
-WORKDIR /app
-RUN pip install Flask
-COPY unsignedapp.py /app
-ENTRYPOINT [ "python" ]
-CMD [ "unsignedapp.py" ]
