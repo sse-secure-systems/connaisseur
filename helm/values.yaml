@@ -1,7 +1,7 @@
 # configure connaisser deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v1.2.1
+  image: securesystemsengineering/connaisseur:v1.3.0
   imagePullPolicy: Always
   resources: {}
   # limits:
@@ -32,8 +32,10 @@ notary:
 
   # if notary uses an authentication server, give a user and password
   # with pull rights
+  # The default we use is the notary instance from docker.io which is
+  # accessible without authentication for public repositories
   auth:
-    enabled: true
+    enabled: false
     # enter user/pass directly
     # these are placeholders and should be changed!
     user: notaryuser
