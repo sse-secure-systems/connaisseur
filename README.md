@@ -11,6 +11,7 @@ Connaisseur is an admission controller for Kubernetes that integrates Image Sign
 ## Contents
 
 - [Introduction](#introduction)
+- [Demo](#demo)
 - [How it works](#how-it-works)
 - [Getting Started](#getting-started)
   * [Image Policy](#image-policy)
@@ -34,6 +35,35 @@ However, as one might have already guessed, this convenience has its drawbacks. 
 Enter [*Docker Content Trust (DCT)*](https://docs.docker.com/engine/security/trust/), a solution that offers a way to digitally sign images. It uses *Notary*, an implementation of *The Update Framework*, to store a manifest file linking the latest image digest with its tag, which then is signed with a private key. As the digest uniquely identifies an image with specific contents, this allows making a cryptographic guarantee about the integrity of an image based on its tag. DCT can be used on Docker Hub to sign images and overall offers a good experience with Docker. Sadly, it does not work with Kubernetes out of the box, even though Kubernetes uses Docker. Kubernetes is unaware whether the underlying Docker daemon has DCT enabled or not, and deploys any kind of images, regardless of their signature status.
 
 **Connaisseur** solves this problem by bringing image signature verification into Kubernetes. It uses the already existing Docker Content Trust solution and adds it to the cluster as a mutating admission controller. It pulls trust data from *Notary* and verifies it before any commitment to Kubernetes happens.
+
+## Demo
+
+We provide two public sample images for testing. Setting the trust anchor of Connaisseur to our public key allows you to have a working demo in just a few minutes. Below, you see a full setup starting a [MicroK8s](https://microk8s.io/) test cluster, installing of Connaisseur and testing with a signed and unsigned image.
+
+![](img/connaisseur_demo.gif)
+
+Make sure `docker`, `git`, `helm`, `kubectl`, `make` and `yq` are installed. Your `kubectl` context should be set to your Kubernetes test cluster.
+
+> :warning: Do not start this on a cluster used for other purposes, as Connaisseur will block all deployments!
+
+- Clone the repository via `git clone https://github.com/sse-secure-systems/connaisseur.git` and set the trust anchor to our public key in the `helm/values.yaml`:
+
+```yaml
+  # the public part of the root key, for verifying notary's signatures
+  rootPubKey: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+    BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+    -----END PUBLIC KEY-----
+```
+
+- Install Connaisseur on the cluster via `make install`.
+- Trying to deploy an unsigned app to your cluster will be denied due to lack of trust data: `kubectl run unsigned --image=docker.io/connytest/testimage:unsigned`
+- However, the signature of our signed image is successfully verified: `kubectl run signed --image=docker.io/connytest/testimage:signed`
+- You can compare the trust data of the two images via `docker trust inspect --pretty docker.io/connytest/testimage`.
+- To uninstall Connaisseur from your cluster after the demo, run `make uninstall`.
+
+Congrats :bowtie:! You have successfully validated authenticity and integrity of our test images before deploying to your cluster. Below you can find a guide how to setup Connaisseur in your own environment.
 
 ## How it works
 
