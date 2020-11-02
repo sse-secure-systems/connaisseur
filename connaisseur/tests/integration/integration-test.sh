@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: sample
-        image: docker.io/connytest/testiiiimage:unsigned
+        image: docker.io/connytest/testiimage:unsigned
         imagePullPolicy: IfNotPresent
 EOF
 
