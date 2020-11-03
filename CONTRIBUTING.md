@@ -34,12 +34,12 @@ To start contributing, you will need to setup your local environment. First step
 ```bash
 git clone git@github.com:sse-secure-systems/connaisseur.git
 ```
-In order to review the effects of your changes, you should create your own Kubernetes cluster and install Connaisseur. This is described in the [setup guide](setup/README.md). A simple starting point may be a Minikube cluster with e.g. a [Docker Hub](https://hub.docker.com/) repository for maintaining your test images and trust data.
+In order to review the effects of your changes, you should create your own Kubernetes cluster and install Connaisseur. This is described in the [setup guide](setup/README.md). A simple starting point may be a minikube cluster with e.g. a [Docker Hub](https://hub.docker.com/) repository for maintaining your test images and trust data.
 
 In case you make changes to the Connaisseur Docker image itself or code for that matter, you need to re-build the image and install it locally for testing. This requires a few steps:
 
 1. In `helm/values.yaml`, set `imagePullPolicy` to `IfNotPresent`.
-2. Configure your local environment to use the Kubernetes docker daemen. In Minikube, this can be done via `eval (minikube docker-env)`.
+2. Configure your local environment to use the Kubernetes Docker daemon. In minikube, this can be done via `eval (minikube docker-env)`.
 3. Build the Connaisseur Docker image via `make docker`.
 4. Install Connaisseur as usual via `make install`.
 
@@ -74,7 +74,7 @@ Besides the unit testing and before any PR can be merged, an integration test sh
 - a signed image is deployed to the cluster and passed
 - Connaisseur is successfully uninstalled
 
-We hope to automate these tests in the future and also provide a test script for local testing with Minikube.
+We hope to automate these tests in the future and also provide a test script for local testing with minikube.
 
 ### Signed Commits and Pull Requests
 All changes to the `master` branch must be signed which is enforced via [branch protection](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing). This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor. Consequently, while we appreciate signed commits in PRs, we do not require it.
