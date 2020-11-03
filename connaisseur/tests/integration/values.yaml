@@ -1,7 +1,7 @@
 # configure connaisser deployment
 deployment:
   replicasCount: 3
-  image: ${RELEASE_IMAGE}:1.4
+  image: ${RELEASE_IMAGE}:${RELEASE_VERSION}
   imagePullPolicy: Never
   resources: {}
   # limits:
