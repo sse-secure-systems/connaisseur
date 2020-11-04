@@ -1,4 +1,4 @@
-# configure connaisser deployment
+# configure connaisseur deployment
 deployment:
   replicasCount: 3
   image: securesystemsengineering/connaisseur:v1.3.0
