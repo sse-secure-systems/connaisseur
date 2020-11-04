@@ -381,11 +381,12 @@ def test_parse_auth_error(napi, header: str, error: str):
         napi.parse_auth(header)
     assert error in str(err.value)
 
+
 @pytest.mark.parametrize(
     "user, password, out",
     [
         (None, None, "no.BA.no"),
-        (None, 'password123', "no.BA.no"),
+        (None, "password123", "no.BA.no"),
         ("myname", "password456", "BA.myname.password456a"),
         ("myname", None, "BA.myname.a"),
     ],
