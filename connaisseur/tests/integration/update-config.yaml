@@ -1,0 +1,34 @@
+---
+    - command: update
+      path: deployment.imagePullPolicy
+      value: Never
+    - command: update
+      path: deployment.image
+      value: ${RELEASE_IMAGE}:${RELEASE_VERSION}
+    - command: update
+      path: notary.host
+      value: notary.docker.io
+    - command: update
+      path: notary.selfsigned
+      value: false
+    - command: update
+      path: notary.auth.enabled
+      value: false
+    - command: update
+      path: notary.rootPubKey
+      value: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+          BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+          -----END PUBLIC KEY-----
+    - command: update
+      path: policy
+      value:
+        - pattern: "*:*"
+          verify: true
+        - pattern: "k8s.gcr.io/*:*"
+          verify: false
+        - pattern: "docker.io/securesystemsengineering/connaisseur:*"
+          verify: true
+        - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook"
+          verify: false

@@ -132,4 +132,39 @@ jobs:
         with:
            name: trivy-report
            path: trivy-report.json
-  
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: [bandit, safety, trivy]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install yq and bash
+        run: |
+          sudo snap install yq
+          sudo apt update
+          sudo apt install bash -y
+
+      - name: Build Connaisseur image
+        run: |
+          sed -i "s+TAG =.*+TAG = ${RELEASE_VERSION}+" Makefile
+          sed -i "s+IMAGE_NAME =.*+IMAGE_NAME = ${RELEASE_IMAGE}+" Makefile
+          make docker
+
+      - name: Create KinD cluster
+        run: |
+          GO111MODULE="on" go get sigs.k8s.io/kind
+          kind create cluster --wait 120s
+
+      - name: Check KinD cluster
+        run: |
+          kubectl get nodes
+
+      - name: Add images to KinD
+        run: |
+          kind load docker-image ${RELEASE_IMAGE}:${RELEASE_VERSION}
+          kind load docker-image ${RELEASE_IMAGE}:helm-hook
+
+      - name: Run actual integration test
+        run: |
+          bash connaisseur/tests/integration/integration-test.sh
