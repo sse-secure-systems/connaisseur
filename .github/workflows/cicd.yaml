@@ -13,6 +13,27 @@ env:
   RELEASE_IMAGE: securesystemsengineering/connaisseur
 
 jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install black
+        run: |
+          pip3 install setuptools wheel
+          pip3 install black
+      - name: Verify formatting
+        run: |
+          python3 -m black . 2>&1 | grep -q "reformatted" && { echo 'Not properly formatted.'; exit 1; } || true
+
+  hadolint:
+    runs-on: ubuntu-latest
+    container:
+      image: hadolint/hadolint:latest-debian
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint
+        run: hadolint docker/Dockerfile
+
   pylint:
     runs-on: ubuntu-latest
     container:
@@ -24,20 +45,11 @@ jobs:
       - name: Lint
         run: cd connaisseur && pylint --ignore-patterns=tests,coverage *.*
 
-  hadolint:
-    runs-on: ubuntu-latest
-    container:
-      image: hadolint/hadolint:latest-debian
-    steps:
-      - uses: actions/checkout@v2
-      - name: Lint
-        run: hadolint docker/Dockerfile
-
   pytest:
     runs-on: ubuntu-latest
     container:
       image: python:slim
-    needs: [pylint, hadolint]
+    needs: [black,hadolint,pylint]
     steps:
       - uses: actions/checkout@v2
       - name: Install packages
