@@ -18,6 +18,22 @@ request_obj_pod = {
         ]
     },
 }
+request_obj_pod_with_init_container = {
+    "kind": "Pod",
+    "apiVersion": "v1",
+    "metadata": {},
+    "spec": {
+        "containers": [
+            {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"}
+        ],
+        "initContainers": [
+            {
+                "name": "init-container",
+                "image": "docker.io/abreust/testing_conny:unsigned",
+            }
+        ],
+    },
+}
 request_obj_cronjob = {
     "apiVersion": "batch/v1beta1",
     "kind": "CronJob",
@@ -40,6 +56,35 @@ request_obj_cronjob = {
         },
     },
 }
+request_obj_cronjob_with_init_container = {
+    "apiVersion": "batch/v1beta1",
+    "kind": "CronJob",
+    "metadata": {},
+    "spec": {
+        "schedule": "*/1 * * * *",
+        "jobTemplate": {
+            "spec": {
+                "template": {
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "test-connaisseur",
+                                "image": "phbelitz/charlie-image:test",
+                            }
+                        ],
+                        "initContainers": [
+                            {
+                                "name": "init-container",
+                                "image": "docker.io/abreust/testing_conny:unsigned",
+                            }
+                        ],
+                    }
+                }
+            }
+        },
+    },
+}
+
 request_obj_deployment = {
     "kind": "Deployment",
     "apiVersion": "apps/v1",
@@ -58,8 +103,45 @@ request_obj_deployment = {
         }
     },
 }
+request_obj_deployment_with_two_init_containers = {
+    "kind": "Deployment",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "phbelitz/charlie-image:test",
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "init-container",
+                        "image": "docker.io/abreust/testing_conny:unsigned",
+                    },
+                    {
+                        "name": "init-container2",
+                        "image": "docker.io/abreust/testing_conny:signed",
+                    },
+                ],
+            },
+        }
+    },
+}
 request_obj_output = [
     {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"}
+]
+request_obj_output_with_init_container = [
+    {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"},
+    {"name": "init-container", "image": "docker.io/abreust/testing_conny:unsigned"},
+]
+request_obj_output_with_two_init_containers = [
+    {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"},
+    {"name": "init-container", "image": "docker.io/abreust/testing_conny:unsigned"},
+    {"name": "init-container2", "image": "docker.io/abreust/testing_conny:signed"},
 ]
 patch_pod = {
     "op": "replace",
@@ -236,6 +318,15 @@ def get_ad_request(path: str):
         (request_obj_pod, request_obj_output),
         (request_obj_cronjob, request_obj_output),
         (request_obj_deployment, request_obj_output),
+        (request_obj_pod_with_init_container, request_obj_output_with_init_container),
+        (
+            request_obj_cronjob_with_init_container,
+            request_obj_output_with_init_container,
+        ),
+        (
+            request_obj_deployment_with_two_init_containers,
+            request_obj_output_with_two_init_containers,
+        ),
     ],
 )
 def test_get_container_specs(mutate, request_obj: dict, output: dict):

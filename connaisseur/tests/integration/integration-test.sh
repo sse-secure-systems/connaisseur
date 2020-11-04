@@ -51,6 +51,17 @@ else
   echo 'Successfully allowed usage of signed image'
 fi
 
+echo 'Testing deployment of unsigned init container along with a valid container...'
+kubectl apply -f connaisseur/tests/integration/valid_container_with_unsigned_init_container_image.yml >output.log 2>&1 || true
+
+if [[ "$(cat output.log)" != 'Error from server: error when creating "connaisseur/tests/integration/valid_container_with_unsigned_init_container_image.yml": admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/connytest/testimage:unsigned" in trust data.' ]]; then
+  echo 'Allowed an unsigned image via init container or failed due to an unexpected error handling init containers. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully denied unsigned image in init container'
+fi
+
 echo 'Uninstalling Connaisseur...'
 make uninstall || { echo 'Failed to uninstall Connaisseur'; exit 1; }
 echo 'Successfully uninstalled Connaisseur'

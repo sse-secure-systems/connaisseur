@@ -26,11 +26,15 @@ def get_container_specs(request_object: dict):
     """
     object_kind = request_object["kind"]
     if object_kind == "Pod":
-        return request_object["spec"]["containers"]
+        relevant_spec = request_object["spec"]
+        init_containers = relevant_spec.get("initContainers", [])
+        return relevant_spec["containers"] + init_containers
     elif object_kind == "CronJob":
-        return request_object["spec"]["jobTemplate"]["spec"]["template"]["spec"][
-            "containers"
+        relevant_spec = request_object["spec"]["jobTemplate"]["spec"]["template"][
+            "spec"
         ]
+        init_containers = relevant_spec.get("initContainers", [])
+        return relevant_spec["containers"] + init_containers
     elif object_kind in (
         "Deployment",
         "ReplicationController",
@@ -39,7 +43,9 @@ def get_container_specs(request_object: dict):
         "StatefulSet",
         "Job",
     ):
-        return request_object["spec"]["template"]["spec"]["containers"]
+        relevant_spec = request_object["spec"]["template"]["spec"]
+        init_containers = relevant_spec.get("initContainers", [])
+        return relevant_spec["containers"] + init_containers
 
 
 def get_json_patch(object_kind: str, index: int, image_name: str):
