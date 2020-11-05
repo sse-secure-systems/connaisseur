@@ -100,7 +100,7 @@ Lastly, we need to configure the `notary.rootPubKey` that serves as a trust anch
     -----END PUBLIC KEY-----
 ```
 
-2. In case you already had DCT setup or cannot find the file, we need to retrieve and convert the key manually from your previously created root key. For bash users, there is a short script below. Otherwise, just follow the manual steps:
+2. In case you already had DCT setup or cannot find the file, we need to retrieve and convert the key manually from your previously created root key. For most shell users, there is a short script below. Otherwise, just follow the manual steps:
 
 ##### manual
 
@@ -110,15 +110,11 @@ Lastly, we need to configure the `notary.rootPubKey` that serves as a trust anch
 - The new `root.pub` contains your public which you copy and set for `notary.rootPubKey` in `connaisseur/helm/values.yaml`. The result should look similar as for the first case above.
 - To clean up, remove the `root-priv.key` and `root.pub` in `~/.docker/trust/private`.
 
-##### bash
+##### bash/sh/zsh
 
 - Run the script below from the Connaisseur repository to generate your root public key. You will be asked to enter your root password set above:
 
 ```bash
-FIRST_LINE=$(grep -n rootPubKey: helm/values.yaml | sed s/:.*//)
-LAST_LINE=$(grep -nF -- '-----END PUBLIC KEY-----' helm/values.yaml | sed s/:.*//)
-sed -i $((${FIRST_LINE} + 1)),${LAST_LINE}d helm/values.yaml
-
 cd ~/.docker/trust/private
 sed '/^role:\sroot$/d' $(grep -iRl "role: root$" .) > root-priv.key
 openssl ec -in root-priv.key -pubout -out root.pub
@@ -127,7 +123,7 @@ openssl ec -in root-priv.key -pubout -out root.pub
 - After entering your password, copy the public key to the `helm/values.yaml`: 
 
 ```bash
-sed -i "${FIRST_LINE}s?.*?  rootPubKey: |\n    $(sed ':a;N;$!ba;s/\n/\\n    /g' root.pub)?" ${OLDPWD}/helm/values.yaml
+yq write --inplace ${OLDPWD}/helm/values.yaml -- notary.rootPubKey "$(cat root.pub)"
 rm root-priv.key root.pub
 cd -
 ```
