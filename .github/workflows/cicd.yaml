@@ -75,15 +75,15 @@ jobs:
       - name: Install bandit
         run: pip3 install bandit
       - name: Run bandit
-        run: bandit -r -x tests/ -f txt -o report.txt .
+        run: bandit -r -x tests/ -f txt -o bandit-report.txt .
       - name: Print report
         if: ${{ success() || failure() }}
-        run: cat report.txt
+        run: cat bandit-report.txt
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: bandit-report
-          path: report.txt
+          path: bandit-report.txt
 
   safety:
     runs-on: ubuntu-latest
@@ -99,15 +99,15 @@ jobs:
       - name: Install safety
         run: pip3 install safety
       - name: Run safety
-        run: safety check -r ./actual_package_versions.txt --full-report -o report.txt
+        run: safety check -r ./actual_package_versions.txt --full-report -o safety-report.txt
       - name: Print report
         if: ${{ success() || failure() }}
-        run: cat report.txt
+        run: cat safety-report.txt
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: safety-report
-          path: report.txt
+          path: safety-report.txt
 
   trivy:
     runs-on: ubuntu-latest
@@ -126,12 +126,15 @@ jobs:
       - name: Save image
         run: docker save $GITHUB_SHA -o $GITHUB_SHA.tar
       - name: Scan
-        run: trivy image --input $GITHUB_SHA.tar -o trivy-report.json --exit-code 1 --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
+        run: trivy image --input $GITHUB_SHA.tar -o trivy-report.txt --exit-code 1 --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
+      - name: Print report
+        if: ${{ success() || failure() }}
+        run: cat trivy-report.txt
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
            name: trivy-report
-           path: trivy-report.json
+           path: trivy-report.txt
 
   integration-test:
     runs-on: ubuntu-latest
