@@ -48,7 +48,7 @@
             "spec": {
                 "containers": [
                     {
-                        "image": "phbelitz/sample-san-sama:hai",
+                        "image": "securesystemsengineering/sample-san-sama:hai",
                         "imagePullPolicy": "Always",
                         "name": "test-connaisseur",
                         "ports": [

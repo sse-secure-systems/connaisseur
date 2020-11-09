@@ -61,7 +61,7 @@
             "spec": {
               "containers": [{
                 "name": "test-connaisseur",
-                "image": "phbelitz/alice-image:test",
+                "image": "securesystemsengineering/alice-image:test",
                 "ports": [{
                   "containerPort": 5000,
                   "protocol": "TCP"

@@ -9,27 +9,27 @@ def excep():
 
 
 def test_exceptions(excep):
-    ex = excep.BaseConnaisseurException("Hallo", {"du": "da"})
-    assert ex.message == "Hallo"
-    assert ex.context == {"du": "da"}
+    ex = excep.BaseConnaisseurException("Hello", {"you": "there"})
+    assert ex.message == "Hello"
+    assert ex.context == {"you": "there"}
     assert ex.detection_mode == False
 
 
 def test_exception_str(excep):
-    ex = excep.BaseConnaisseurException("Hallo", {"du": "da"})
+    ex = excep.BaseConnaisseurException("Hello", {"you": "there"})
     assert str(ex) == str(
-        {"message": "Hallo", "context": {"du": "da"}, "detection_mode": False}
+        {"message": "Hello", "context": {"you": "there"}, "detection_mode": False}
     )
 
 
 @pytest.mark.parametrize(
     "msg, dm, out",
     [
-        ("Hallo", "0", "Hallo"),
-        ("Hallo", "1", "Hallo (not denied due to DETECTION_MODE)"),
+        ("Hello", "0", "Hello"),
+        ("Hello", "1", "Hello (not denied due to DETECTION_MODE)"),
     ],
 )
 def test_exception_user_msg(excep, msg, dm, out):
     os.environ["DETECTION_MODE"] = dm
-    ex = excep.BaseConnaisseurException(msg, {"du": "da"})
+    ex = excep.BaseConnaisseurException(msg, {"you": "there"})
     assert ex.user_msg == out
