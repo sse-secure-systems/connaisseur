@@ -46,7 +46,7 @@ az ad sp create-for-rbac --name "<SERVICE-PRINCIPLE-NAME>" --role Reader --scope
 
 > If something goes wrong with the creation of the Service Principal, check that you actually have sufficient privileges to create a Service Principal.
 
-Note down the `.appId` and `.password` values. These are your notary username and password, respectively. You will need them later in the setup when [configuring Notary](../README.md#configure-notary). Use the `.appId` value as your Notary username and `.password` as password.
+Note down the `.appId` and `.password` values. These are your notary username and password, respectively. You will need them later in the setup when [configuring Notary](../README.md#configure-notary). Use the `.appId` value as your Notary username, `.password` value as password and `<ACR-NAME>.azurecr.io` as your notary URL.
 
 At this point, the adaptations specific to AKS and ACR are complete and you can continue with the [second step of the general Kubernetes guide](../README.md#2-set-up-docker-content-trust).
 
