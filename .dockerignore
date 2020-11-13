@@ -1,0 +1,6 @@
+# ignore Markdown files
+*.md
+# ignore tests
+connaisseur/tests/
+# ignore img
+img/

@@ -59,7 +59,7 @@ Changes can also be tested locally. We recommend the following approach for runn
 ```
 docker run -it --rm -v <path-to-repository>:/data --entrypoint=ash python:alpine
 cd data
-pip3 install -r requirements.txt
+pip3 install -r requirements_dev.txt
 pip3 install .
 cd connaisseur
 pytest --cov=connaisseur --cov-report=xml tests/

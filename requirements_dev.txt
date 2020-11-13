@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest-cov~=2.10.0
+parsedatetime~=2.6
+pylint~=2.5.3

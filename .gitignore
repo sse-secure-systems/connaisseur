@@ -17,3 +17,4 @@ testing-env/aks/k8s/deployment.yaml
 samples/*
 demo/
 tls-*.conf
+.venv
