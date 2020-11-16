@@ -115,10 +115,10 @@ def create_logging_context(request: dict, image: str = None):
     the current `request` and currently view `image`, if present.
 
     """
-    user = request["request"]["userInfo"]["username"]
-    operation = request["request"]["operation"]
-    namespace = request["request"]["namespace"]
-    kind = request["request"]["kind"]["kind"]
+    user = request.get("request", {}).get("userInfo", {}).get("username")
+    operation = request.get("request", {}).get("operation")
+    namespace = request.get("request", {}).get("namespace")
+    kind = request.get("request", {}).get("kind", {}).get("kind")
 
     context = {
         "user": user,

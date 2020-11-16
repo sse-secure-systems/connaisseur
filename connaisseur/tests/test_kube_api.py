@@ -57,7 +57,9 @@ def get_data(path: str):
         ("sample_releases.json", get_data("tests/data/sample_releases.json")),
     ],
 )
-def test_request_kube_api(api, mock_request, mock_get_token, path: str, response: dict):
-    os.environ["KUBERNETES_SERVICE_HOST"] = "127.0.0.1"
-    os.environ["KUBERNETES_SERVICE_PORT"] = "1234"
+def test_request_kube_api(
+    api, mock_request, mock_get_token, path: str, response: dict, monkeypatch
+):
+    monkeypatch.setenv("KUBERNETES_SERVICE_HOST", "127.0.0.1")
+    monkeypatch.setenv("KUBERNETES_SERVICE_PORT", "1234")
     assert api.request_kube_api(path) == response

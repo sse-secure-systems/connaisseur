@@ -32,7 +32,7 @@ def mutate():
         logging.error(str(err))
         return jsonify(
             get_admission_review(
-                admission_request["request"]["uid"],
+                admission_request.get("request", {}).get("uid"),
                 False,
                 msg=err.user_msg,
                 detection_mode=DETECTION_MODE,
@@ -42,7 +42,7 @@ def mutate():
         logging.error(str(err))
         return jsonify(
             get_admission_review(
-                admission_request["request"]["uid"],
+                admission_request.get("request", {}).get("uid"),
                 False,
                 msg=str(err),
                 detection_mode=DETECTION_MODE,
@@ -52,7 +52,7 @@ def mutate():
         logging.error(traceback.format_exc())
         return jsonify(
             get_admission_review(
-                admission_request["request"]["uid"],
+                admission_request.get("request", {}).get("uid"),
                 False,
                 msg="unknown error. please check the logs.",
                 detection_mode=DETECTION_MODE,
