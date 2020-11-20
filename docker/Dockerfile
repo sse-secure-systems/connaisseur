@@ -8,7 +8,7 @@ RUN sh /harden.sh && rm /harden.sh
 
 # Copy source code and install packages
 COPY requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 COPY connaisseur /app/connaisseur
 
 USER 1000:2000
