@@ -14,7 +14,7 @@ In [#3](https://github.com/sse-secure-systems/connaisseur/issues/3) it was noted
 
 ### Option 1
 
-At the start of the Helm deployment, one can create a Pod named `connaisseur-bootstrap-sentinel` that will run for 30 seconds (default). Connaisseur Pods will report `Ready` if they can 1) access notary AND ( 2) the MutatingWebhookConfiguration exists OR 3) the `connaisseur-bootstrap-sentinel` Pod is still running ).
+At the start of the Helm deployment, one can create a Pod named `connaisseur-bootstrap-sentinel` that will run for 5 minutes (which is also the installation timeout by helm). Connaisseur Pods will report `Ready` if they can 1) access notary AND 2) the MutatingWebhookConfiguration exists OR 3) the `connaisseur-bootstrap-sentinel` Pod is still running. If 1)  AND 2) both hold true, the sentinel is killed even if the 5 minutes have not passed yet.
 
 ### Option 2
 
@@ -34,4 +34,4 @@ If the Connaisseur Pods report `Ready` during the `connaisseur-bootstrap-sentine
 
 ### Negative Consequences
 
-On the other hand, if an adversary can deploy a Pod named `connaisseur-bootstrap-sentinel` to Connaisseur's Namespace, the Connaisseur Pods will always show `Ready` regardless of the MutatingWebhookConfiguration. However, if an adversary can deploy to Connaisseur's Namespace, chances are Connaisseur can be compromised anyways. More importantly, if not a single Connaisseur Pod is successfully deployed or if the notary healthcheck fails during the initial period of 30 seconds, then the deployment will fail regardless of possible recovery at a later time. Another issue would be the `connaisseur-bootstrap-sentinel` Pod being left behind, however since it has a very limited use-case we can also clean it up during the deployment, so apart from the minimal additional complexity of the deployment this is a non-issue.
+On the other hand, if an adversary can deploy a Pod named `connaisseur-bootstrap-sentinel` to Connaisseur's Namespace, the Connaisseur Pods will always show `Ready` regardless of the MutatingWebhookConfiguration. However, if an adversary can deploy to Connaisseur's Namespace, chances are Connaisseur can be compromised anyways. More importantly, if not a single Connaisseur Pod is successfully deployed or if the notary healthcheck fails during the sentinel's lifetime, then the deployment will fail regardless of possible recovery at a later time. Another issue would be the `connaisseur-bootstrap-sentinel` Pod being left behind, however since it has a very limited use-case we can also clean it up during the deployment, so apart from the minimal additional complexity of the deployment this is a non-issue.

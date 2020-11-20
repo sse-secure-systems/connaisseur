@@ -1,7 +1,7 @@
 # configure connaisseur deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v1.4.3
+  image: securesystemsengineering/connaisseur:v1.4.4
   imagePullPolicy: Always
   resources: {}
   # limits:
@@ -13,9 +13,6 @@ deployment:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-  # bootstrap sentinel timeout in seconds
-  # deployment will fail if Connaisseur pods do not report ready within this timeframe
-  sentinelTimeout: 60
 
 # configure connaisseur service
 service:

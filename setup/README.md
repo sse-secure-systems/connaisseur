@@ -166,8 +166,6 @@ TEST SUITE: None
 
 Connaisseur was successfully deployed.
 
-> If `make install` fails and your Kubernetes cluster has low network bandwidth, it may be the case that the [Connaisseur Bootstrap Sentinel](../adr/ADR-1_connaisseur-bootstrap-sentinel.md) times out before Connaisseur's image has been pulled. You might want to consider increasing the `.deployment.sentinelTimeout` value in your `helm/values.yaml`.
-
 ## Test Connaisseur (optional)
 
 If you were just trusting everything someone told you, you wouldn't be here looking for a tool that ensures image integrity, so don't take our word for Connaisseur working. Go ahead and try it:

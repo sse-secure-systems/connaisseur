@@ -16,7 +16,14 @@ certs:
 install: certs
 	kubectl create ns $(NAMESPACE) || true
 	kubectl config set-context --current --namespace $(NAMESPACE)
-	helm install connaisseur helm --wait
+	#
+	#=============================================
+	#
+	# The installation may last up to 5 minutes.
+	#
+	#=============================================
+	#
+	helm install connaisseur helm --atomic
 
 uninstall:
 	kubectl config set-context --current --namespace $(NAMESPACE)
