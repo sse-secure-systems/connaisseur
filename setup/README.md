@@ -38,6 +38,8 @@ git clone https://github.com/sse-secure-systems/connaisseur.git
 cd connaisseur
 ```
 
+> The default of what you will install when following this guide will always be the latest release of Connaisseur. If you want to run Connaisseur with the most recent changes that haven't yet made it into a release, you will have to [build an image yourself](../CONTRIBUTING.md#setup-the-environment) with `make docker`.
+
 ### 2. Set up Docker Content Trust
 
 If you already have a root key configured on your system, you can skip this step (you can check whether there is already a root key file with `grep -iRl "role: root$" ~/.docker/trust/`).

@@ -1,7 +1,6 @@
 NAMESPACE = connaisseur
-IMAGE = $(IMAGE_NAME):$(TAG)
-IMAGE_NAME = securesystemsengineering/connaisseur
-TAG = v1.4.0
+IMAGE := $(shell yq r helm/values.yaml 'deployment.image')
+IMAGE_NAME := $(shell echo $(IMAGE) | cut -d ':' -f1)
 
 .PHONY: all docker certs install unistall upgrade annihilate
 

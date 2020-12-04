@@ -1,0 +1,53 @@
+name: release
+
+on:
+  push:
+    tags: "*"
+    branches: master
+
+jobs:
+  version-match:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install yq
+        run: sudo snap install yq
+      - name: Ensure version equality
+        run: |
+          if [[ "$(echo $GITHUB_REF | sed s+refs/tags/++)" == "" ]] \
+          || [[ "$(echo $GITHUB_REF | sed s+refs/tags/++)" != "$(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f2)" ]]
+            then exit 1
+          fi
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: [version-match]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install yq and bash
+        run: |
+          sudo snap install yq
+          sudo apt update
+          sudo apt install bash -y
+
+      - name: Pull Connaisseur images
+        run: |
+          DOCKER_CONTENT_TRUST=1 docker pull $(yq r helm/values.yaml 'deployment.image')
+          DOCKER_CONTENT_TRUST=1 docker pull $(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f1):helm-hook
+
+      - name: Create KinD cluster
+        run: |
+          GO111MODULE="on" go get sigs.k8s.io/kind
+          kind create cluster --wait 120s
+
+      - name: Check KinD cluster
+        run: kubectl get nodes
+
+      - name: Add images to KinD
+        run: |
+          kind load docker-image $(yq r helm/values.yaml 'deployment.image')
+          kind load docker-image $(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f1):helm-hook
+
+      - name: Run actual integration test
+        run: bash connaisseur/tests/integration/integration-test.sh
