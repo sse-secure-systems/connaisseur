@@ -13,11 +13,11 @@ from connaisseur.key_store import KeyStore
 from connaisseur.exceptions import BaseConnaisseurException
 
 policy_rule1 = {
-    "pattern": "docker.io/phbelitz/alice-image",
+    "pattern": "docker.io/securesystemsengineering/alice-image",
     "verify": True,
     "delegations": ["phbelitz", "chamsen"],
 }
-policy_rule2 = {"pattern": "docker.io/phbelitz/*:*", "verify": True}
+policy_rule2 = {"pattern": "docker.io/securesystemsengineering/*:*", "verify": True}
 targets1 = {
     "v1": {
         "hashes": {"sha256": "E4irx6ElMoNsOoG9sAh0CbFSCPWuunqHrtz9VtY3wUU="},
@@ -31,7 +31,7 @@ targets1 = {
 
 req_delegations1 = ["targets/phbelitz", "targets/chamsen"]
 req_delegations2 = []
-req_delegations3 = ["targets/daugustin"]
+req_delegations3 = ["targets/someuserthatdidnotsign"]
 targets1 = [
     {
         "test": {
@@ -213,14 +213,14 @@ def test_is_notary_selfsigned(napi, slfsig: str, out: bool):
     "image, policy_rule, digest",
     [
         (
-            "phbelitz/alice-image:test",
+            "securesystemsengineering/alice-image:test",
             policy_rule1,
             "ac904c9b191d14faf54b7952f2650a4bb21c201bf34131388b851e8ce992a652",
         ),
         (
             (
                 (
-                    "phbelitz/alice-image@sha256:ac904c9b191d14faf54b7952f2650a4bb21"
+                    "securesystemsengineering/alice-image@sha256:ac904c9b191d14faf54b7952f2650a4bb21"
                     "c201bf34131388b851e8ce992a652"
                 )
             ),
@@ -228,12 +228,12 @@ def test_is_notary_selfsigned(napi, slfsig: str, out: bool):
             "ac904c9b191d14faf54b7952f2650a4bb21c201bf34131388b851e8ce992a652",
         ),
         (
-            "phbelitz/sample-image:sign",
+            "securesystemsengineering/sample-image:sign",
             policy_rule2,
             "a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
         ),
         (
-            "phbelitz/sample-image:v1",
+            "securesystemsengineering/sample-image:v1",
             policy_rule2,
             "799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
         ),
@@ -258,8 +258,8 @@ def test_get_trusted_digest_error():
 @pytest.mark.parametrize(
     "image, req_delegations, targets",
     [
-        ("phbelitz/alice-image", req_delegations1, targets1),
-        ("phbelitz/sample-image", req_delegations2, targets2),
+        ("securesystemsengineering/alice-image", req_delegations1, targets1),
+        ("securesystemsengineering/sample-image", req_delegations2, targets2),
     ],
 )
 def test_process_chain_of_trust(
@@ -278,14 +278,14 @@ def test_process_chain_of_trust(
     "image, req_delegations, error",
     [
         (
-            "docker.io/phbelitz/sample-image",
+            "docker.io/securesystemsengineering/sample-image",
             req_delegations1,
             "could not find any delegations in trust data.",
         ),
         (
-            "phbelitz/alice-image",
+            "securesystemsengineering/alice-image",
             req_delegations3,
-            "could not find delegation roles ['targets/daugustin'] in trust data.",
+            "could not find delegation roles ['targets/someuserthatdidnotsign'] in trust data.",
         ),
     ],
 )

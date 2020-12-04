@@ -27,7 +27,7 @@
     "spec": {
         "containers": [
             {
-                "image": "phbelitz/sample-san-sama:hai",
+                "image": "securesystemsengineering/sample-san-sama:hai",
                 "imagePullPolicy": "Always",
                 "name": "test-connaisseur",
                 "ports": [
@@ -112,8 +112,8 @@
         "containerStatuses": [
             {
                 "containerID": "docker://698e8c5c83ac06e99d2cb8565e49585de7611fa2bff4c7b201330ea5c82f89b0",
-                "image": "phbelitz/sample-san-sama:hai",
-                "imageID": "docker-pullable://phbelitz/sample-san-sama@sha256:9191919ca86a88f0d42ce2eada3c7c545b92be5ee7fb1f23a561e814dc78b8c2",
+                "image": "securesystemsengineering/sample-san-sama:hai",
+                "imageID": "docker-pullable://securesystemsengineering/sample-san-sama@sha256:9191919ca86a88f0d42ce2eada3c7c545b92be5ee7fb1f23a561e814dc78b8c2",
                 "lastState": {},
                 "name": "test-connaisseur",
                 "ready": true,

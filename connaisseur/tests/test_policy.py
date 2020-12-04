@@ -3,9 +3,9 @@ import connaisseur.policy
 from connaisseur.image import Image
 from connaisseur.exceptions import BaseConnaisseurException
 
-match_image_tag = "docker.io/phbelitz/sample:v1"
+match_image_tag = "docker.io/securesystemsengineering/sample:v1"
 match_image_digest = (
-    "docker.io/phbelitz/sample@sha256:"
+    "docker.io/securesystemsengineering/sample@sha256:"
     "1388abc7a12532836c3a81bdb0087409b15208f5aeba7a87aedcfd56d637c145"
 )
 policy = {
@@ -15,21 +15,24 @@ policy = {
         {"pattern": "k8s.gcr.io/*:*", "verify": False},
         {"pattern": "gcr.io/*:*", "verify": False},
         {
-            "pattern": "docker.io/phbelitz/*:*",
+            "pattern": "docker.io/securesystemsengineering/*:*",
             "verify": True,
-            "delegations": ["daugustin"],
+            "delegations": ["someuserthatdidnotsign"],
         },
         {
-            "pattern": "docker.io/phbelitz/sample",
+            "pattern": "docker.io/securesystemsengineering/sample",
             "verify": True,
             "delegations": ["phbelitz", "chamsen"],
         },
-        {"pattern": "docker.io/phbelitz/sample:v4", "verify": False},
+        {"pattern": "docker.io/securesystemsengineering/sample:v4", "verify": False},
         {
             "pattern": "docker.io/securesystemsengineering/connaisseur:*",
             "verify": False,
         },
-        {"pattern": "docker.io/phbelitz/sample-san-sama", "verify": True},
+        {
+            "pattern": "docker.io/securesystemsengineering/sample-san-sama",
+            "verify": True,
+        },
     ]
 }
 
@@ -54,7 +57,7 @@ def mock_policy(monkeypatch):
         ("", "", 1, [2], [0]),
         ("*:*", match_image_tag, 1, [3], [0]),
         ("doc*/*", match_image_tag, 2, [4, 3], [3, 0]),
-        ("*/phb*/*:*", match_image_tag, 3, [1, 4, 3], [0, 3, 0]),
+        ("*/sec*/*:*", match_image_tag, 3, [1, 4, 3], [0, 3, 0]),
         ("*@sha256:*", match_image_digest, 1, [10], [0]),
     ],
 )
@@ -112,8 +115,11 @@ def test_image_pol(pol, mock_policy):
         ),
         ("k8s.gcr.io/path/image", {"pattern": "k8s.gcr.io/*:*", "verify": False}),
         (
-            "docker.io/phbelitz/sample:v4",
-            {"pattern": "docker.io/phbelitz/sample:v4", "verify": False},
+            "docker.io/securesystemsengineering/sample:v4",
+            {
+                "pattern": "docker.io/securesystemsengineering/sample:v4",
+                "verify": False,
+            },
         ),
     ],
 )

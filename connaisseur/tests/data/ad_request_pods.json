@@ -60,7 +60,7 @@
                 "containers": [
                     {
                         "name": "test-connaisseur",
-                        "image": "phbelitz/charlie-image@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff",
+                        "image": "securesystemsengineering/charlie-image@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff",
                         "ports": [
                             {
                                 "containerPort": 5000,

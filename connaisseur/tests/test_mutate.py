@@ -14,7 +14,10 @@ request_obj_pod = {
     "metadata": {},
     "spec": {
         "containers": [
-            {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"}
+            {
+                "name": "test-connaisseur",
+                "image": "securesystemsengineering/charlie-image:test",
+            }
         ]
     },
 }
@@ -24,12 +27,15 @@ request_obj_pod_with_init_container = {
     "metadata": {},
     "spec": {
         "containers": [
-            {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"}
+            {
+                "name": "test-connaisseur",
+                "image": "securesystemsengineering/charlie-image:test",
+            }
         ],
         "initContainers": [
             {
                 "name": "init-container",
-                "image": "docker.io/abreust/testing_conny:unsigned",
+                "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
             }
         ],
     },
@@ -47,7 +53,7 @@ request_obj_cronjob = {
                         "containers": [
                             {
                                 "name": "test-connaisseur",
-                                "image": "phbelitz/charlie-image:test",
+                                "image": "securesystemsengineering/charlie-image:test",
                             }
                         ]
                     }
@@ -69,13 +75,13 @@ request_obj_cronjob_with_init_container = {
                         "containers": [
                             {
                                 "name": "test-connaisseur",
-                                "image": "phbelitz/charlie-image:test",
+                                "image": "securesystemsengineering/charlie-image:test",
                             }
                         ],
                         "initContainers": [
                             {
                                 "name": "init-container",
-                                "image": "docker.io/abreust/testing_conny:unsigned",
+                                "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
                             }
                         ],
                     }
@@ -96,7 +102,7 @@ request_obj_deployment = {
                 "containers": [
                     {
                         "name": "test-connaisseur",
-                        "image": "phbelitz/charlie-image:test",
+                        "image": "securesystemsengineering/charlie-image:test",
                     }
                 ]
             },
@@ -114,17 +120,17 @@ request_obj_deployment_with_two_init_containers = {
                 "containers": [
                     {
                         "name": "test-connaisseur",
-                        "image": "phbelitz/charlie-image:test",
+                        "image": "securesystemsengineering/charlie-image:test",
                     }
                 ],
                 "initContainers": [
                     {
                         "name": "init-container",
-                        "image": "docker.io/abreust/testing_conny:unsigned",
+                        "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
                     },
                     {
                         "name": "init-container2",
-                        "image": "docker.io/abreust/testing_conny:signed",
+                        "image": "docker.io/securesystemsengineering/testing_conny:signed",
                     },
                 ],
             },
@@ -132,16 +138,31 @@ request_obj_deployment_with_two_init_containers = {
     },
 }
 request_obj_output = [
-    {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"}
+    {"name": "test-connaisseur", "image": "securesystemsengineering/charlie-image:test"}
 ]
 request_obj_output_with_init_container = [
-    {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"},
-    {"name": "init-container", "image": "docker.io/abreust/testing_conny:unsigned"},
+    {
+        "name": "test-connaisseur",
+        "image": "securesystemsengineering/charlie-image:test",
+    },
+    {
+        "name": "init-container",
+        "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
+    },
 ]
 request_obj_output_with_two_init_containers = [
-    {"name": "test-connaisseur", "image": "phbelitz/charlie-image:test"},
-    {"name": "init-container", "image": "docker.io/abreust/testing_conny:unsigned"},
-    {"name": "init-container2", "image": "docker.io/abreust/testing_conny:signed"},
+    {
+        "name": "test-connaisseur",
+        "image": "securesystemsengineering/charlie-image:test",
+    },
+    {
+        "name": "init-container",
+        "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
+    },
+    {
+        "name": "init-container2",
+        "image": "docker.io/securesystemsengineering/testing_conny:signed",
+    },
 ]
 patch_pod = {
     "op": "replace",
@@ -168,9 +189,9 @@ ad_review1 = {
         "patchType": "JSONPatch",
         "patch": (
             "W3sib3AiOiAicmVwbGFjZSIsICJwYXRoIjogIi9zcGVjL3RlbXBsYXRlL3NwZWMvY29udGFpbmVy"
-            "cy8wL2ltYWdlIiwgInZhbHVlIjogImRvY2tlci5pby9waGJlbGl0ei9hbGljZS1pbWFnZUBzaGEy"
-            "NTY6YWM5MDRjOWIxOTFkMTRmYWY1NGI3OTUyZjI2NTBhNGJiMjFjMjAxYmYzNDEzMTM4OGI4NTFl"
-            "OGNlOTkyYTY1MiJ9XQ=="
+            "cy8wL2ltYWdlIiwgInZhbHVlIjogImRvY2tlci5pby9zZWN1cmVzeXN0ZW1zZW5naW5lZXJpbmcv"
+            "YWxpY2UtaW1hZ2VAc2hhMjU2OmFjOTA0YzliMTkxZDE0ZmFmNTRiNzk1MmYyNjUwYTRiYjIxYzIw"
+            "MWJmMzQxMzEzODhiODUxZThjZTk5MmE2NTIifV0="
         ),
     },
 }
@@ -190,21 +211,24 @@ policy = {
         {"pattern": "k8s.gcr.io/*:*", "verify": False},
         {"pattern": "gcr.io/*:*", "verify": False},
         {
-            "pattern": "docker.io/phbelitz/*:*",
+            "pattern": "docker.io/securesystemsengineering/*:*",
             "verify": True,
-            "delegations": ["daugustin"],
+            "delegations": ["someuserthatdidnotsign"],
         },
         {
-            "pattern": "docker.io/phbelitz/alice-image",
+            "pattern": "docker.io/securesystemsengineering/alice-image",
             "verify": True,
             "delegations": ["phbelitz", "chamsen"],
         },
-        {"pattern": "docker.io/phbelitz/sample:v4", "verify": False},
+        {"pattern": "docker.io/securesystemsengineering/sample:v4", "verify": False},
         {
             "pattern": "docker.io/securesystemsengineering/connaisseur:*",
             "verify": False,
         },
-        {"pattern": "docker.io/phbelitz/sample-san-sama", "verify": True},
+        {
+            "pattern": "docker.io/securesystemsengineering/sample-san-sama",
+            "verify": True,
+        },
     ]
 }
 
@@ -354,7 +378,7 @@ def test_get_json_patch(mutate, object_kind: str, index: int, name: str, patch: 
         (
             get_ad_request("tests/data/ad_request_replicasets.json"),
             0,
-            ["phbelitz/sample-san-sama:hai"],
+            ["securesystemsengineering/sample-san-sama:hai"],
         )
     ],
 )

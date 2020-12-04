@@ -4,7 +4,7 @@
     "metadata": {
         "annotations": {
             "deployment.kubernetes.io/revision": "1",
-            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"test-connaisseur\"},\"name\":\"sample-san-sama-deployment\",\"namespace\":\"test-connaisseur\"},\"spec\":{\"replicas\":1,\"selector\":{\"matchLabels\":{\"app\":\"test-connaisseur\"}},\"template\":{\"metadata\":{\"labels\":{\"app\":\"test-connaisseur\"}},\"spec\":{\"containers\":[{\"image\":\"phbelitz/sample-san-sama:hai\",\"imagePullPolicy\":\"Always\",\"name\":\"test-connaisseur\",\"ports\":[{\"containerPort\":5000}]}]}}}}\n"
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"test-connaisseur\"},\"name\":\"sample-san-sama-deployment\",\"namespace\":\"test-connaisseur\"},\"spec\":{\"replicas\":1,\"selector\":{\"matchLabels\":{\"app\":\"test-connaisseur\"}},\"template\":{\"metadata\":{\"labels\":{\"app\":\"test-connaisseur\"}},\"spec\":{\"containers\":[{\"image\":\"securesystemsengineering/sample-san-sama:hai\",\"imagePullPolicy\":\"Always\",\"name\":\"test-connaisseur\",\"ports\":[{\"containerPort\":5000}]}]}}}}\n"
         },
         "creationTimestamp": "2020-04-16T08:50:11Z",
         "generation": 1,
@@ -43,7 +43,7 @@
             "spec": {
                 "containers": [
                     {
-                        "image": "phbelitz/sample-san-sama:hai",
+                        "image": "securesystemsengineering/sample-san-sama:hai",
                         "imagePullPolicy": "Always",
                         "name": "test-connaisseur",
                         "ports": [
