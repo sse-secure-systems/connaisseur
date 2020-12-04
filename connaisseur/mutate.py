@@ -1,7 +1,7 @@
 import os
 import logging
 from connaisseur.image import Image
-from connaisseur.notary_api import get_trusted_digest
+from connaisseur.validate import get_trusted_digest
 from connaisseur.admission_review import get_admission_review
 from connaisseur.kube_api import request_kube_api
 from connaisseur.exceptions import BaseConnaisseurException, UnknownVersionError

@@ -1,7 +1,7 @@
 # configure connaisseur deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v1.4.0
+  image: securesystemsengineering/connaisseur:v1.4.1
   imagePullPolicy: Always
   resources: {}
   # limits:
