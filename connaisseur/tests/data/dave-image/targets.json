@@ -1,0 +1,73 @@
+{
+    "signed": {
+        "_type": "Targets",
+        "delegations": {
+            "keys": {
+                "5957cfccd680731c1f49cf97034d3959ab962fb5bf6e90478026281258149909": {
+                    "keytype": "ecdsa",
+                    "keyval": {
+                        "private": null,
+                        "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtFwBbHgCmYO+1KhYOmoHy3jsTBwmLJFBIk7UEqS55M92F7IKklGfPUcFSJWTktwHF42CdVEBrXroIBaetrVYyA=="
+                    }
+                },
+                "df668d99231f8dd36672252f44169bcfa6d238a50ccd6df89ae8f2cef99a8897": {
+                    "keytype": "ecdsa",
+                    "keyval": {
+                        "private": null,
+                        "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEJIClt+jsCxq5bPyy8pYLUFs/BOXpQtIWRZ/p0v7vNQeozZBNoqzEKintTM62Z71gYdgmwbzHFgK42zoiQNJmBA=="
+                    }
+                }
+            },
+            "roles": [
+                {
+                    "keyids": [
+                        "5957cfccd680731c1f49cf97034d3959ab962fb5bf6e90478026281258149909"
+                    ],
+                    "name": "targets/del1",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                },
+                {
+                    "keyids": [
+                        "5957cfccd680731c1f49cf97034d3959ab962fb5bf6e90478026281258149909",
+                        "df668d99231f8dd36672252f44169bcfa6d238a50ccd6df89ae8f2cef99a8897"
+                    ],
+                    "name": "targets/releases",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                },
+                {
+                    "keyids": [
+                        "df668d99231f8dd36672252f44169bcfa6d238a50ccd6df89ae8f2cef99a8897"
+                    ],
+                    "name": "targets/del2",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                }
+            ]
+        },
+        "expires": "2023-11-13T15:58:26.772857185+01:00",
+        "targets": {
+            "test": {
+                "hashes": {
+                    "sha256": "TgYbzUu1pMskoZbfWdcj2RF0HVUg+J4034p5LVa97j4="
+                },
+                "length": 528
+            }
+        },
+        "version": 4
+    },
+    "signatures": [
+        {
+            "keyid": "1b899f3b88832cf11552edcedb4f1d98404900624a72dc5d52dcf087054d322f",
+            "method": "ecdsa",
+            "sig": "3mkXNTorWEPXkYoPKyN8VcGwQ3LkL4Ob0ciSF2ZmU1FYf7sltj9L+Qr4aZuscsnK0u5Kl5dYKrpuj+qfIUBc0w=="
+        }
+    ]
+}

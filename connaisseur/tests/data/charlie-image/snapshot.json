@@ -1,0 +1,44 @@
+{
+    "signed": {
+        "_type": "Snapshot",
+        "expires": "2023-11-13T14:33:03.559395872Z",
+        "meta": {
+            "root": {
+                "hashes": {
+                    "sha256": "kJk/YNB/g8l1Bnd8TPE6uiWItE90nbqFwfwg1FYbKoA=",
+                    "sha512": "Xi59nWgJKTkitFpykz53WJ6N3ZTUfmkcrJauh6u5lwdD1aEJA56dv3Y00/OMA48shlTmxsYZpjXMk3L5eitnjA=="
+                },
+                "length": 2417
+            },
+            "targets": {
+                "hashes": {
+                    "sha256": "9/hpBlIfxpdhisnmPnjpFRW4mDmW8HvLfAiV4zcLBpc=",
+                    "sha512": "v0s1WuiwKaUzR90r4IocfSuanN0OFzdS5ND9bCWUTj4AS7u58/4D00rMf3OCw78OWrBzxXYokV9LtLB+6+30ig=="
+                },
+                "length": 943
+            },
+            "targets/del1": {
+                "hashes": {
+                    "sha256": "9lkZXJRzsb+9DUnKononxLrkJZVutCtZoceqyue0SIo=",
+                    "sha512": "WsCMQJOD3q6AXOnCCQcFj1XswTIWkMHKlD/7a5PnJBw3GHY/8nzM4+peGp6m/w3ABNNQIPMn02/m4qtN4WK47A=="
+                },
+                "length": 434
+            },
+            "targets/releases": {
+                "hashes": {
+                    "sha256": "L/TM6BIdDUJcPGPyfefYJoAWTpNjjaZvZqW5T5EHa9g=",
+                    "sha512": "NRekswr1gyOKUAqGJTi/fH79Hwkm/np+oVCag0zR7C58Liue/GWb3fkCBGGk9uzsYuomLneBMrM74IuY4CIxUg=="
+                },
+                "length": 434
+            }
+        },
+        "version": 3
+    },
+    "signatures": [
+        {
+            "keyid": "3d35905515c7fd8e70aeba3837aaa7aabdc29e8bc8ce2aa8107c328d6ab9da85",
+            "method": "ecdsa",
+            "sig": "A2Fjs/KSUDR+1JHlaKPk0EFBdSvDhj5MuNZLqrpJNpyAAhhG1pgFnNeiF+Lsm0CxSExoAw+5vxYfaOKTT51Fbg=="
+        }
+    ]
+}

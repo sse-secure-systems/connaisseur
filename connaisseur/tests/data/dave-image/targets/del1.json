@@ -1,0 +1,26 @@
+{
+    "signed": {
+        "_type": "Targets",
+        "delegations": {
+            "keys": {},
+            "roles": []
+        },
+        "expires": "2023-11-13T15:35:17.483607251Z",
+        "targets": {
+            "test": {
+                "hashes": {
+                    "sha256": "K3tQZXLk87nedST/hCh9uI7SSwz5RIp7BK0GZOze9xs="
+                },
+                "length": 528
+            }
+        },
+        "version": 3
+    },
+    "signatures": [
+        {
+            "keyid": "5957cfccd680731c1f49cf97034d3959ab962fb5bf6e90478026281258149909",
+            "method": "ecdsa",
+            "sig": "Xq0Umc8tIkkfZkD/2GdSu+uYSF3iiVczzgwh8IZvRq/17WN//f1KWJPGYwnmwvl4Yt40B0Wq+PZfASUbkHhOeg=="
+        }
+    ]
+}
