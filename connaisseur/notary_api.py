@@ -185,7 +185,7 @@ def get_auth_token(url: str):
             "no token in authentication server response.", {"auth_url": url}
         )
 
-    token_re = r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$"
+    token_re = r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$"  # nosec
 
     if not re.match(token_re, token):
         raise InvalidFormatException(

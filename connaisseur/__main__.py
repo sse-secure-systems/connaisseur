@@ -12,9 +12,7 @@ if __name__ == "__main__":
         {
             "version": 1,
             "formatters": {
-                "default": {
-                    "format": "[%(asctime)s] %(levelname)s: %(message)s",
-                }
+                "default": {"format": "[%(asctime)s] %(levelname)s: %(message)s"}
             },
             "handlers": {
                 "wsgi": {
@@ -27,4 +25,9 @@ if __name__ == "__main__":
         }
     )
 
-    APP.run(host="0.0.0.0", ssl_context=("/etc/certs/tls.crt", "/etc/certs/tls.key"))
+    # the host needs to be set to `0.0.0.0` so it can be reachable from outside the
+    # container
+    APP.run(
+        host="0.0.0.0",  # nosec
+        ssl_context=("/etc/certs/tls.crt", "/etc/certs/tls.key"),
+    )
