@@ -182,7 +182,8 @@ The STRIDE threat model has been used as a reference for threat modeling. Each o
 
 ## Additional Information
 
-Also checkout our [Medium article](https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce), giving a short introduction to Connaisseur and a demo!
+- An introduction to Connaisseur is available in our [Medium article](https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce)
+- A recording on "Integrity of Docker images" diving into supply chain security, *The Update Framework*, *Notary*, *Docker Content Trust* and Connaisseur including a live demo is available on [YouTube](https://youtu.be/M3KAiBXhsPQ)
 
 ## Contributing
 We hope to steer development of Connaisseur from demand of the community and are excited about direct contributions to improve the tool! Please refer to our [contributing guide](CONTRIBUTING.md) to learn how to contribute to Connaisseur.
