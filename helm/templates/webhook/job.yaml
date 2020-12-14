@@ -25,7 +25,7 @@ spec:
       serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
       containers:
         - name: {{ .Chart.Name }}-install-webhook
-          image: "securesystemsengineering/connaisseur:helm-hook"
+          image: {{ .Values.deployment.helmHookImage }}
           imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
           command:
             - ash
@@ -71,7 +71,7 @@ spec:
       serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
       containers:
         - name: {{ .Chart.Name }}-delete-webhook
-          image: "securesystemsengineering/connaisseur:helm-hook"
+          image: {{ .Values.deployment.helmHookImage }}
           imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
           command:
             - ash
@@ -110,7 +110,7 @@ spec:
       serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
       containers:
         - name: {{ .Chart.Name }}-upgrade-webhook
-          image: "securesystemsengineering/connaisseur:helm-hook"
+          image: {{ .Values.deployment.helmHookImage }}
           imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
           command:
             - ash

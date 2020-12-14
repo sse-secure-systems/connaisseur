@@ -30,5 +30,5 @@
           verify: false
         - pattern: "docker.io/securesystemsengineering/connaisseur:*"
           verify: true
-        - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook"
+        - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
           verify: false

@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir images
           docker save $(yq r helm/values.yaml 'deployment.image') -o images/${GITHUB_SHA}_image.tar
-          docker save $(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f1):helm-hook -o images/${GITHUB_SHA}_hook.tar
+          docker save $(yq r helm/values.yaml 'deployment.helmHookImage') -o images/${GITHUB_SHA}_hook.tar
       - uses: actions/upload-artifact@v2
         with:
           name: images
@@ -184,6 +184,7 @@ jobs:
       - name: Add images to KinD
         run: |
           kind load docker-image $(yq r helm/values.yaml 'deployment.image')
-          kind load docker-image $(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f1):helm-hook
+          kind load docker-image $(yq r helm/values.yaml 'deployment.helmHookImage')
+
       - name: Run actual integration test
         run: bash connaisseur/tests/integration/integration-test.sh

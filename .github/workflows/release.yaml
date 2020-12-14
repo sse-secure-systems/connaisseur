@@ -34,7 +34,7 @@ jobs:
       - name: Pull Connaisseur images
         run: |
           DOCKER_CONTENT_TRUST=1 docker pull $(yq r helm/values.yaml 'deployment.image')
-          DOCKER_CONTENT_TRUST=1 docker pull $(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f1):helm-hook
+          DOCKER_CONTENT_TRUST=1 docker pull $(yq r helm/values.yaml 'deployment.helmHookImage')
 
       - name: Create KinD cluster
         run: |
@@ -47,7 +47,7 @@ jobs:
       - name: Add images to KinD
         run: |
           kind load docker-image $(yq r helm/values.yaml 'deployment.image')
-          kind load docker-image $(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f1):helm-hook
+          kind load docker-image $(yq r helm/values.yaml 'deployment.helmHookImage')
 
       - name: Run actual integration test
         run: bash connaisseur/tests/integration/integration-test.sh

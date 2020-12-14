@@ -2,6 +2,7 @@
 deployment:
   replicasCount: 3
   image: securesystemsengineering/connaisseur:v1.4.4
+  helmHookImage: securesystemsengineering/connaisseur:helm-hook-v1.0
   imagePullPolicy: Always
   resources: {}
   # limits:

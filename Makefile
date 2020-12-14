@@ -1,6 +1,6 @@
 NAMESPACE = connaisseur
 IMAGE := $(shell yq r helm/values.yaml 'deployment.image')
-IMAGE_NAME := $(shell echo $(IMAGE) | cut -d ':' -f1)
+HELM_HOOK_IMAGE := $(shell yq r helm/values.yaml 'deployment.helmHookImage')
 
 .PHONY: all docker certs install unistall upgrade annihilate
 
@@ -8,7 +8,7 @@ all: docker install
 
 docker:
 	docker build -f docker/Dockerfile -t $(IMAGE) .
-	docker build -f docker/Dockerfile.hook -t $(IMAGE_NAME):helm-hook .
+	docker build -f docker/Dockerfile.hook -t $(HELM_HOOK_IMAGE) .
 
 certs:
 	bash helm/certs/gen_certs.sh
