@@ -75,7 +75,7 @@
                                     },
                                     "name": {
                                         "type": "string",
-                                        "pattern": "^targets\/\\w*$"
+                                        "pattern": "^targets/([a-z\\d][a-z\\d_-]*)+$"
                                     },
                                     "paths": {
                                         "type": "array",

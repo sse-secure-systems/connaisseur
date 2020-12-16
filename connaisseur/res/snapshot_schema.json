@@ -20,7 +20,7 @@
                 "meta": {
                     "type": "object",
                     "patternProperties": {
-                        "^(root|targets(\/\\w*)?)$": {
+                        "^(root|targets(/([a-z\\d][a-z\\d_-]*))?)$": {
                             "type": "object",
                             "properties": {
                                 "hashes": {

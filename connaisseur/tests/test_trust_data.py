@@ -330,6 +330,8 @@ def test_validate_schema_error(td, mock_schema_path, trustdata: dict, role: str)
         (trust_data("tests/data/sample_timestamp.json"), "timestamp"),
         (trust_data("tests/data/sample3_targets.json"), "targets"),
         (trust_data("tests/data/sample4_targets.json"), "targets"),
+        (trust_data("tests/data/sample7_targets.json"), "targets"),
+        (trust_data("tests/data/sample7_snapshot.json"), "snapshot"),
     ],
 )
 def test_validate_schema(td, mock_schema_path, trustdata: dict, role: str):
