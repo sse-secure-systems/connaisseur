@@ -2,8 +2,7 @@ name: release
 
 on:
   push:
-    tags: "*"
-    branches: master
+    tags: "v*"
 
 jobs:
   version-match:
@@ -14,10 +13,14 @@ jobs:
         run: sudo snap install yq
       - name: Ensure version equality
         run: |
-          if [[ "$(echo $GITHUB_REF | sed s+refs/tags/++)" == "" ]] \
-          || [[ "$(echo $GITHUB_REF | sed s+refs/tags/++)" != "$(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f2)" ]]
-            then exit 1
-          fi
+          IMAGE_TAG=$(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f2)
+          for COMMIT_TAG in $(git tag --points-at $(git rev-parse HEAD)); do
+            if [[ "$IMAGE_TAG" == "$COMMIT_TAG" ]]; then
+              exit 0
+            fi
+          done
+          echo "Tag '$IMAGE_TAG' is not within tags of commit: $(git tag --points-at $(git rev-parse HEAD))"
+          exit 1
 
   integration-test:
     runs-on: ubuntu-latest
