@@ -6,9 +6,9 @@ metadata:
 spec:
   containers:
   - name: valid_container
-    image: connytest/testimage:signed
+    image: securesystemsengineering/testimage:signed
     command: ['sh', '-c', 'echo The app is running! && sleep 3600']
   initContainers:
   - name: unsigned_init_container
-    image: connytest/testimage:unsigned
+    image: securesystemsengineering/testimage:unsigned
     command: ['sh', '-c', 'sleep 5']

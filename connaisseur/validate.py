@@ -75,7 +75,7 @@ def process_chain_of_trust(
     potentially 'targets/releases' are requested in this order and afterwards
     validated, also according to the `policy_rule`.
 
-    Returns the the signed image targets, which contain the digests.
+    Returns the signed image targets, which contain the digests.
 
     Raises `NotFoundExceptions` should no required delegetions be present in
     the trust data, or no image targets be found.
@@ -99,9 +99,9 @@ def process_chain_of_trust(
             )
 
     # validate all trust data's signatures, expiry dates and hashes.
-    # when delegation are added to the repository, but weren't yet used for signing, the
+    # when delegations are added to the repository, but weren't yet used for signing, the
     # delegation files don't exist yet and are `None`. in this case they can't be
-    # validated and must be skipped.
+    # validated and must be skipped
     for role in trust_data:
         if trust_data[role] is not None:
             trust_data[role].validate(key_store)

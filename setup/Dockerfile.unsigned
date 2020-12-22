@@ -1,0 +1,3 @@
+FROM python:3.7-alpine
+RUN echo "echo 'Hello World of untrusted images D:  (will sleep for forever)'; sleep infinity;" >> hello.sh
+CMD ["sh", "hello.sh"]

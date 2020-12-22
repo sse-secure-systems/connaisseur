@@ -178,7 +178,7 @@ Let's test if our configuration works. We need to prepare a signed and an unsign
 
 ```bash
 # Typically, IMAGE_PATH=<YOUR-REGISTRY>/<YOUR-REPOSITORY-NAME-/-DOCKER-HUB-ID>/<IMAGE-NAME>
-IMAGE_PATH=docker.io/connytest/testimage
+IMAGE_PATH=docker.io/securesystemsengineering/testimage
 ```
 
 We start with the signed image and use the `Dockerfile` in `connaisseur/setup` as sample:
@@ -201,12 +201,12 @@ DOCKER_CONTENT_TRUST=0 docker push ${IMAGE_PATH}:unsigned
 We can check if everything works via `docker trust inspect --pretty ${IMAGE_PATH}` and should get something like:
 
 ```bash
-Signatures for docker.io/connytest/testimage
+Signatures for docker.io/securesystemsengineering/testimage
 
 SIGNED TAG          DIGEST                                                             SIGNERS
 signed              0c5d7013f91c03a2e87c29439ecfd093527266d92bfb051cab2103b80791193a   (Repo Admin)
 
-Administrative keys for docker.io/connytest/testimage
+Administrative keys for docker.io/securesystemsengineering/testimage
 
   Repository Key:   130b5abbea417fea7e2a0acd2cc0a3a84f81d5b763ed82dcfaad8dceebac0b75
   Root Key:   6b35860633a0cf852670fd9b5c12ba068875f3804d6711feb16fcd74c723c816
@@ -233,13 +233,13 @@ kubectl run unsigned --image=${IMAGE_PATH}:unsigned
 You should see the deployment being rejected with an error similar to:
 
 ```bash
-Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/connytest/testimage:unsigned" in trust data.
+Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/securesystemsengineering/testimage:unsigned" in trust data.
 ```
 
 or if you pushed the unsigned image to another registry altogether:
 
 ```bash
-Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: no trust data for image "docker.io/connytest/testimage:unsigned".
+Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: no trust data for image "docker.io/securesystemsengineering/testimage:unsigned".
 ```
 
 > Note that while deployment of containers is blocked, Kubernetes will still create services or other resources you might specify in a `deployment.yaml` because those do not reference an image and are thus not denied by Connaisseur. You might have to clean up denied deployments.
