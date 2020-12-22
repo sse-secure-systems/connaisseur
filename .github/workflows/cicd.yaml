@@ -65,7 +65,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: python:slim
-    needs: [black,hadolint,pylint]
     steps:
       - uses: actions/checkout@v2
       - name: Install packages
@@ -81,7 +80,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: python:alpine
-    needs: [pytest]
     steps:
       - uses: actions/checkout@v2
       - name: Install bandit
@@ -101,7 +99,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: python:alpine
-    needs: [pytest]
     steps:
       - uses: actions/checkout@v2
       - name: Install packages
