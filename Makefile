@@ -1,6 +1,6 @@
 NAMESPACE = connaisseur
-IMAGE := $(shell yq r helm/values.yaml 'deployment.image')
-HELM_HOOK_IMAGE := $(shell yq r helm/values.yaml 'deployment.helmHookImage')
+IMAGE := $(shell yq e '.deployment.image' helm/values.yaml)
+HELM_HOOK_IMAGE := $(shell yq e '.deployment.helmHookImage' helm/values.yaml)
 
 .PHONY: all docker certs install unistall upgrade annihilate
 

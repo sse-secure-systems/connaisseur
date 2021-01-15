@@ -13,7 +13,7 @@ jobs:
         run: sudo snap install yq
       - name: Ensure version equality
         run: |
-          IMAGE_TAG=$(yq r helm/values.yaml 'deployment.image' | cut -d ':' -f2)
+          IMAGE_TAG=$(yq e '.deployment.image' helm/values.yaml| cut -d ':' -f2)
           for COMMIT_TAG in $(git tag --points-at $(git rev-parse HEAD)); do
             if [[ "$IMAGE_TAG" == "$COMMIT_TAG" ]]; then
               exit 0
@@ -36,8 +36,8 @@ jobs:
 
       - name: Pull Connaisseur images
         run: |
-          DOCKER_CONTENT_TRUST=1 docker pull $(yq r helm/values.yaml 'deployment.image')
-          DOCKER_CONTENT_TRUST=1 docker pull $(yq r helm/values.yaml 'deployment.helmHookImage')
+          DOCKER_CONTENT_TRUST=1 docker pull $(yq e '.deployment.image' helm/values.yaml)
+          DOCKER_CONTENT_TRUST=1 docker pull $(yq e '.deployment.helmHookImage' helm/values.yaml)
 
       - name: Create KinD cluster
         run: |
@@ -49,8 +49,8 @@ jobs:
 
       - name: Add images to KinD
         run: |
-          kind load docker-image $(yq r helm/values.yaml 'deployment.image')
-          kind load docker-image $(yq r helm/values.yaml 'deployment.helmHookImage')
+          kind load docker-image $(yq e '.deployment.image' helm/values.yaml)
+          kind load docker-image $(yq e '.deployment.helmHookImage' helm/values.yaml)
 
       - name: Run actual integration test
         run: bash connaisseur/tests/integration/integration-test.sh

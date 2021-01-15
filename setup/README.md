@@ -21,7 +21,7 @@ Two further specialized guides exist:
 
 ## Requirements
 
-We assume you have a running Kubernetes cluster already. Since this tutorial works with the CLI, we furthermore assume you have the `docker`, `git`, `helm`, `kubectl`, `make`, `openssl` and `yq` binaries installed and usable, i.e. having run `docker login` and having switched to the appropriate `kubectl` context.
+We assume you have a running Kubernetes cluster already. Since this tutorial works with the CLI, we furthermore assume you have the `docker`, `git`, `helm`, `kubectl`, `make`, `openssl` and `yq` (>= v4) binaries installed and usable, i.e. having run `docker login` and having switched to the appropriate `kubectl` context.
 
 > **MicroK8s**: DNS addon must be activated using `sudo microk8s enable dns`.
 
@@ -125,7 +125,7 @@ openssl ec -in root-priv.key -pubout -out root.pub
 - After entering your password, copy the public key to the `helm/values.yaml`: 
 
 ```bash
-yq write --inplace ${OLDPWD}/helm/values.yaml -- notary.rootPubKey "$(cat root.pub)"
+yq e '.notary.rootPubKey=$(cat root.pub)' -i "${OLDPWD}/helm/values.yaml"
 rm root-priv.key root.pub
 cd -
 ```

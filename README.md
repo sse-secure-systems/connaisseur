@@ -43,7 +43,7 @@ We provide two public sample images for testing. Setting the trust anchor of Con
 
 ![](img/connaisseur_demo.gif)
 
-Make sure `docker`, `git`, `helm`, `kubectl`, `make` and `yq` are installed. Your `kubectl` context should be set to your Kubernetes test cluster.
+Make sure `docker`, `git`, `helm`, `kubectl`, `make` and `yq` (>= v4) are installed. Your `kubectl` context should be set to your Kubernetes test cluster.
 
 > :warning: Do not start this on a cluster used for other purposes, as Connaisseur will block all deployments!
 
@@ -83,7 +83,8 @@ Connaisseur can be integrated into a multitude of different systems, with a few 
 1. **Requirements**: A few tools are needed in advance. You'll need `git` for getting the source code and `make` for a convenient setup. Since Connaisseur will be deployed as a container to a Kubernetes cluster, [docker](https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/), [helm](https://helm.sh/docs/intro/install/) and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) are required for building the image, generating a Deployment file and deploying it to the cluster. During the deployment, some certificates need to be created, which requires `openssl`. To install everything except docker, helm and kubectl, use
 
 ```bash
-sudo apt install git make openssl yq
+sudo apt install git make openssl -y
+sudo snap install yq
 ```
 
 2. **Getting the code**: Clone this repository to your favorite location.
