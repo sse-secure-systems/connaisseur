@@ -1,14 +1,16 @@
-import os
-import pytest
-from flask import Flask
 import json
-from connaisseur.image import Image
-from connaisseur.exceptions import NotFoundException
+
+import pytest
+import requests
+from requests.exceptions import HTTPError
+
 import connaisseur.flask_server as fs
-import connaisseur.policy as policy
 import connaisseur.kube_api as api
 import connaisseur.mutate as mutate
-from requests.exceptions import HTTPError
+import connaisseur.policy as policy
+from connaisseur.exceptions import AlertSendingError, ConfigurationError
+from connaisseur.exceptions import NotFoundException
+from connaisseur.image import Image
 
 
 @pytest.fixture
@@ -47,6 +49,14 @@ def mock_policy_verify(monkeypatch):
         self.policy = {"rules": [{"pattern": "*:*", "verify": True}]}
 
     monkeypatch.setattr(policy.ImagePolicy, "__init__", m__init__)
+
+
+@pytest.fixture
+def mock_env_vars(monkeypatch):
+    monkeypatch.setenv(
+        "HELM_HOOK_IMAGE", "securesystemsengineering/connaisseur:helm-hook"
+    )
+    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting")
 
 
 @pytest.fixture
@@ -99,6 +109,7 @@ def test_healthz():
 def test_readyz(
     mock_kube_request,
     mock_notary_health,
+    mock_env_vars,
     monkeypatch,
     sentinel_name,
     webhook,
@@ -114,13 +125,18 @@ def test_readyz(
 
 
 @pytest.mark.parametrize(
-    "name",
+    "ad_request_filename",
     [("ad_request_deployments"), ("ad_request_pods"), ("ad_request_replicasets")],
 )
-def test_mutate_no_verify(mock_mutate, mock_policy_no_verify, name):
+def test_mutate_no_verify(
+    mocker, mock_env_vars, mock_mutate, mock_policy_no_verify, ad_request_filename
+):
+    mock_send_alerts = mocker.patch(
+        "connaisseur.flask_server.send_alerts", return_value=None
+    )
     client = fs.APP.test_client()
 
-    mock_request_data = get_file_json(f"tests/data/{name}.json")
+    mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     response = client.post("/mutate", json=mock_request_data)
     assert response.status_code == 200
     assert response.is_json
@@ -128,10 +144,11 @@ def test_mutate_no_verify(mock_mutate, mock_policy_no_verify, name):
     assert admission_response["allowed"] == True
     assert admission_response["status"]["code"] == 202
     assert not "response" in admission_response["status"]
+    assert mock_send_alerts.has_calls([mocker.call(mock_request_data, admitted=True)])
 
 
 @pytest.mark.parametrize(
-    "name, api_version, allowed, code, message",
+    "ad_request_filename, api_version, allowed, code, message",
     [
         ("ad_request_pods", "v2", False, 403, "API version v2 unknown."),
         (
@@ -143,11 +160,23 @@ def test_mutate_no_verify(mock_mutate, mock_policy_no_verify, name):
         ),
     ],
 )
-def test_mutate_invalid(monkeypatch, name, api_version, allowed, code, message):
+def test_mutate_invalid(
+    monkeypatch,
+    mock_env_vars,
+    mocker,
+    ad_request_filename,
+    api_version,
+    allowed,
+    code,
+    message,
+):
     monkeypatch.setenv("DETECTION_MODE", "0")
+    mock_send_alerts = mocker.patch(
+        "connaisseur.flask_server.send_alerts", return_value=None
+    )
     client = fs.APP.test_client()
 
-    mock_request_data = get_file_json(f"tests/data/{name}.json")
+    mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     mock_request_data["apiVersion"] = api_version
     response = client.post("/mutate", json=mock_request_data)
     assert response.status_code == 200
@@ -156,10 +185,11 @@ def test_mutate_invalid(monkeypatch, name, api_version, allowed, code, message):
     assert admission_response["allowed"] == allowed
     assert admission_response["status"]["code"] == code
     assert admission_response["status"]["message"] == message
+    assert mock_send_alerts.has_calls([mocker.call(mock_request_data, admitted=True)])
 
 
 @pytest.mark.parametrize(
-    "name, allowed, image, detection",
+    "ad_request_filename, allowed, image, detection",
     [
         (
             "ad_request_pods",
@@ -194,19 +224,24 @@ def test_mutate_invalid(monkeypatch, name, api_version, allowed, code, message):
     ],
 )
 def test_mutate_verify(
+    mocker,
     mock_mutate,
     mock_policy_verify,
     mock_notary_allow_leet,
-    name,
+    mock_env_vars,
+    ad_request_filename,
     allowed,
     image,
     detection,
     monkeypatch,
 ):
     monkeypatch.setenv("DETECTION_MODE", detection)
+    mock_send_alerts = mocker.patch(
+        "connaisseur.flask_server.send_alerts", return_value=None
+    )
     client = fs.APP.test_client()
 
-    mock_request_data = get_file_json(f"tests/data/{name}.json")
+    mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     mock_request_data["request"]["object"]["spec"]["containers"][0]["image"] = image
     response = client.post("/mutate", json=mock_request_data)
     assert response.status_code == 200
@@ -219,6 +254,9 @@ def test_mutate_verify(
     if allowed:
         assert admission_response["status"]["code"] == 202
         assert not "message" in admission_response["status"]
+        assert mock_send_alerts.has_calls(
+            [mocker.call(mock_request_data, admitted=True)]
+        )
     else:
         assert admission_response["status"]["code"] == 403
         image = (
@@ -234,4 +272,70 @@ def test_mutate_verify(
                 image, detection_mode_string
             )
         )
+        assert mock_send_alerts.has_calls(
+            [mocker.call(mock_request_data, admitted=False)]
+        )
         assert admission_response["status"]["message"] == expected_message
+
+
+@pytest.mark.parametrize("ad_request_filename", [("ad_request_deployments")])
+def test_alert_sending_error_handler(
+    mocker,
+    requests_mock,
+    mock_mutate,
+    mock_policy_verify,
+    mock_env_vars,
+    monkeypatch,
+    ad_request_filename,
+):
+    monkeypatch.setenv("DETECTION_MODE", "0")
+
+    requests_mock.post(
+        "https://www.mocked_test_connaisseur_url.xyz",
+        status_code=401,
+    )
+    try:
+        mock_response = requests.post(
+            "https://www.mocked_test_connaisseur_url.xyz", {}, {}
+        )
+        mock_response.raise_for_status()
+    except HTTPError as err:
+        http_error = err
+
+    mock_send_alerts = mocker.patch(
+        "connaisseur.flask_server.send_alerts",
+        side_effect=AlertSendingError(http_error),
+    )
+    client = fs.APP.test_client()
+    mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
+    response = client.post("/mutate", json=mock_request_data)
+    assert mock_send_alerts.has_calls([mocker.call(mock_request_data, admitted=True)])
+    assert response.status_code == 500
+    assert (
+        response.get_data().decode()
+        == "401 Client Error: None for url: https://www.mocked_test_connaisseur_url.xyz/"
+    )
+
+
+@pytest.mark.parametrize("ad_request_filename", [("ad_request_deployments")])
+def test_configuration_error_handler(
+    mocker,
+    mock_mutate,
+    mock_policy_verify,
+    mock_env_vars,
+    monkeypatch,
+    ad_request_filename,
+):
+    monkeypatch.setenv("DETECTION_MODE", "0")
+    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting/misconfigured_config")
+
+    mock_send_alerts = mocker.patch(
+        "connaisseur.flask_server.send_alerts",
+        side_effect=ConfigurationError(Exception("This is misconfigured.")),
+    )
+    client = fs.APP.test_client()
+    mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
+    response = client.post("/mutate", json=mock_request_data)
+    assert mock_send_alerts.has_calls([mocker.call(mock_request_data, admitted=True)])
+    assert response.status_code == 500
+    assert response.get_data().decode() == "This is misconfigured."

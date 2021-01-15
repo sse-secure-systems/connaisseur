@@ -1,0 +1,16 @@
+{
+    "message": "{{ alert_message }}",
+    "alias": "{{ alert_message }} to deploy the images {{ images }}.",
+    "description":"{{ alert_message }} to deploy the following images:\n {{ images }} \n\n Please check the logs of the `{{ connaisseur_pod_id }}` for more details.",
+    "responders": [
+    ],
+    "visibleTo": [
+    ],
+    "actions": [
+    ],
+    "tags": [
+    ],
+    "details":{"pod":"{{ connaisseur_pod_id }}","cluster":"{{ cluster }}", "alert_created": "{{ timestamp }}", "request_id": "{{ request_id }}"},
+    "entity":"Connaisseur",
+    "priority":"P{{ priority }}"
+}

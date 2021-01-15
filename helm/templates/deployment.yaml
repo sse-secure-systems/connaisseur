@@ -48,6 +48,9 @@ spec:
             - name: {{ .Chart.Name }}-certs
               mountPath: /etc/certs
               readOnly: true
+            - name: {{ .Chart.Name }}-alertconfig
+              mountPath: {{ .Values.alerting.config_dir_path }}
+              readOnly: true
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-env
@@ -59,6 +62,11 @@ spec:
                 name: {{ .Chart.Name }}-secret-env
               {{- end }}
             {{- end }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
           securityContext:
@@ -91,3 +99,6 @@ spec:
         - name: {{ .Chart.Name }}-certs
           secret:
             secretName: {{ .Chart.Name }}-tls
+        - name: {{ .Chart.Name }}-alertconfig
+          configMap:
+            name: {{ .Chart.Name }}-alertconfig

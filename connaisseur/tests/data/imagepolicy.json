@@ -1,0 +1,67 @@
+{
+    "apiVersion": "connaisseur.policy/v1",
+    "kind": "ImagePolicy",
+    "metadata": {
+        "annotations": {
+            "meta.helm.sh/release-name": "connaisseur",
+            "meta.helm.sh/release-namespace": "connaisseur"
+        },
+        "creationTimestamp": "2020-12-02T08:24:41Z",
+        "generation": 1,
+        "labels": {
+            "app.kubernetes.io/instance": "connaisseur",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "connaisseur",
+            "helm.sh/chart": "connaisseur-0.1.0"
+        },
+        "managedFields": [
+            {
+                "apiVersion": "connaisseur.policy/v1",
+                "fieldsType": "FieldsV1",
+                "fieldsV1": {
+                    "f:metadata": {
+                        "f:annotations": {
+                            ".": {},
+                            "f:meta.helm.sh/release-name": {},
+                            "f:meta.helm.sh/release-namespace": {}
+                        },
+                        "f:labels": {
+                            ".": {},
+                            "f:app.kubernetes.io/instance": {},
+                            "f:app.kubernetes.io/managed-by": {},
+                            "f:app.kubernetes.io/name": {},
+                            "f:helm.sh/chart": {}
+                        }
+                    },
+                    "f:spec": {
+                        ".": {},
+                        "f:rules": {}
+                    }
+                },
+                "manager": "Go-http-client",
+                "operation": "Update",
+                "time": "2020-12-02T08:24:41Z"
+            }
+        ],
+        "name": "connaisseur-policy",
+        "resourceVersion": "26390",
+        "selfLink": "/apis/connaisseur.policy/v1/imagepolicies/connaisseur-policy",
+        "uid": "f0fb35c7-8d1b-4dc2-8bbc-9ae87ec91853"
+    },
+    "spec": {
+        "rules": [
+            {
+                "pattern": "*:*",
+                "verify": true
+            },
+            {
+                "pattern": "k8s.gcr.io/*:*",
+                "verify": false
+            },
+            {
+                "pattern": "docker.io/securesystemsengineering/connaisseur:*",
+                "verify": false
+            }
+        ]
+    }
+}

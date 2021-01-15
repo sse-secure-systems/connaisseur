@@ -1,0 +1,80 @@
+{
+    "admit_request": {
+        "message": "CONNAISSEUR admitted a request",
+        "templates": [
+            {
+                "custom_headers": [
+                    "Authorization: GenieKey 12345678-abcd-2222-3333-1234567890ef"
+                ],
+                "fail_if_alert_sending_fails": true,
+                "payload_fields": {
+                    "responders": [
+                        {
+                            "type": "user",
+                            "username": "testuser@testcompany.de"
+                        }
+                    ],
+                    "tags": [
+                        "deployed_an_image"
+                    ],
+                    "visibleTo": [
+                        {
+                            "type": "user",
+                            "username": "testuser@testcompany.de"
+                        }
+                    ]
+                },
+                "priority": 4,
+                "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                "template": "opsgenie"
+            },
+            {
+                "fail_if_alert_sending_fails": false,
+                "priority": 3,
+                "receiver_url": "https://hooks.slack.com/services/A0123456789/ABCDEFGHIJ/HFb3Gs7FFscjQNJYWHGY7GPV",
+                "template": "slack"
+            }
+        ]
+    },
+    "cluster_name": "minikube",
+    "reject_request": {
+        "message": "CONNAISSEUR rejected a request",
+        "templates": [
+            {
+                "custom_headers": [
+                    "Content-Language: de-DE"
+                ],
+                "fail_if_alert_sending_fails": false,
+                "priority": 3,
+                "receiver_url": "https://bots.keybase.io/webhookbot/IFP--tpV2wBxEP3ArYx4gVS_B-0",
+                "template": "keybase"
+            },
+            {
+                "custom_headers": [
+                    "Authorization: GenieKey 12345678-abcd-2222-3333-1234567890ef"
+                ],
+                "fail_if_alert_sending_fails": false,
+                "payload_fields": {
+                    "responders": [
+                        {
+                            "type": "user",
+                            "username": "testuser@testcompany.de"
+                        }
+                    ],
+                    "tags": [
+                        "image_rejected"
+                    ],
+                    "visibleTo": [
+                        {
+                            "type": "user",
+                            "username": "testuser@testcompany.de"
+                        }
+                    ]
+                },
+                "priority": 4,
+                "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                "template": "opsgenie"
+            }
+        ]
+    }
+}

@@ -3,11 +3,17 @@ import traceback
 import logging
 from flask import Flask, request, jsonify
 from requests.exceptions import HTTPError
-from connaisseur.exceptions import BaseConnaisseurException, UnknownVersionError
+from connaisseur.exceptions import (
+    BaseConnaisseurException,
+    UnknownVersionError,
+    AlertSendingError,
+    ConfigurationError,
+)
 from connaisseur.mutate import admit, validate
 from connaisseur.notary_api import health_check
 from connaisseur.admission_review import get_admission_review
 import connaisseur.kube_api as api
+from connaisseur.alert import call_alerting_on_request, send_alerts
 
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
 
@@ -18,17 +24,32 @@ sends its response back.
 """
 
 
+@APP.errorhandler(AlertSendingError)
+def handle_alert_sending_failure(err):
+    logging.error(err.message)
+    return (str(err.message), 500)
+
+
+@APP.errorhandler(ConfigurationError)
+def handle_alert_config_error(err):
+    logging.error(err.message)
+    return (str(err.message), 500)
+
+
 @APP.route("/mutate", methods=["POST"])
 def mutate():
     """
     Handles the '/mutate' path and accepts CREATE and UPDATE requests.
     Sends its response back, which either denies or allows the request.
     """
+
     admission_request = request.json
     try:
         validate(admission_request)
         response = admit(admission_request)
     except BaseConnaisseurException as err:
+        if call_alerting_on_request(admission_request, admitted=False):
+            send_alerts(admission_request, admitted=False)
         logging.error(str(err))
         return jsonify(
             get_admission_review(
@@ -39,6 +60,8 @@ def mutate():
             )
         )
     except UnknownVersionError as err:
+        if call_alerting_on_request(admission_request, admitted=False):
+            send_alerts(admission_request, admitted=False)
         logging.error(str(err))
         return jsonify(
             get_admission_review(
@@ -49,6 +72,8 @@ def mutate():
             )
         )
     except Exception:
+        if call_alerting_on_request(admission_request, admitted=False):
+            send_alerts(admission_request, admitted=False)
         logging.error(traceback.format_exc())
         return jsonify(
             get_admission_review(
@@ -58,6 +83,8 @@ def mutate():
                 detection_mode=DETECTION_MODE,
             )
         )
+    if call_alerting_on_request(admission_request, admitted=True):
+        send_alerts(admission_request, admitted=True)
     return jsonify(response)
 
 

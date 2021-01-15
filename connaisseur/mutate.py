@@ -24,7 +24,7 @@ def get_container_specs(request_object: dict):
     Returns the container specifications of the `request_object`, based on its
     type.
     """
-    object_kind = request_object["kind"]
+    object_kind = request_object.get("kind")
     if object_kind == "Pod":
         relevant_spec = request_object["spec"]
         init_containers = relevant_spec.get("initContainers", [])
@@ -46,6 +46,7 @@ def get_container_specs(request_object: dict):
         relevant_spec = request_object["spec"]["template"]["spec"]
         init_containers = relevant_spec.get("initContainers", [])
         return relevant_spec["containers"] + init_containers
+    return []
 
 
 def get_json_patch(object_kind: str, index: int, image_name: str):
