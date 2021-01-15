@@ -2,7 +2,7 @@ import base64
 from connaisseur.image import Image
 from connaisseur.key_store import KeyStore
 from connaisseur.util import normalize_delegation
-from connaisseur.notary_api import get_trust_data
+from connaisseur.notary_api import get_trust_data, get_delegation_trust_data
 from connaisseur.tuf_role import TUFRole
 from connaisseur.exceptions import (
     NotFoundException,
@@ -66,7 +66,9 @@ def get_trusted_digest(host: str, image: Image, policy_rule: dict):
     return digests.pop()
 
 
-def process_chain_of_trust(host: str, image: Image, req_delegations: list):
+def process_chain_of_trust(
+    host: str, image: Image, req_delegations: list
+):  # pylint: disable=too-many-branches
     """
     Processes the whole chain of trust, provided by the notary server (`host`)
     for any given `image`. The 'root', 'snapshot', 'timestamp', 'targets' and
@@ -92,11 +94,17 @@ def process_chain_of_trust(host: str, image: Image, req_delegations: list):
     # as well
     if trust_data["targets"].has_delegations():
         for delegation in trust_data["targets"].get_delegations():
-            trust_data[delegation] = get_trust_data(host, image, TUFRole(delegation))
+            trust_data[delegation] = get_delegation_trust_data(
+                host, image, TUFRole(delegation)
+            )
 
-    # validate all trust data's signatures, expiry dates and hashes
+    # validate all trust data's signatures, expiry dates and hashes.
+    # when delegation are added to the repository, but weren't yet used for signing, the
+    # delegation files don't exist yet and are `None`. in this case they can't be
+    # validated and must be skipped.
     for role in trust_data:
-        trust_data[role].validate(key_store)
+        if trust_data[role] is not None:
+            trust_data[role].validate(key_store)
 
     # validate needed delegations
     if req_delegations:
@@ -124,14 +132,29 @@ def process_chain_of_trust(host: str, image: Image, req_delegations: list):
     # required delegation JSON's. otherwise take the targets field of the targets JSON, as
     # long as no delegations are defined in the targets JSON. should there be delegations
     # defined in the targets JSON the targets field of the releases JSON will be used.
+    # unfortunately there is a case, where delegations could have been added to a
+    # repository, but no signatures were created using the delegations. in this special
+    # case, the releases JSON doesn't exist yet and the targets JSON must be used instead
     if req_delegations:
+        if not all(trust_data[target_role] for target_role in req_delegations):
+            tuf_roles = [
+                target_role
+                for target_role in req_delegations
+                if not trust_data[target_role]
+            ]
+            msg = f"no trust data for delegation roles {tuf_roles} for image {image}"
+            raise NotFoundException(msg, {"tuf_roles": tuf_roles})
+
         image_targets = [
             trust_data[target_role].signed.get("targets", {})
             for target_role in req_delegations
         ]
     else:
         targets_key = (
-            "targets/releases" if trust_data["targets"].has_delegations() else "targets"
+            "targets/releases"
+            if trust_data["targets"].has_delegations()
+            and trust_data["targets/releases"]
+            else "targets"
         )
         image_targets = [trust_data[targets_key].signed.get("targets", {})]
 

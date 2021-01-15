@@ -97,6 +97,17 @@ def get_trust_data(host: str, image: Image, role: TUFRole, token: str = None):
     return TrustData(data, role.role)
 
 
+def get_delegation_trust_data(
+    host: str, image: Image, role: TUFRole, token: str = None
+):
+    try:
+        return get_trust_data(host, image, role, token)
+    except Exception as ex:
+        if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
+            raise ex
+        return None
+
+
 def parse_auth(auth_header: str):
     """
     Generates an URL from the 'Www-authenticate' header, where a token can be
