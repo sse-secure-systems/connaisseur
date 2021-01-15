@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install yq
-        run: sudo snap install yq
+        run: sudo snap install yq --channel=v3/stable
       - name: Build images
         run: make docker
       - name: Save images
@@ -169,7 +169,7 @@ jobs:
           docker load -i ${GITHUB_SHA}_hook.tar
       - name: Install yq and bash
         run: |
-          sudo snap install yq
+          sudo snap install yq --channel=v3/stable
           sudo apt update
           sudo apt install bash -y
       - name: Create KinD cluster
