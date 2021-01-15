@@ -1,0 +1,15 @@
+{
+     "text": "Connaisseur Slack Alert Message",
+     "blocks": [
+         {
+             "type": "divider"
+         },
+         {
+             "type": "section",
+             "text": {
+                 "type": "mrkdwn",
+                 "text": "*{{ alert_message }}* \n\n_*Cluster*_:                           {{ cluster }}\n_*Request ID*_:                     {{ request_id }}\n_*Images*_:                           {{ images }}\n_*Connaisseur Pod ID*_:       {{ connaisseur_pod_id }}\n_*Created*_:                          {{ timestamp }}\n_*Severity*_:                          {{ priority }}\n\nCheck the logs of `{{ connaisseur_pod_id }}` for more details!"
+             }
+         }
+     ]
+}
