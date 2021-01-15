@@ -9,7 +9,7 @@ For this tutorial, we assume you have a working AKS cluster and an ACR with [ena
 
 Your AKS cluster [should be authenticated to pull images from your ACR](https://docs.microsoft.com/en-us/azure/aks/cluster-container-registry-integration) (you can also use pull secrets instead of integrating both components, in which case some commands of the general setup guide might need small adaptations). Your Azure Active Directory user will need the `AcrImageSigner` role assignment for the ACR, otherwise you will not be able to push signed images to it.
 
-Furthermore, we assume you have `az`, `docker`, `git`, `helm`, `kubectl`, `make` and `yq` installed and ready to use in your CLI, i.e. you executed `az acr login`, `az aks get-credentials` and `kubectl use-context` to login to the ACR and switch to the appropriate Kubernetes context.
+Furthermore, we assume you have `az`, `docker`, `git`, `helm`, `kubectl`, `make` and `yq` (>= v4) installed and ready to use in your CLI, i.e. you executed `az acr login`, `az aks get-credentials` and `kubectl use-context` to login to the ACR and switch to the appropriate Kubernetes context.
 
 > The tutorial was tested on a machine running Ubuntu 20.04, but since we're not doing much of anything client-side pretty much any other OS should work as well.
 
@@ -31,7 +31,7 @@ cd connaisseur
 First we want to tell Connaisseur that the notary it connects to is the ACR. Unfortunately, the notary API exposed by ACR is slightly different from other notaries, so Connaisseur needs to know in order to adapt. You can either manually set `notary.isAcr` to `true` in `helm/values.yaml` or use the shell one-liner below:
 
 ```bash
-yq write --inplace helm/values.yaml -- notary.isAcr true
+yq e '.notary.isAcr=true' -i helm/values.yaml
 ```
 
 The second specific change to be done when deploying Connaisseur in an environment with the ACR is to create a Service Principal (SP) that gives Connaisseur a username/password combination to retrieve an access token via BasicAuth. Below set `<ACR-NAME>` to your registry's name and choose `<SERVICE-PRINCIPLE-NAME>` as you like:

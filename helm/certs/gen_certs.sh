@@ -1,7 +1,7 @@
 set -euof pipefail
 
 SCRIPT_PATH=$(dirname $0)
-SERVICE_NAME=$(yq r $SCRIPT_PATH/../Chart.yaml name)
+SERVICE_NAME=$(yq e '.name' $SCRIPT_PATH/../Chart.yaml)
 
 cd $SCRIPT_PATH
 openssl genrsa -out tls.key 4096
