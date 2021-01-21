@@ -29,7 +29,7 @@ def get_trusted_digest(notary_config: Notary, image: Image, policy_rule: dict):
 
     if notary_config.is_cosign:
         # validate with cosign
-        digests = get_cosign_validated_digests(str(image), pubkey)
+        digests = get_cosign_validated_digests(str(image), pub_key)
     else:
         # prepend `targets/` to the required delegation roles, if not already present
         req_delegations = list(

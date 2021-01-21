@@ -1,22 +1,26 @@
 deployment:
   imagePullPolicy: Never
-notary:
+notaries:
+- name: dockerhub
   host: notary.docker.io
-  selfsigned: false
-  auth:
-    enabled: false
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-    qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-    -----END PUBLIC KEY-----
-  isCosign: true
+  pub_root_keys: 
+  - name: sse
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+      -----END PUBLIC KEY-----
+  is_cosign: True
 policy:
-  - pattern: "*:*"
-    verify: true
-  - pattern: "k8s.gcr.io/*:*"
-    verify: false
-  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-    verify: true
-  - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
-    verify: false
+- pattern: "*:*"
+  verify: true
+  notary: dockerhub
+  key: sse
+- pattern: "k8s.gcr.io/*:*"
+  verify: false
+- pattern: "docker.io/securesystemsengineering/connaisseur:*"
+  verify: true
+  notary: dockerhub
+  key: sse
+- pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
+  verify: false

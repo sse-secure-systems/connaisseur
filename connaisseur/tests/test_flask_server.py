@@ -4,13 +4,32 @@ import pytest
 import requests
 from requests.exceptions import HTTPError
 
-import connaisseur.flask_server as fs
 import connaisseur.kube_api as api
 import connaisseur.mutate as mutate
 import connaisseur.policy as policy
 from connaisseur.exceptions import AlertSendingError, ConfigurationError
 from connaisseur.exceptions import NotFoundException
 from connaisseur.image import Image
+from connaisseur.config import Config, Notary
+
+sample_config = [
+    {
+        "name": "dockerhub",
+        "host": "notary.docker.io",
+        "pub_root_keys": [
+            {
+                "name": "alice",
+                "key": (
+                    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
+                    "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
+                ),
+            }
+        ],
+        "is_acr": False,
+        "auth": {"USER": "bert", "PASS": "bertig"},
+        "selfsigned_cert": None,
+    }
+]
 
 with open("tests/data/alerting/alertconfig_schema.json", "r") as readfile:
     alertconfig_schema = json.load(readfile)
@@ -34,16 +53,6 @@ def mock_kube_request(monkeypatch):
             raise HTTPError
 
     monkeypatch.setattr(api, "request_kube_api", m_request)
-
-
-@pytest.fixture
-def mock_notary_health(monkeypatch):
-    def m_health_check(path: str):
-        if path == "healthy":
-            return True
-        return False
-
-    monkeypatch.setattr(fs, "health_check", m_health_check)
 
 
 @pytest.fixture
@@ -104,43 +113,83 @@ def mock_mutate(monkeypatch):
     monkeypatch.setattr(mutate, "get_parent_images", m_get_parent_images)
 
 
+@pytest.fixture
+def mock_notary(monkeypatch):
+    def notary_init(self, name: str, host: str, pub_root_keys: list, **kwargs):
+        self.name = name
+        self.host = host
+        self.pub_root_keys = pub_root_keys
+        self.is_acr = kwargs.get("is_acr")
+        self.auth = kwargs.get("auth")
+        self.selfsigned_cert = kwargs.get("selfsigned_cert")
+
+    def notary_get_key(self, key_name: str = None):
+        if key_name:
+            key = next(
+                key_["key"] for key_ in self.pub_root_keys if key_["name"] == key_name
+            )
+        else:
+            key = self.pub_root_keys[0]["key"]
+        return key
+
+    def auth(self):
+        return self.auth
+
+    def selfsigned_cert(self):
+        return self.selfsigned_cert
+
+    monkeypatch.setattr(Notary, "__init__", notary_init)
+    monkeypatch.setattr(Notary, "get_key", notary_get_key)
+    monkeypatch.setattr(Notary, "auth", auth)
+    monkeypatch.setattr(Notary, "selfsigned_cert", selfsigned_cert)
+
+
+@pytest.fixture
+def mock_config(mock_notary, monkeypatch):
+    def config_init(self):
+        self.notaries = [Notary(**notary) for notary in sample_config]
+
+    monkeypatch.setattr(Config, "__init__", config_init)
+
+    import connaisseur.flask_server as fs
+
+    pytest.fs = fs
+
+
 def get_file_json(path: str):
     with open(path, "r") as file:
         return json.load(file)
 
 
-def test_healthz():
-    assert fs.healthz() == ("", 200)
+def test_healthz(mock_config):
+    assert pytest.fs.healthz() == ("", 200)
 
 
 @pytest.mark.parametrize(
-    "sentinel_name, webhook, notary_health, status",
+    "sentinel_name, webhook, status",
     [
-        ("sample_sentinel_run", "", "healthy", 200),
-        ("sample_sentinel_fin", "", "healthy", 500),
-        ("sample_sentinel_err", "", "healthy", 500),
-        ("", "", "", 500),
-        ("sample_sentinel_fin", "sample_webhook", "healthy", 200),
-        ("sample_sentinel_fin", "", "healthy", 500),
-        ("sample_sentinel_fin", "sample_webhook", "unhealthy", 500),
+        ("sample_sentinel_run", "", 200),
+        ("sample_sentinel_fin", "", 500),
+        ("sample_sentinel_err", "", 500),
+        ("", "", 500),
+        ("sample_sentinel_fin", "sample_webhook", 200),
+        ("sample_sentinel_fin", "", 500),
     ],
 )
 def test_readyz(
     mock_kube_request,
-    mock_notary_health,
     mock_env_vars,
+    mock_config,
     monkeypatch,
     sentinel_name,
     webhook,
-    notary_health,
     status,
 ):
     monkeypatch.setenv("CONNAISSEUR_NAMESPACE", "conny")
     monkeypatch.setenv("CONNAISSEUR_SENTINEL", sentinel_name)
     monkeypatch.setenv("CONNAISSEUR_WEBHOOK", webhook)
-    monkeypatch.setenv("NOTARY_SERVER", notary_health)
 
-    assert fs.readyz() == ("", status)
+    assert pytest.fs.readyz() == ("", status)
 
 
 @pytest.mark.parametrize(
@@ -148,10 +197,15 @@ def test_readyz(
     [("ad_request_deployments"), ("ad_request_pods"), ("ad_request_replicasets")],
 )
 def test_mutate_no_verify(
-    mocker, mock_env_vars, mock_mutate, mock_policy_no_verify, ad_request_filename
+    mocker,
+    mock_config,
+    mock_env_vars,
+    mock_mutate,
+    mock_policy_no_verify,
+    ad_request_filename,
 ):
 
-    client = fs.APP.test_client()
+    client = pytest.fs.APP.test_client()
     mocker.patch("connaisseur.flask_server.call_alerting_on_request", return_value=True)
     mock_send_alerts = mocker.patch(
         "connaisseur.flask_server.send_alerts", return_value=None
@@ -191,6 +245,7 @@ def test_mutate_no_verify(
 def test_mutate_invalid(
     monkeypatch,
     mock_env_vars,
+    mock_config,
     mocker,
     ad_request_filename,
     api_version,
@@ -203,7 +258,7 @@ def test_mutate_invalid(
     mock_send_alerts = mocker.patch(
         "connaisseur.flask_server.send_alerts", return_value=None
     )
-    client = fs.APP.test_client()
+    client = pytest.fs.APP.test_client()
 
     mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     mock_request_data["apiVersion"] = api_version
@@ -256,6 +311,7 @@ def test_mutate_invalid(
 )
 def test_mutate_verify(
     mocker,
+    mock_config,
     mock_mutate,
     mock_policy_verify,
     mock_notary_allow_leet,
@@ -271,7 +327,7 @@ def test_mutate_verify(
     mock_send_alerts = mocker.patch(
         "connaisseur.flask_server.send_alerts", return_value=None
     )
-    client = fs.APP.test_client()
+    client = pytest.fs.APP.test_client()
 
     mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     mock_request_data["request"]["object"]["spec"]["containers"][0]["image"] = image
@@ -314,6 +370,7 @@ def test_mutate_verify(
 def test_alert_sending_error_handler(
     mocker,
     requests_mock,
+    mock_config,
     mock_mutate,
     mock_policy_verify,
     mock_env_vars,
@@ -338,7 +395,7 @@ def test_alert_sending_error_handler(
         "connaisseur.flask_server.send_alerts",
         side_effect=AlertSendingError(http_error),
     )
-    client = fs.APP.test_client()
+    client = pytest.fs.APP.test_client()
     mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     response = client.post("/mutate", json=mock_request_data)
     mock_send_alerts.assert_has_calls([mocker.call(mock_request_data, admitted=True)])
@@ -355,6 +412,7 @@ def test_configuration_error_handler(
     mock_mutate,
     mock_policy_verify,
     mock_env_vars,
+    mock_config,
     monkeypatch,
     ad_request_filename,
 ):
@@ -367,7 +425,7 @@ def test_configuration_error_handler(
         "connaisseur.flask_server.call_alerting_on_request",
         side_effect=ConfigurationError(Exception("This is misconfigured.")),
     )
-    client = fs.APP.test_client()
+    client = pytest.fs.APP.test_client()
     mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     response = client.post("/mutate", json=mock_request_data)
     assert response.status_code == 500

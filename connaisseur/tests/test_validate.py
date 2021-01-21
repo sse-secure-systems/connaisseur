@@ -9,21 +9,32 @@ import connaisseur.validate as val
 from connaisseur.image import Image
 from connaisseur.key_store import KeyStore
 from connaisseur.exceptions import BaseConnaisseurException
+from connaisseur.config import Notary
+
 
 policy_rule1 = {
     "pattern": "docker.io/securesystemsengineering/alice-image",
     "verify": True,
     "delegations": ["phbelitz", "chamsen"],
+    "notary": "dockerhub",
+    "key": "alice",
 }
-policy_rule2 = {"pattern": "docker.io/securesystemsengineering/*:*", "verify": True}
+policy_rule2 = {
+    "pattern": "docker.io/securesystemsengineering/*:*",
+    "verify": True,
+    "notary": "dockerhub",
+    "key": "alice",
+}
 policy_rule3 = {
     "pattern": "docker.io/securesystemsengineering/*:*",
     "verify": True,
     "delegations": ["del1"],
+    "key": "charlie",
 }
 policy_rule4 = {
     "pattern": "docker.io/securesystemsengineering/*:*",
     "verify": True,
+    "key": "charlie",
     "delegations": ["del1", "del2"],
 }
 
@@ -96,10 +107,34 @@ targets6 = [
 cosign_trust_data = '{"Critical":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
 
 
-alt_root_pub = (
-    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtkQuBJ/wL1MEDy/6kgfSBls04MT1"
-    "aUWM7eZ19L2WPJfjt105PPieCM1CZybSZ2h3O4+E4hPz1X5RfmojpXKePg=="
-)
+pub_root_keys = [
+    {
+        "name": "alice",
+        "key": (
+            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
+            "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
+        ),
+    },
+    {
+        "name": "charlie",
+        "key": (
+            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtkQuBJ/wL1MEDy/6kgfSBls04MT1"
+            "aUWM7eZ19L2WPJfjt105PPieCM1CZybSZ2h3O4+E4hPz1X5RfmojpXKePg=="
+        ),
+    },
+    {"name": "cosign"},
+]
+
+sample_notary = {
+    "name": "dockerhub",
+    "host": "notary.docker.io",
+    "pub_root_keys": pub_root_keys,
+    "is_acr": False,
+    "hasAuth": True,
+    "auth": {"USER": "bert", "PASS": "bertig"},
+    "isSelfsigned": False,
+    "selfsigned_cert": None,
+}
 
 
 @pytest.fixture
@@ -180,23 +215,6 @@ def mock_request(monkeypatch):
 
 
 @pytest.fixture
-def mock_keystore(monkeypatch, root_pub: str = None):
-    def init(self):
-        self.keys = {
-            "root": os.environ.get(
-                "ROOT_PUB",
-                (
-                    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
-                    "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
-                ),
-            )
-        }
-        self.hashes = {}
-
-    monkeypatch.setattr(KeyStore, "__init__", init)
-
-
-@pytest.fixture
 def mock_trust_data(monkeypatch):
     def validate_expiry(self):
         pass
@@ -215,6 +233,37 @@ def mock_trust_data(monkeypatch):
     connaisseur.trust_data.TrustData.schema_path = "res/{}_schema.json"
 
 
+@pytest.fixture
+def mock_notary(monkeypatch):
+    def notary_init(self, name: str, host: str, pub_root_keys: list, **kwargs):
+        self.name = name
+        self.host = host
+        self.pub_root_keys = pub_root_keys
+        self.is_acr = kwargs.get("is_acr")
+        self.auth = kwargs.get("auth")
+        self.selfsigned_cert = kwargs.get("selfsigned_cert")
+
+    def notary_get_key(self, key_name: str = None):
+        if key_name:
+            key = next(
+                key_["key"] for key_ in self.pub_root_keys if key_["name"] == key_name
+            )
+        else:
+            key = self.pub_root_keys[0]["key"]
+        return key
+
+    def auth(self):
+        return self.auth
+
+    def selfsigned_cert(self):
+        return self.selfsigned_cert
+
+    monkeypatch.setattr(Notary, "__init__", notary_init)
+    monkeypatch.setattr(Notary, "get_key", notary_get_key)
+    monkeypatch.setattr(Notary, "auth", auth)
+    monkeypatch.setattr(Notary, "selfsigned_cert", selfsigned_cert)
+
+
 def trust_data(path: str):
     with open(path, "r") as file:
         return json.load(file)
@@ -231,7 +280,8 @@ def trust_data(path: str):
         (
             (
                 (
-                    "securesystemsengineering/alice-image@sha256:ac904c9b191d14faf54b7952f2650a4bb21"
+                    "securesystemsengineering/alice-image@sha256"
+                    ":ac904c9b191d14faf54b7952f2650a4bb21"
                     "c201bf34131388b851e8ce992a652"
                 )
             ),
@@ -252,13 +302,14 @@ def trust_data(path: str):
 )
 def test_get_trusted_digest(
     mock_trust_data,
-    mock_keystore,
     mock_request,
+    mock_notary,
     image: str,
     policy_rule: dict,
     digest: str,
 ):
-    assert val.get_trusted_digest("host", Image(image), policy_rule) == digest
+    notary = Notary(**sample_notary)
+    assert val.get_trusted_digest(notary, Image(image), policy_rule) == digest
 
 
 @pytest.mark.parametrize(
@@ -272,18 +323,20 @@ def test_get_trusted_digest(
     ],
 )
 def test_get_trusted_digest_cosigned(
-    fake_process, monkeypatch, image: str, policy_rule: dict, digest: str
+    fake_process, mock_notary, image: str, policy_rule: dict, digest: str
 ):
+    notary = Notary(**sample_notary)
+    notary.host = "host"
+    notary.is_cosign = True
     fake_process.register_subprocess(
         ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image],
         stdout=bytes(cosign_trust_data, "utf-8"),
     )
-    monkeypatch.setenv("IS_COSIGN", "1")
-    assert val.get_trusted_digest("host", Image(image), policy_rule) == digest
+    assert val.get_trusted_digest(notary, Image(image), policy_rule) == digest
 
 
 @pytest.mark.parametrize(
-    "image, policy, error, root_pub",
+    "image, policy, error",
     [
         (
             "securesystemsengineering/charlie-image:test2",
@@ -292,118 +345,134 @@ def test_get_trusted_digest_cosigned(
                 "not all required delegations have trust data for image "
                 '"docker.io/securesystemsengineering/charlie-image:test2".'
             ),
-            alt_root_pub,
         ),
         (
             "securesystmesengineering/dave-image:test",
             policy_rule4,
             "found multiple signed digests for the same image.",
-            alt_root_pub,
         ),
     ],
 )
 def test_get_trusted_digest_error(
     monkeypatch,
     mock_trust_data,
-    mock_keystore,
+    mock_notary,
     mock_request,
     image: str,
     policy: dict,
     error: str,
-    root_pub: str,
 ):
-    if root_pub:
-        monkeypatch.setenv("ROOT_PUB", root_pub)
+    notary = Notary(**sample_notary)
     with pytest.raises(BaseConnaisseurException) as err:
-        val.get_trusted_digest("host", Image(image), policy)
+        val.get_trusted_digest(notary, Image(image), policy)
     assert error in str(err.value)
 
 
 @pytest.mark.parametrize(
-    "image, req_delegations, targets, root_pub",
+    "image, req_delegations, root_key, targets",
     [
-        ("securesystemsengineering/alice-image", req_delegations1, targets1, None),
-        ("securesystemsengineering/sample-image", req_delegations2, targets2, None),
+        (
+            "securesystemsengineering/alice-image",
+            req_delegations1,
+            pub_root_keys[0]["key"],
+            targets1,
+        ),
+        (
+            "securesystemsengineering/sample-image",
+            req_delegations2,
+            pub_root_keys[0]["key"],
+            targets2,
+        ),
         (
             "securesystemsengineering/bob-image",
             req_delegations2,
+            pub_root_keys[1]["key"],
             targets3,
-            alt_root_pub,
         ),
         (
             "securesystemsengineering/charlie-image",
             req_delegations2,
+            pub_root_keys[1]["key"],
             targets4,
-            alt_root_pub,
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations2,
+            pub_root_keys[1]["key"],
             targets5,
-            alt_root_pub,
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations4,
+            pub_root_keys[1]["key"],
             targets5,
-            alt_root_pub,
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations5,
+            pub_root_keys[1]["key"],
             targets6,
-            alt_root_pub,
         ),
     ],
 )
 def test_process_chain_of_trust(
     monkeypatch,
-    mock_keystore,
+    mock_notary,
     mock_request,
     mock_trust_data,
     image: str,
     req_delegations: dict,
+    root_key: str,
     targets: list,
-    root_pub: str,
 ):
-    if root_pub:
-        monkeypatch.setenv("ROOT_PUB", root_pub)
-    assert val.process_chain_of_trust("host", Image(image), req_delegations) == targets
+    notary = Notary(**sample_notary)
+    assert (
+        val.process_chain_of_trust(notary, Image(image), req_delegations, root_key)
+        == targets
+    )
 
 
 @pytest.mark.parametrize(
-    "image, req_delegations, error",
+    "image, req_delegations, root_key, error",
     [
         (
             # no delegations
             "docker.io/securesystemsengineering/sample-image",
             req_delegations1,
+            pub_root_keys[0]["key"],
             "could not find any delegations in trust data.",
         ),
         (
             # single invalid delegation
             "securesystemsengineering/alice-image",
             req_delegations3,
-            "could not find delegation roles ['targets/someuserthatdidnotsign'] in trust data.",
+            pub_root_keys[0]["key"],
+            (
+                "could not find delegation roles "
+                "['targets/someuserthatdidnotsign'] in trust data."
+            ),
         ),
         (
             # invalid and valid delegations
             "securesystemsengineering/alice-image",
             req_delegations6,
+            pub_root_keys[0]["key"],
             "could not find delegation roles ['targets/someuserthatdidnotsign'] in trust data.",
         ),
     ],
 )
 def test_process_chain_of_trust_error(
-    mock_keystore,
+    mock_notary,
     mock_request,
     mock_trust_data,
     image: str,
     req_delegations: list,
+    root_key: str,
     error: str,
 ):
+    notary = Notary(**sample_notary)
     with pytest.raises(BaseConnaisseurException) as err:
-        val.process_chain_of_trust("host", Image(image), req_delegations)
+        val.process_chain_of_trust(notary, Image(image), req_delegations, root_key)
     assert error in str(err.value)
 
 
