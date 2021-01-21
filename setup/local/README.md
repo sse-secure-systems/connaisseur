@@ -264,34 +264,53 @@ git clone https://github.com/sse-secure-systems/connaisseur.git
 cd connaisseur
 ```
 
-In there, you will find a `helm` directory, which holds a `values.yaml` file, which needs to be configured. Change the `notary` section to reflect the appropriate values. In `notary.selfsignedCert` you have to put the certificate from `harbor-ca.crt`.
+In there, you will find a `helm` directory, which holds a `values.yaml` file, which needs to be configured. Add a new notary configuration with all appropriate values. The `selfsigned_cert` field should be filled with the contents of the `harbor-ca.crt` from earlier.
 
 ```yaml
-notary:
+notaries:
+- name: dockerhub
+  ...
+# -- Add this ------
+- name: harbor
   host: notary.harbor.domain
-  selfsigned: true
-  selfsignedCert: |
+  selfsigned_cert: |
     -----BEGIN CERTIFICATE-----
     -----END CERTIFICATE-----
   auth:
-    enabled: true
     user: test
     password: Securesystems8
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    -----END PUBLIC KEY-----
+  root_keys:
+  - name: default
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      -----END PUBLIC KEY-----
+# ------------------
 ```
 
-For the `notary.rootPubKey` field, you need the public part of the Notary's `root` key. Its private component resides in your `~/.docker/trust/private` directory. With `openssl` you can get the public part form it, but you'll need to provide the passphrase you set, when generating the key:
+For the `notaries[1].root_keys[0].key` field, you need the public part of the Notary's `root` key. Its private component resides in your `~/.docker/trust/private` directory. With `openssl` you can get the public part form it, but you'll need to provide the passphrase you set, when generating the key:
 
 ```bash
 cd ~/.docker/trust/private
-sed '/^role:\sroot$/d' $(grep -iRl "role: root" .) > root-priv.key
+KEY_PATH=$(grep -iRl "role: root$" .)
+KEY_ID=$(basename -s .key $KEY_PATH)
+sed '/^role:\sroot$/d' $KEY_PATH > root-priv.key
 openssl ec -in root-priv.key -pubout -out root-pub.pem
 cd -
 ```
 
- Copy the contents of the public key into the `notary.rootPubKey` field of the `helm/values.yaml`.
+Copy the contents of the public key into the `notaries[1].root_keys[0].key` field of the `helm/values.yaml`. The create a new rule in the `policy` field of the `helm/values.yaml`, matching all images coming from the harbor registry, referencing harbor's notary.
+
+```yaml
+policy:
+- pattern: "*:*"
+  ...
+# -- Add this ------
+- pattern: "core.harbor.domain/*:*"
+  verify: true
+  notary: harbor
+  key: default
+# ------------------
+```
 
 And with that, everything is ready to install Connaisseur. Use the repository's `Makefile`:
 
