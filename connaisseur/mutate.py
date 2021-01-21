@@ -1,4 +1,3 @@
-import os
 import logging
 from connaisseur.image import Image
 from connaisseur.validate import get_trusted_digest
@@ -6,6 +5,7 @@ from connaisseur.admission_review import get_admission_review
 from connaisseur.kube_api import request_kube_api
 from connaisseur.exceptions import BaseConnaisseurException, UnknownVersionError
 from connaisseur.policy import ImagePolicy
+from connaisseur.config import Config
 
 SUPPORTED_API_VERSIONS = {
     "Pod": ["v1"],
@@ -163,7 +163,7 @@ def validate(request: dict):
         )
 
 
-def admit(request: dict):
+def admit(request: dict):  # pylint: disable=too-many-locals
     """
     Admits a request, parses all image names from it, validates the images,
     optionally mutates the request and sends back a response. The request is
@@ -203,6 +203,7 @@ def admit(request: dict):
                 acceptable_images += get_parent_images(request, index, namespace)
 
     policy = ImagePolicy()
+    config = Config()
 
     # validate all images from the request
     for index, container in enumerate(containers):
@@ -219,6 +220,8 @@ def admit(request: dict):
 
             policy_rule = policy.get_matching_rule(image)
             verify = policy_rule.get("verify", True)
+            notary_name = policy_rule.get("notary")
+            notary = config.get_notary(notary_name)
 
             # if image doesn't need verification, continue
             if not verify:
@@ -232,16 +235,16 @@ def admit(request: dict):
                     {
                         "message": msg,
                         "context": dict(
-                            logging_context, matching_rule=policy_rule.get("pattern")
+                            logging_context,
+                            matching_rule=policy_rule.get("pattern"),
+                            host_config=notary.name,
                         ),
                     }
                 )
             )
 
             # get signed digest and update image reference with the digest
-            trusted_digest = get_trusted_digest(
-                os.environ.get("NOTARY_SERVER"), image, policy_rule
-            )
+            trusted_digest = get_trusted_digest(notary, image, policy_rule)
             image.set_digest(trusted_digest)
             patches += [
                 get_json_patch(

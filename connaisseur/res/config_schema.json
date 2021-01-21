@@ -1,0 +1,48 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+                "pattern": "^[^\/\\\\]+(?<!tls)$"
+            },
+            "host": {
+                "type": "string",
+                "pattern": "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}"
+            },
+            "rootKeys": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "key": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "key"
+                    ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+            },
+            "isAcr": {
+                "type": "boolean"
+            },
+            "selfsigned": {
+                "type": "boolean"
+            },
+            "selfsignedCert": {
+                "type": "string"
+            }
+        },
+        "required": ["name", "host", "rootKeys"]
+    },
+    "minItems": 1,
+    "uniqueItems": true
+}

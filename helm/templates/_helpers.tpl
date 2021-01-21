@@ -30,3 +30,55 @@ Create chart name and version as used by the chart label.
 {{- define "helm.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+
+{{- define "anyIntAuth" -}}
+{{- range $i := .Values.notaries }}
+{{- if $i.auth }}
+{{- if not $i.auth.secretName}}
+true
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+
+{{- define "getIntAuth" -}}
+USER: {{ .user }}
+PASS: {{ .password }}
+{{- end -}}
+
+
+{{- define "getAuthSecretVol" -}}
+{{- range $i := .Values.notaries -}}
+{{- if $i.auth }}
+- name: {{ $i.name }}-secret
+  secret:
+    {{- if $i.auth.secretName }}
+    secretName: {{ $i.auth.secretName }}
+    {{- else }}
+    secretName: {{ $i.name }}-host-secret
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- define "getAuthSecretVolMount" -}}
+{{- range $i := .Values.notaries -}}
+{{- if $i.auth }}
+- name: {{ $i.name }}-secret
+  mountPath: /etc/creds/{{ $i.name }}
+  readOnly: true
+{{ end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- define "selfsigned" -}}
+{{- range $i := .Values.notaries -}}
+{{- if $i.selfsignedCert -}}
+{{ $i.name }}.crt: {{ $i.selfsignedCert | b64enc }} 
+{{ end -}}
+{{- end -}}
+{{- end -}}

@@ -1,7 +1,7 @@
 # configure connaisseur deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v1.4.5
+  image: securesystemsengineering/connaisseur:v2.0.0
   helmHookImage: securesystemsengineering/connaisseur:helm-hook-v1.0
   imagePullPolicy: Always
   resources: {}
@@ -21,47 +21,50 @@ service:
   port: 443
 
 # configure access to the notary server
-notary:
-  # domain to the notary server. can be `null` or non-existant to use
-  # the public Docker Hub notary server
+notaries:
+# public notary form dockerhub
+- name: dockerhub
   host: notary.docker.io
-  # only for insecure notary instances with selfsigned certificates.
-  selfsigned: false
-  # selfsignedCert: |
-  #   -----BEGIN CERTIFICATE-----
-  #   -----END CERTIFICATE-----
-
-  # if notary uses an authentication server, give a user and password
-  # with pull rights
-  # The default we use is the notary instance from docker.io which is
-  # accessible without authentication for public repositories
-  auth:
-    enabled: false
-    # enter user/pass directly
-    # these are placeholders and should be changed!
-    user: notaryuser
-    password: Password123
-    # or use a predefined secret, which needs the fields 'NOTARY_USER'
-    # and 'NOTARY_PASS'
-    secretName: null
-  # the public part of the root key, for verifying notary's signatures
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    -----END PUBLIC KEY-----
-  # if you use Azure Container Registry (ACR) for your notary
-  # changes some behaviour, such as health probes and how to retrieve auth tokens
-  # for compatibility with ACR set to `true`
-  isAcr: false
+  rootKeys:
+  - name: library
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+      QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+      -----END PUBLIC KEY-----
+# additional sample configuration
+# - name: sample-notary  # name for referencing in the image policy
+#   host: notary.sample.org  # host address, where to reach the notary
+#   rootKeys:  # public root keys, used fo rsignature erification
+#   - name: default  # name for referencing in the image policy
+#     key: |  # key in PEM format
+#       -----BEGIN PUBLIC KEY-----
+#       ...
+#       -----END PUBLIC KEY-----
+#   selfsignedCert: |  # selfsigned certificate in PEM format
+#     -----BEGIN CERTIFICATE-----
+#     -----END CERTIFICATE-----
+#   rootKeys:
+#   - name: library
+#     key: |
+#       -----BEGIN PUBLIC KEY-----
+#       -----END PUBLIC KEY-----
+#   auth:
+#     secretName: harbor-creds
 
 # the image policy, which defines all repositories that need to be
 # verified. more detail in the git repo README.md
 policy:
-  - pattern: "*:*"
-    verify: true
-  - pattern: "k8s.gcr.io/*:*"
-    verify: false
-  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-    verify: false
+- pattern: "*:*"
+  verify: true
+  notary: dockerhub
+  key: library
+- pattern: "docker.io/connytest/*:*"
+  verify: true
+  notary: dockerhub
+  key: connytest
+- pattern: "docker.io/securesystemsengineering/connaisseur:*"
+  verify: false
 
 # in detection mode, deployment will not be denied, but only prompted
 # and logged. This allows testing the functionality without

@@ -1,5 +1,6 @@
 import base64
 from connaisseur.image import Image
+from connaisseur.config import Notary
 from connaisseur.key_store import KeyStore
 from connaisseur.util import normalize_delegation
 from connaisseur.notary_api import get_trust_data, get_delegation_trust_data
@@ -10,7 +11,7 @@ from connaisseur.exceptions import (
 )
 
 
-def get_trusted_digest(host: str, image: Image, policy_rule: dict):
+def get_trusted_digest(notary_config: Notary, image: Image, policy_rule: dict):
     """
     Searches in given notary server(`host`) for trust data, that belongs to the
     given `image`, by using the notary API. Also checks whether the given
@@ -23,9 +24,18 @@ def get_trusted_digest(host: str, image: Image, policy_rule: dict):
         map(normalize_delegation, policy_rule.get("delegations", []))
     )
 
+    # get root key
+    pub_root_key = notary_config.get_key(policy_rule.get("key"))
+    if not pub_root_key:
+        raise NotFoundException(
+            "error retrieving the public root key from configuration."
+        )
+
     # get list of targets fields, containing tag to signed digest mapping from
     # `targets.json` and all potential delegation roles
-    signed_image_targets = process_chain_of_trust(host, image, req_delegations)
+    signed_image_targets = process_chain_of_trust(
+        notary_config, image, req_delegations, pub_root_key
+    )
 
     # search for digests or tag, depending on given image
     search_image_targets = (
@@ -67,7 +77,7 @@ def get_trusted_digest(host: str, image: Image, policy_rule: dict):
 
 
 def process_chain_of_trust(
-    host: str, image: Image, req_delegations: list
+    notary_config: Notary, image: Image, req_delegations: list, pub_root_key: str
 ):  # pylint: disable=too-many-branches
     """
     Processes the whole chain of trust, provided by the notary server (`host`)
@@ -82,12 +92,12 @@ def process_chain_of_trust(
     """
     tuf_roles = ["root", "snapshot", "timestamp", "targets"]
     trust_data = {}
-    key_store = KeyStore()
+    key_store = KeyStore(pub_root_key)
 
     # get all trust data and collect keys (from root and targets), as well as
     # hashes (from snapshot and timestamp)
     for role in tuf_roles:
-        trust_data[role] = get_trust_data(host, image, TUFRole(role))
+        trust_data[role] = get_trust_data(notary_config, image, TUFRole(role))
         key_store.update(trust_data[role])
 
     # if the 'targets.json' has delegation roles defined, get their trust data
@@ -95,7 +105,7 @@ def process_chain_of_trust(
     if trust_data["targets"].has_delegations():
         for delegation in trust_data["targets"].get_delegations():
             trust_data[delegation] = get_delegation_trust_data(
-                host, image, TUFRole(delegation)
+                notary_config, image, TUFRole(delegation)
             )
 
     # validate all trust data's signatures, expiry dates and hashes.

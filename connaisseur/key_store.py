@@ -10,22 +10,10 @@ class KeyStore:
     keys: dict
     hashes: dict
 
-    def __init__(self):
+    def __init__(self, root_pub_key: str):
         # will always be loaded there as k8s secret
-        root_path = "/etc/certs/root-pub.pem"
-        root_key = KeyStore.load_root_pub_key(root_path)
-
-        self.keys = {"root": root_key}
+        self.keys = {"root": root_pub_key}
         self.hashes = {}
-
-    @staticmethod
-    def load_root_pub_key(path: str):
-        """
-        Loads the public root key from the containers file system.
-        """
-        with open(path, "r") as root_file:
-            root_key = "".join(root_file.read().splitlines()[1:-1])
-        return root_key
 
     def get_key(self, key_id: str):
         """

@@ -5,7 +5,6 @@ from flask import Flask, request, jsonify
 from requests.exceptions import HTTPError
 from connaisseur.exceptions import BaseConnaisseurException, UnknownVersionError
 from connaisseur.mutate import admit, validate
-from connaisseur.notary_api import health_check
 from connaisseur.admission_review import get_admission_review
 import connaisseur.kube_api as api
 
@@ -111,10 +110,4 @@ def readyz():
     except HTTPError:
         webhook_response = None
 
-    notary_health = health_check(os.environ.get("NOTARY_SERVER"))
-
-    return (
-        ("", 200)
-        if ((webhook_response or sentinel_running) and notary_health)
-        else ("", 500)
-    )
+    return ("", 200) if (webhook_response or sentinel_running) else ("", 500)
