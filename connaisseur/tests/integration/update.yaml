@@ -1,21 +1,25 @@
 deployment:
   imagePullPolicy: Never
-notary:
+notaries:
+- name: dockerhub
   host: notary.docker.io
-  selfsigned: false
-  auth:
-    enabled: false
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-    d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-    -----END PUBLIC KEY-----
+  root_keys: 
+  - name: sse
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+      d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+      -----END PUBLIC KEY-----
 policy:
   - pattern: "*:*"
     verify: true
+    notary: dockerhub
+    key: sse
   - pattern: "k8s.gcr.io/*:*"
     verify: false
   - pattern: "docker.io/securesystemsengineering/connaisseur:*"
     verify: true
+    notary: dockerhub
+    key: sse
   - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
     verify: false

@@ -48,7 +48,7 @@ def im():
             "path/to/repo",
             "reg.com:12345",
         ),
-        ("image:tag", "image", "tag", None, "", "docker.io"),
+        ("image:tag", "image", "tag", None, "library", "docker.io"),
         (
             "sub.registry.io/path/image:tag",
             "image",
@@ -118,12 +118,12 @@ def test_has_digest(im, image: str, digest: bool):
 @pytest.mark.parametrize(
     "image, str_image",
     [
-        ("image:tag", "docker.io/image:tag"),
+        ("image:tag", "docker.io/library/image:tag"),
         ("registry.io/image:tag", "registry.io/image:tag"),
         ("reg.io/path/image:tag", "reg.io/path/image:tag"),
-        ("image", "docker.io/image:latest"),
+        ("image", "docker.io/library/image:latest"),
         ("registry.io:42358/path/image:1", "registry.io:42358/path/image:1"),
-        ("registry:12", "docker.io/registry:12"),
+        ("registry:12", "docker.io/library/registry:12"),
         ("registry.io:8080/image", "registry.io:8080/image:latest"),
         (
             (
@@ -131,7 +131,7 @@ def test_has_digest(im, image: str, digest: bool):
                 "e8fc232cf126c9e598390ae61895eb96f52ae46d"
             ),
             (
-                "docker.io/image@sha256:859b5aada817b3eb53410"
+                "docker.io/library/image@sha256:859b5aada817b3eb53410"
                 "222e8fc232cf126c9e598390ae61895eb96f52ae46d"
             ),
         ),

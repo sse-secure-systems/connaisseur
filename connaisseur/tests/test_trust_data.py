@@ -5,6 +5,7 @@ import datetime as dt
 import connaisseur.trust_data
 from connaisseur.exceptions import ValidationError, NotFoundException, NoSuchClassError
 from connaisseur.key_store import KeyStore
+from connaisseur.crypto import load_key
 
 root_keys = {
     "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": {
@@ -265,6 +266,10 @@ def mock_keystore(monkeypatch):
                 "PqkYN4ge13exMeGZzRtv5fcaEHEyt4zK/bPyXpc2laxLiIHEZMU6WQYVD2A=="
             ),
         }
+
+        for key in self.keys:
+            self.keys[key] = load_key(self.keys[key])
+
         self.hashes = {
             "root": ("wlaYz21+0NezlHjqkldQQBf3KWtifimy07A+fOEyCTo=", 2401),
             "snapshot": ("cNXm5R+rJsc3WNQVH8M1G/cTwkO1doq5n8fQmYpQcfQ=", 1286),
