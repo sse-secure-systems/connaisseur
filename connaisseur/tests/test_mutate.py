@@ -7,6 +7,7 @@ import connaisseur.trust_data
 import connaisseur.mutate as muta
 from connaisseur.exceptions import BaseConnaisseurException, UnknownVersionError
 from connaisseur.key_store import KeyStore
+from connaisseur.config import Config, Notary
 
 request_obj_pod = {
     "kind": "Pod",
@@ -219,6 +220,8 @@ policy = {
             "pattern": "docker.io/securesystemsengineering/alice-image",
             "verify": True,
             "delegations": ["phbelitz", "chamsen"],
+            "notary": "dockerhub",
+            "key": "alice",
         },
         {"pattern": "docker.io/securesystemsengineering/sample:v4", "verify": False},
         {
@@ -231,6 +234,27 @@ policy = {
         },
     ]
 }
+
+sample_config = [
+    {
+        "name": "dockerhub",
+        "host": "notary.docker.io",
+        "rootKeys": [
+            {
+                "name": "alice",
+                "key": (
+                    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
+                    "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
+                ),
+            }
+        ],
+        "isAcr": False,
+        "hasAuth": True,
+        "auth": {"USER": "bert", "PASS": "bertig"},
+        "isSelfsigned": False,
+        "selfsignedCert": None,
+    }
+]
 
 
 @pytest.fixture
@@ -290,20 +314,6 @@ def mock_request(monkeypatch):
 
 
 @pytest.fixture
-def mock_keystore(monkeypatch):
-    def init(self):
-        self.keys = {
-            "root": (
-                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
-                "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
-            )
-        }
-        self.hashes = {}
-
-    monkeypatch.setattr(KeyStore, "__init__", init)
-
-
-@pytest.fixture
 def mock_policy(monkeypatch):
     def get_policy():
         return policy
@@ -329,6 +339,51 @@ def mock_trust_data(monkeypatch):
     )
     monkeypatch.setattr(connaisseur.trust_data.TargetsData, "__init__", trust_init)
     connaisseur.trust_data.TrustData.schema_path = "res/{}_schema.json"
+
+
+@pytest.fixture
+def mock_notary(monkeypatch):
+    def config_init(self, config: dict):
+        self.name = config.get("name")
+        self.host = config.get("host")
+        self.root_keys = config.get("rootKeys")
+        self.is_acr = config.get("isAcr")
+        self.auth = config.get("auth")
+        self.has_auth = config.get("hasAuth")
+        self.is_selfsigned = config.get("isSelfsigned")
+        self.selfsigned_cert = config.get("selfsignedCert")
+
+    def config_get_key(self, key_name: str = None):
+        if key_name:
+            key = next(
+                key_.get("key")
+                for key_ in self.root_keys
+                if key_.get("name") == key_name
+            )
+        else:
+            key = self.root_keys[0].get("key")
+        return key
+
+    def config_get_auth(self):
+        return self.auth
+
+    def config_get_selfsigned_cert(self):
+        return self.selfsigned_cert
+
+    monkeypatch.setattr(connaisseur.config.Notary, "__init__", config_init)
+    monkeypatch.setattr(connaisseur.config.Notary, "get_key", config_get_key)
+    monkeypatch.setattr(connaisseur.config.Notary, "get_auth", config_get_auth)
+    monkeypatch.setattr(
+        connaisseur.config.Notary, "get_selfsigned_cert", config_get_selfsigned_cert
+    )
+
+
+@pytest.fixture
+def mock_config(monkeypatch):
+    def config_init(self):
+        self.notaries = [Notary(notary) for notary in sample_config]
+
+    monkeypatch.setattr(connaisseur.config.Config, "__init__", config_init)
 
 
 def get_ad_request(path: str):
@@ -406,7 +461,8 @@ def test_admit(
     mutate,
     mock_kube_request,
     mock_request,
-    mock_keystore,
+    mock_notary,
+    mock_config,
     mock_policy,
     mock_trust_data,
     ad_request: dict,

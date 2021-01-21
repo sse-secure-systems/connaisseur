@@ -4,29 +4,7 @@ from connaisseur.trust_data import TrustData, TargetsData
 import connaisseur.key_store as ks
 from connaisseur.exceptions import BaseConnaisseurException
 
-root_pub_key = {
-    "root": (
-        "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
-        "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
-        "l+W2k3elHkPbR+gNkK2PCA=="
-    )
-}
-
 root_keys = {
-    "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": (
-        "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJlekNDQVNLZ0F3SUJBZ0lSQ"
-        "UtDclUxM0pNUzdHTnJMWEk2SjVvRmd3Q2dZSUtvWkl6ajBFQXdJd0pERWkKTUNBR0"
-        "ExVUVBeE1aWkc5amEyVnlMbWx2TDNCb1ltVnNhWFI2TDNOaGJYQnNaVEFlRncweU1"
-        "EQXhNVE14TlRVMApORFphRncwek1EQXhNVEF4TlRVME5EWmFNQ1F4SWpBZ0JnTlZC"
-        "QU1UR1dSdlkydGxjaTVwYnk5d2FHSmxiR2wwCmVpOXpZVzF3YkdVd1dUQVRCZ2Nxa"
-        "GtqT1BRSUJCZ2dxaGtqT1BRTUJCd05DQUFTMUhtVENzTXJiWkxJSzd0WXcKWHkwS0"
-        "5XQjQ1RUJMWTlacHhGd0UzOVZCMVVyZzlXVFhEaWt4YVhQMEFkQzJFTWFYNWJhVGQ"
-        "2VWVROXRINkEyUQpyWThJb3pVd016QU9CZ05WSFE4QkFmOEVCQU1DQmFBd0V3WURW"
-        "UjBsQkF3d0NnWUlLd1lCQlFVSEF3TXdEQVlEClZSMFRBUUgvQkFJd0FEQUtCZ2dxa"
-        "GtqT1BRUURBZ05IQURCRUFpQnRLN25SMGZmc2oxRlZkNFJXeXRJM0orVG8KTkxMT0"
-        "lVMXJkczArQ2IxdjRnSWdiUGt5V21heGlxQW1OeFp5bnFBVHpuN3JLQ2FWRlZKWW9"
-        "XZjlqeFg1elRNPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
-    ),
     "7c62922e6be165f1ea08252f77410152b9e4ec0d7bf4e69c1cc43f0e6c73da20": (
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErIGdt5pelfWOSjmY7k+/TypV0IFF"
         "9XLA+K4swhclLJb79cLoeBBDqkkUrkfhN5gxRnA//wA3amL4WXkaGsb9zQ=="
@@ -38,6 +16,21 @@ root_keys = {
     "f1997e14be3d33c5677282b6a73060d8124f4020f464644e27ab76f703eb6f7e": (
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMza1L1+e8vfZ1q7+GA5E0st13g7j"
         "WR7fdQSsxkdrpJ6IkUq9D6f9BUopD83YvLBMEMy20MBvsICJnXMu8IZlYA=="
+    ),
+    "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": (
+        "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJlekNDQVNLZ0F3SUJB"
+        "Z0lSQUtDclUxM0pNUzdHTnJMWEk2SjVvRmd3Q2dZSUtvWkl6ajBFQXdJd0pE"
+        "RWkKTUNBR0ExVUVBeE1aWkc5amEyVnlMbWx2TDNCb1ltVnNhWFI2TDNOaGJY"
+        "QnNaVEFlRncweU1EQXhNVE14TlRVMApORFphRncwek1EQXhNVEF4TlRVME5E"
+        "WmFNQ1F4SWpBZ0JnTlZCQU1UR1dSdlkydGxjaTVwYnk5d2FHSmxiR2wwCmVp"
+        "OXpZVzF3YkdVd1dUQVRCZ2NxaGtqT1BRSUJCZ2dxaGtqT1BRTUJCd05DQUFT"
+        "MUhtVENzTXJiWkxJSzd0WXcKWHkwS05XQjQ1RUJMWTlacHhGd0UzOVZCMVVy"
+        "ZzlXVFhEaWt4YVhQMEFkQzJFTWFYNWJhVGQ2VWVROXRINkEyUQpyWThJb3pV"
+        "d016QU9CZ05WSFE4QkFmOEVCQU1DQmFBd0V3WURWUjBsQkF3d0NnWUlLd1lC"
+        "QlFVSEF3TXdEQVlEClZSMFRBUUgvQkFJd0FEQUtCZ2dxaGtqT1BRUURBZ05I"
+        "QURCRUFpQnRLN25SMGZmc2oxRlZkNFJXeXRJM0orVG8KTkxMT0lVMXJkczAr"
+        "Q2IxdjRnSWdiUGt5V21heGlxQW1OeFp5bnFBVHpuN3JLQ2FWRlZKWW9XZjlq"
+        "eFg1elRNPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
     ),
 }
 
@@ -71,18 +64,6 @@ def key_store():
 
 
 @pytest.fixture
-def mock_pub_key(monkeypatch):
-    def pub_key(path: str):
-        return (
-            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
-            "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
-            "l+W2k3elHkPbR+gNkK2PCA=="
-        )
-
-    ks.KeyStore.load_root_pub_key = staticmethod(pub_key)
-
-
-@pytest.fixture
 def mock_trust_data(monkeypatch):
     def _validate_expiry(self):
         pass
@@ -105,21 +86,39 @@ def trust_data(path: str):
     return data
 
 
-def test_key_store(key_store, mock_pub_key):
-    k = ks.KeyStore()
-    assert k.keys == root_pub_key
+@pytest.mark.parametrize(
+    "pub_key",
+    [
+        (
+            (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
+                "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
+                "l+W2k3elHkPbR+gNkK2PCA=="
+            )
+        ),
+        (
+            (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErIGdt5pelfWOSjmY7k+/TypV0IFF"
+                "9XLA+K4swhclLJb79cLoeBBDqkkUrkfhN5gxRnA//wA3amL4WXkaGsb9zQ=="
+            )
+        ),
+    ],
+)
+def test_key_store(key_store, pub_key: str):
+    k = ks.KeyStore(pub_key)
+    assert k.keys == {"root": pub_key}
     assert k.hashes == {}
 
 
 @pytest.mark.parametrize("k_id, k_value", [("1", "1"), ("2", "2")])
-def test_get_key(key_store, mock_pub_key, k_id: str, k_value: str):
-    k = ks.KeyStore()
+def test_get_key(key_store, k_id: str, k_value: str):
+    k = ks.KeyStore(None)
     k.keys = {"1": "1", "2": "2"}
     assert k.get_key(k_id) == k_value
 
 
-def test_get_key_error(key_store, mock_pub_key):
-    k = ks.KeyStore()
+def test_get_key_error(key_store):
+    k = ks.KeyStore(None)
     with pytest.raises(BaseConnaisseurException) as err:
         k.get_key("1")
     assert 'could not find key id "1" in keystore.' in str(err.value)
@@ -133,14 +132,14 @@ def test_get_key_error(key_store, mock_pub_key):
         ("targets/releases", "pNjHgtwOrSZB5l0bzHZt9u3dUdFpKsPBhWPiVrIMm88=", 712),
     ],
 )
-def test_get_hash(key_store, mock_pub_key, role: str, _hash: str, _len: int):
-    k = ks.KeyStore()
+def test_get_hash(key_store, role: str, _hash: str, _len: int):
+    k = ks.KeyStore(None)
     k.hashes = snapshot_hashes
     assert k.get_hash(role) == (_hash, _len)
 
 
-def test_get_hash_error(key_store, mock_pub_key):
-    k = ks.KeyStore()
+def test_get_hash_error(key_store):
+    k = ks.KeyStore(None)
     with pytest.raises(BaseConnaisseurException) as err:
         k.get_hash("timestamp")
     assert 'could not find hash for role "timestamp" in keystore.' in str(err.value)
@@ -152,39 +151,38 @@ def test_get_hash_error(key_store, mock_pub_key):
         (
             trust_data("tests/data/sample_root.json"),
             "root",
-            dict(root_pub_key, **root_keys),
+            dict(**{"root": None}, **root_keys),
             {},
         ),
         (
             trust_data("tests/data/sample_targets.json"),
             "targets",
-            dict(root_pub_key, **target_keys),
+            dict(**{"root": None}, **target_keys),
             {},
         ),
         (
             trust_data("tests/data/sample_snapshot.json"),
             "snapshot",
-            root_pub_key,
+            {"root": None},
             snapshot_hashes,
         ),
         (
             trust_data("tests/data/sample_timestamp.json"),
             "timestamp",
-            root_pub_key,
+            {"root": None},
             timestamp_hashes,
         ),
     ],
 )
 def test_update(
     key_store,
-    mock_pub_key,
     mock_trust_data,
     data: dict,
     role: str,
     keys: dict,
     hashes: dict,
 ):
-    k = ks.KeyStore()
+    k = ks.KeyStore(None)
     trust_data_ = TrustData(data, role)
     k.update(trust_data_)
     assert k.keys == keys

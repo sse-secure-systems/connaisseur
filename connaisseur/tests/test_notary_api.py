@@ -10,19 +10,22 @@ import connaisseur.notary_api as notary_api
 from connaisseur.image import Image
 from connaisseur.tuf_role import TUFRole
 from connaisseur.exceptions import BaseConnaisseurException
+from connaisseur.config import Notary
+
+sample_notary = {
+    "name": "dockerhub",
+    "host": "notary.docker.io",
+    "rootKeys": [],
+    "isAcr": False,
+    "hasAuth": True,
+    "auth": {"USER": "bert", "PASS": "bertig"},
+    "isSelfsigned": False,
+    "selfsignedCert": None,
+}
 
 
 @pytest.fixture
-def napi(monkeypatch):
-    monkeypatch.setenv("IS_ACR", "0")
-    monkeypatch.setenv("SELFSIGNED_NOTARY", "1")
-    return notary_api
-
-
-@pytest.fixture
-def acrapi(monkeypatch):
-    monkeypatch.setenv("IS_ACR", "1")
-    monkeypatch.setenv("SELFSIGNED_NOTARY", "1")
+def napi():
     return notary_api
 
 
@@ -78,6 +81,10 @@ def mock_request(monkeypatch):
                     return MockResponse({}, status_code=500)
                 return MockResponse({"token": "token"})
             elif auth:
+                if kwargs.get("verify"):
+                    return MockResponse(
+                        {"token": f"BA.self.{auth.username}.{auth.password}a"}
+                    )
                 return MockResponse({"token": f"BA.{auth.username}.{auth.password}a"})
             return MockResponse({"token": "no.BA.no"})
         elif registry == "auth.io" and not kwargs.get("headers"):
@@ -122,29 +129,44 @@ def mock_trust_data(monkeypatch):
     connaisseur.trust_data.TrustData.schema_path = "res/{}_schema.json"
 
 
+@pytest.fixture
+def mock_config(monkeypatch):
+    def config_init(self, config: dict):
+        self.name = config.get("name")
+        self.host = config.get("host")
+        self.root_keys = config.get("rootKeys")
+        self.is_acr = config.get("isAcr")
+        self.auth = config.get("auth")
+        self.has_auth = config.get("hasAuth")
+        self.is_selfsigned = config.get("isSelfsigned")
+        self.selfsigned_cert = config.get("selfsignedCert")
+
+    def config_get_key(self, key_name: str = None):
+        if key_name:
+            key = next(
+                key.get("key") for key in self.root_keys if key.get("name") == key_name
+            )
+        else:
+            key = self.root_keys[0].get("key")
+        return key
+
+    def config_get_auth(self):
+        return self.auth
+
+    def config_get_selfsigned_cert(self):
+        return self.selfsigned_cert
+
+    monkeypatch.setattr(connaisseur.config.Notary, "__init__", config_init)
+    monkeypatch.setattr(connaisseur.config.Notary, "get_key", config_get_key)
+    monkeypatch.setattr(connaisseur.config.Notary, "get_auth", config_get_auth)
+    monkeypatch.setattr(
+        connaisseur.config.Notary, "get_selfsigned_cert", config_get_selfsigned_cert
+    )
+
+
 def trust_data(path: str):
     with open(path, "r") as file:
         return json.load(file)
-
-
-@pytest.mark.parametrize(
-    "host, out", [("host", True), ("", False), ("https://unhealthy.registry", False)]
-)
-def test_health_check(napi, mock_request, host: str, out: bool):
-    assert napi.health_check(host) == out
-
-
-@pytest.mark.parametrize(
-    "host, out", [("host", True), ("", False), ("https://unhealthy.registry", True)]
-)
-def test_health_check_acr(acrapi, mock_request, host: str, out: bool):
-    assert acrapi.health_check(host) == out
-
-
-@pytest.mark.parametrize("slfsig, out", [("1", True), ("0", False), ("", False)])
-def test_is_notary_selfsigned(napi, slfsig: str, out: bool, monkeypatch):
-    monkeypatch.setenv("SELFSIGNED_NOTARY", slfsig)
-    assert napi.is_notary_selfsigned() == out
 
 
 @pytest.mark.parametrize(
@@ -169,17 +191,38 @@ def test_is_notary_selfsigned(napi, slfsig: str, out: bool, monkeypatch):
     ],
 )
 def test_get_trust_data(
-    napi, mock_request, mock_trust_data, image: str, role: str, out: dict
+    napi, mock_request, mock_trust_data, mock_config, image: str, role: str, out: dict
 ):
-    trust_data_ = napi.get_trust_data("host", Image(image), TUFRole(role))
+    notary = Notary(sample_notary)
+    trust_data_ = napi.get_trust_data(notary, Image(image), TUFRole(role))
     assert trust_data_.signed == out["signed"]
     assert trust_data_.signatures == out["signatures"]
 
 
-def test_get_trust_data_error(napi, mock_request, mock_trust_data):
+def test_get_trust_data_error(napi, mock_request, mock_trust_data, mock_config):
+    notary = Notary(sample_notary)
     with pytest.raises(BaseConnaisseurException) as err:
-        napi.get_trust_data("host", Image("empty.io/image:tag"), TUFRole("targets"))
+        napi.get_trust_data(notary, Image("empty.io/image:tag"), TUFRole("targets"))
     assert 'no trust data for image "empty.io/image:tag".' in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "image, role, out",
+    [
+        ("alice-image:tag", "root", trust_data("tests/data/alice-image/root.json")),
+        ("empty.io/image:tag", "targets", None),
+    ],
+)
+def test_get_delegation_trust_data(
+    napi, mock_request, mock_trust_data, mock_config, image, role, out
+):
+    notary = Notary(sample_notary)
+    trust_data_ = napi.get_delegation_trust_data(notary, Image(image), TUFRole(role))
+    if not trust_data_:
+        assert trust_data_ == out
+    else:
+        assert trust_data_.signed == out["signed"]
+        assert trust_data_.signatures == out["signatures"]
 
 
 def test_parse_auth(napi):
@@ -227,69 +270,94 @@ def test_parse_auth_error(napi, header: str, error: str):
 
 
 @pytest.mark.parametrize(
-    "user, password, out",
+    "has_auth, auth, selfsigned, is_acr, out",
     [
-        (None, None, "no.BA.no"),
-        (None, "password123", "no.BA.no"),
-        ("myname", "password456", "BA.myname.password456a"),
-        ("myname", None, "BA.myname.a"),
+        (False, {"USER": None, "PASS": None}, False, False, "no.BA.no"),
+        (True, {"USER": None, "PASS": None}, False, False, "BA.None.Nonea"),
+        (
+            True,
+            {"USER": None, "PASS": "password123"},
+            False,
+            False,
+            "BA.None.password123a",
+        ),
+        (
+            True,
+            {"USER": "myname", "PASS": "password456"},
+            False,
+            False,
+            "BA.myname.password456a",
+        ),
+        (True, {"USER": "myname", "PASS": None}, False, False, "BA.myname.Nonea"),
+        (
+            True,
+            {"USER": "myname", "PASS": "password123"},
+            True,
+            False,
+            "BA.self.myname.password123a",
+        ),
+        (True, {"USER": "myname", "PASS": None}, False, True, "d.e.f"),
     ],
 )
-def test_get_auth_token(napi, mock_request, monkeypatch, user, password, out):
-    if user:
-        monkeypatch.setenv("NOTARY_USER", user)
-    if password is not None:
-        monkeypatch.setenv("NOTARY_PASS", password)
-    url = "https://auth.server.good/token/very/good"
-    assert napi.get_auth_token(url) == out
-
-
-def test_get_auth_token_acr(acrapi, mock_request):
-    url = "https://myregistry.azurecr.io/auth/oauth2?scope=someId"
-    assert acrapi.get_auth_token(url) == "d.e.f"
+def test_get_auth_token(
+    napi, mock_request, mock_config, has_auth, auth, selfsigned, is_acr, out
+):
+    notary = Notary(sample_notary)
+    notary.auth["USER"] = auth["USER"]
+    notary.auth["PASS"] = auth["PASS"]
+    notary.has_auth = has_auth
+    notary.is_selfsigned = selfsigned
+    if selfsigned:
+        notary.selfsigned_cert = "2"
+    notary.is_acr = is_acr
+    url = (
+        "https://auth.server.good/token/very/good"
+        if not is_acr
+        else "https://myregistry.azurecr.io/auth/oauth2?scope=someId"
+    )
+    assert napi.get_auth_token(notary, url) == out
 
 
 @pytest.mark.parametrize(
-    "url, error",
+    "url, is_acr, error",
     [
         (
             "https://auth.server.bad/token/very/bad/very",
+            False,
             "authentication token has wrong format.",
         ),
         (
             "https://auth.server.bad/token/no/token",
+            False,
             "no token in authentication server response.",
         ),
         (
             "https://auth.server.bad/token/it/aint/there/token",
+            False,
             "unable to get auth token, likely because of missing trust data.",
         ),
         (
             "https://myregistry.azurecr.io/auth/oauth2?scope=someId",
+            False,
             "no token in authentication server response.",
         ),
-    ],
-)
-def test_get_auth_token_error(napi, mock_request, url: str, error: str):
-    with pytest.raises(BaseConnaisseurException) as err:
-        napi.get_auth_token(url)
-    assert error in str(err.value)
-
-
-@pytest.mark.parametrize(
-    "url, error",
-    [
         (
             "https://auth.server.bad/token/very/bad/very",
+            True,
             "no token in authentication server response.",
         ),
         (
             "https://auth.server.good/token/very/good",
+            True,
             "no token in authentication server response.",
         ),
     ],
 )
-def test_get_auth_token_error_acr(acrapi, mock_request, url: str, error: str):
+def test_get_auth_token_error(
+    napi, mock_request, mock_config, url: str, is_acr: bool, error: str
+):
+    notary = Notary(sample_notary)
+    notary.is_acr = is_acr
     with pytest.raises(BaseConnaisseurException) as err:
-        acrapi.get_auth_token(url)
+        napi.get_auth_token(notary, url)
     assert error in str(err.value)
