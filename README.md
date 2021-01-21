@@ -50,12 +50,13 @@ Make sure `docker`, `git`, `helm`, `kubectl`, `make` and `yq` are installed. You
 - Clone the repository via `git clone https://github.com/sse-secure-systems/connaisseur.git` and set the trust anchor to our public key in the `helm/values.yaml`:
 
 ```yaml
-  # the public part of the root key, for verifying notary's signatures
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
-    BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
-    -----END PUBLIC KEY-----
+  # the public part of the root keys, for verifying notary's signatures
+  rootPubKeys: 
+    6b35860633a0cf852670fd9b5c12ba068875f3804d6711feb16fcd74c723c816: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+      BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+      -----END PUBLIC KEY-----
 ```
 
 - Install Connaisseur on the cluster via `make install`.
@@ -92,7 +93,7 @@ sudo apt install git make openssl yq
 git clone git@github.com:sse-secure-systems/connaisseur.git
 ```
 
-3. **Configure deployment**: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. The `helm/values.yaml` file is a good start. In there, the `.notary.host` field specifies the hostname and port of the Notary server. If your Notary uses a self-signed certificate, `.notary.selfsigned` should be set to `true` and the certificate has to be added to `.notary.selfsignedCert`. In case your Notary instance is authenticated (which it should), set the `.notary.auth.enabled` to `true` and enter the credentials either directly or as a predefined secret. Lastly enter the public root key in `.notary.rootPubKey`, which is used for verifying the image signatures.
+3. **Configure deployment**: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. The `helm/values.yaml` file is a good start. In there, the `.notary.host` field specifies the hostname and port of the Notary server. If your Notary uses a self-signed certificate, `.notary.selfsigned` should be set to `true` and the certificate has to be added to `.notary.selfsignedCert`. In case your Notary instance is authenticated (which it should), set the `.notary.auth.enabled` to `true` and enter the credentials either directly or as a predefined secret. Lastly enter the public root key and key ID in `.notary.rootPubKeys`, which is used for verifying the image signatures. You can retrieve both the key and key ID with the *get_root_key* utility described [here](#getting-the-root-key).
 4. **Deploy**: Switch to the cluster where you would like to install Connaisseur, and run `make install`. This may take some seconds, as the installation order of the Connaisseur components is critical. Only when the Connaisseur pods are ready and running, the Admission Webhook can be applied for intercepting requests.
 
 > :warning: **WARNING!** Be careful when installing Connaisseur, as it will block unsigned images and may for example even block some resources during a restart of `minikube`! In such a situation you should still be able to fix it by deleting Connaisseur manually. You can use [Detection Mode](#detection-mode) to avoid interruptions during testing.
@@ -138,6 +139,21 @@ In addition to the pattern, rules can also contain a `verify` flag which specifi
 A detection mode is available in order to avoid interruptions of a running cluster, to support initial rollout or for testing purposes. In detection mode, Connaisseur will admit all images to the cluster, but logs an error message for images that do not comply with the policy or in case of other unexpected failures.
 
 To activate the detection mode, set the `detection_mode` flag to `true` in `helm/values.yaml`.
+
+### Getting the Root Key
+
+For verifying the signatures of images, a public root key and it's key ID is needed, but where do you get those, especially for public images whose signatures you didn't create? For this we created the *get_root_key* utility. You can use it by building the docker image with `docker build -t get-root-key -f docker/Dockerfile.getRoot .` and the running the image:
+
+```bash
+$ docker run --rm get-root-key -i connytest/testimage
+KeyID: 6b35860633a0cf852670fd9b5c12ba068875f3804d6711feb16fcd74c723c816
+Key: -----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+-----END PUBLIC KEY-----
+```
+
+The `-i` (`--image`) option is required and takes the image, for which you want the public key. There is also the `-s` (`--server`) option, which defines the notary server that should be used and it defaults to `notary.docker.io`.
 
 ## Threat Model
 

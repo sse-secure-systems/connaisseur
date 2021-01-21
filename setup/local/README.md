@@ -277,21 +277,24 @@ notary:
     enabled: true
     user: test
     password: Securesystems8
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    -----END PUBLIC KEY-----
+  rootPubKeys:
+    # <key-id>: |
+    #   -----BEGIN PUBLIC KEY-----
+    #   -----END PUBLIC KEY-----
 ```
 
-For the `notary.rootPubKey` field, you need the public part of the Notary's `root` key. Its private component resides in your `~/.docker/trust/private` directory. With `openssl` you can get the public part form it, but you'll need to provide the passphrase you set, when generating the key:
+For the `notary.rootPubKeys` field, you need the public part of the Notary's `root` key and it's key ID. Its private component resides in your `~/.docker/trust/private` directory. With `openssl` you can get the public part form it, but you'll need to provide the passphrase you set, when generating the key:
 
 ```bash
 cd ~/.docker/trust/private
-sed '/^role:\sroot$/d' $(grep -iRl "role: root" .) > root-priv.key
+KEY_PATH=$(grep -iRl "role: root$" .)
+KEY_ID=$(basename -s .key $KEY_PATH)
+sed '/^role:\sroot$/d' $KEY_PATH > root-priv.key
 openssl ec -in root-priv.key -pubout -out root-pub.pem
 cd -
 ```
 
- Copy the contents of the public key into the `notary.rootPubKey` field of the `helm/values.yaml`.
+ Copy the key ID and the contents of the public key into the `notary.rootPubKeys` field of the `helm/values.yaml`.
 
 And with that, everything is ready to install Connaisseur. Use the repository's `Makefile`:
 

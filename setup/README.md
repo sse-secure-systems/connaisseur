@@ -89,28 +89,28 @@ For security in a real environment, you should first setup and then reference a 
 
 > What is being done at this point is to set your personal root key as Connaisseur's trust anchor. If used in production, you may wish to go for [setting up delegation keys](https://docs-stage.docker.com/engine/security/trust/trust_delegation/#creating-delegation-keys) and keep the root key away from everyday-signing.
 
-Lastly, we need to configure the `notary.rootPubKey` that serves as a trust anchor and pins all signatures of deployed images to this public key. There is two different ways to get the required key:
-
-1. In case you just setup DCT and created your root keys, you should have a `root.pub` file in your folder. Remove the `role` and empty line and copy the contents to `notary.rootPubKey` in `helm/values.yaml`. The result should look similar to this (except for the different key value):
-
-```yaml
-  # the public part of the root key, for verifying notary's signatures
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
-    BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
-    -----END PUBLIC KEY-----
-```
-
-2. In case you already had DCT setup or cannot find the file, we need to retrieve and convert the key manually from your previously created root key. For most shell users, there is a short script below. Otherwise, just follow the manual steps:
+Lastly, we need to configure the `notary.rootPubKeys` that serves as a trust anchor and pins all signatures of deployed images to this public key. We need to retrieve and convert the key manually from your previously created root key. For most shell users, there is a short script below. Otherwise, just follow the manual steps:
 
 ##### manual
 
-- Go to your private docker trust folder `~/.docker/trust/private` and identify the root key. To do so, you can either go through the files and search for the one with `role: root` or `grep -r 'role: root'`.
-- Copy this file to a new file `root-priv.key` and remove line with `role: root` and the following empty line.
+- Go to your private docker trust folder `~/.docker/trust/private` and identify the root key. To do so, you can either go through the files and search for the one with `role: root` or `grep -r 'role: root'`. The name of this file is the key ID. Copy and add the key ID to the `notary.rootPubKeys` list in `connaisseur/helm/values.yaml` according to the example below.
+- Copy the root key file to a new file `root-priv.key` and remove line with `role: root` and the following empty line.
 - Generate the corresponding public key via `openssl ec -in root-priv.key -pubout -out root.pub`. You will be asked to enter your root password.
-- The new `root.pub` contains your public which you copy and set for `notary.rootPubKey` in `connaisseur/helm/values.yaml`. The result should look similar as for the first case above.
+- The new `root.pub` contains your public which you copy and set for `notary.rootPubKeys.<key-id>` in `connaisseur/helm/values.yaml`. The result should look similar as in the example below.
 - To clean up, remove the `root-priv.key` and `root.pub` in `~/.docker/trust/private`.
+
+```yaml
+rootPubKeys: 
+    6b35860633a0cf852670fd9b5c12ba068875f3804d6711feb16fcd74c723c816: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+      BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+      -----END PUBLIC KEY-----
+    # general schema
+    # <key-id>: |
+    #   -----BEGIN PUBLIC KEY-----
+    #   -----END PUBLIC KEY-----
+```
 
 ##### bash/sh/zsh
 
@@ -118,14 +118,16 @@ Lastly, we need to configure the `notary.rootPubKey` that serves as a trust anch
 
 ```bash
 cd ~/.docker/trust/private
-sed '/^role:\sroot$/d' $(grep -iRl "role: root$" .) > root-priv.key
+KEY_PATH=$(grep -iRl "role: root$" .)
+sed '/^role:\sroot$/d' $KEY_PATH > root-priv.key
 openssl ec -in root-priv.key -pubout -out root.pub
 ```
 
 - After entering your password, copy the public key to the `helm/values.yaml`: 
 
 ```bash
-yq write --inplace ${OLDPWD}/helm/values.yaml -- notary.rootPubKey "$(cat root.pub)"
+KEY_ID=$(basename -s .key $KEY_PATH)
+yq write --inplace ${OLDPWD}/helm/values.yaml -- notary.rootPubKeys.${KEY_ID} "$(cat root.pub)"
 rm root-priv.key root.pub
 cd -
 ```
