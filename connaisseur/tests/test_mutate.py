@@ -293,7 +293,7 @@ def mock_request(monkeypatch):
 def mock_keystore(monkeypatch):
     def init(self):
         self.keys = {
-            "root": (
+            "a873ab3f157cfd51c9ccdc445caac92e8aef9f57881169d3bc3cc4868a20add2": (
                 "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
                 "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
             )

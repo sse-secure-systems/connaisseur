@@ -5,7 +5,7 @@ import connaisseur.key_store as ks
 from connaisseur.exceptions import BaseConnaisseurException
 
 root_pub_key = {
-    "root": (
+    "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": (
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
         "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
         "l+W2k3elHkPbR+gNkK2PCA=="
@@ -13,20 +13,6 @@ root_pub_key = {
 }
 
 root_keys = {
-    "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": (
-        "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJlekNDQVNLZ0F3SUJBZ0lSQ"
-        "UtDclUxM0pNUzdHTnJMWEk2SjVvRmd3Q2dZSUtvWkl6ajBFQXdJd0pERWkKTUNBR0"
-        "ExVUVBeE1aWkc5amEyVnlMbWx2TDNCb1ltVnNhWFI2TDNOaGJYQnNaVEFlRncweU1"
-        "EQXhNVE14TlRVMApORFphRncwek1EQXhNVEF4TlRVME5EWmFNQ1F4SWpBZ0JnTlZC"
-        "QU1UR1dSdlkydGxjaTVwYnk5d2FHSmxiR2wwCmVpOXpZVzF3YkdVd1dUQVRCZ2Nxa"
-        "GtqT1BRSUJCZ2dxaGtqT1BRTUJCd05DQUFTMUhtVENzTXJiWkxJSzd0WXcKWHkwS0"
-        "5XQjQ1RUJMWTlacHhGd0UzOVZCMVVyZzlXVFhEaWt4YVhQMEFkQzJFTWFYNWJhVGQ"
-        "2VWVROXRINkEyUQpyWThJb3pVd016QU9CZ05WSFE4QkFmOEVCQU1DQmFBd0V3WURW"
-        "UjBsQkF3d0NnWUlLd1lCQlFVSEF3TXdEQVlEClZSMFRBUUgvQkFJd0FEQUtCZ2dxa"
-        "GtqT1BRUURBZ05IQURCRUFpQnRLN25SMGZmc2oxRlZkNFJXeXRJM0orVG8KTkxMT0"
-        "lVMXJkczArQ2IxdjRnSWdiUGt5V21heGlxQW1OeFp5bnFBVHpuN3JLQ2FWRlZKWW9"
-        "XZjlqeFg1elRNPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
-    ),
     "7c62922e6be165f1ea08252f77410152b9e4ec0d7bf4e69c1cc43f0e6c73da20": (
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErIGdt5pelfWOSjmY7k+/TypV0IFF"
         "9XLA+K4swhclLJb79cLoeBBDqkkUrkfhN5gxRnA//wA3amL4WXkaGsb9zQ=="
@@ -73,13 +59,15 @@ def key_store():
 @pytest.fixture
 def mock_pub_key(monkeypatch):
     def pub_key(path: str):
-        return (
-            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
-            "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
-            "l+W2k3elHkPbR+gNkK2PCA=="
-        )
+        return {
+            "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
+                "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
+                "l+W2k3elHkPbR+gNkK2PCA=="
+            )
+        }
 
-    ks.KeyStore.load_root_pub_key = staticmethod(pub_key)
+    ks.KeyStore.load_root_pub_keys = staticmethod(pub_key)
 
 
 @pytest.fixture

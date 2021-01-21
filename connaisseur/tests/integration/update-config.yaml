@@ -15,8 +15,9 @@
       path: notary.auth.enabled
       value: false
     - command: update
-      path: notary.rootPubKey
-      value: |
+      path: notary.rootPubKeys
+      value: 
+        6b35860633a0cf852670fd9b5c12ba068875f3804d6711feb16fcd74c723c816: |
           -----BEGIN PUBLIC KEY-----
           MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
           BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==

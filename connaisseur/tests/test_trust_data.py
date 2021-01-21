@@ -232,7 +232,7 @@ def mock_schema_path(monkeypatch):
 def mock_keystore(monkeypatch):
     def init(self):
         self.keys = {
-            "root": (
+            "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": (
                 "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
                 "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
             ),

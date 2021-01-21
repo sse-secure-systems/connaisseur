@@ -91,11 +91,6 @@ targets6 = [
     }
 ]
 
-alt_root_pub = (
-    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtkQuBJ/wL1MEDy/6kgfSBls04MT1"
-    "aUWM7eZ19L2WPJfjt105PPieCM1CZybSZ2h3O4+E4hPz1X5RfmojpXKePg=="
-)
-
 
 @pytest.fixture
 def mock_request(monkeypatch):
@@ -178,13 +173,22 @@ def mock_request(monkeypatch):
 def mock_keystore(monkeypatch, root_pub: str = None):
     def init(self):
         self.keys = {
-            "root": os.environ.get(
-                "ROOT_PUB",
-                (
-                    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
-                    "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
-                ),
-            )
+            "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
+                "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
+            ),
+            "a873ab3f157cfd51c9ccdc445caac92e8aef9f57881169d3bc3cc4868a20add2": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
+                "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
+            ),
+            "950430dd6ff06b4a3b4e6f29f7fc7e07f1386718fc936795b0ca27d85645cace": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
+                "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
+            ),
+            "2b53d5708f0defb3e7023b59a32d85938139ee613b85f1aa862cd484f53edc2e": (
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtkQuBJ/wL1MEDy/6kgfSBls04MT1"
+                "aUWM7eZ19L2WPJfjt105PPieCM1CZybSZ2h3O4+E4hPz1X5RfmojpXKePg=="
+            ),
         }
         self.hashes = {}
 
@@ -257,7 +261,7 @@ def test_get_trusted_digest(
 
 
 @pytest.mark.parametrize(
-    "image, policy, error, root_pub",
+    "image, policy, error",
     [
         (
             "securesystemsengineering/charlie-image:test2",
@@ -266,13 +270,11 @@ def test_get_trusted_digest(
                 "not all required delegations have trust data for image "
                 '"docker.io/securesystemsengineering/charlie-image:test2".'
             ),
-            alt_root_pub,
         ),
         (
             "securesystmesengineering/dave-image:test",
             policy_rule4,
             "found multiple signed digests for the same image.",
-            alt_root_pub,
         ),
     ],
 )
@@ -284,49 +286,41 @@ def test_get_trusted_digest_error(
     image: str,
     policy: dict,
     error: str,
-    root_pub: str,
 ):
-    if root_pub:
-        monkeypatch.setenv("ROOT_PUB", root_pub)
     with pytest.raises(BaseConnaisseurException) as err:
         val.get_trusted_digest("host", Image(image), policy)
     assert error in str(err.value)
 
 
 @pytest.mark.parametrize(
-    "image, req_delegations, targets, root_pub",
+    "image, req_delegations, targets",
     [
-        ("securesystemsengineering/alice-image", req_delegations1, targets1, None),
-        ("securesystemsengineering/sample-image", req_delegations2, targets2, None),
+        ("securesystemsengineering/alice-image", req_delegations1, targets1),
+        ("securesystemsengineering/sample-image", req_delegations2, targets2),
         (
             "securesystemsengineering/bob-image",
             req_delegations2,
             targets3,
-            alt_root_pub,
         ),
         (
             "securesystemsengineering/charlie-image",
             req_delegations2,
             targets4,
-            alt_root_pub,
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations2,
             targets5,
-            alt_root_pub,
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations4,
             targets5,
-            alt_root_pub,
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations5,
             targets6,
-            alt_root_pub,
         ),
     ],
 )
@@ -338,10 +332,7 @@ def test_process_chain_of_trust(
     image: str,
     req_delegations: dict,
     targets: list,
-    root_pub: str,
 ):
-    if root_pub:
-        monkeypatch.setenv("ROOT_PUB", root_pub)
     assert val.process_chain_of_trust("host", Image(image), req_delegations) == targets
 
 
