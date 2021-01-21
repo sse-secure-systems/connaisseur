@@ -28,11 +28,11 @@ install: certs
 uninstall:
 	kubectl config set-context --current --namespace $(NAMESPACE)
 	helm uninstall connaisseur
-	kubectl delete ns $(NAMESPACE) --timeout=120s
+	kubectl delete ns connaisseur
 
 upgrade:
 	kubectl config set-context --current --namespace $(NAMESPACE)
 	helm upgrade connaisseur helm --wait
 
 annihilate:
-	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies -lapp.kubernetes.io/instance=connaisseur
+	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies,secrets -lapp.kubernetes.io/instance=connaisseur

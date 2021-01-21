@@ -35,6 +35,10 @@ spec:
                                     pattern: '[\w\d]*'
                             verify:
                                 type: boolean
+                            notary:
+                              type: string
+                            key:
+                              type: string
                         required:
                           - pattern
                           - verify

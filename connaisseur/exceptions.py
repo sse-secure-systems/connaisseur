@@ -55,3 +55,7 @@ class UnknownVersionError(Exception):
 
 class AmbiguousDigestError(BaseConnaisseurException):
     pass
+
+
+class UnreachableError(BaseConnaisseurException):
+    pass

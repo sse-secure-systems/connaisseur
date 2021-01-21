@@ -103,6 +103,12 @@ class TrustData:
             pub_key = keystore.get_key(key_id)
             sig = signature["sig"]
 
+            if not pub_key:
+                raise NotFoundException(
+                    "couldn't find right public for trust data.",
+                    {"key_id": key_id, "trust_data_type": self.signed.get("_type")},
+                )
+
             try:
                 verify_signature(pub_key, sig, msg)
             except Exception as err:

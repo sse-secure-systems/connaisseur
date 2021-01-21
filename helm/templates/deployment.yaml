@@ -48,17 +48,13 @@ spec:
             - name: {{ .Chart.Name }}-certs
               mountPath: /etc/certs
               readOnly: true
+            - name: {{ .Chart.Name }}-config
+              mountPath: /etc/connaisseur-config
+              readOnly: true
+            {{- include "getAuthSecretVolMount" . | nindent 12 }}
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-env
-            {{- if .Values.notary.auth.enabled }}
-            - secretRef:
-              {{- if default false .Values.notary.auth.secretName}}
-                name: {{ .Values.notary.auth.secretName}}
-              {{- else }}
-                name: {{ .Chart.Name }}-secret-env
-              {{- end }}
-            {{- end }}
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
           securityContext:
@@ -91,3 +87,7 @@ spec:
         - name: {{ .Chart.Name }}-certs
           secret:
             secretName: {{ .Chart.Name }}-tls
+        - name: {{ .Chart.Name }}-config
+          configMap:
+            name: {{ .Chart.Name }}-config
+        {{- include "getAuthSecretVol" . | nindent 8 }}

@@ -7,72 +7,53 @@ from connaisseur.exceptions import (
     NotFoundException,
     UnsupportedTypeException,
     InvalidFormatException,
+    UnreachableError,
 )
 from connaisseur.tuf_role import TUFRole
 from connaisseur.trust_data import TrustData
+from connaisseur.config import Notary
 
 
-def health_check(host: str):
-    """
-    Does a health check for a given notary server by using it's API.
-    """
-    if not host:
-        return False
-
-    # The ACR does not expose the notary health endpoint: https://github.com/Azure/acr/issues/475
-    # As a consequence, Connaisseur Pods will not appear as unhealthy if they cannot connect to the ACR
-    # This behavior differs from behavior for all other notaries
-    if is_acr():
+def get_health(notary: Notary):
+    if notary.is_acr:
         return True
 
-    url = f"https://{host}/_notary_server/health"
+    try:
+        url = f"https://{notary.host}/_notary_server/health"
+        request_kwargs = {"url": url, "verify": notary.selfsigned_cert}
+        response = requests.get(**request_kwargs)
 
-    request_kwargs = {"url": url}
-    if is_notary_selfsigned():
-        request_kwargs["verify"] = "/etc/certs/notary.crt"
-    response = requests.get(**request_kwargs)
-
-    return response.status_code == 200
-
-
-def is_acr():
-    """
-    Checks whether the notary server should be considered to be the
-    Azure Container Registry (ACR).
-    """
-    return os.environ.get("IS_ACR", "0") == "1"
+        return response.status_code == 200
+    except Exception:
+        return False
 
 
-def is_notary_selfsigned():
-    """
-    Checks whether the notary server should be considered insecure and a
-    self-signed certificate needs to be used to contact the server.
-    """
-    return os.environ.get("SELFSIGNED_NOTARY", "0") == "1"
-
-
-def get_trust_data(host: str, image: Image, role: TUFRole, token: str = None):
+def get_trust_data(
+    notary_config: Notary, image: Image, role: TUFRole, token: str = None
+):
     """
     Request the specific trust data, denoted by the `role` and `image` from
     the notary server (`host`). Uses a token, should authentication be
     required.
     """
+    if not get_health(notary_config):
+        raise UnreachableError(f"couldn't reach notary host {notary_config.host}.")
+
     if image.repository:
         url = (
-            f"https://{host}/v2/{image.registry}/{image.repository}/"
+            f"https://{notary_config.host}/v2/{image.registry}/{image.repository}/"
             f"{image.name}/_trust/tuf/{role.role}.json"
         )
     else:
         url = (
-            f"https://{host}/v2/{image.registry}/"
+            f"https://{notary_config.host}/v2/{image.registry}/"
             f"{image.name}/_trust/tuf/{role.role}.json"
         )
 
     request_kwargs = {"url": url}
     if token:
         request_kwargs["headers"] = {"Authorization": f"Bearer {token}"}
-    if is_notary_selfsigned():
-        request_kwargs["verify"] = "/etc/certs/notary.crt"
+    request_kwargs["verify"] = notary_config.selfsigned_cert
     response = requests.get(**request_kwargs)
 
     if not token and response.status_code == 401:
@@ -82,8 +63,8 @@ def get_trust_data(host: str, image: Image, role: TUFRole, token: str = None):
 
         if case_insensitive_headers["www-authenticate"]:
             auth_url = parse_auth(case_insensitive_headers["www-authenticate"])
-            token = get_auth_token(auth_url)
-            return get_trust_data(host, image, role, token)
+            token = get_auth_token(notary_config, auth_url)
+            return get_trust_data(notary_config, image, role, token)
 
     if response.status_code == 404:
         raise NotFoundException(
@@ -98,13 +79,14 @@ def get_trust_data(host: str, image: Image, role: TUFRole, token: str = None):
 
 
 def get_delegation_trust_data(
-    host: str, image: Image, role: TUFRole, token: str = None
+    notary_config: Notary, image: Image, role: TUFRole, token: str = None
 ):
+    if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
+        return get_trust_data(notary_config, image, role, token)
+
     try:
-        return get_trust_data(host, image, role, token)
-    except Exception as ex:
-        if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
-            raise ex
+        return get_trust_data(notary_config, image, role, token)
+    except Exception:
         return None
 
 
@@ -160,21 +142,21 @@ def parse_auth(auth_header: str):
     return url
 
 
-def get_auth_token(url: str):
+def get_auth_token(notary_config: Notary, url: str):
     """
     Return the JWT from the given `url`, using user and password from
     environment variables.
 
     Raises an exception if a HTTP error status code occurs.
     """
-    user = os.environ.get("NOTARY_USER", False)
-    password = os.environ.get("NOTARY_PASS", "")
     request_kwargs = {"url": url}
-    if user:
-        request_kwargs["auth"] = requests.auth.HTTPBasicAuth(user, password)
 
-    if is_notary_selfsigned():
-        request_kwargs["verify"] = "/etc/certs/notary.crt"
+    try:
+        request_kwargs["auth"] = requests.auth.HTTPBasicAuth(*notary_config.auth)
+    except TypeError:
+        pass
+
+    request_kwargs["verify"] = notary_config.selfsigned_cert
 
     response = requests.get(**request_kwargs)
 
@@ -187,7 +169,7 @@ def get_auth_token(url: str):
     response.raise_for_status()
 
     try:
-        if is_acr():
+        if notary_config.is_acr:
             token = response.json()["access_token"]
         else:
             token = response.json()["token"]

@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  config.yaml: | 
+    {{- range  .Values.notaries }}
+    - {{ range $k, $v := . -}}
+      {{ if and (ne $k "auth") (ne $k "selfsigned_cert") -}}
+      {{ if eq $k "root_keys" -}}
+      root_keys:
+      {{ range . -}}
+      - name: {{ toYaml .name }}
+        key: |
+          {{- .key | nindent 10 }}
+      {{ end -}}
+      {{- else if eq $k "selfsigned_cert" -}}
+      {{ toYaml $k }}: |
+        {{- . | nindent 8 }}
+      {{- else -}}
+      {{ toYaml $k }}: {{ toYaml $v }}
+      {{ end -}}
+      {{ end -}}
+      {{- end -}}
+    {{- end -}}
