@@ -43,14 +43,16 @@ notaries:
 #       -----END PUBLIC KEY-----
 #   selfsignedCert: |  # selfsigned certificate in PEM format
 #     -----BEGIN CERTIFICATE-----
+#     ...
 #     -----END CERTIFICATE-----
-#   rootKeys:
-#   - name: library
-#     key: |
-#       -----BEGIN PUBLIC KEY-----
-#       -----END PUBLIC KEY-----
-#   auth:
-#     secretName: harbor-creds
+#   auth:  # authentication details
+#     # either
+#     user: notaryuser  # username
+#     password: notarypassword  # password
+#     # or
+#     secretName: notary-secret  # external kubernetes secret
+#   isAcr: true  # mark notary as part of an ACR
+
 
 # the image policy, which defines all repositories that need to be
 # verified. more detail in the git repo README.md
@@ -59,10 +61,8 @@ policy:
   verify: true
   notary: dockerhub
   key: library
-- pattern: "docker.io/connytest/*:*"
-  verify: true
-  notary: dockerhub
-  key: connytest
+- pattern: "k8s.gcr.io/*:*"
+  verify: false
 - pattern: "docker.io/securesystemsengineering/connaisseur:*"
   verify: false
 
