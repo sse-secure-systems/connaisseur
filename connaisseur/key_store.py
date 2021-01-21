@@ -1,3 +1,4 @@
+import yaml
 from connaisseur.exceptions import NotFoundException
 
 
@@ -12,20 +13,21 @@ class KeyStore:
 
     def __init__(self):
         # will always be loaded there as k8s secret
-        root_path = "/etc/certs/root-pub.pem"
-        root_key = KeyStore.load_root_pub_key(root_path)
+        root_path = "/etc/keys/rootPubKeys.yaml"
 
-        self.keys = {"root": root_key}
+        self.keys = KeyStore.load_root_pub_keys(root_path)
         self.hashes = {}
 
     @staticmethod
-    def load_root_pub_key(path: str):
+    def load_root_pub_keys(path: str):
         """
         Loads the public root key from the containers file system.
         """
         with open(path, "r") as root_file:
-            root_key = "".join(root_file.read().splitlines()[1:-1])
-        return root_key
+            pub_keys = yaml.safe_load(root_file)
+            for key_id in pub_keys:
+                pub_keys[key_id] = "".join(pub_keys[key_id].split("\n")[1:-2])
+            return pub_keys
 
     def get_key(self, key_id: str):
         """

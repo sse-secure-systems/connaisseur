@@ -1,7 +1,7 @@
 # configure connaisseur deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v1.4.5
+  image: securesystemsengineering/connaisseur:v1.5.0
   helmHookImage: securesystemsengineering/connaisseur:helm-hook-v1.0
   imagePullPolicy: Always
   resources: {}
@@ -44,10 +44,23 @@ notary:
     # or use a predefined secret, which needs the fields 'NOTARY_USER'
     # and 'NOTARY_PASS'
     secretName: null
-  # the public part of the root key, for verifying notary's signatures
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    -----END PUBLIC KEY-----
+  # the public part of the root keys, for verifying notary's signatures
+  rootPubKeys:
+    # general schema
+    # <key-id>: |
+    #   -----BEGIN PUBLIC KEY-----
+    #   -----END PUBLIC KEY-----
+    # e.g.
+    # 6b35860633a0cf852670fd9b5c12ba068875f3804d6711feb16fcd74c723c816: |
+    #   -----BEGIN PUBLIC KEY-----
+    #   MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+    #   BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+    #   -----END PUBLIC KEY-----
+    # 5cc8d0bc980f600ec41c29974014626d69e3b1dad47540c9183965f0055e12cd: |
+    #   -----BEGIN PUBLIC KEY-----
+    #   MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+    #   QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+    #   -----END PUBLIC KEY-----
   # if you use Azure Container Registry (ACR) for your notary
   # changes some behaviour, such as health probes and how to retrieve auth tokens
   # for compatibility with ACR set to `true`

@@ -48,6 +48,9 @@ spec:
             - name: {{ .Chart.Name }}-certs
               mountPath: /etc/certs
               readOnly: true
+            - name: {{ .Chart.Name }}-root-pub-keys
+              mountPath: /etc/keys
+              readOnly: true
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-env
@@ -91,3 +94,6 @@ spec:
         - name: {{ .Chart.Name }}-certs
           secret:
             secretName: {{ .Chart.Name }}-tls
+        - name: {{ .Chart.Name }}-root-pub-keys
+          configMap:
+            name: {{ .Chart.Name }}-root-pub-keys

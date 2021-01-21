@@ -97,9 +97,15 @@ class TrustData:
         """
         msg = json.dumps(self.signed, separators=(",", ":"))
         for signature in self.signatures:
-            key_id = "root" if self.kind == "root" else signature["keyid"]
+            key_id = signature["keyid"]
             pub_key = keystore.get_key(key_id)
             sig = signature["sig"]
+
+            if not pub_key:
+                raise NotFoundException(
+                    "couldn't find right public for trust data.",
+                    {"key_id": key_id, "trust_data_type": self.signed.get("_type")},
+                )
 
             try:
                 verify_signature(pub_key, sig, msg)

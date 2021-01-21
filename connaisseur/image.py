@@ -54,7 +54,9 @@ class Image:
         # strip trailing "/" or set to default "docker.io" registry
         self.registry = (self.registry or "docker.io").rstrip("/")
         # strip trailing "/"
-        self.repository = (self.repository or "/").rstrip("/")
+        self.repository = (
+            self.repository or ("library/" if self.registry == "docker.io" else "/")
+        ).rstrip("/")
 
         if not (self.tag or self.digest):
             self.tag = "latest"
