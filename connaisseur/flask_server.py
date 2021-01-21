@@ -10,14 +10,16 @@ from connaisseur.exceptions import (
     ConfigurationError,
 )
 from connaisseur.mutate import admit, validate
-from connaisseur.notary_api import health_check
 from connaisseur.admission_review import get_admission_review
 import connaisseur.kube_api as api
 from connaisseur.alert import call_alerting_on_request, send_alerts
+import connaisseur.notary_api as napi
+from connaisseur.config import Config
 
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
 
 APP = Flask(__name__)
+config = Config()
 """
 Flask Server that admits the request send to the k8s cluster, validates it and
 sends its response back.
@@ -49,7 +51,7 @@ def mutate():
     admission_request = request.json
     try:
         validate(admission_request)
-        response = admit(admission_request)
+        response = admit(admission_request, config)
     except Exception as err:
         if isinstance(err, BaseConnaisseurException):
             err_log = str(err)
@@ -83,6 +85,12 @@ def healthz():
     server. Sends back either '200' for a healthy status or '500'
     otherwise.
     """
+    for notary in config.notaries:
+        if not napi.get_health(notary):
+            logging.error(  # pylint: disable=logging-fstring-interpolation
+                f"{notary.host} ({notary.name}) is unreachable."
+            )
+
     return ("", 200)
 
 
@@ -125,10 +133,4 @@ def readyz():
     except HTTPError:
         webhook_response = None
 
-    notary_health = health_check(os.environ.get("NOTARY_SERVER"))
-
-    return (
-        ("", 200)
-        if ((webhook_response or sentinel_running) and notary_health)
-        else ("", 500)
-    )
+    return ("", 200) if (webhook_response or sentinel_running) else ("", 500)

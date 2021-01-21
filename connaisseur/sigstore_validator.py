@@ -3,7 +3,7 @@ import logging
 import re
 import subprocess  # nosec
 
-from connaisseur.crypto import decode_and_verify_ecdsa_key
+from connaisseur.crypto import load_key
 from connaisseur.exceptions import (
     CosignError,
     CosignTimeout,
@@ -79,7 +79,7 @@ def invoke_cosign(image, pubkey):
     returns the returncode, stdout and stderr. Will raise an exception if cosign times out.
     """
 
-    decode_and_verify_ecdsa_key(pubkey)  # raises if invalid; return value not used
+    load_key(pubkey)  # raises if invalid; return value not used
     cmd = ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image]
     stdinput = f"-----BEGIN PUBLIC KEY-----\n{pubkey}\n-----END PUBLIC KEY-----"
 

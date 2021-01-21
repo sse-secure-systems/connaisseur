@@ -19,6 +19,12 @@
                     },
                     "verify": {
                         "type": "boolean"
+                    },
+                    "notary": {
+                        "type": "string"
+                    },
+                    "key": {
+                        "type": "string"
                     }
                 },
                 "required": [

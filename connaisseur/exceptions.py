@@ -91,3 +91,7 @@ class ConfigurationError(AlertingException):
 
 class AlertSendingError(AlertingException):
     pass
+
+
+class UnreachableError(BaseConnaisseurException):
+    pass

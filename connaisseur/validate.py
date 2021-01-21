@@ -1,6 +1,6 @@
 import base64
-import os
 from connaisseur.image import Image
+from connaisseur.config import Notary
 from connaisseur.key_store import KeyStore
 from connaisseur.util import normalize_delegation
 from connaisseur.notary_api import get_trust_data, get_delegation_trust_data
@@ -12,7 +12,7 @@ from connaisseur.exceptions import (
 )
 
 
-def get_trusted_digest(host: str, image: Image, policy_rule: dict):
+def get_trusted_digest(notary_config: Notary, image: Image, policy_rule: dict):
     """
     Searches in given notary server(`host`) for trust data, that belongs to the
     given `image`, by using the notary API. Also checks whether the given
@@ -20,9 +20,15 @@ def get_trusted_digest(host: str, image: Image, policy_rule: dict):
 
     Returns the signed digest, belonging to the `image` or throws if validation fails.
     """
-    if os.environ.get("IS_COSIGN", "0") == "1":
+    # get root key
+    pub_key = notary_config.get_key(policy_rule.get("key"))
+    if not pub_key:
+        raise NotFoundException(
+            "error retrieving the public root key from configuration."
+        )
+
+    if notary_config.is_cosign:
         # validate with cosign
-        pubkey = KeyStore().keys["root"]
         digests = get_cosign_validated_digests(str(image), pubkey)
     else:
         # prepend `targets/` to the required delegation roles, if not already present
@@ -32,7 +38,9 @@ def get_trusted_digest(host: str, image: Image, policy_rule: dict):
 
         # get list of targets fields, containing tag to signed digest mapping from
         # `targets.json` and all potential delegation roles
-        signed_image_targets = process_chain_of_trust(host, image, req_delegations)
+        signed_image_targets = process_chain_of_trust(
+            notary_config, image, req_delegations, pub_key
+        )
 
         # search for digests or tag, depending on given image
         search_image_targets = (
@@ -76,7 +84,7 @@ def get_trusted_digest(host: str, image: Image, policy_rule: dict):
 
 
 def process_chain_of_trust(
-    host: str, image: Image, req_delegations: list
+    notary_config: Notary, image: Image, req_delegations: list, pub_root_key: str
 ):  # pylint: disable=too-many-branches
     """
     Processes the whole chain of trust, provided by the notary server (`host`)
@@ -90,21 +98,21 @@ def process_chain_of_trust(
     the trust data, or no image targets be found.
     """
     trust_data = {}
-    key_store = KeyStore()
+    key_store = KeyStore(pub_root_key)
 
     tuf_roles = ["root", "snapshot", "timestamp", "targets"]
 
     # load all trust data
     for role in tuf_roles:
-        trust_data[role] = get_trust_data(host, image, TUFRole(role))
+        trust_data[role] = get_trust_data(notary_config, image, TUFRole(role))
 
     # validate signature and expiry data of and load root file
-    # this does NOT conclude the validation of the root file. To prevent roleback/freeze attacks,
-    # the hash still needs to be validated against the snapshot file
-    root_trust_data = get_trust_data(host, image, TUFRole("root"))
+    # this does NOT conclude the validation of the root file. To prevent roleback/freeze
+    # attacks, the hash still needs to be validated against the snapshot file
+    root_trust_data = trust_data["root"]
     root_trust_data.validate_signature(key_store)
     root_trust_data.validate_expiry()
-    trust_data["root"] = root_trust_data
+
     key_store.update(root_trust_data)
 
     # validate timestamp file to prevent freeze attacks
@@ -145,7 +153,7 @@ def process_chain_of_trust(
     delegations = trust_data["targets"].get_delegations()
     if trust_data["targets"].has_delegations():
         _update_with_delegation_trust_data(
-            trust_data, delegations, key_store, host, image
+            trust_data, delegations, key_store, notary_config, image
         )
 
     # validate existence of required delegations
@@ -211,10 +219,12 @@ def search_image_targets_for_tag(trust_data: dict, image: Image):
     return base64.b64decode(base64_digest).hex()
 
 
-def _update_with_delegation_trust_data(trust_data, delegations, key_store, host, image):
+def _update_with_delegation_trust_data(
+    trust_data, delegations, key_store, notary_config, image
+):
     for delegation in delegations:
         delegation_trust_data = get_delegation_trust_data(
-            host, image, TUFRole(delegation)
+            notary_config, image, TUFRole(delegation)
         )
         # when delegations are added to the repository, but weren't yet used for signing, the
         # delegation files don't exist yet and are `None`. in this case validation must be skipped

@@ -1,8 +1,7 @@
-{{- if and (.Values.notary.auth.enabled) (not (default false .Values.notary.auth.secretName)) }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Chart.Name }}-secret-env
+  name: {{ .Chart.Name }}-tls
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "helm.name" . }}
@@ -11,6 +10,8 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 type: Opaque
 data:
-  NOTARY_USER: {{ .Values.notary.auth.user | b64enc }}
-  NOTARY_PASS: {{ .Values.notary.auth.password | b64enc }}
-{{- end }}
+  tls.crt: {{ .Files.Get "certs/tls.crt" | b64enc }}
+  tls.key: {{ .Files.Get "certs/tls.key" | b64enc }}
+  {{- if (include "selfsigned" . ) }}
+  {{ include "selfsigned" . }}
+  {{- end }}

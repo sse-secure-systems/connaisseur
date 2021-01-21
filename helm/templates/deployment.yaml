@@ -54,17 +54,13 @@ spec:
             - name: {{ .Chart.Name }}-alertconfig
               mountPath: "/app/config"
               readOnly: true
+            - name: {{ .Chart.Name }}-config
+              mountPath: /etc/connaisseur-config
+              readOnly: true
+            {{- include "getAuthSecretVolMount" . | nindent 12 }}
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-env
-            {{- if .Values.notary.auth.enabled }}
-            - secretRef:
-              {{- if default false .Values.notary.auth.secretName}}
-                name: {{ .Values.notary.auth.secretName}}
-              {{- else }}
-                name: {{ .Chart.Name }}-secret-env
-              {{- end }}
-            {{- end }}
           env:
             - name: POD_NAME
               valueFrom:
@@ -108,3 +104,7 @@ spec:
         - name: {{ .Chart.Name }}-alert-templates
           configMap:
             name: {{ .Chart.Name }}-alert-templates
+        - name: {{ .Chart.Name }}-config
+          configMap:
+            name: {{ .Chart.Name }}-config
+        {{- include "getAuthSecretVol" . | nindent 8 }}

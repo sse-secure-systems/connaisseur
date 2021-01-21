@@ -6,10 +6,12 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from connaisseur.image import Image
 from connaisseur.tuf_role import TUFRole
+from connaisseur.config import Notary
 
 
 def get_pub_root_key(host: str, image: Image):
-    root_td = api.get_trust_data(host, image, TUFRole("root"))
+    notary = Notary("no", host, ["not_empty"])
+    root_td = api.get_trust_data(notary, image, TUFRole("root"))
 
     root_key_id = root_td.signatures[0].get("keyid")
     root_cert_base64 = (
