@@ -43,6 +43,7 @@ notaries:
 #       -----END PUBLIC KEY-----
 #   selfsigned_cert: |  # selfsigned certificate in PEM format
 #     -----BEGIN CERTIFICATE-----
+#     ...
 #     -----END CERTIFICATE-----
 #   auth:  # authentication details
 #     # either

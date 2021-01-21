@@ -47,15 +47,39 @@ Make sure `docker`, `git`, `helm`, `kubectl`, `make` and `yq` (>= v4) are instal
 
 > :warning: Do not start this on a cluster used for other purposes, as Connaisseur will block all deployments!
 
-- Clone the repository via `git clone https://github.com/sse-secure-systems/connaisseur.git` and set the trust anchor to our public key in the `helm/values.yaml`:
+- Clone the repository via `git clone https://github.com/sse-secure-systems/connaisseur.git` and set the trust anchor to our public key in the `helm/values.yaml`. For that, add the following lines to the already existing `default` notary configuration:
 
 ```yaml
-  # the public part of the root key, for verifying notary's signatures
-  rootPubKey: |
-    -----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
-    BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
-    -----END PUBLIC KEY-----
+notaries:
+- name: dockerhub
+  host: notary.docker.io
+  root_keys:
+  - name: library
+    key: ...
+  # -- Add this part ----
+  - name: securesystemsengineering
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+      d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+      -----END PUBLIC KEY-----
+  # ---------------------
+```
+
+- Also in the `helm/values.yaml` add a new pattern to the `policy` field, referencing the notary entry and key:
+
+```yaml
+policy:
+- pattern: "*:*"
+  verify: true
+- pattern: "docker.io/securesystemsengineering/connaisseur:*"
+  verify: false
+# -- Add this part ----
+- pattern: "docker.io/securesystemsengineering/testimage:*"
+  verify: true
+  notary: dockerhub
+  key: securesystemsengineering
+# ---------------------
 ```
 
 - Install Connaisseur on the cluster via `make install`.
@@ -78,9 +102,9 @@ Notary trust data includes some auxiliary information on the freshness of each i
 
 ## Getting Started
 
-Connaisseur can be integrated into a multitude of different systems, with a few requirements and a bit of configurational effort. It was tested on a Linux Mint 19.2, but other distributions should work just fine. We provide a [full setup guide](setup/README.md) with detailed instructions for various environments. In short: 
+Connaisseur can be integrated into a multitude of different systems, with a few requirements and a bit of configurational effort. It was tested on a Linux Mint 19.2, but other distributions should work just fine. We provide a [full setup guide](setup/README.md) with detailed instructions for various environments. In short:
 
-1. **Requirements**: A few tools are needed in advance. You'll need `git` for getting the source code and `make` for a convenient setup. Since Connaisseur will be deployed as a container to a Kubernetes cluster, [docker](https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/), [helm](https://helm.sh/docs/intro/install/) and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) are required for building the image, generating a Deployment file and deploying it to the cluster. During the deployment, some certificates need to be created, which requires `openssl`. To install everything except docker, helm and kubectl, use
+1. **Requirements**: First of all you'll need an image with an exiting signature. If you don't have one, head to the [full setup guide](setup/README.md) where creating Docker Content Trust keys and signing images is explained. Also a few tools are needed in advance. You'll need `git` for getting the source code and `make` for a convenient setup. Since Connaisseur will be deployed as a container to a Kubernetes cluster, [docker](https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/), [helm](https://helm.sh/docs/intro/install/) and [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) are required for building the image, generating a Deployment file and deploying it to the cluster. During the deployment, some certificates need to be created, which requires `openssl`. To install everything except docker, helm and kubectl, use
 
 ```bash
 sudo apt install git make openssl -y
@@ -93,7 +117,12 @@ sudo snap install yq
 git clone git@github.com:sse-secure-systems/connaisseur.git
 ```
 
-3. **Configure deployment**: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. The `helm/values.yaml` file is a good start. In there, the `.notary.host` field specifies the hostname and port of the Notary server. If your Notary uses a self-signed certificate, `.notary.selfsigned` should be set to `true` and the certificate has to be added to `.notary.selfsignedCert`. In case your Notary instance is authenticated (which it should), set the `.notary.auth.enabled` to `true` and enter the credentials either directly or as a predefined secret. Lastly enter the public root key in `.notary.rootPubKey`, which is used for verifying the image signatures.
+3. **Configure deployment**: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. Open `helm/values.yaml`, which is Connaisseur's configuration file.
+
+    1. **Configure notary instances**: The `.notaries` field specifies different notary configurations, with the official DockerHub notary instance predefined. When wanting to add a new (e.g. private) notary instance, create a new entry and define a `name` and add the host address in the `host` field. Should the new instance use a self-signed certificate, add it with the `selfsigned_cert` field in a PEM format. Also should the instance need authentication, an `auth` field can be added, containing either an `auth.user` and `auth.password` with the credentials, or an `auth.secretName` referencing a predefined secret. Regardless of whether you want to add a new instance or use the DockerHub one, you'll probably want to add at least one public root key, used for verifying the signatures. Root keys reside in the `root_keys` field as a list. The public key for all official images on DockerHub is already defined with the name `default`. Simply add a new entry, give it a `name` and add the key in PEM format in the `key` field. For retrieving a public root key you can use the *get_root_key* utility described [here](#getting-the-root-key).
+
+    2. **Configure the policy**: To actually use the newly defined notary instances or public keys, they have to be referenced in the image policy. How the image policy is setup, is described in the [image policy](#image-policy) section. Make sure to reference the instance and key via the `notary` and `key` fields, or leave them out should you want to use the default ones, which are identified by their `name` fields set to `default`.
+
 4. **Deploy**: Switch to the cluster where you would like to install Connaisseur, and run `make install`. This may take some seconds, as the installation order of the Connaisseur components is critical. Only when the Connaisseur pods are ready and running, the Admission Webhook can be applied for intercepting requests.
 
 > :warning: **WARNING!** Be careful when installing Connaisseur, as it will block unsigned images and may for example even block some resources during a restart of `minikube`! In such a situation you should still be able to fix it by deleting Connaisseur manually. You can use [Detection Mode](#detection-mode) to avoid interruptions during testing.
@@ -115,12 +144,19 @@ Connaisseur allows defining an image policy, for fine-grained control over Conna
 
 ```yaml
 policy:
-  - pattern: "*:*"
-    verify: true
-  - pattern: "k8s.gcr.io/*:*"
-    verify: false
-  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-    verify: false
+- pattern: "*:*"
+  verify: true
+- pattern: "k8s.gcr.io/*:*"
+  verify: false
+- pattern: "docker.io/securesystemsengineering/connaisseur:*"
+  verify: false
+- pattern: "sample.registry.io/image:*"
+  verify: true
+  delegations:
+  - lou 
+  - max
+  notary: sample-notary
+  key: sample-key
 ```
 
 The policy consists of a set of rules. Each rule starts with a pattern that needs to be matched to an image name (such as `"*:*"` and `"docker.io/*:*"`). Only the most specific rule, with the most specific matching pattern, is chosen for any given image. This is determined by the following algorithm:
@@ -133,12 +169,31 @@ The policy consists of a set of rules. Each rule starts with a pattern that need
     4. The rule whose pattern has won all comparisons is considered the most specific rule.
 3. Return the most specific rule.
 
-In addition to the pattern, rules can also contain a `verify` flag which specifies whether the image requires a signature or can skip verification. If `verify` is set to `true`, a valid signature is required; otherwise, the image is admitted. Additionally, a rule can have `delegations` which correspond to Notary delegation roles. These are to be understood as specific signers that need to be present in the Notary trust data in order for signature verification to be successful.
+In addition to the pattern, rules can also contain a `verify` flag which specifies whether the image requires a signature or can skip verification. If `verify` is set to `true`, a valid signature is required; otherwise, the image is admitted without verification. The default value for `verify` is `true`. Additionally, a rule can have `delegations` which correspond to Notary delegation roles. These are to be understood as specific signers that need to be present in the Notary trust data in order for signature verification to be successful. Lastly a `notary` and `key` field can be added, which reference which of the notaries should be consulted when accessing signatures for a given image, and which of the keys should be used to verify these signatures. Make sure that the `notary` field references one of the notaries `name` fields and the `key` field references of the public root keys `name` field, within the given notary configuration. If no `notary` or `key` fields are given, Connaisseur will either do one of two things:
+
+1. Should there only be one notary configuration or only one key defined within a given configuration, this configuration or key will be taken by default for verification purposes.
+2. Should there be more then one notary configuration or key and if one of the `name` fields is set to `default`, Connaisseur will take this one. If no default is specified and no specific entry defined, Connaisseur will abort the validation with an error.
 
 ### Detection Mode
+
 A detection mode is available in order to avoid interruptions of a running cluster, to support initial rollout or for testing purposes. In detection mode, Connaisseur will admit all images to the cluster, but logs an error message for images that do not comply with the policy or in case of other unexpected failures.
 
 To activate the detection mode, set the `detection_mode` flag to `true` in `helm/values.yaml`.
+
+### Getting the Root Key
+
+For verifying the signatures of images, a public root key is needed, but from where do you get this, especially for public images whose signatures you didn't create? For this we created the *get_root_key* utility. You can use it by building the docker image with `docker build -t get-root-key -f docker/Dockerfile.getRoot .` and the running the image:
+
+```bash
+$ docker run --rm notaryrootkey -i securesystemsengineering/testimage
+KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
+Key: -----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+-----END PUBLIC KEY-----
+```
+
+The `-i` (`--image`) option is required and takes the image, for which you want the public key. There is also the `-s` (`--server`) option, which defines the notary server that should be used and which defaults to `notary.docker.io`.
 
 ## Threat Model
 
@@ -187,10 +242,13 @@ The STRIDE threat model has been used as a reference for threat modeling. Each o
 - A recording on "Integrity of Docker images" diving into supply chain security, *The Update Framework*, *Notary*, *Docker Content Trust* and Connaisseur including a live demo is available on [YouTube](https://youtu.be/M3KAiBXhsPQ)
 
 ## Contributing
+
 We hope to steer development of Connaisseur from demand of the community and are excited about direct contributions to improve the tool! Please refer to our [contributing guide](CONTRIBUTING.md) to learn how to contribute to Connaisseur.
 
 ## Security Policy
+
 We are grateful for any community support reporting vulnerabilities! How to submit a report is described in our [Security Policy](SECURITY.md).
 
 ## Contact
+
 You can reach us via email under [connaisseur@securesystems.dev](mailto:connaisseur@securesystems.dev).

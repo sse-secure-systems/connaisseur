@@ -28,10 +28,18 @@ cd connaisseur
 
 ### 2. Configure specifics to ACR
 
-First we want to tell Connaisseur that the notary it connects to is the ACR. Unfortunately, the notary API exposed by ACR is slightly different from other notaries, so Connaisseur needs to know in order to adapt. You can either manually set `notary.isAcr` to `true` in `helm/values.yaml` or use the shell one-liner below:
+First we want to tell Connaisseur that the notary it connects to is the ACR. Unfortunately, the notary API exposed by ACR is slightly different from other notaries, so Connaisseur needs to know in order to adapt. You can manually set `notaries[*].is_acr` to `true` in `helm/values.yaml`.
 
-```bash
-yq e '.notary.isAcr=true' -i helm/values.yaml
+```yaml
+notaries:
+- name: sample-acr-notary
+  host: notary.acr.io
+  root_keys:
+  - name: default
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      -----END PUBLIC KEY-----
+  is_acr: true
 ```
 
 The second specific change to be done when deploying Connaisseur in an environment with the ACR is to create a Service Principal (SP) that gives Connaisseur a username/password combination to retrieve an access token via BasicAuth. Below set `<ACR-NAME>` to your registry's name and choose `<SERVICE-PRINCIPLE-NAME>` as you like:
