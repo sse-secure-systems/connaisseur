@@ -98,9 +98,13 @@ def process_chain_of_trust(
                 host, image, TUFRole(delegation)
             )
 
-    # validate all trust data's signatures, expiry dates and hashes
+    # validate all trust data's signatures, expiry dates and hashes.
+    # when delegation are added to the repository, but weren't yet used for signing, the
+    # delegation files don't exist yet and are `None`. in this case they can't be
+    # validated and must be skipped.
     for role in trust_data:
-        trust_data[role].validate(key_store)
+        if trust_data[role] is not None:
+            trust_data[role].validate(key_store)
 
     # validate needed delegations
     if req_delegations:

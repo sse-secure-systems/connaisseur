@@ -100,12 +100,11 @@ def get_trust_data(host: str, image: Image, role: TUFRole, token: str = None):
 def get_delegation_trust_data(
     host: str, image: Image, role: TUFRole, token: str = None
 ):
-    if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
-        return get_trust_data(host, image, role, token)
-
     try:
         return get_trust_data(host, image, role, token)
-    except Exception:
+    except Exception as ex:
+        if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
+            raise ex
         return None
 
 
