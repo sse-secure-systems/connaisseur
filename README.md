@@ -59,9 +59,9 @@ Make sure `docker`, `git`, `helm`, `kubectl`, `make` and `yq` (>= v4) are instal
 ```
 
 - Install Connaisseur on the cluster via `make install`.
-- Trying to deploy an unsigned app to your cluster will be denied due to lack of trust data: `kubectl run unsigned --image=docker.io/connytest/testimage:unsigned`
-- However, the signature of our signed image is successfully verified: `kubectl run signed --image=docker.io/connytest/testimage:signed`
-- You can compare the trust data of the two images via `docker trust inspect --pretty docker.io/connytest/testimage`.
+- Trying to deploy an unsigned app to your cluster will be denied due to lack of trust data: `kubectl run unsigned --image=docker.io/securesystemsengineering/testimage:unsigned`
+- However, the signature of our signed image is successfully verified: `kubectl run signed --image=docker.io/securesystemsengineering/testimage:signed`
+- You can compare the trust data of the two images via `docker trust inspect --pretty docker.io/securesystemsengineering/testimage`.
 - To uninstall Connaisseur from your cluster after the demo, run `make uninstall`.
 
 Congrats :bowtie:! You have successfully validated authenticity and integrity of our test images before deploying to your cluster. Below you can find a guide how to setup Connaisseur in your own environment.
