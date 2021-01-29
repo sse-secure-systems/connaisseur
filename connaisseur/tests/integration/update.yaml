@@ -1,0 +1,21 @@
+deployment:
+  imagePullPolicy: Never
+notary:
+  host: notary.docker.io
+  selfsigned: false
+  auth:
+    enabled: false
+  rootPubKey: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+    BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+    -----END PUBLIC KEY-----
+policy:
+  - pattern: "*:*"
+    verify: true
+  - pattern: "k8s.gcr.io/*:*"
+    verify: false
+  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
+    verify: true
+  - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
+    verify: false
