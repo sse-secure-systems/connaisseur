@@ -84,7 +84,7 @@ def mock_pub_key(monkeypatch):
 
 @pytest.fixture
 def mock_trust_data(monkeypatch):
-    def _validate_expiry(self):
+    def validate_expiry(self):
         pass
 
     def trust_init(self, data: dict, role: str):
@@ -94,7 +94,7 @@ def mock_trust_data(monkeypatch):
         self.signed = data["signed"]
         self.signatures = data["signatures"]
 
-    monkeypatch.setattr(TrustData, "_validate_expiry", _validate_expiry)
+    monkeypatch.setattr(TrustData, "validate_expiry", validate_expiry)
     monkeypatch.setattr(TargetsData, "__init__", trust_init)
     TrustData.schema_path = "res/{}_schema.json"
 

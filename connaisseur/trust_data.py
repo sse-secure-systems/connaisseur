@@ -71,11 +71,11 @@ class TrustData:
         Validates the trust data's signature, expiry date and hash value, given
         a `keystore` containing keys and hashes.
         """
-        self._validate_signature(keystore)
-        self._validate_expiry()
-        self._validate_hash(keystore)
+        self.validate_signature(keystore)
+        self.validate_expiry()
+        self.validate_hash(keystore)
 
-    def _validate_expiry(self):
+    def validate_expiry(self):
         """
         Validates the expiry date of the trust data.
 
@@ -90,7 +90,7 @@ class TrustData:
                 {"expire": str(expire), "trust_data_type": self.signed.get("_type")},
             )
 
-    def _validate_signature(self, keystore: KeyStore):
+    def validate_signature(self, keystore: KeyStore):
         """
         Validates the signature of the trust data, using keys from a
         `keystore`.
@@ -111,7 +111,7 @@ class TrustData:
                     {"key_id": key_id, "trust_data_type": self.signed.get("_type")},
                 ) from err
 
-    def _validate_hash(self, keystore: KeyStore):
+    def validate_hash(self, keystore: KeyStore):
         """
         Validates the given hash from a `keystore` corresponds to the trust
         data's calculated hash.
@@ -168,7 +168,7 @@ class SnapshotData(TrustData):  # pylint: disable=abstract-method
 
 
 class TimestampData(TrustData):  # pylint: disable=abstract-method
-    def _validate_hash(self, keystore: KeyStore):
+    def validate_hash(self, keystore: KeyStore):
         pass
 
     def get_hashes(self):

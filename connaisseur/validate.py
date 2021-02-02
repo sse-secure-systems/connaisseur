@@ -72,41 +72,80 @@ def process_chain_of_trust(
     """
     Processes the whole chain of trust, provided by the notary server (`host`)
     for any given `image`. The 'root', 'snapshot', 'timestamp', 'targets' and
-    potentially 'targets/releases' are requested in this order and afterwards
-    validated, also according to the `policy_rule`.
+    potentially 'targets/releases' are requested and validated.
+    Additionally, it is checked whether all required delegations are valid.
 
     Returns the signed image targets, which contain the digests.
 
     Raises `NotFoundExceptions` should no required delegetions be present in
     the trust data, or no image targets be found.
     """
-    tuf_roles = ["root", "snapshot", "timestamp", "targets"]
     trust_data = {}
     key_store = KeyStore()
 
-    # get all trust data and collect keys (from root and targets), as well as
-    # hashes (from snapshot and timestamp)
+    tuf_roles = ["root", "snapshot", "timestamp", "targets"]
+
+    # Load all trust data
     for role in tuf_roles:
-        trust_data[role] = get_trust_data(host, image, TUFRole(role))
-        key_store.update(trust_data[role])
+        role_trust_data = get_trust_data(host, image, TUFRole(role))
+        trust_data[role] = role_trust_data
+
+    # Validate signature and expiry data of and load root file
+    # This does NOT conclude the validation of the root file. To prevent roleback/freeze attacks,
+    # the hash still needs to be validated against the snapshot file
+    root_trust_data = get_trust_data(host, image, TUFRole("root"))
+    root_trust_data.validate_signature(key_store)
+    root_trust_data.validate_expiry()
+    trust_data["root"] = root_trust_data
+    key_store.update(root_trust_data)
+
+    # Validate timestamp file to prevent freeze attacks
+    # validates signature and expiry data
+    # there is no hash to verify it against since it is short lived
+    # TODO should we ensure short expiry duration here?
+    timestamp_trust_data = trust_data["timestamp"]
+    timestamp_trust_data.validate(key_store)
+
+    # Validate snapshot file signature against the key defined in the root file
+    # and its hash against the one from the timestamp file
+    # and validate expiry
+    snapshot_trust_data = trust_data["snapshot"]
+    snapshot_trust_data.validate_signature(key_store)
+
+    timestamp_key_store = KeyStore()
+    timestamp_key_store.update(timestamp_trust_data)
+    snapshot_trust_data.validate_hash(timestamp_key_store)
+
+    snapshot_trust_data.validate_expiry()
+
+    # Now snapshot and timestamp files are validated, we can be safe against
+    # roleback and freeze attacks if the root file matches the hash of the snapshot file
+    # (or the root key has been compromised, which Connaisseur cannot defend against)
+    snapshot_key_store = KeyStore()
+    snapshot_key_store.update(snapshot_trust_data)
+    root_trust_data.validate_hash(snapshot_key_store)
+
+    # If we are safe at this point, we can add the snapshot data to the main KeyStore
+    # and proceed with validating the targets file and (potentially) delegation files
+    key_store.update(snapshot_trust_data)
+    targets_trust_data = trust_data["targets"]
+    targets_trust_data.validate(key_store)
+    key_store.update(targets_trust_data)
 
     # if the 'targets.json' has delegation roles defined, get their trust data
     # as well
     if trust_data["targets"].has_delegations():
         for delegation in trust_data["targets"].get_delegations():
-            trust_data[delegation] = get_delegation_trust_data(
+            delegation_trust_data = get_delegation_trust_data(
                 host, image, TUFRole(delegation)
             )
+            # when delegations are added to the repository, but weren't yet used for signing, the
+            # delegation files don't exist yet and are `None`. in this case validation must be skipped
+            if delegation_trust_data is not None:
+                delegation_trust_data.validate(key_store)
+            trust_data[delegation] = delegation_trust_data
 
-    # validate all trust data's signatures, expiry dates and hashes.
-    # when delegations are added to the repository, but weren't yet used for signing, the
-    # delegation files don't exist yet and are `None`. in this case they can't be
-    # validated and must be skipped
-    for role in trust_data:
-        if trust_data[role] is not None:
-            trust_data[role].validate(key_store)
-
-    # validate needed delegations
+    # validate required delegations
     if req_delegations:
         if trust_data["targets"].has_delegations():
             delegations = trust_data["targets"].get_delegations()

@@ -353,7 +353,7 @@ def test_validate_schema(td, mock_schema_path, trustdata: dict, role: str):
 def test_validate_signature(td, mock_schema_path, mock_keystore, data: dict, role: str):
     ks = KeyStore()
     trust_data_ = td.TrustData(data, role)
-    assert trust_data_._validate_signature(ks) is None
+    assert trust_data_.validate_signature(ks) is None
 
 
 def test_validate_signature_error(td, mock_schema_path, mock_keystore):
@@ -363,7 +363,7 @@ def test_validate_signature_error(td, mock_schema_path, mock_keystore):
     ks = KeyStore()
 
     with pytest.raises(ValidationError) as err:
-        trust_data_._validate_signature(ks)
+        trust_data_.validate_signature(ks)
     assert "failed to verify signature of trust data." in str(err.value)
 
 
@@ -380,7 +380,7 @@ def test_validate_signature_error(td, mock_schema_path, mock_keystore):
 def test_validate_hash(td, mock_schema_path, mock_keystore, data: dict, role: str):
     ks = KeyStore()
     trust_data_ = td.TrustData(data, role)
-    assert trust_data_._validate_hash(ks) is None
+    assert trust_data_.validate_hash(ks) is None
 
 
 def test_validate_hash_error(td, mock_schema_path, mock_keystore):
@@ -390,7 +390,7 @@ def test_validate_hash_error(td, mock_schema_path, mock_keystore):
     ks = KeyStore()
 
     with pytest.raises(ValidationError) as err:
-        trust_data_._validate_hash(ks)
+        trust_data_.validate_hash(ks)
     assert "failed validating trust data hash." in str(err.value)
 
 
@@ -408,7 +408,7 @@ def test_validate_trust_data_expiry(td, mock_schema_path, data: dict, role: str)
     time_format = "%Y-%m-%dT%H:%M:%S.%f%z"
     trust_data_.signed["expires"] = time.strftime(time_format)
 
-    assert trust_data_._validate_expiry() is None
+    assert trust_data_.validate_expiry() is None
 
 
 @pytest.mark.parametrize(
@@ -422,7 +422,7 @@ def test_validate_trust_data_expiry_error(td, mock_schema_path, data: dict, role
     trust_data_.signed["expires"] = time.strftime(time_format)
 
     with pytest.raises(ValidationError) as err:
-        trust_data_._validate_expiry()
+        trust_data_.validate_expiry()
     assert "trust data expired." in str(err.value)
 
 
