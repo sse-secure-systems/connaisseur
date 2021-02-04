@@ -67,7 +67,7 @@ class TrustData:
     def validate(self, keystore: KeyStore):
         """
         Validates the trust data's signature, expiry date and hash value, given
-        the keys and hashes from a `keystore`.
+        a `keystore` containing keys and hashes.
         """
         self._validate_signature(keystore)
         self._validate_expiry()

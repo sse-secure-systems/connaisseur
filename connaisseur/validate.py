@@ -16,9 +16,9 @@ def get_trusted_digest(host: str, image: Image, policy_rule: dict):
     given `image`, by using the notary API. Also checks whether the given
     `policy_rule` complies.
 
-    Returns the signed digest, belonging to the `image`.
+    Returns the signed digest, belonging to the `image` or throws if validation fails.
     """
-    # concat `targets/` to the  required delegation roles, if not already present
+    # prepend `targets/` to the required delegation roles, if not already present
     req_delegations = list(
         map(normalize_delegation, policy_rule.get("delegations", []))
     )

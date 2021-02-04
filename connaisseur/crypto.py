@@ -8,7 +8,7 @@ def verify_signature(public_base64: str, signature_base64: str, message: str):
     Verifies the given bas64-encoded signature with the base64-encoded public
     key and serialized message. The message should not contain any whitespaces.
 
-    Raises ValidationError if unsuccessfull.
+    Raises ValidationError if unsuccessful.
     """
     public = base64.b64decode(public_base64)
     pub_key = ecdsa.VerifyingKey.from_der(public)

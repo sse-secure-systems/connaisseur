@@ -53,7 +53,7 @@ def is_notary_selfsigned():
 
 def get_trust_data(host: str, image: Image, role: TUFRole, token: str = None):
     """
-    Request the specific trust data, denoted by the `role` and `image` form
+    Request the specific trust data, denoted by the `role` and `image` from
     the notary server (`host`). Uses a token, should authentication be
     required.
     """
