@@ -313,6 +313,8 @@ def test_trust_data_error(td):
     "trustdata, role",
     [
         (trust_data("tests/data/sample6_root.json"), "root"),
+        ([], "root"),
+        ({}, "targets"),
         (trust_data("tests/data/sample3_timestamp.json"), "timestamp"),
     ],
 )

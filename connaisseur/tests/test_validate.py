@@ -31,6 +31,7 @@ req_delegations2 = []
 req_delegations3 = ["targets/someuserthatdidnotsign"]
 req_delegations4 = ["targets/del1"]
 req_delegations5 = ["targets/del2"]
+req_delegations6 = ["targets/phbelitz", "targets/someuserthatdidnotsign"]
 
 targets1 = [
     {
@@ -349,13 +350,21 @@ def test_process_chain_of_trust(
     "image, req_delegations, error",
     [
         (
+            # no delegations
             "docker.io/securesystemsengineering/sample-image",
             req_delegations1,
             "could not find any delegations in trust data.",
         ),
         (
+            # single invalid delegation
             "securesystemsengineering/alice-image",
             req_delegations3,
+            "could not find delegation roles ['targets/someuserthatdidnotsign'] in trust data.",
+        ),
+        (
+            # invalid and valid delegations
+            "securesystemsengineering/alice-image",
+            req_delegations6,
             "could not find delegation roles ['targets/someuserthatdidnotsign'] in trust data.",
         ),
     ],

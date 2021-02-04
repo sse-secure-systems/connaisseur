@@ -90,7 +90,6 @@ request_obj_cronjob_with_init_container = {
         },
     },
 }
-
 request_obj_deployment = {
     "kind": "Deployment",
     "apiVersion": "apps/v1",
@@ -111,6 +110,254 @@ request_obj_deployment = {
 }
 request_obj_deployment_with_two_init_containers = {
     "kind": "Deployment",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "init-container",
+                        "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
+                    },
+                    {
+                        "name": "init-container2",
+                        "image": "docker.io/securesystemsengineering/testing_conny:signed",
+                    },
+                ],
+            },
+        }
+    },
+}
+request_obj_replicationscontroller = {
+    "kind": "ReplicationController",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ]
+            },
+        }
+    },
+}
+request_obj_replicationcontroller_with_two_init_containers = {
+    "kind": "ReplicationController",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "init-container",
+                        "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
+                    },
+                    {
+                        "name": "init-container2",
+                        "image": "docker.io/securesystemsengineering/testing_conny:signed",
+                    },
+                ],
+            },
+        }
+    },
+}
+request_obj_replicatset = {
+    "kind": "ReplicaSet",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ]
+            },
+        }
+    },
+}
+request_obj_replicaset_with_two_init_containers = {
+    "kind": "ReplicaSet",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "init-container",
+                        "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
+                    },
+                    {
+                        "name": "init-container2",
+                        "image": "docker.io/securesystemsengineering/testing_conny:signed",
+                    },
+                ],
+            },
+        }
+    },
+}
+request_obj_daemonset = {
+    "kind": "DaemonSet",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ]
+            },
+        }
+    },
+}
+request_obj_daemonset_with_two_init_containers = {
+    "kind": "DaemonSet",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "init-container",
+                        "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
+                    },
+                    {
+                        "name": "init-container2",
+                        "image": "docker.io/securesystemsengineering/testing_conny:signed",
+                    },
+                ],
+            },
+        }
+    },
+}
+request_obj_statefulset = {
+    "kind": "StatefulSet",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ]
+            },
+        }
+    },
+}
+request_obj_tuftuf = {
+    "kind": "TufTuf",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ]
+            },
+        }
+    },
+}
+request_obj_statefulset_with_two_init_containers = {
+    "kind": "StatefulSet",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "init-container",
+                        "image": "docker.io/securesystemsengineering/testing_conny:unsigned",
+                    },
+                    {
+                        "name": "init-container2",
+                        "image": "docker.io/securesystemsengineering/testing_conny:signed",
+                    },
+                ],
+            },
+        }
+    },
+}
+request_obj_job = {
+    "kind": "Job",
+    "apiVersion": "apps/v1",
+    "metadata": {},
+    "spec": {
+        "template": {
+            "metadata": {},
+            "spec": {
+                "containers": [
+                    {
+                        "name": "test-connaisseur",
+                        "image": "securesystemsengineering/charlie-image:test",
+                    }
+                ]
+            },
+        }
+    },
+}
+request_obj_job_with_two_init_containers = {
+    "kind": "Job",
     "apiVersion": "apps/v1",
     "metadata": {},
     "spec": {
@@ -342,6 +589,12 @@ def get_ad_request(path: str):
         (request_obj_pod, request_obj_output),
         (request_obj_cronjob, request_obj_output),
         (request_obj_deployment, request_obj_output),
+        (request_obj_replicationscontroller, request_obj_output),
+        (request_obj_replicatset, request_obj_output),
+        (request_obj_daemonset, request_obj_output),
+        (request_obj_statefulset, request_obj_output),
+        (request_obj_job, request_obj_output),
+        (request_obj_tuftuf, None),
         (request_obj_pod_with_init_container, request_obj_output_with_init_container),
         (
             request_obj_cronjob_with_init_container,
@@ -349,6 +602,26 @@ def get_ad_request(path: str):
         ),
         (
             request_obj_deployment_with_two_init_containers,
+            request_obj_output_with_two_init_containers,
+        ),
+        (
+            request_obj_replicationcontroller_with_two_init_containers,
+            request_obj_output_with_two_init_containers,
+        ),
+        (
+            request_obj_replicaset_with_two_init_containers,
+            request_obj_output_with_two_init_containers,
+        ),
+        (
+            request_obj_daemonset_with_two_init_containers,
+            request_obj_output_with_two_init_containers,
+        ),
+        (
+            request_obj_statefulset_with_two_init_containers,
+            request_obj_output_with_two_init_containers,
+        ),
+        (
+            request_obj_job_with_two_init_containers,
             request_obj_output_with_two_init_containers,
         ),
     ],
