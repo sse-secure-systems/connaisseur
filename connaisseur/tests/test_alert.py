@@ -96,7 +96,7 @@ alert_payload_slack_deployment = {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*CONNAISSEUR admitted a request*: \n\n_*Cluster*_:                           minikube\n_*Request ID*_:                     3a3a7b38-5512-4a85-94bb-3562269e0a6a\n_*Images*_:                           ['securesystemsengineering/alice-image:test']\n_*Connaisseur Pod ID*_:       connaisseur-pod-123\n_*Created*_:                          ${datetime.now()}\n_*Severity*_:                          4\n\nCheck the logs of `connaisseur-pod-123` for more details!",
+                "text": "*CONNAISSEUR admitted a request*: \n\n_*Cluster*_:                           minikube\n_*Request ID*_:                     3a3a7b38-5512-4a85-94bb-3562269e0a6a\n_*Images*_:                           ['securesystemsengineering/alice-image:test']\n_*Connaisseur Pod ID*_:       connaisseur-pod-123\n_*Created*_:                          ${datetime.now()}\n_*Severity*_:                          4\n\nCheck the logs of `connaisseur-pod-123` for more details!",
             },
         },
     ],

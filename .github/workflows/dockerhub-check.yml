@@ -17,3 +17,5 @@ jobs:
         run: DOCKER_CONTENT_TRUST=1 docker pull docker.io/securesystemsengineering/testimage:signed
       - name: Check unsigned test image
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:unsigned
+      - name: Check alerting endpoint image
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/alerting-endpoint

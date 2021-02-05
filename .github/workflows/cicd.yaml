@@ -158,6 +158,9 @@ jobs:
   integration-test:
     runs-on: ubuntu-latest
     needs: [build]
+    services:
+      alerting-endpoint:
+        image: securesystemsengineering/alerting-endpoint
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -182,6 +185,9 @@ jobs:
         run: |
           kind load docker-image $(yq e '.deployment.image' helm/values.yaml)
           kind load docker-image $(yq e '.deployment.helmHookImage' helm/values.yaml)
-
       - name: Run actual integration test
-        run: bash connaisseur/tests/integration/integration-test.sh
+        run: |
+          SERVICE_CONTAINER_ID=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))' | jq -r .ID)
+          docker network connect kind ${SERVICE_CONTAINER_ID}
+          export ALERTING_ENDPOINT_IP=$(docker network inspect kind | jq -r --arg container_id ${SERVICE_CONTAINER_ID}  '.[].Containers[$container_id].IPv4Address' | sed s+/.*++g)
+          bash connaisseur/tests/integration/integration-test.sh
