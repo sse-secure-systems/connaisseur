@@ -19,7 +19,7 @@ class Config:
     def __init__(self):
         """
         Creates a Config object, containing all notary configurations. It does so by
-        reading a config file, doing input validation and then creating Notary object,
+        reading a config file, doing input validation and then creating Notary objects,
         storing them in a list.
 
         Raises `NotFoundException` if the configuration file is not found.
@@ -56,6 +56,12 @@ class Config:
             ) from err
 
     def get_notary(self, notary_name: str = None):
+        """
+        Returns the notary configuration with the given `notary_name`. If `notary_name`
+        is None, the element with `name=default` is taken, or the only existing element.
+
+        Raises `NotFoundException` if no matching or default element can be found.
+        """
         try:
             if len(self.notaries) < 2:
                 return next(iter(self.notaries))
@@ -88,7 +94,7 @@ class Notary:
         """
         Creates a Notary object from a dictionary.
 
-        Raises `InvalidFormatException` should teh mandatory fields be missing.
+        Raises `InvalidFormatException` should the mandatory fields be missing.
         """
 
         if not (name and host and root_keys):
@@ -100,6 +106,14 @@ class Notary:
         self.is_acr = kwargs.get("is_acr", False)
 
     def get_key(self, key_name: str = None):
+        """
+        Returns the public root key with name `key_name` in DER format, without any
+        whitespaces. If `key_name` is None, the element with `name=default` is returned,
+        or the only existing element.
+
+        Raises `NotFoundException` if no matching or default element can be found.
+        """
+
         try:
             if len(self.root_keys) < 2:
                 key = next(iter(self.root_keys))["key"]

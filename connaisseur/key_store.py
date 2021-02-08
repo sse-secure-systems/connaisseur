@@ -61,7 +61,7 @@ class KeyStore:
 
         # the root.json stores the public keys for all other JSONs in DER format, except
         # its own key. its own key, which is also referenced in the signature, is stored
-        # as a certificate in PEM format and therefore can' tbe loaded like the other
+        # as a certificate in PEM format and therefore can't be loaded like the other
         # keys. since we don't do trust on first use and have the public key inside the
         # certificate pre-provisioned anyways, we'll delete it from the dictionary, so
         # it's never loaded into the key store. note, that this only happens for the
