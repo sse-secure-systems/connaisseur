@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Amended in [ADR-3](ADR-3_multi_notary_config.md).
 
 ## Context
 
