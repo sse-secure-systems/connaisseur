@@ -6,11 +6,24 @@ from connaisseur.util import safe_path_exists
 
 
 class Config:
+    """
+    Config Object, that contains all notary configurations inside a list.
+    """
+
     CONFIG_PATH = "/etc/connaisseur-config/config.yaml"
     CONFIG_SCHEMA_PATH = "/app/connaisseur/res/config_schema.json"
     notaries: list = []
 
     def __init__(self):
+        """
+        Creates a Config object, containing all notary configurations. It does so by
+        reading a config file, doing input validation and then creating Notary object,
+        storing them in a list.
+
+        Raises `NotFoundException` if the configuration file is not found.
+
+        Raises `InvalidFormatException` if the configuration file has an invalid format.
+        """
         with open(self.CONFIG_PATH, "r") as configfile:
             config_content = yaml.safe_load(configfile)
 
@@ -30,6 +43,12 @@ class Config:
         self.notaries = [Notary(notary) for notary in config_content]
 
     def get_notary(self, notary_name: str = None):
+        """
+        Returns the notary configuration with the given `notary_name`. If `notary_name`
+        is None, the top most element of the notary configuration list is returned.
+
+        Raises `NotFoundException` if no top most element can be found.
+        """
         try:
             if notary_name:
                 return next(
@@ -44,6 +63,10 @@ class Config:
 
 
 class Notary:  # pylint: disable=too-many-instance-attributes
+    """
+    Notary object, that holds all information for a single notary configuration.
+    """
+
     name: str
     host: str
     root_keys: list
@@ -57,6 +80,12 @@ class Notary:  # pylint: disable=too-many-instance-attributes
     AUTH_PATH = "/etc/creds/{}/cred.yaml"
 
     def __init__(self, notary_config: dict):
+        """
+        Creates a Notary object from a dictionary.
+
+        Raises `InvalidFormatException` should teh mandatory fields be missing.
+        """
+
         self.name = notary_config.get("name")
         self.host = notary_config.get("host")
         self.root_keys = notary_config.get("rootKeys")
@@ -75,6 +104,14 @@ class Notary:  # pylint: disable=too-many-instance-attributes
         )
 
     def get_key(self, key_name: str = None):
+        """
+        Returns the public root key with name `key_name` in DER format, without any
+        whitespaces. If `key_name` is None, the top most element of the public root key
+        list is returned.
+
+        Raises `NotFoundException` if no top most element can be found.
+        """
+
         try:
             if key_name:
                 key = next(
@@ -91,6 +128,13 @@ class Notary:  # pylint: disable=too-many-instance-attributes
             )
 
     def get_auth(self):
+        """
+        Returns authentication credentials as a dict. If notary configuration has no
+        authentication, an empty dict is returned. Otherwise a YAML file with the
+        credentials is read and returned.
+
+        Raises `InvalidFormatException` if credential file has an invalid format.
+        """
         if not self.auth and self.has_auth:
             with open(self.AUTH_PATH.format(self.name), "r") as cred_file:
                 self.auth = yaml.safe_load(cred_file)
@@ -105,6 +149,10 @@ class Notary:  # pylint: disable=too-many-instance-attributes
         return self.auth
 
     def get_selfsigned_cert(self):
+        """
+        Returns the path to a selfsigned certificate, should it exist. Otherwise None is
+        returned.
+        """
         if self.is_selfsigned and not self.selfsigned_cert:
             self.selfsigned_cert = self.SELFSIGNED_PATH.format(self.name)
         return self.selfsigned_cert
