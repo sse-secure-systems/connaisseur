@@ -85,13 +85,12 @@ def process_chain_of_trust(
 
     tuf_roles = ["root", "snapshot", "timestamp", "targets"]
 
-    # Load all trust data
+    # load all trust data
     for role in tuf_roles:
-        role_trust_data = get_trust_data(host, image, TUFRole(role))
-        trust_data[role] = role_trust_data
+        trust_data[role] = get_trust_data(host, image, TUFRole(role))
 
-    # Validate signature and expiry data of and load root file
-    # This does NOT conclude the validation of the root file. To prevent roleback/freeze attacks,
+    # validate signature and expiry data of and load root file
+    # this does NOT conclude the validation of the root file. To prevent roleback/freeze attacks,
     # the hash still needs to be validated against the snapshot file
     root_trust_data = get_trust_data(host, image, TUFRole("root"))
     root_trust_data.validate_signature(key_store)
@@ -99,14 +98,14 @@ def process_chain_of_trust(
     trust_data["root"] = root_trust_data
     key_store.update(root_trust_data)
 
-    # Validate timestamp file to prevent freeze attacks
+    # validate timestamp file to prevent freeze attacks
     # validates signature and expiry data
     # there is no hash to verify it against since it is short lived
     # TODO should we ensure short expiry duration here?
     timestamp_trust_data = trust_data["timestamp"]
     timestamp_trust_data.validate(key_store)
 
-    # Validate snapshot file signature against the key defined in the root file
+    # validate snapshot file signature against the key defined in the root file
     # and its hash against the one from the timestamp file
     # and validate expiry
     snapshot_trust_data = trust_data["snapshot"]
@@ -118,14 +117,14 @@ def process_chain_of_trust(
 
     snapshot_trust_data.validate_expiry()
 
-    # Now snapshot and timestamp files are validated, we can be safe against
+    # now snapshot and timestamp files are validated, we can be safe against
     # roleback and freeze attacks if the root file matches the hash of the snapshot file
     # (or the root key has been compromised, which Connaisseur cannot defend against)
     snapshot_key_store = KeyStore()
     snapshot_key_store.update(snapshot_trust_data)
     root_trust_data.validate_hash(snapshot_key_store)
 
-    # If we are safe at this point, we can add the snapshot data to the main KeyStore
+    # if we are safe at this point, we can add the snapshot data to the main KeyStore
     # and proceed with validating the targets file and (potentially) delegation files
     key_store.update(snapshot_trust_data)
     targets_trust_data = trust_data["targets"]
@@ -134,41 +133,17 @@ def process_chain_of_trust(
 
     # if the 'targets.json' has delegation roles defined, get their trust data
     # as well
+    delegations = trust_data["targets"].get_delegations()
     if trust_data["targets"].has_delegations():
-        for delegation in trust_data["targets"].get_delegations():
-            delegation_trust_data = get_delegation_trust_data(
-                host, image, TUFRole(delegation)
-            )
-            # when delegations are added to the repository, but weren't yet used for signing, the
-            # delegation files don't exist yet and are `None`. in this case validation must be skipped
-            if delegation_trust_data is not None:
-                delegation_trust_data.validate(key_store)
-            trust_data[delegation] = delegation_trust_data
+        _update_with_delegation_trust_data(
+            trust_data, delegations, key_store, host, image
+        )
 
-    # validate required delegations
-    if req_delegations:
-        if trust_data["targets"].has_delegations():
-            delegations = trust_data["targets"].get_delegations()
-
-            req_delegations_set = set(req_delegations)
-            delegations_set = set(delegations)
-
-            delegations_set.discard("targets/releases")
-
-            # make an intersection between required delegations and actually
-            # present ones
-            if not req_delegations_set.issubset(delegations_set):
-                missing = list(req_delegations_set - delegations_set)
-                raise NotFoundException(
-                    "could not find delegation roles {} in trust data.".format(
-                        str(missing)
-                    )
-                )
-        else:
-            raise NotFoundException("could not find any delegations in trust data.")
+    # validate existence of required delegations
+    _validate_all_required_delegations_present(req_delegations, delegations)
 
     # if certain delegations are required, then only take the targets fields of the
-    # required delegation JSON's. otherwise take the targets field of the targets JSON, as
+    # required delegation JSONs. otherwise take the targets field of the targets JSON, as
     # long as no delegations are defined in the targets JSON. should there be delegations
     # defined in the targets JSON the targets field of the releases JSON will be used.
     # unfortunately there is a case, where delegations could have been added to a
@@ -225,3 +200,38 @@ def search_image_targets_for_tag(trust_data: dict, image: Image):
 
     base64_digest = trust_data[image_tag]["hashes"]["sha256"]
     return base64.b64decode(base64_digest).hex()
+
+
+def _update_with_delegation_trust_data(trust_data, delegations, key_store, host, image):
+    for delegation in delegations:
+        delegation_trust_data = get_delegation_trust_data(
+            host, image, TUFRole(delegation)
+        )
+        # when delegations are added to the repository, but weren't yet used for signing, the
+        # delegation files don't exist yet and are `None`. in this case validation must be skipped
+        if delegation_trust_data is not None:
+            delegation_trust_data.validate(key_store)
+        trust_data[delegation] = delegation_trust_data
+
+
+def _validate_all_required_delegations_present(
+    required_delegations, present_delegations
+):
+    if required_delegations:
+        if present_delegations:
+            req_delegations_set = set(required_delegations)
+            delegations_set = set(present_delegations)
+
+            delegations_set.discard("targets/releases")
+
+            # make an intersection between required delegations and actually
+            # present ones
+            if not req_delegations_set.issubset(delegations_set):
+                missing = list(req_delegations_set - delegations_set)
+                raise NotFoundException(
+                    "could not find delegation roles {} in trust data.".format(
+                        str(missing)
+                    )
+                )
+        else:
+            raise NotFoundException("could not find any delegations in trust data.")
