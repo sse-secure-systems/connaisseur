@@ -1,0 +1,85 @@
+name: nightly-scans
+
+on:
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install yq
+        run: sudo snap install yq
+      - name: Build images
+        run: make docker
+      - name: Save images
+        run: |
+          mkdir images
+          docker save $(yq e '.deployment.image' helm/values.yaml) -o images/${GITHUB_SHA}_image.tar
+          docker save $(yq e '.deployment.helmHookImage' helm/values.yaml) -o images/${GITHUB_SHA}_hook.tar
+      - uses: actions/upload-artifact@v2
+        with:
+          name: images
+          path: images
+          retention-days: 1
+
+  safety:
+    runs-on: ubuntu-latest
+    container:
+      image: python:alpine
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        run: pip3 install -r requirements_dev.txt
+      - name: Freeze packages
+        run: pip3 freeze > actual_package_versions.txt
+      - name: Install safety
+        run: pip3 install safety
+      - name: Run safety
+        run: safety check -r ./actual_package_versions.txt --full-report -o safety-report.txt
+      - name: Print report
+        if: ${{ success() || failure() }}
+        run: cat safety-report.txt
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: safety-report
+          path: safety-report.txt
+
+  trivy:
+    runs-on: ubuntu-latest
+    container:
+      image: docker:stable
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: images
+      - name: Install trivy
+        run: |
+          apk update
+          apk add curl
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin
+          mkdir trivy-reports
+      - name: Scan Image
+        run: trivy image --input ${GITHUB_SHA}_image.tar
+                -o trivy-reports/image.txt
+                --exit-code 1
+                --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
+      - name: Scan Hook
+        run: trivy image --input ${GITHUB_SHA}_hook.tar 
+                -o trivy-reports/hook.txt
+                --exit-code 1
+                --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
+      - name: Print reports
+        if: ${{ success() || failure() }}
+        run: |
+          cat trivy-reports/image.txt
+          cat trivy-reports/hook.txt
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+           name: trivy-reports
+           path: trivy-reports
