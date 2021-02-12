@@ -1,6 +1,5 @@
 {
     "admit_request": {
-        "message": "CONNAISSEUR admitted a request",
         "templates": [
             {
                 "custom_headers": [

@@ -594,7 +594,7 @@ def get_ad_request(path: str):
         (request_obj_daemonset, request_obj_output),
         (request_obj_statefulset, request_obj_output),
         (request_obj_job, request_obj_output),
-        (request_obj_tuftuf, None),
+        (request_obj_tuftuf, []),
         (request_obj_pod_with_init_container, request_obj_output_with_init_container),
         (
             request_obj_cronjob_with_init_container,

@@ -27,13 +27,16 @@ sends its response back.
 @APP.errorhandler(AlertSendingError)
 def handle_alert_sending_failure(err):
     logging.error(err.message)
-    return (str(err.message), 500)
+    return ("Alert could not be sent. Check the logs for more details!", 500)
 
 
 @APP.errorhandler(ConfigurationError)
 def handle_alert_config_error(err):
     logging.error(err.message)
-    return (str(err.message), 500)
+    return (
+        "Alerting configuration is not valid. Check the logs for more details!",
+        500,
+    )
 
 
 @APP.route("/mutate", methods=["POST"])
@@ -47,39 +50,23 @@ def mutate():
     try:
         validate(admission_request)
         response = admit(admission_request)
-    except BaseConnaisseurException as err:
+    except Exception as err:
+        if isinstance(err, BaseConnaisseurException):
+            err_log = str(err)
+            msg = err.user_msg
+        elif isinstance(err, UnknownVersionError):
+            msg, err_log = str(err), str(err)
+        else:
+            err_log = str(traceback.format_exc())
+            msg = "unknown error. please check the logs."
         if call_alerting_on_request(admission_request, admitted=False):
-            send_alerts(admission_request, admitted=False)
-        logging.error(str(err))
+            send_alerts(admission_request, admitted=False, reason=msg)
+        logging.error(err_log)
         return jsonify(
             get_admission_review(
                 admission_request.get("request", {}).get("uid"),
                 False,
-                msg=err.user_msg,
-                detection_mode=DETECTION_MODE,
-            )
-        )
-    except UnknownVersionError as err:
-        if call_alerting_on_request(admission_request, admitted=False):
-            send_alerts(admission_request, admitted=False)
-        logging.error(str(err))
-        return jsonify(
-            get_admission_review(
-                admission_request.get("request", {}).get("uid"),
-                False,
-                msg=str(err),
-                detection_mode=DETECTION_MODE,
-            )
-        )
-    except Exception:
-        if call_alerting_on_request(admission_request, admitted=False):
-            send_alerts(admission_request, admitted=False)
-        logging.error(traceback.format_exc())
-        return jsonify(
-            get_admission_review(
-                admission_request.get("request", {}).get("uid"),
-                False,
-                msg="unknown error. please check the logs.",
+                msg=msg,
                 detection_mode=DETECTION_MODE,
             )
         )

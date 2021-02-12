@@ -12,6 +12,17 @@ from connaisseur.exceptions import AlertSendingError, ConfigurationError
 from connaisseur.exceptions import NotFoundException
 from connaisseur.image import Image
 
+with open("tests/data/alerting/alertconfig_schema.json", "r") as readfile:
+    alertconfig_schema = json.load(readfile)
+
+
+@pytest.fixture(autouse=True)
+def mock_alertconfig_schema(mocker):
+    mocker.patch(
+        "connaisseur.alert.get_alert_config_validation_schema",
+        return_value=alertconfig_schema,
+    )
+
 
 @pytest.fixture
 def mock_kube_request(monkeypatch):
@@ -49,6 +60,14 @@ def mock_policy_verify(monkeypatch):
         self.policy = {"rules": [{"pattern": "*:*", "verify": True}]}
 
     monkeypatch.setattr(policy.ImagePolicy, "__init__", m__init__)
+
+
+@pytest.fixture(autouse=True)
+def mock_safe_path_func_load_config(mocker):
+    side_effect = lambda callback, base_dir, path, *args, **kwargs: callback(
+        path, *args, **kwargs
+    )
+    mocker.patch("connaisseur.alert.safe_path_func", side_effect)
 
 
 @pytest.fixture
@@ -131,11 +150,12 @@ def test_readyz(
 def test_mutate_no_verify(
     mocker, mock_env_vars, mock_mutate, mock_policy_no_verify, ad_request_filename
 ):
+
+    client = fs.APP.test_client()
+    mocker.patch("connaisseur.flask_server.call_alerting_on_request", return_value=True)
     mock_send_alerts = mocker.patch(
         "connaisseur.flask_server.send_alerts", return_value=None
     )
-    client = fs.APP.test_client()
-
     mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     response = client.post("/mutate", json=mock_request_data)
     assert response.status_code == 200
@@ -144,7 +164,15 @@ def test_mutate_no_verify(
     assert admission_response["allowed"] == True
     assert admission_response["status"]["code"] == 202
     assert not "response" in admission_response["status"]
-    assert mock_send_alerts.has_calls([mocker.call(mock_request_data, admitted=True)])
+    mock_send_alerts.assert_has_calls([mocker.call(mock_request_data, admitted=True)])
+    mocker.resetall()
+    mocker.patch(
+        "connaisseur.flask_server.call_alerting_on_request", return_value=False
+    )
+    mock_send_alerts = mocker.patch(
+        "connaisseur.flask_server.send_alerts", return_value=None
+    )
+    assert mock_send_alerts.called is False
 
 
 @pytest.mark.parametrize(
@@ -171,6 +199,7 @@ def test_mutate_invalid(
     message,
 ):
     monkeypatch.setenv("DETECTION_MODE", "0")
+    mocker.patch("connaisseur.flask_server.call_alerting_on_request", return_value=True)
     mock_send_alerts = mocker.patch(
         "connaisseur.flask_server.send_alerts", return_value=None
     )
@@ -185,7 +214,9 @@ def test_mutate_invalid(
     assert admission_response["allowed"] == allowed
     assert admission_response["status"]["code"] == code
     assert admission_response["status"]["message"] == message
-    assert mock_send_alerts.has_calls([mocker.call(mock_request_data, admitted=True)])
+    mock_send_alerts.assert_has_calls(
+        [mocker.call(mock_request_data, admitted=False, reason=message)]
+    )
 
 
 @pytest.mark.parametrize(
@@ -236,6 +267,7 @@ def test_mutate_verify(
     monkeypatch,
 ):
     monkeypatch.setenv("DETECTION_MODE", detection)
+    mocker.patch("connaisseur.flask_server.call_alerting_on_request", return_value=True)
     mock_send_alerts = mocker.patch(
         "connaisseur.flask_server.send_alerts", return_value=None
     )
@@ -254,7 +286,7 @@ def test_mutate_verify(
     if allowed:
         assert admission_response["status"]["code"] == 202
         assert not "message" in admission_response["status"]
-        assert mock_send_alerts.has_calls(
+        mock_send_alerts.assert_has_calls(
             [mocker.call(mock_request_data, admitted=True)]
         )
     else:
@@ -272,10 +304,10 @@ def test_mutate_verify(
                 image, detection_mode_string
             )
         )
-        assert mock_send_alerts.has_calls(
-            [mocker.call(mock_request_data, admitted=False)]
-        )
         assert admission_response["status"]["message"] == expected_message
+        mock_send_alerts.assert_has_calls(
+            [mocker.call(mock_request_data, admitted=False, reason=expected_message)]
+        )
 
 
 @pytest.mark.parametrize("ad_request_filename", [("ad_request_deployments")])
@@ -301,7 +333,7 @@ def test_alert_sending_error_handler(
         mock_response.raise_for_status()
     except HTTPError as err:
         http_error = err
-
+    mocker.patch("connaisseur.flask_server.admit", return_value=True)
     mock_send_alerts = mocker.patch(
         "connaisseur.flask_server.send_alerts",
         side_effect=AlertSendingError(http_error),
@@ -309,11 +341,11 @@ def test_alert_sending_error_handler(
     client = fs.APP.test_client()
     mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     response = client.post("/mutate", json=mock_request_data)
-    assert mock_send_alerts.has_calls([mocker.call(mock_request_data, admitted=True)])
+    mock_send_alerts.assert_has_calls([mocker.call(mock_request_data, admitted=True)])
     assert response.status_code == 500
     assert (
         response.get_data().decode()
-        == "401 Client Error: None for url: https://www.mocked_test_connaisseur_url.xyz/"
+        == "Alert could not be sent. Check the logs for more details!"
     )
 
 
@@ -327,15 +359,22 @@ def test_configuration_error_handler(
     ad_request_filename,
 ):
     monkeypatch.setenv("DETECTION_MODE", "0")
-    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting/misconfigured_config")
-
-    mock_send_alerts = mocker.patch(
-        "connaisseur.flask_server.send_alerts",
+    mocker.patch(
+        "connaisseur.flask_server.admit",
+        return_value=True,
+    )
+    mock_call_alerting_on_request = mocker.patch(
+        "connaisseur.flask_server.call_alerting_on_request",
         side_effect=ConfigurationError(Exception("This is misconfigured.")),
     )
     client = fs.APP.test_client()
     mock_request_data = get_file_json(f"tests/data/{ad_request_filename}.json")
     response = client.post("/mutate", json=mock_request_data)
-    assert mock_send_alerts.has_calls([mocker.call(mock_request_data, admitted=True)])
     assert response.status_code == 500
-    assert response.get_data().decode() == "This is misconfigured."
+    assert (
+        response.get_data().decode()
+        == "Alerting configuration is not valid. Check the logs for more details!"
+    )
+    mock_call_alerting_on_request.assert_has_calls(
+        [mocker.call(mock_request_data, admitted=True)]
+    )

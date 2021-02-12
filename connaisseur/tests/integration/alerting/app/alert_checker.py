@@ -16,9 +16,7 @@ def show_endpoint_hits():
 
 @APP.route("/opsgenie", methods=["POST"])
 def opsgenie_payload_verification():
-    with open(
-        "/app/opsgenie_payload.json", "r"
-    ) as readfile:
+    with open("/app/opsgenie_payload.json", "r") as readfile:
         opsgenie_test_payload = json.load(readfile)
     if request.is_json is False:
         return ("", 500)
@@ -39,9 +37,7 @@ def opsgenie_payload_verification():
 
 @APP.route("/slack", methods=["POST"])
 def slack_payload_verification():
-    with open(
-        "/app/slack_payload.json", "r"
-    ) as readfile:
+    with open("/app/slack_payload.json", "r") as readfile:
         slack_test_payload = json.load(readfile)
     payload = request.json
     if (
@@ -58,9 +54,7 @@ def slack_payload_verification():
 
 @APP.route("/keybase", methods=["POST"])
 def keybase_payload_verification():
-    with open(
-        "/app/keybase_payload.json", "r"
-    ) as readfile:
+    with open("/app/keybase_payload.json", "r") as readfile:
         keybase_test_payload = json.load(readfile)
     payload = request.json
     if payload.keys() != keybase_test_payload.keys():

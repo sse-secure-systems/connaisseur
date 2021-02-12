@@ -64,19 +64,20 @@ else
 fi
 
 echo 'Checking whether alert endpoints have been called successfully'
-ENDPOINT_HITS=$(curl 0.0.0.0:56243 --header "Content-Type: application/json")
+ENDPOINT_HITS=$(curl 127.0.0.1:56243 --header "Content-Type: application/json")
 let NUMBER_OF_DEPLOYMENTS=${NUMBER_OF_INVALID_DEPLOYMENTS}+${NUMBER_OF_VALID_DEPLOYMENTS}
 EXPECTED_ENDPOINT_HITS=$(jq -n \
 --argjson REQUESTS_TO_SLACK_ENDPOINT ${NUMBER_OF_DEPLOYMENTS} \
 --argjson REQUESTS_TO_OPSGENIE_ENDPOINT  ${NUMBER_OF_VALID_DEPLOYMENTS} \
---argjson REQUESTS_TO_KEYBASE_ENDPOINT ${NUMBER_OF_VALID_DEPLOYMENTS} \
+--argjson REQUESTS_TO_KEYBASE_ENDPOINT ${NUMBER_OF_INVALID_DEPLOYMENTS} \
 '{
 "successful_requests_to_slack_endpoint":$REQUESTS_TO_SLACK_ENDPOINT,
 "successful_requests_to_opsgenie_endpoint": $REQUESTS_TO_OPSGENIE_ENDPOINT,
 "successful_requests_to_keybase_endpoint": $REQUESTS_TO_KEYBASE_ENDPOINT
 }')
+echo "Hit the alerting endpoints ${ENDPOINT_HITS} times; expected was ${EXPECTED_ENDPOINT_HITS}."
 diff <(echo $ENDPOINT_HITS | jq -S .) <(echo $EXPECTED_ENDPOINT_HITS | jq -S .) >output.log 2>&1
-if [[ "$(cat output.log)" != "" ]]; then
+if [[ -s output.log ]]; then
   cat output.log
   exit 1
 else

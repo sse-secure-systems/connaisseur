@@ -49,7 +49,7 @@ spec:
               mountPath: /etc/certs
               readOnly: true
             - name: {{ .Chart.Name }}-alertconfig
-              mountPath: {{ .Values.alerting.config_dir_path }}
+              mountPath: "/app/config"
               readOnly: true
           envFrom:
             - configMapRef:

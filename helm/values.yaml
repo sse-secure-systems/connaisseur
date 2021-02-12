@@ -79,11 +79,8 @@ detection_mode: false
 # "timestamp", "request_id" and "images" each one basically meaning what their names indicate
 # Below is an example config
 
-alerting:
-  config_dir_path: "/app/config"
-  cluster_name: "minikube"
+#alerting:
 #  admit_request:
-#    message: "CONNAISSEUR admitted a request"
 #    templates:
 #      # <template> needs to be chosen such that <template>.json matches one of the file names
 #      # in the ./alert_payload_templates directory
@@ -100,17 +97,13 @@ alerting:
 #              type: user
 #          tags:
 #            - "deployed_an_image"
-#        fail_if_alert_sending_fails: True  # (defaults to True, meaning that Connaisseur will respond with a 500 to the
-#                                           # admission request if there was an alert to be sent which failed)
+#        fail_if_alert_sending_fails: True  # (defaults to False, turning it to True will make Connaisseur deny your
+#                                           # deployment (even in detection mode))
 #      - template: slack #REQUIRED!
 #        receiver_url: https://hooks.slack.com/services/A0123456789/ABCDEFGHIJ/HFb3Gs7FFscjQNJYWHGY7GPV
-#        priority: 3
-#        fail_if_alert_sending_fails: False
+#        priority: 1
 #  reject_request:
-#    message: "CONNAISSEUR rejected a request"
 #    templates:
 #      - template: keybase  #REQUIRED!
 #        receiver_url: https://bots.keybase.io/webhookbot/IFP--tpV2wBxEP3ArYx4gVS_B-0
-#        priority: 3
 #        fail_if_alert_sending_fails: True
-#        custom_headers: ["Content-Language : de-DE"]

@@ -1,6 +1,5 @@
 {
     "admit_request": {
-        "message": "CONNAISSEUR admitted a request",
         "templates": [
             {
                 "custom_headers": [
@@ -15,7 +14,7 @@
                         }
                     ],
                     "tags": [
-                        "deployed_an_image"
+                        "image_deployed"
                     ],
                     "visibleTo": [
                         {
@@ -29,22 +28,19 @@
                 "template": "opsgenie"
             },
             {
-                "fail_if_alert_sending_fails": false,
                 "priority": 3,
                 "receiver_url": "https://hooks.slack.com/services/A0123456789/ABCDEFGHIJ/HFb3Gs7FFscjQNJYWHGY7GPV",
                 "template": "slack"
             }
         ]
     },
-    "cluster_name": "minikube",
     "reject_request": {
-        "message": "CONNAISSEUR rejected a request",
         "templates": [
             {
                 "custom_headers": [
                     "Content-Language: de-DE"
                 ],
-                "fail_if_alert_sending_fails": false,
+                "fail_if_alert_sending_fails": true,
                 "priority": 3,
                 "receiver_url": "https://bots.keybase.io/webhookbot/IFP--tpV2wBxEP3ArYx4gVS_B-0",
                 "template": "keybase"

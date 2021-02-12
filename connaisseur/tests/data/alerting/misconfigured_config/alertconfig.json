@@ -1,5 +1,4 @@
 {
-    "cluster_name": "minikube",
     "reject_request": {
         "message": "CONNAISSEUR rejected a request",
         "templates": [

@@ -18,3 +18,5 @@ samples/*
 demo/
 tls-*.conf
 .venv/
+venv/
+.idea/

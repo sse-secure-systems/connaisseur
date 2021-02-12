@@ -1,0 +1,12 @@
+{
+    "reject_request": {
+        "templates": [
+            {
+                "receiver_url": "https://bots.keybase.io/webhookbot/IFP--tpV2wBxEP3ArYx4gVS_B-0",
+                "fail_if_alert_sending_fails": "i should not be a string",
+                "priority": 3,
+                "template": "keybase"
+            }
+        ]
+    }
+}

@@ -57,23 +57,23 @@ class AmbiguousDigestError(BaseConnaisseurException):
     pass
 
 
-class AlertSendingError(Exception):
+class AlertingException(Exception):
 
     message: str
     status_code: int
 
-    def __init__(self, message):
-        super().__init__(self)
+    def __init__(self, message: str):
         self.message = message
         self.status_code = 500
+        super().__init__()
+
+    def __str__(self):
+        return str(self.__dict__)
 
 
-class ConfigurationError(Exception):
+class ConfigurationError(AlertingException):
+    pass
 
-    message: str
-    status_code: int
 
-    def __init__(self, message):
-        super().__init__(self)
-        self.message = message
-        self.status_code = 500
+class AlertSendingError(AlertingException):
+    pass

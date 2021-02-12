@@ -161,6 +161,8 @@ jobs:
     services:
       alerting-endpoint:
         image: securesystemsengineering/alerting-endpoint
+        ports:
+          - 56243:56243
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2

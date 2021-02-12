@@ -1,15 +1,24 @@
 import pytest
 from datetime import datetime, timedelta
 import json
-from connaisseur.alert import Alert, send_alerts, call_alerting_on_request
+
+from connaisseur.alert import (
+    Alert,
+    send_alerts,
+    call_alerting_on_request,
+    get_alert_config_validation_schema,
+    load_config,
+)
 from connaisseur.exceptions import AlertSendingError, ConfigurationError
-from connaisseur.policy import ImagePolicy
 
 with open("tests/data/ad_request_deployments.json", "r") as readfile:
     admission_request_deployment = json.load(readfile)
 
 with open("tests/data/ad_request_allowlisted.json", "r") as readfile:
     admission_request_allowlisted = json.load(readfile)
+
+with open("tests/data/alerting/alertconfig_schema.json", "r") as readfile:
+    alertconfig_schema = json.load(readfile)
 
 opsgenie_receiver_config_throw = {
     "custom_headers": ["Authorization: GenieKey 12345678-abcd-2222-3333-1234567890ef"],
@@ -38,7 +47,6 @@ opsgenie_receiver_config = {
 }
 
 slack_receiver_config = {
-    "fail_if_alert_sending_fails": False,
     "priority": 3,
     "receiver_url": "https://hooks.slack.com/services/A0123456789/ABCDEFGHIJ/HFb3Gs7FFscjQNJYWHGY7GPV",
     "template": "slack",
@@ -50,11 +58,6 @@ keybase_receiver_config = {
     "priority": 3,
     "receiver_url": "https://bots.keybase.io/webhookbot/IFP--tpV2wBxEP3ArYx4gVS_B-0",
     "template": "keybase",
-}
-
-misconfigured_receiver_config = {
-    "fail_if_alert_sending_fails": True,
-    "receiver_url": "https://bots.keybase.io/webhookbot/IFP--tpV2wBxEP3ArYx4gVS_B-0",
 }
 
 missing_template_receiver_config = {
@@ -96,31 +99,37 @@ alert_payload_slack_deployment = {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*CONNAISSEUR admitted a request*: \n\n_*Cluster*_:                           minikube\n_*Request ID*_:                     3a3a7b38-5512-4a85-94bb-3562269e0a6a\n_*Images*_:                           ['securesystemsengineering/alice-image:test']\n_*Connaisseur Pod ID*_:       connaisseur-pod-123\n_*Created*_:                          ${datetime.now()}\n_*Severity*_:                          4\n\nCheck the logs of `connaisseur-pod-123` for more details!",
+                "text": "*CONNAISSEUR admitted a request* \n\n_*Cluster*_:                           minikube\n_*Request ID*_:                     3a3a7b38-5512-4a85-94bb-3562269e0a6a\n_*Images*_:                           ['securesystemsengineering/alice-image:test']\n_*Connaisseur Pod ID*_:       connaisseur-pod-123\n_*Created*_:                          ${datetime.now()}\n_*Severity*_:                          4\n\nCheck the logs of `connaisseur-pod-123` for more details!",
             },
         },
     ],
 }
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def mock_env_vars(monkeypatch):
     monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting")
     monkeypatch.setenv("POD_NAME", "connaisseur-pod-123")
+    monkeypatch.setenv("CLUSTER_NAME", "minikube")
     monkeypatch.setenv(
         "HELM_HOOK_IMAGE", "securesystemsengineering/connaisseur:helm-hook"
     )
 
 
-@pytest.fixture
-def mock_image_policy(monkeypatch):
-    def read_policy():
-        with open("tests/data/imagepolicy.json") as readfile:
-            policy = json.load(readfile)
-            return policy["spec"]
+@pytest.fixture()
+def mock_alertconfig_validation_schema(mocker):
+    mocker.patch(
+        "connaisseur.alert.get_alert_config_validation_schema",
+        return_value=alertconfig_schema,
+    )
 
-    monkeypatch.setattr(ImagePolicy, "JSON_SCHEMA_PATH", "res/policy_schema.json")
-    monkeypatch.setattr(ImagePolicy, "get_image_policy", read_policy)
+
+@pytest.fixture(autouse=True)
+def mock_safe_path_func_load_config(mocker):
+    side_effect = lambda callback, base_dir, path, *args, **kwargs: callback(
+        path, *args, **kwargs
+    )
+    mocker.patch("connaisseur.alert.safe_path_func", side_effect)
 
 
 @pytest.mark.parametrize(
@@ -143,7 +152,7 @@ def mock_image_policy(monkeypatch):
     ],
 )
 def test_alert(
-    mock_env_vars,
+    mock_alertconfig_validation_schema,
     message: str,
     receiver_config: dict,
     admission_request: dict,
@@ -151,14 +160,12 @@ def test_alert(
     alert_headers: dict,
 ):
     alert = Alert(message, receiver_config, admission_request)
-    assert (
-        alert.throw_if_alert_sending_fails
-        == receiver_config["fail_if_alert_sending_fails"]
+    assert alert.throw_if_alert_sending_fails == receiver_config.get(
+        "fail_if_alert_sending_fails", False
     )
     assert alert.receiver_url == receiver_config["receiver_url"]
     assert alert.headers == alert_headers
-    payload = alert.payload
-
+    payload = json.loads(alert.payload)
     if receiver_config["template"] == "opsgenie":
         assert payload["details"]["alert_created"] is not None
         assert datetime.strptime(
@@ -172,7 +179,7 @@ def test_alert(
             alert_payload_slack_deployment["blocks"][1]["text"]["text"].split(
                 "Created"
             )[0]
-            in alert.payload["blocks"][1]["text"]["text"]
+            in json.loads(alert.payload)["blocks"][1]["text"]["text"]
         )
 
 
@@ -181,33 +188,52 @@ def test_alert(
     [
         (
             "CONNAISSEUR admitted a request",
-            misconfigured_receiver_config,
-            admission_request_deployment,
-        ),
-        (
-            "CONNAISSEUR admitted a request",
             missing_template_receiver_config,
             admission_request_deployment,
         ),
     ],
 )
-def test_configuration_error(
-    capfd, mock_env_vars, message, receiver_config, admission_request
+def test_configuration_error_missing_template(
+    mock_alertconfig_validation_schema, message, receiver_config, admission_request
 ):
-    with pytest.raises(Exception):
+    with pytest.raises(ConfigurationError) as err:
         Alert(message, receiver_config, admission_request)
-        out, err = capfd.readouterr()
-        with pytest.raises(ConfigurationError) as config_error:
-            if receiver_config == misconfigured_receiver_config:
-                assert (
-                    "Either 'receiver_url' or 'template' or both are missing to construct the alert. Both can be configured in the 'values.yaml' file in the 'helm' directory"
-                    in str(config_error)
-                )
-            if receiver_config == missing_template_receiver_config:
-                assert (
-                    "Template file for alerting payload is either missing or invalid JSON:"
-                ) in str(config_error)
-            assert ConfigurationError(config_error) == err
+    assert (
+        "Template file for alerting payload is either missing or invalid JSON"
+        in str(err.value)
+    )
+
+
+@pytest.mark.parametrize(
+    "message, receiver_config, admission_request",
+    [
+        (
+            "CONNAISSEUR admitted a request",
+            slack_receiver_config,
+            admission_request_deployment,
+        ),
+    ],
+)
+def test_configuration_error_missing_or_invalid_config(
+    mock_alertconfig_validation_schema,
+    monkeypatch,
+    message,
+    receiver_config,
+    admission_request,
+):
+    alert_config_dirs = [
+        "tests/data/alerting/misconfigured_config",
+        "tests/data/alerting/invalid_config",
+    ]
+    for alert_config_dir in alert_config_dirs:
+        monkeypatch.setenv("ALERT_CONFIG_DIR", alert_config_dir)
+        with pytest.raises(ConfigurationError) as err:
+            load_config()
+        assert (
+            "Alerting configuration file either not present or not valid."
+            "Check in the 'helm/values.yml' whether everything is correctly configured"
+            in str(err.value)
+        )
 
 
 @pytest.mark.parametrize(
@@ -218,44 +244,26 @@ def test_configuration_error(
             opsgenie_receiver_config_throw,
             admission_request_deployment,
         ),
-        (
-            "CONNAISSEUR admitted a request",
-            opsgenie_receiver_config,
-            admission_request_deployment,
-        ),
     ],
 )
 def test_alert_sending_error(
     requests_mock,
-    capfd,
-    caplog,
-    mock_env_vars,
-    mock_image_policy,
+    mock_alertconfig_validation_schema,
     message: str,
     receiver_config: dict,
     admission_request: dict,
 ):
     requests_mock.post(
         "https://api.eu.opsgenie.com/v2/alerts",
-        text="401 Client Error: Unauthorized for url: https://api.eu.opsgenie.com/v2/alerts",
         status_code=401,
     )
-    alert = Alert(message, receiver_config, admission_request)
-    with pytest.raises(Exception):
+    with pytest.raises(AlertSendingError) as err:
+        alert = Alert(message, receiver_config, admission_request)
         alert.send_alert()
-        if alert.throw_if_alert_sending_fails is True:
-            out, err = capfd.readouterr()
-            with pytest.raises(AlertSendingError) as alert_error:
-                assert (
-                    "401 Client Error: Unauthorized for url: https://api.eu.opsgenie.com/v2/alerts"
-                    in str(alert_error)
-                )
-                assert AlertSendingError(alert_error) == err
-        else:
-            assert (
-                "401 Client Error: Unauthorized for url: https://api.eu.opsgenie.com/v2/alerts"
-                in caplog.text
-            )
+    assert (
+        "401 Client Error: None for url: https://api.eu.opsgenie.com/v2/alerts"
+        in str(err.value)
+    )
 
 
 @pytest.mark.parametrize(
@@ -263,6 +271,34 @@ def test_alert_sending_error(
     [
         (
             "CONNAISSEUR admitted a request",
+            slack_receiver_config,
+            admission_request_deployment,
+        ),
+    ],
+)
+def test_log_alert_sending_error(
+    requests_mock,
+    mocker,
+    mock_alertconfig_validation_schema,
+    message: str,
+    receiver_config: dict,
+    admission_request: dict,
+):
+    mock_error_log = mocker.patch("logging.error")
+    requests_mock.post(
+        "https://hooks.slack.com/services/A0123456789/ABCDEFGHIJ/HFb3Gs7FFscjQNJYWHGY7GPV",
+        status_code=401,
+    )
+    alert = Alert(message, receiver_config, admission_request)
+    alert.send_alert()
+    assert mock_error_log.called is True
+
+
+@pytest.mark.parametrize(
+    "message, receiver_config, admission_request",
+    [
+        (
+            "CONNAISSEUR admitted a request.",
             opsgenie_receiver_config,
             admission_request_deployment,
         )
@@ -270,13 +306,13 @@ def test_alert_sending_error(
 )
 def test_alert_sending(
     requests_mock,
-    caplog,
-    mock_env_vars,
-    mock_image_policy,
+    mocker,
+    mock_alertconfig_validation_schema,
     message: str,
     receiver_config: dict,
     admission_request: dict,
 ):
+    mock_info_log = mocker.patch("logging.info")
     requests_mock.post(
         "https://api.eu.opsgenie.com/v2/alerts",
         json={
@@ -287,26 +323,24 @@ def test_alert_sending(
         status_code=200,
     )
     alert = Alert(message, receiver_config, admission_request)
-    with pytest.raises(Exception):
-        response = alert.send_alert()
-        assert "sent alert to opsgenie" in caplog.text
-        assert response.status_code == 200
-        assert response.json.result == "Request will be processed"
+    response = alert.send_alert()
+    mock_info_log.assert_has_calls([mocker.call("sent alert to %s", "opsgenie")])
+    assert response.status_code == 200
+    assert response.json()["result"] == "Request will be processed"
 
 
 @pytest.mark.parametrize(
     "message, receiver_config, admission_request",
     [
         (
-            "CONNAISSEUR admitted a request",
+            "CONNAISSEUR admitted a request.",
             opsgenie_receiver_config_throw,
             admission_request_allowlisted,
         ),
     ],
 )
 def test_alert_sending_bypass_for_only_allowlisted_images(
-    mock_env_vars,
-    mock_image_policy,
+    mock_alertconfig_validation_schema,
     message: str,
     receiver_config: dict,
     admission_request: dict,
@@ -322,40 +356,46 @@ def test_alert_sending_bypass_for_only_allowlisted_images(
     ],
 )
 def test_send_alerts(
-    mock_env_vars, mocker, admission_decision: bool, admission_request: dict
+    mocker,
+    mock_alertconfig_validation_schema,
+    admission_decision: bool,
+    admission_request: dict,
 ):
     mock_alert = mocker.patch("connaisseur.alert.Alert")
     send_alerts(admission_request, admitted=True)
     admit_calls = [
         mocker.call(
-            "CONNAISSEUR admitted a request",
+            "CONNAISSEUR admitted a request.",
             opsgenie_receiver_config_throw,
             admission_request_deployment,
         ),
         mocker.call(
-            "CONNAISSEUR admitted a request",
+            "CONNAISSEUR admitted a request.",
             slack_receiver_config,
             admission_request_deployment,
         ),
     ]
-    assert mock_alert.has_calls(admit_calls)
+    mock_alert.assert_has_calls(admit_calls, any_order=True)
     mocker.resetall()
-
+    mocker.patch(
+        "connaisseur.alert.get_alert_config_validation_schema",
+        return_value=alertconfig_schema,
+    )
     mock_alert = mocker.patch("connaisseur.alert.Alert")
-    send_alerts(admission_request, admitted=False)
+    send_alerts(admission_request, admitted=False, reason="Couldn't find trust data.")
     reject_calls = [
         mocker.call(
-            "CONNAISSEUR rejected a request",
+            "CONNAISSEUR rejected a request: Couldn't find trust data.",
             opsgenie_receiver_config,
             admission_request_deployment,
         ),
         mocker.call(
-            "CONNAISSEUR rejected a request",
+            "CONNAISSEUR rejected a request: Couldn't find trust data.",
             keybase_receiver_config,
             admission_request_deployment,
         ),
     ]
-    assert mock_alert.has_calls(reject_calls)
+    mock_alert.assert_has_calls(reject_calls, any_order=True)
     mocker.resetall()
 
     mock_alert_sending = mocker.patch(
@@ -407,7 +447,7 @@ def test_send_alerts(
     ],
 )
 def test_call_alerting_on_request(
-    mock_env_vars,
+    mock_alertconfig_validation_schema,
     monkeypatch,
     admission_request,
     admission_decision,
@@ -417,3 +457,10 @@ def test_call_alerting_on_request(
     monkeypatch.setenv("ALERT_CONFIG_DIR", alert_config_dir)
     decision = call_alerting_on_request(admission_request, **admission_decision)
     assert decision == alert_call_decision
+
+
+def test_get_alert_config_validation_schema(mocker, mock_env_vars):
+    with open("tests/data/alerting/alertconfig_schema.json") as f:
+        content = f.read()
+    mocker.patch("builtins.open", mocker.mock_open(read_data=content))
+    assert get_alert_config_validation_schema() == alertconfig_schema

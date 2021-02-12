@@ -1,0 +1,89 @@
+{
+  "type": "object",
+  "properties": {
+    "admit_request": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "template": {
+                "type": "string"
+              },
+              "receiver_url": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "integer"
+              },
+              "custom_headers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "payload_fields": {
+                "type": "object"
+              },
+              "fail_if_alert_sending_fails": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "template",
+              "receiver_url"
+            ]
+          }
+        }
+      },
+      "required": [
+        "templates"
+      ]
+    },
+    "reject_request": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "template": {
+                "type": "string"
+              },
+              "receiver_url": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "integer"
+              },
+              "custom_headers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "payload_fields": {
+                "type": "object"
+              },
+              "fail_if_alert_sending_fails": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "template",
+              "receiver_url"
+            ]
+          }
+        }
+      },
+      "required": [
+        "templates"
+      ]
+    }
+  }
+}
