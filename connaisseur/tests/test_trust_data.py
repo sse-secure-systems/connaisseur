@@ -265,6 +265,10 @@ def mock_keystore(monkeypatch):
                 "PqkYN4ge13exMeGZzRtv5fcaEHEyt4zK/bPyXpc2laxLiIHEZMU6WQYVD2A=="
             ),
         }
+
+        for key in self.keys:
+            self.keys[key] = KeyStore.load_key_string(key, self.keys[key])
+
         self.hashes = {
             "root": ("wlaYz21+0NezlHjqkldQQBf3KWtifimy07A+fOEyCTo=", 2401),
             "snapshot": ("cNXm5R+rJsc3WNQVH8M1G/cTwkO1doq5n8fQmYpQcfQ=", 1286),
