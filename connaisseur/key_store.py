@@ -1,4 +1,7 @@
-from connaisseur.exceptions import NotFoundException
+import base64
+import binascii
+import ecdsa
+from connaisseur.exceptions import NotFoundException, InvalidFormatException
 
 
 class KeyStore:
@@ -12,7 +15,7 @@ class KeyStore:
 
     def __init__(self, root_pub_key: str):
         # will always be loaded there as k8s secret
-        self.keys = {"root": root_pub_key}
+        self.keys = {"root": self.load_key_string("root", root_pub_key)}
         self.hashes = {}
 
     def get_key(self, key_id: str):
@@ -47,10 +50,22 @@ class KeyStore:
         `trust_data.`
         """
 
+        keys = dict(trust_data.get_keys())
+        signature_keys = [sig.get("keyid") for sig in trust_data.signatures]
+
+        # delete the key, which was used to sign the current trust data, since since we
+        # don't follow trust on first use. this is only the case for the root.json which
+        # has its public key in PEM format and as a certificate, which will cause
+        # problems when loading it. so we'll delete it.
+        for key in signature_keys:
+            if key in keys:
+                del keys[key]
+
         # update keys
-        keys = trust_data.get_keys()
         for key in keys:
-            self.keys.setdefault(key, keys[key]["keyval"]["public"])
+            self.keys.setdefault(
+                key, self.load_key_string(key, keys[key]["keyval"]["public"])
+            )
 
         # update hashes
         hashes = trust_data.get_hashes()
@@ -61,4 +76,15 @@ class KeyStore:
                     hashes[role].get("hashes", {}).get("sha256"),
                     hashes[role].get("length", 0),
                 ),
+            )
+
+    @staticmethod
+    def load_key_string(key_id: str, key_base64: str):
+        try:
+            key_der = base64.b64decode(key_base64)
+            key = ecdsa.VerifyingKey.from_der(key_der)
+            return key
+        except (ecdsa.der.UnexpectedDER, binascii.Error, TypeError):
+            raise InvalidFormatException(
+                f"error loading key {key_id}.", {"key_id": key_id}
             )
