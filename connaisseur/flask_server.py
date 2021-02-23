@@ -53,7 +53,7 @@ def mutate():
     except Exception as err:
         if isinstance(err, BaseConnaisseurException):
             err_log = str(err)
-            msg = err.user_msg
+            msg = err.user_msg  # pylint: disable=no-member
         elif isinstance(err, UnknownVersionError):
             msg, err_log = str(err), str(err)
         else:
