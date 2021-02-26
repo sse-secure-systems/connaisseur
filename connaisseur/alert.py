@@ -55,7 +55,10 @@ class Alert:
         try:
             alert_templates_dir = f'{os.getenv("ALERT_CONFIG_DIR")}/templates'
             with safe_path_func(
-                open, alert_templates_dir, f"{alert_templates_dir}/{self.template}.json", "r"
+                open,
+                alert_templates_dir,
+                f"{alert_templates_dir}/{self.template}.json",
+                "r",
             ) as templatefile:
                 template = json.load(templatefile)
         except Exception as err:
