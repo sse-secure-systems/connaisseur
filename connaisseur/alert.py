@@ -53,9 +53,9 @@ class Alert:
 
     def _construct_payload(self, receiver_config):
         try:
-            alert_config_dir = f'{os.getenv("ALERT_CONFIG_DIR")}'
+            alert_templates_dir = f'{os.getenv("ALERT_CONFIG_DIR")}/templates'
             with safe_path_func(
-                open, alert_config_dir, f"{alert_config_dir}/{self.template}.json", "r"
+                open, alert_templates_dir, f"{alert_templates_dir}/{self.template}.json", "r"
             ) as templatefile:
                 template = json.load(templatefile)
         except Exception as err:
@@ -168,9 +168,7 @@ def call_alerting_on_request(admission_request, *, admitted):
         )
     if images == [hook_image]:
         return False
-    if no_alerting_configured_for_event(admitted) is True:
-        return False
-    return True
+    return not no_alerting_configured_for_event(admitted)
 
 
 def no_alerting_configured_for_event(admitted):

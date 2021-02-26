@@ -48,6 +48,9 @@ spec:
             - name: {{ .Chart.Name }}-certs
               mountPath: /etc/certs
               readOnly: true
+            - name: {{ .Chart.Name }}-alert-templates
+              mountPath: "/app/config/templates"
+              readOnly: true
             - name: {{ .Chart.Name }}-alertconfig
               mountPath: "/app/config"
               readOnly: true
@@ -100,5 +103,8 @@ spec:
           secret:
             secretName: {{ .Chart.Name }}-tls
         - name: {{ .Chart.Name }}-alertconfig
+          secret:
+            secretName: {{ .Chart.Name }}-alertconfig
+        - name: {{ .Chart.Name }}-alert-templates
           configMap:
-            name: {{ .Chart.Name }}-alertconfig
+            name: {{ .Chart.Name }}-alert-templates

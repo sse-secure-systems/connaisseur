@@ -158,15 +158,16 @@ alerting:
 
 For each element in `templates`, both `template` as well as `receiver_url` are required. The value for `template` needs to match an existing file of the pattern `helm/alert_payload_templates/<template>.json`; so if you want to use a predefined one it needs to be one of `slack`, `keybase` or `opsgenie`. For some REST endpoints like e.g. Opsgenie you need to configure a additional headers which you can pass to `custom_headers` as a list of plain string like e.g. `["Authorization: GenieKey 12345678-abcd-2222-3333-1234567890ef"]`. Setting `fail_if_alert_sending_fails` to `True` will make Connaisseur deny images if the corresponding alert cannot be successfully sent. This, obviously, makes sense only for requests that Connaisseur would have admitted as other requests would have been denied in the first place. The setting can come handy if you want to run Connaisseur in detection mode but still make sure that you get notified about what is going on in your cluster. *However, this setting will block everyone from contributing if the alert sending fails permanently. It could occur that your developers are blocked if the third party interface is down because somebody accidentally deleted your Slack Webhook App or your configuration has expired because your GenieKey expired!*
 
-| key                                                |  accepted values                                                                                                                     | required               |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------  |
-| `alerting`.<category>.template`                    | `opsgenie`, `slack`, `keybase` or the basename of a custom template file in `helm/alerting_payload_templates` without file extension | yes                    |
-| `alerting`.<category>.receiver_url`                | string                                                                                                                               | yes                    |
-| `alerting`.<category>. priority`                   | int                                                                                                                                  | no (default: `3`)      |
-| `alerting`.<category>.custom_headers`              | list[string]                                                                                                                         | no                     |
-| `alerting`.<category>.payload_fields`              | subyaml                                                                                                                              | no                     |
-| `alerting`.<category>.fail_if_alert_sending_fails` | bool                                                                                                                                 | no (default: `False`)  |
+| key                                                |  accepted values                                     | required               |
+| -------------------------------------------------- | ---------------------------------------------------  | ---------------------  |
+| `alerting.<category>.template`                     | `opsgenie`, `slack`, `keybase` or custom [^footnote] | yes                    |
+| `alerting.<category>.receiver_url`                 | string                                               | yes                    |
+| `alerting.<category>. priority`                    | int                                                  | no (default: `3`)      |
+| `alerting.<category>.custom_headers`               | list[string]                                         | no                     |
+| `alerting.<category>.payload_fields`               | subyaml                                              | no                     |
+| `alerting.<category>.fail_if_alert_sending_fails`  | bool                                                 | no (default: `False`)  |
 
+[^footnote] the basename of a custom template file in `helm/alerting_payload_templates` without file extension
 
 Along the lines of the templates that are already there you can easily define your custom template for your own endpoint. The following variables can be rendered during runtime into your payload: `alert_message`, `priority`, `connaisseur_pod_id`, `cluster`, `timestamp`, `request_id` and `images`. Rendering is done by Jinja2; so if you want to have a timestamp in your payload later on you can use `{{ timestamp }}` in your template. You can update your payload dynamically by adding payload fields in `yaml` presentation in the `payload_fields` key which will be translated to JSON by helm as is. If your REST endpoint requires particular headers, your can specify them as described above in `custom_headers`.
 
