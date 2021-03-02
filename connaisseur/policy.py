@@ -31,8 +31,8 @@ class ImagePolicy:
             schema = json.load(schema_file)
         try:
             validate(instance=image_policy, schema=schema)
-        except ValidationError:
-            raise InvalidFormatException("invalid format for image policy.")
+        except ValidationError as err:
+            raise InvalidFormatException("invalid format for image policy.") from err
 
         self.policy = image_policy
 

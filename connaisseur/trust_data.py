@@ -35,11 +35,13 @@ class TrustData:
 
         try:
             return super(TrustData, cls).__new__(classes[role])
-        except KeyError:
+        except KeyError as err:
             if re.match("^targets/[^/\\s]+$", role):
                 return super(TrustData, cls).__new__(TargetsData)
 
-            raise NoSuchClassError("could not find class with name {}.".format(role))
+            raise NoSuchClassError(
+                "could not find class with name {}.".format(role)
+            ) from err
 
     def __init__(self, data: dict, role: str):
         self.schema_path = self.schema_path.format(role)
@@ -59,10 +61,10 @@ class TrustData:
 
         try:
             json_validate(instance=data, schema=schema, format_checker=JFormatChecker())
-        except JValidationError:
+        except JValidationError as err:
             raise ValidationError(
                 "trust data has invalid format.", {"trust_data_type": self.kind}
-            )
+            ) from err
 
     def validate(self, keystore: KeyStore):
         """
@@ -103,11 +105,11 @@ class TrustData:
 
             try:
                 verify_signature(pub_key, sig, msg)
-            except Exception:
+            except Exception as err:
                 raise ValidationError(
                     "failed to verify signature of trust data.",
                     {"key_id": key_id, "trust_data_type": self.signed.get("_type")},
-                )
+                ) from err
 
     def _validate_hash(self, keystore: KeyStore):
         """
@@ -199,8 +201,10 @@ class TargetsData(TrustData):  # pylint: disable=abstract-method
     def get_digest(self, tag: str):
         try:
             return self.signed.get("targets", {})[tag]["hashes"]["sha256"]
-        except KeyError:
-            raise NotFoundException('could not find digest for tag "{}".'.format(tag))
+        except KeyError as err:
+            raise NotFoundException(
+                'could not find digest for tag "{}".'.format(tag)
+            ) from err
 
     def get_keys(self):
         """

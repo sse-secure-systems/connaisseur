@@ -140,11 +140,11 @@ def parse_auth(auth_header: str):
 
     try:
         realm = quote(params_dict.pop("realm"), safe="/:")
-    except KeyError:
+    except KeyError as err:
         raise NotFoundException(
             "could not find any realm in authentication header.",
             {"auth_header": auth_header},
-        )
+        ) from err
     params = urlencode(params_dict, safe="/:")
 
     url = f"{realm}?{params}"
@@ -191,10 +191,10 @@ def get_auth_token(url: str):
             token = response.json()["access_token"]
         else:
             token = response.json()["token"]
-    except KeyError:
+    except KeyError as err:
         raise NotFoundException(
             "no token in authentication server response.", {"auth_url": url}
-        )
+        ) from err
 
     token_re = r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$"  # nosec
 
