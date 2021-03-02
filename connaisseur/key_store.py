@@ -35,10 +35,10 @@ class KeyStore:
         """
         try:
             return self.keys[key_id]
-        except KeyError:
+        except KeyError as err:
             raise NotFoundException(
                 'could not find key id "{}" in keystore.'.format(key_id)
-            )
+            ) from err
 
     def get_hash(self, role: str):
         """
@@ -48,10 +48,10 @@ class KeyStore:
         """
         try:
             return self.hashes[role]
-        except KeyError:
+        except KeyError as err:
             raise NotFoundException(
                 'could not find hash for role "{}" in keystore.'.format(role)
-            )
+            ) from err
 
     def update(self, trust_data):
         """

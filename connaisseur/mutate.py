@@ -156,11 +156,11 @@ def validate(request: dict):
                     f"for resource {request_object_kind}."
                 )
             )
-    except KeyError:
+    except KeyError as err:
         raise BaseConnaisseurException(
             f"unknown request object kind {request_object_kind}",
             create_logging_context(request),
-        )
+        ) from err
 
 
 def admit(request: dict):
