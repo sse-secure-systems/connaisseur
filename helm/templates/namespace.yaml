@@ -1,0 +1,11 @@
+{{- if not (has "*" .Values.targetNamespaces) }}
+{{- range .Values.targetNamespaces }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ . | quote }}
+  labels:
+    {{- include  "connaisseur.namespaceLabels" $ | indent 4 }}
+---
+{{- end }}        
+{{- end }}        
