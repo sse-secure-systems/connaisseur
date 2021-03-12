@@ -1,0 +1,108 @@
+{
+    "type": "object",
+    "properties": {
+        "kind": {
+            "type": "string",
+            "const": "AdmissionReview"
+        },
+        "apiVersion": {
+            "type": "string",
+            "enum": [
+                "admission.k8s.io/v1beta1",
+                "admission.k8s.io/v1"
+            ]
+        },
+        "request": {
+            "type": "object",
+            "properties": {
+                "uid": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "object",
+                    "properties": {
+                        "kind": {
+                            "type": "string",
+                            "enum": [
+                                "Pod",
+                                "Deployment",
+                                "ReplicationController",
+                                "ReplicaSet",
+                                "DaemonSet",
+                                "StatefulSet",
+                                "Job",
+                                "CronJob"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "kind"
+                    ]
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "string"
+                },
+                "userInfo": {
+                    "type": "object",
+                    "properties": {
+                        "username": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "username"
+                    ]
+                },
+                "object": {
+                    "type": "object",
+                    "properties": {
+                        "kind": {
+                            "type": "string",
+                            "enum": [
+                                "Pod",
+                                "Deployment",
+                                "ReplicationController",
+                                "ReplicaSet",
+                                "DaemonSet",
+                                "StatefulSet",
+                                "Job",
+                                "CronJob"
+                            ]
+                        },
+                        "apiVersion": {
+                            "type": "string"
+                        },
+                        "spec": {
+                            "type": "object"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "kind",
+                        "apiVersion",
+                        "spec",
+                        "metadata"
+                    ]
+                }
+            },
+            "required": [
+                "uid",
+                "kind",
+                "namespace",
+                "operation",
+                "userInfo",
+                "object"
+            ]
+        }
+    },
+    "required": [
+        "kind",
+        "apiVersion",
+        "request"
+    ]
+}

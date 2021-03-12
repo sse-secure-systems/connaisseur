@@ -3,15 +3,16 @@ from connaisseur.image import Image
 from connaisseur.config import Notary
 from connaisseur.key_store import KeyStore
 from connaisseur.util import normalize_delegation
-from connaisseur.notary_api import get_trust_data, get_delegation_trust_data
 from connaisseur.tuf_role import TUFRole
 from connaisseur.exceptions import (
     NotFoundException,
+    InsufficientTrustDataError,
     AmbiguousDigestError,
 )
+from connaisseur.policy import Rule
 
 
-def get_trusted_digest(notary_config: Notary, image: Image, policy_rule: dict):
+def get_trusted_digest(notary_config: Notary, image: Image, policy_rule: Rule):
     """
     Searches in given notary server(`host`) for trust data, that belongs to the
     given `image`, by using the notary API. Also checks whether the given
@@ -20,28 +21,25 @@ def get_trusted_digest(notary_config: Notary, image: Image, policy_rule: dict):
     Returns the signed digest, belonging to the `image` or throws if validation fails.
     """
     # prepend `targets/` to the required delegation roles, if not already present
-    req_delegations = list(
-        map(normalize_delegation, policy_rule.get("delegations", []))
-    )
+    req_delegations = list(map(normalize_delegation, policy_rule.delegations))
 
     # get root key
-    pub_root_key = notary_config.get_key(policy_rule.get("key"))
+    pub_root_key = notary_config.get_key(policy_rule.key)
     if not pub_root_key:
-        raise NotFoundException(
-            "error retrieving the public root key from configuration."
-        )
+        msg = "Unable to get public root key from configuration."
+        raise NotFoundException(message=msg)
 
     # get list of targets fields, containing tag to signed digest mapping from
     # `targets.json` and all potential delegation roles
-    signed_image_targets = process_chain_of_trust(
+    signed_image_targets = __process_chain_of_trust(
         notary_config, image, req_delegations, pub_root_key
     )
 
     # search for digests or tag, depending on given image
     search_image_targets = (
-        search_image_targets_for_digest
+        __search_image_targets_for_digest
         if image.has_digest()
-        else search_image_targets_for_tag
+        else __search_image_targets_for_tag
     )
 
     # filter out the searched for digests, if present
@@ -51,36 +49,31 @@ def get_trusted_digest(notary_config: Notary, image: Image, policy_rule: dict):
     # consist of delegation role targets. if searched for the signed digest, none of
     # them should be empty
     if req_delegations and not all(digests):
-        raise NotFoundException(
-            'not all required delegations have trust data for image "{}".'.format(
-                str(image)
-            )
-        )
+        msg = "Not all required delegations have trust data for image {image_name}."
+        raise InsufficientTrustDataError(message=msg, image_name=str(image))
 
     # filter out empty results and squash same elements
     digests = set(filter(None, digests))
 
     # no digests could be found
     if not digests:
-        raise NotFoundException(
-            'could not find signed digest for image "{}" in trust data.'.format(
-                str(image)
-            )
-        )
+        msg = "Unable to find signed digest for image {image_name}."
+        raise NotFoundException(message=msg, image_name=str(image))
 
     # if there is more than one valid digest in the set, no decision can be made, which
     # to chose
     if len(digests) > 1:
-        raise AmbiguousDigestError("found multiple signed digests for the same image.")
+        msg = "Found multiple signed digest for image {image_name}."
+        raise AmbiguousDigestError(message=msg, image_name=str(image))
 
     return digests.pop()
 
 
-def process_chain_of_trust(
+def __process_chain_of_trust(
     notary_config: Notary, image: Image, req_delegations: list, pub_root_key: str
 ):  # pylint: disable=too-many-branches
     """
-    Processes the whole chain of trust, provided by the notary server (`host`)
+    Processes the whole chain of trust, provided by the notary server (`notary_config`)
     for any given `image`. The 'root', 'snapshot', 'timestamp', 'targets' and
     potentially 'targets/releases' are requested and validated.
     Additionally, it is checked whether all required delegations are valid.
@@ -97,10 +90,10 @@ def process_chain_of_trust(
 
     # load all trust data
     for role in tuf_roles:
-        trust_data[role] = get_trust_data(notary_config, image, TUFRole(role))
+        trust_data[role] = notary_config.get_trust_data(image, TUFRole(role))
 
     # validate signature and expiry data of and load root file
-    # this does NOT conclude the validation of the root file. To prevent roleback/freeze
+    # this does NOT conclude the validation of the root file. To prevent rollback/freeze
     # attacks, the hash still needs to be validated against the snapshot file
     root_trust_data = trust_data["root"]
     root_trust_data.validate_signature(key_store)
@@ -128,7 +121,7 @@ def process_chain_of_trust(
     snapshot_trust_data.validate_expiry()
 
     # now snapshot and timestamp files are validated, we can be safe against
-    # roleback and freeze attacks if the root file matches the hash of the snapshot file
+    # rollback and freeze attacks if the root file matches the hash of the snapshot file
     # (or the root key has been compromised, which Connaisseur cannot defend against)
     snapshot_key_store = KeyStore()
     snapshot_key_store.update(snapshot_trust_data)
@@ -145,12 +138,12 @@ def process_chain_of_trust(
     # as well
     delegations = trust_data["targets"].get_delegations()
     if trust_data["targets"].has_delegations():
-        _update_with_delegation_trust_data(
+        __update_with_delegation_trust_data(
             trust_data, delegations, key_store, notary_config, image
         )
 
     # validate existence of required delegations
-    _validate_all_required_delegations_present(req_delegations, delegations)
+    __validate_all_required_delegations_present(req_delegations, delegations)
 
     # if certain delegations are required, then only take the targets fields of the
     # required delegation JSONs. otherwise take the targets field of the targets JSON, as
@@ -166,8 +159,13 @@ def process_chain_of_trust(
                 for target_role in req_delegations
                 if not trust_data[target_role]
             ]
-            msg = f"no trust data for delegation roles {tuf_roles} for image {image}"
-            raise NotFoundException(msg, {"tuf_roles": tuf_roles})
+            msg = (
+                "Unable to find trust data for delegation "
+                "roles {tuf_roles} and image {image_name}."
+            )
+            raise NotFoundException(
+                message=msg, tuf_roles=str(tuf_roles), image_name=str(image)
+            )
 
         image_targets = [
             trust_data[target_role].signed.get("targets", {})
@@ -183,12 +181,13 @@ def process_chain_of_trust(
         image_targets = [trust_data[targets_key].signed.get("targets", {})]
 
     if not any(image_targets):
-        raise NotFoundException("could not find any image digests in trust data.")
+        msg = "Unable to find any image digests in trust data."
+        raise NotFoundException(message=msg)
 
     return image_targets
 
 
-def search_image_targets_for_digest(trust_data: dict, image: Image):
+def __search_image_targets_for_digest(trust_data: dict, image: Image):
     """
     Searches in the `trust_data` for a signed digest, given an `image` with
     digest.
@@ -200,7 +199,7 @@ def search_image_targets_for_digest(trust_data: dict, image: Image):
     return None
 
 
-def search_image_targets_for_tag(trust_data: dict, image: Image):
+def __search_image_targets_for_tag(trust_data: dict, image: Image):
     """
     Searches in the `trust_data` for a digest, given an `image` with tag.
     """
@@ -212,12 +211,12 @@ def search_image_targets_for_tag(trust_data: dict, image: Image):
     return base64.b64decode(base64_digest).hex()
 
 
-def _update_with_delegation_trust_data(
+def __update_with_delegation_trust_data(
     trust_data, delegations, key_store, notary_config, image
 ):
     for delegation in delegations:
-        delegation_trust_data = get_delegation_trust_data(
-            notary_config, image, TUFRole(delegation)
+        delegation_trust_data = notary_config.get_delegation_trust_data(
+            image, TUFRole(delegation)
         )
         # when delegations are added to the repository, but weren't yet used for signing, the
         # delegation files don't exist yet and are `None`. in this case validation must be skipped
@@ -226,7 +225,7 @@ def _update_with_delegation_trust_data(
         trust_data[delegation] = delegation_trust_data
 
 
-def _validate_all_required_delegations_present(
+def __validate_all_required_delegations_present(
     required_delegations, present_delegations
 ):
     if required_delegations:
@@ -240,10 +239,10 @@ def _validate_all_required_delegations_present(
             # present ones
             if not req_delegations_set.issubset(delegations_set):
                 missing = list(req_delegations_set - delegations_set)
-                raise NotFoundException(
-                    "could not find delegation roles {} in trust data.".format(
-                        str(missing)
-                    )
+                msg = (
+                    "Unable to find delegation roles {delegation_roles} in trust data."
                 )
+                raise NotFoundException(message=msg, delegation_roles=str(missing))
         else:
-            raise NotFoundException("could not find any delegations in trust data.")
+            msg = "Unable to find any delegations in trust data."
+            raise NotFoundException(message=msg)

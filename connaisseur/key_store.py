@@ -1,4 +1,4 @@
-from connaisseur.exceptions import NotFoundException, InvalidFormatException
+from connaisseur.exceptions import NotFoundException, InvalidKeyFormatError
 from connaisseur.crypto import load_key
 
 
@@ -18,8 +18,9 @@ class KeyStore:
             try:
                 key = load_key(root_pub_key)
             except ValueError as err:
-                raise InvalidFormatException(
-                    'error loading key "root".', {"key_id": "root"}
+                msg = "The public root key has an invalid format."
+                raise InvalidKeyFormatError(
+                    message=msg, root_pub_key=root_pub_key
                 ) from err
             self.keys = {"root": key}
         else:
@@ -34,9 +35,8 @@ class KeyStore:
         try:
             return self.keys[key_id]
         except KeyError as err:
-            raise NotFoundException(
-                'could not find key id "{}" in keystore.'.format(key_id)
-            ) from err
+            msg = "Unable to find key {key_id} in keystore."
+            raise NotFoundException(message=msg, key_id=key_id) from err
 
     def get_hash(self, role: str):
         """
@@ -47,9 +47,8 @@ class KeyStore:
         try:
             return self.hashes[role]
         except KeyError as err:
-            raise NotFoundException(
-                'could not find hash for role "{}" in keystore.'.format(role)
-            ) from err
+            msg = "Unable to find hash for {tuf_role} in keystore."
+            raise NotFoundException(message=msg, tuf_role=role) from err
 
     def update(self, trust_data):
         """
@@ -74,8 +73,9 @@ class KeyStore:
             try:
                 key = load_key(keys[key_id]["keyval"]["public"])
             except ValueError as err:
-                raise InvalidFormatException(
-                    f'error loading key "{key_id}".', {"key_id": key_id}
+                msg = "Key {key_id} has an invalid format."
+                raise InvalidKeyFormatError(
+                    message=msg, key_id=key_id, key=keys[key_id]["keyval"]["public"]
                 ) from err
             self.keys.setdefault(key_id, key)
 

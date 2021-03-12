@@ -13,7 +13,7 @@ def request_kube_api(path: str):
     kube_ip = os.environ.get("KUBERNETES_SERVICE_HOST")
     kube_port = os.environ.get("KUBERNETES_SERVICE_PORT")
 
-    token = get_token(token_path)
+    token = __get_token(token_path)
 
     url = f"https://{kube_ip}:{kube_port}/{path}"
     headers = {"Authorization": f"Bearer {token}"}
@@ -24,7 +24,7 @@ def request_kube_api(path: str):
     return response.json()
 
 
-def get_token(path: str):
+def __get_token(path: str):
     """
     Gets the API token from the containers file system.
     """

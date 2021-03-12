@@ -2,9 +2,12 @@ import os
 import fnmatch
 import json
 from jsonschema import validate, ValidationError
-import connaisseur.kube_api as api
+import connaisseur.kube_api as kapi
 from connaisseur.image import Image
-from connaisseur.exceptions import InvalidFormatException, NotFoundException
+from connaisseur.exceptions import (
+    InvalidPolicyFormatError,
+    NoMatchingPolicyRuleError,
+)
 
 
 class ImagePolicy:
@@ -20,31 +23,34 @@ class ImagePolicy:
     """
 
     policy: dict
-    JSON_SCHEMA_PATH = "connaisseur/res/policy_schema.json"
+    _schema_path = "connaisseur/res/policy_schema.json"
 
     def __init__(self):
         # load policy from k8s
-        image_policy = ImagePolicy.get_image_policy()
+        image_policy = ImagePolicy.__get_image_policy()
 
         # validate policy
-        with open(self.JSON_SCHEMA_PATH, "r") as schema_file:
+        with open(self._schema_path, "r") as schema_file:
             schema = json.load(schema_file)
         try:
             validate(instance=image_policy, schema=schema)
         except ValidationError as err:
-            raise InvalidFormatException("invalid format for image policy.") from err
+            msg = "Image policy has an invalid format: {validation_err}."
+            raise InvalidPolicyFormatError(
+                message=msg, validation_err=str(err)
+            ) from err
 
         self.policy = image_policy
 
     @staticmethod
-    def get_image_policy():
+    def __get_image_policy():
         """
         Loads the image policy from the kubernetes API.
         """
         image_policy = os.environ.get("CONNAISSEUR_IMAGE_POLICY")
 
         path = f"apis/connaisseur.policy/v1/imagepolicies/{image_policy}"
-        response = api.request_kube_api(path)
+        response = kapi.request_kube_api(path)
 
         return response["spec"]
 
@@ -62,15 +68,26 @@ class ImagePolicy:
                 best_match = match.compare(best_match)
 
         if not best_match:
-            raise NotFoundException(
-                'no matching rule for image "{}" could be found.'.format(str(image))
-            )
+            msg = "No matching policy rule could be found for image {image_name}."
+            raise NoMatchingPolicyRuleError(message=msg, image_name=str(image))
 
         most_specific_rule = next(
             filter(lambda x: x["pattern"] == best_match.key, self.policy["rules"]), None
         )
 
-        return most_specific_rule
+        return Rule(**most_specific_rule)
+
+
+class Rule:
+    def __init__(self, pattern: str, **kwargs):
+        self.pattern = pattern
+        self.verify = kwargs.get("verify", True)
+        self.delegations = kwargs.get("delegations", [])
+        self.notary = kwargs.get("notary")
+        self.key = kwargs.get("key")
+
+    def __str__(self):
+        return self.pattern
 
 
 class Match:
