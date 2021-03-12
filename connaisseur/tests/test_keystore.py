@@ -126,7 +126,13 @@ def test_key_store(key_store, pub_key: str):
     assert k.hashes == {}
 
 
-@pytest.mark.parametrize("pub_key", [(key3), (key4), (key5), (None), ("")])
+def test_key_store_none(key_store):
+    k = ks.KeyStore()
+    assert k.keys == {}
+    assert k.hashes == {}
+
+
+@pytest.mark.parametrize("pub_key", [(key3), (key4), (key5)])
 def test_key_store_error(key_store, pub_key: str):
     with pytest.raises(BaseConnaisseurException) as err:
         ks.KeyStore(pub_key)
