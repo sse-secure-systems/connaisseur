@@ -49,7 +49,7 @@ class Alert:
             "fail_if_alert_sending_fails", False
         )
         self.payload = self._construct_payload(receiver_config)
-        self.headers = _get_headers(receiver_config)
+        self.headers = self._get_headers(receiver_config)
 
     def _construct_payload(self, receiver_config):
         try:
@@ -66,25 +66,26 @@ class Alert:
                 "Template file for alerting payload is either missing or invalid JSON: {}".format(
                     str(err)
                 )
-            )
+            ) from err
         payload = self._render_template(template)
         if receiver_config.get("payload_fields") is not None:
             payload.update(receiver_config.get("payload_fields"))
         return json.dumps(payload)
 
-    def _render_template(self, template_dict):
-        if isinstance(template_dict, (dict, list)):
-            for key, value in template_dict.items():
-                if isinstance(value, dict):
-                    self._render_template(value)
-                elif isinstance(value, list):
-                    for entry in value:
-                        self._render_template(entry)
-                else:
-                    template_dict[key] = Template(value).render(
-                        self.context, undefined=StrictUndefined
-                    )
-        return template_dict
+    def _render_template(self, template):
+        if isinstance(template, dict):
+            for key in template.keys():
+                template[key] = self._render_template(template[key])
+        elif isinstance(template, list):
+            rendered_list = []
+            for entry in template:
+                rendered_list.append(self._render_template(entry))
+            template = rendered_list
+        elif isinstance(template, str):
+            template = Template(template).render(
+                self.context, undefined=StrictUndefined
+            )
+        return template
 
     def send_alert(self):
         try:
@@ -95,19 +96,19 @@ class Alert:
             logging.info("sent alert to %s", self.template)
         except Exception as err:
             if self.throw_if_alert_sending_fails:
-                raise AlertSendingError(str(err))
+                raise AlertSendingError(str(err)) from err
             logging.error(err)
         return response
 
-
-def _get_headers(receiver_config):
-    headers = {"Content-Type": "application/json"}
-    additional_headers = receiver_config.get("custom_headers")
-    if additional_headers is not None:
-        for header in additional_headers:
-            key, value = header.split(":", 1)
-            headers.update({key.strip(): value.strip()})
-    return headers
+    @staticmethod
+    def _get_headers(receiver_config):
+        headers = {"Content-Type": "application/json"}
+        additional_headers = receiver_config.get("custom_headers")
+        if additional_headers is not None:
+            for header in additional_headers:
+                key, value = header.split(":", 1)
+                headers.update({key.strip(): value.strip()})
+        return headers
 
 
 def load_config():
@@ -117,15 +118,15 @@ def load_config():
             open, alert_config_dir, f"{alert_config_dir}/alertconfig.json", "r"
         ) as configfile:
             alertconfig = json.load(configfile)
-            schema = get_alert_config_validation_schema()
-            json_validate(instance=alertconfig, schema=schema)
+        schema = get_alert_config_validation_schema()
+        json_validate(instance=alertconfig, schema=schema)
     except Exception as err:
         raise ConfigurationError(
             "Alerting configuration file either not present or not valid."
             "Check in the 'helm/values.yml' whether everything is correctly configured. {}".format(
                 str(err)
             )
-        )
+        ) from err
     return alertconfig
 
 
@@ -133,7 +134,7 @@ def get_images(admission_request):
     relevant_spec = get_container_specs(
         admission_request.get("request", {}).get("object", {})
     )
-    return [container.get("image") for container in relevant_spec]
+    return list(map(lambda x: x.get("image"), relevant_spec))
 
 
 def send_alerts(admission_request, *, admitted, reason=None):

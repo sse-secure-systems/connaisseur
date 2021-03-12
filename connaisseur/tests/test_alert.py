@@ -21,7 +21,7 @@ with open("tests/data/alerting/alertconfig_schema.json", "r") as readfile:
     alertconfig_schema = json.load(readfile)
 
 opsgenie_receiver_config_throw = {
-    "custom_headers": ["Authorization: GenieKey 12345678-abcd-2222-3333-1234567890ef"],
+    "custom_headers": ["Authorization: GenieKey <Your-Genie-Key>"],
     "fail_if_alert_sending_fails": True,
     "payload_fields": {
         "responders": [{"type": "user", "username": "testuser@testcompany.de"}],
@@ -34,7 +34,7 @@ opsgenie_receiver_config_throw = {
 }
 
 opsgenie_receiver_config = {
-    "custom_headers": ["Authorization: GenieKey 12345678-abcd-2222-3333-1234567890ef"],
+    "custom_headers": ["Authorization: GenieKey <Your-Genie-Key>"],
     "fail_if_alert_sending_fails": False,
     "payload_fields": {
         "responders": [{"type": "user", "username": "testuser@testcompany.de"}],
@@ -48,15 +48,20 @@ opsgenie_receiver_config = {
 
 slack_receiver_config = {
     "priority": 3,
-    "receiver_url": "https://hooks.slack.com/services/A0123456789/ABCDEFGHIJ/HFb3Gs7FFscjQNJYWHGY7GPV",
+    "receiver_url": "https://hooks.slack.com/services/123",
     "template": "slack",
+}
+
+custom_receiver_config = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "template": "custom",
 }
 
 keybase_receiver_config = {
     "custom_headers": ["Content-Language: de-DE"],
     "fail_if_alert_sending_fails": True,
     "priority": 3,
-    "receiver_url": "https://bots.keybase.io/webhookbot/IFP--tpV2wBxEP3ArYx4gVS_B-0",
+    "receiver_url": "https://bots.keybase.io/webhookbot/123",
     "template": "keybase",
 }
 
@@ -68,7 +73,7 @@ missing_template_receiver_config = {
 
 alert_headers_opsgenie = {
     "Content-Type": "application/json",
-    "Authorization": "GenieKey 12345678-abcd-2222-3333-1234567890ef",
+    "Authorization": "GenieKey <Your-Genie-Key>",
 }
 
 alert_headers_slack = {"Content-Type": "application/json"}
@@ -104,6 +109,8 @@ alert_payload_slack_deployment = {
         },
     ],
 }
+
+injection_string = '"]}, "test": "Can I inject into json?", "cluster":'
 
 
 @pytest.fixture(autouse=True)
@@ -149,6 +156,26 @@ def mock_safe_path_func_load_config(mocker):
             alert_payload_slack_deployment,
             alert_headers_slack,
         ),
+        (
+            "CONNAISSEUR does great",
+            custom_receiver_config,
+            admission_request_deployment,
+            [
+                {"test": ["connaisseur-pod-123", "3"]},
+                {"test1": ["CONNAISSEUR does great", "minikube"]},
+            ],
+            {"Content-Type": "application/json"},
+        ),
+        (
+            '"]}, "test": "Can I inject into json?", "cluster":',
+            custom_receiver_config,
+            admission_request_deployment,
+            [
+                {"test": ["connaisseur-pod-123", "3"]},
+                {"test1": [injection_string, "minikube"]},
+            ],
+            {"Content-Type": "application/json"},
+        ),
     ],
 )
 def test_alert(
@@ -181,6 +208,8 @@ def test_alert(
             )[0]
             in json.loads(alert.payload)["blocks"][1]["text"]["text"]
         )
+    if receiver_config["template"] == "custom":
+        assert alert_payload == json.loads(alert.payload)
 
 
 @pytest.mark.parametrize(
@@ -286,7 +315,7 @@ def test_log_alert_sending_error(
 ):
     mock_error_log = mocker.patch("logging.error")
     requests_mock.post(
-        "https://hooks.slack.com/services/A0123456789/ABCDEFGHIJ/HFb3Gs7FFscjQNJYWHGY7GPV",
+        "https://hooks.slack.com/services/123",
         status_code=401,
     )
     alert = Alert(message, receiver_config, admission_request)

@@ -1,0 +1,14 @@
+[
+  {
+    "test": [
+      "{{ connaisseur_pod_id }}",
+      "{{ priority }}"
+    ]
+  },
+  {
+    "test1": [
+      "{{ alert_message }}",
+      "{{ cluster }}"
+    ]
+  }
+]

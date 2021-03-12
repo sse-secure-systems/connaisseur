@@ -28,7 +28,7 @@ alerting:
       - template: opsgenie
         receiver_url: http://${ALERTING_ENDPOINT_IP}:56243/opsgenie
         priority: 4
-        custom_headers: ["Authorization: GenieKey 12345678-abcd-2222-3333-1234567890ef"]
+        custom_headers: ["Authorization: GenieKey <Your-Genie-Key>"]
         payload_fields:
           responders:
             - username: "testuser@testcompany.de"

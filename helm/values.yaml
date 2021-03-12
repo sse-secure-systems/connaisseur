@@ -77,6 +77,7 @@ detection_mode: false
 # payload to use with a simple POST request to the receiver_url to receive alerts.
 # Parameters you can use in your templates are "alert_message", "priority", "connaisseur_pod_id", "cluster",
 # "timestamp", "request_id" and "images" each one basically meaning what their names indicate
+#
 # Below is an example config
 
 #alerting:
@@ -87,7 +88,7 @@ detection_mode: false
 #      - template: opsgenie #REQUIRED!
 #        receiver_url: https://api.eu.opsgenie.com/v2/alerts #REQUIRED!
 #        priority: 4 #(defaults to 3)
-#        custom_headers: ["Authorization: GenieKey 12345678-abcd-2222-3333-1234567890ef"]
+#        custom_headers: ["Authorization: GenieKey <Your-Genie-Key>"]
 #        payload_fields:
 #          responders:
 #            - username: "testuser@testcompany.de"
@@ -100,10 +101,10 @@ detection_mode: false
 #        fail_if_alert_sending_fails: True  # (defaults to False, turning it to True will make Connaisseur deny your
 #                                           # deployment (even in detection mode))
 #      - template: slack #REQUIRED!
-#        receiver_url: https://hooks.slack.com/services/A0123456789/ABCDEFGHIJ/HFb3Gs7FFscjQNJYWHGY7GPV
+#        receiver_url: https://hooks.slack.com/services/<Your-Slack-Hook-Path>
 #        priority: 1
 #  reject_request:
 #    templates:
 #      - template: keybase  #REQUIRED!
-#        receiver_url: https://bots.keybase.io/webhookbot/IFP--tpV2wBxEP3ArYx4gVS_B-0
+#        receiver_url: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
 #        fail_if_alert_sending_fails: True
