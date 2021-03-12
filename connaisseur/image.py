@@ -1,5 +1,5 @@
 import re
-from connaisseur.exceptions import InvalidFormatException
+from connaisseur.exceptions import InvalidImageFormatError
 
 
 class Image:
@@ -47,9 +47,8 @@ class Image:
 
         match = re.search(regex, image)
         if not match:
-            raise InvalidFormatException(
-                '"{}" is not a valid image format.'.format(image)
-            )
+            msg = "{image} is not a valid image reference."
+            raise InvalidImageFormatError(message=msg, image=image)
 
         self.registry, self.repository, self.name, self.digest, self.tag = (
             match.group(1),

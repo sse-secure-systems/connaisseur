@@ -11,15 +11,16 @@ class BaseConnaisseurException(Exception):
     message: str
     context: dict
     detection_mode: bool
+    default_message = "An error occurred."
 
-    def __init__(self, message: str, context: dict = {}):
-        self.message = message
-        self.context = context
+    def __init__(self, message: str = default_message, **kwargs):
+        self.message = message.format(**kwargs)
         self.detection_mode = os.environ.get("DETECTION_MODE", "0") == "1"
+        self.context = dict(**kwargs, detection_mode=self.detection_mode)
         super().__init__()
 
     def __str__(self):
-        return str(self.__dict__)
+        return str(dict(message=self.message, context=self.context))
 
     @property
     def user_msg(self):
@@ -28,12 +29,11 @@ class BaseConnaisseurException(Exception):
             msg += " (not denied due to DETECTION_MODE)"
         return msg
 
+    def update_context(self, **kwargs):
+        self.context.update(dict(**kwargs))
+
 
 class InvalidPublicKey(BaseConnaisseurException):
-    pass
-
-
-class InvalidFormatException(BaseConnaisseurException):
     pass
 
 
@@ -41,19 +41,59 @@ class ValidationError(BaseConnaisseurException):
     pass
 
 
+class InvalidFormatException(ValidationError):
+    pass
+
+
+class InvalidImageFormatError(InvalidFormatException):
+    pass
+
+
+class InvalidKeyFormatError(InvalidFormatException):
+    pass
+
+
+class InvalidPolicyFormatError(InvalidFormatException):
+    pass
+
+
+class InvalidConfigurationFormatError(InvalidFormatException):
+    pass
+
+
+class InvalidTrustDataFormatError(InvalidFormatException):
+    pass
+
+
+class PathTraversalError(InvalidFormatException):
+    pass
+
+
 class NotFoundException(BaseConnaisseurException):
     pass
 
 
-class NoSuchClassError(Exception):
+class NoSuchClassError(NotFoundException):
     pass
 
 
-class UnsupportedTypeException(BaseConnaisseurException):
+class NoMatchingPolicyRuleError(NotFoundException):
     pass
 
 
-class UnknownVersionError(Exception):
+class ParentNotFoundError(NotFoundException):
+    pass
+
+
+class InsufficientTrustDataError(NotFoundException):
+    pass
+
+
+class UnknownTypeException(BaseConnaisseurException):
+    pass
+
+
+class UnknownAPIVersionError(UnknownTypeException):
     pass
 
 

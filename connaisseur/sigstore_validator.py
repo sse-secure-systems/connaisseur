@@ -37,10 +37,14 @@ def get_cosign_validated_digests(image: str, pubkey: str):
                         "Docker-manifest-digest", ""
                     )
                     if re.match(r"sha256:[0-9A-Fa-f]{64}", digest) is None:
-                        raise Exception(
-                            f"digest '{digest}' does not match expected digest pattern."
+                        msg = (
+                            "Digest '{digest}' does not match expected digest pattern."
                         )
                 except Exception as err:
+                    msg = (
+                        "Could not retrieve valid and unambiguous digest from data "
+                        "received by cosign: {err_type}: {err}"
+                    )
                     raise UnexpectedCosignData(
                         "could not retrieve valid and unambiguous digest "
                         f"from data received by cosign: {type(err).__name__}: {err}"
@@ -51,23 +55,26 @@ def get_cosign_validated_digests(image: str, pubkey: str):
                 logging.info("non-json signature data from cosign: %s", sig)
                 pass
     elif "error: no matching signatures:\nunable to verify signature\n" in stderr:
+        msg = "Failed to verify signature of trust data."
         raise ValidationError(
             "failed to verify signature of trust data.",
             {"trust_data_type": "dev.cosignproject.cosign/signature", "stderr": stderr},
         )
     elif re.match(r"^error: GET https://[^ ]+ MANIFEST_UNKNOWN:.*", stderr):
+        msg = 'No trust data for image "{image}".'
         raise NotFoundException(
             f'no trust data for image "{image}".',
             {"trust_data_type": "dev.cosignproject.cosign/signature", "stderr": stderr},
         )
     else:
+        msg = 'Unexpected cosign exception for image "{image}": {stderr}.'
         raise CosignError(
             f'unexpected cosign exception for image "{image}": {stderr}.',
             {"trust_data_type": "dev.cosignproject.cosign/signature"},
         )
     if not digests:
-        raise UnexpectedCosignData(
-            "could not extract any digest from data received by cosign "
+        msg = (
+            "Could not extract any digest from data received by cosign "
             "despite successful image verification."
         )
     return digests
@@ -90,6 +97,7 @@ def invoke_cosign(image, pubkey):
             stdout, stderr = process.communicate(bytes(stdinput, "utf-8"), timeout=60)
         except subprocess.TimeoutExpired as err:
             process.kill()
+            msg = "Cosign timed out."
             raise CosignTimeout(
                 "cosign timed out.",
                 {"trust_data_type": "dev.cosignproject.cosign/signature"},

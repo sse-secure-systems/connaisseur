@@ -11,11 +11,19 @@ description: A Helm chart for the Connaisseur Admission Controller
 # a dependency of application charts to inject those utilities and functions into the rendering
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
-
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-version: 0.2.0
-
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application.
-appVersion: 1.16.0
+version: 1.0.0
+appVersion: 2.0.0
+keywords:
+  - docker image
+  - signature
+  - verification
+home: https://github.com/sse-secure-systems/connaisseur
+sources:
+  - https://github.com/sse-secure-systems/connaisseur
+maintainers:
+  - name: Philipp Belitz
+    email: philipp.belitz@securesystems.de
+  - name: Peter Thomassen
+    email: peter.thomassen@securesystems.de
+  - name: Christoph Hamsen
+    email: christoph.hamsen@securesystems.de

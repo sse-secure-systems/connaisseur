@@ -17,6 +17,10 @@ class TUFRole:
         match = re.match(regex, role)
 
         if not match:
-            raise InvalidFormatException('"{}" is not a valid TUF role.'.format(role))
+            msg = "{role} is not a valid TUF role."
+            raise InvalidFormatException(message=msg, role=str(role))
 
         self.role = role
+
+    def __str__(self):
+        return self.role
