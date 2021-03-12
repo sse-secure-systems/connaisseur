@@ -146,7 +146,7 @@ def process_chain_of_trust(
     delegations = trust_data["targets"].get_delegations()
     if trust_data["targets"].has_delegations():
         _update_with_delegation_trust_data(
-            trust_data, delegations, key_store, host, image
+            trust_data, delegations, key_store, notary_config, image
         )
 
     # validate existence of required delegations
@@ -212,10 +212,12 @@ def search_image_targets_for_tag(trust_data: dict, image: Image):
     return base64.b64decode(base64_digest).hex()
 
 
-def _update_with_delegation_trust_data(trust_data, delegations, key_store, host, image):
+def _update_with_delegation_trust_data(
+    trust_data, delegations, key_store, notary_config, image
+):
     for delegation in delegations:
         delegation_trust_data = get_delegation_trust_data(
-            host, image, TUFRole(delegation)
+            notary_config, image, TUFRole(delegation)
         )
         # when delegations are added to the repository, but weren't yet used for signing, the
         # delegation files don't exist yet and are `None`. in this case validation must be skipped
