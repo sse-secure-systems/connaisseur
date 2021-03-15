@@ -32,6 +32,14 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 
+{{- define "helm.labels" -}}
+app.kubernetes.io/name: {{ include "helm.name" . }}
+helm.sh/chart: {{ include "helm.chart" . }}
+app.kubernetes.io/instance: {{ .Chart.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+
 {{- define "anyIntAuth" -}}
 {{- range $i := .Values.notaries }}
 {{- if $i.auth }}

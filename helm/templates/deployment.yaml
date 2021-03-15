@@ -4,10 +4,7 @@ metadata:
   name: {{ .Chart.Name }}-deployment
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "helm.name" . }}
-    helm.sh/chart: {{ include "helm.chart" . }}
-    app.kubernetes.io/instance: {{ .Chart.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "helm.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.deployment.replicasCount }}
   selector:
