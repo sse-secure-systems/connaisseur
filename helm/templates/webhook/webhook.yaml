@@ -4,10 +4,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: {{ .Chart.Name }}-webhook
   labels:
-    app.kubernetes.io/name: {{ include "helm.name" . }}
-    helm.sh/chart: {{ include "helm.chart" . }}
-    app.kubernetes.io/instance: {{ .Chart.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "helm.labels" . | nindent 4 }}
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
     failurePolicy: Fail

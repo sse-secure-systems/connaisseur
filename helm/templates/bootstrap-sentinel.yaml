@@ -3,10 +3,7 @@ kind: Pod
 metadata:
   name: {{ .Chart.Name }}-bootstrap-sentinel
   labels:
-    app.kubernetes.io/name: {{ include "helm.name" . }}
-    helm.sh/chart: {{ include "helm.chart" . }}
-    app.kubernetes.io/instance: {{ .Chart.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "helm.labels" . | nindent 4 }}
     app.kubernetes.io/service: bootstrap
 spec:
   containers:

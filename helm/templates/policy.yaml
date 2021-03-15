@@ -3,10 +3,7 @@ kind: ImagePolicy
 metadata:
   name: {{ .Chart.Name }}-policy
   labels:
-    app.kubernetes.io/name: {{ include "helm.name" . }}
-    helm.sh/chart: {{ include "helm.chart" . }}
-    app.kubernetes.io/instance: {{ .Chart.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "helm.labels" . | nindent 4 }}
 spec:
   rules:
     {{- range $k,$v := .Values.policy }}
