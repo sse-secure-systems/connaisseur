@@ -68,4 +68,8 @@ policy:
 # interrupting operation.
 detection_mode: false
 
+# A list of namespaces that will be subsequent to Connaisseur verification.
+# If the list contains '*' - all namespaces will be monitored.
+targetNamespaces: ['*']
+
 # debug: true
