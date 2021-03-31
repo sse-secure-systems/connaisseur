@@ -88,7 +88,7 @@ jobs:
       - name: Install bandit
         run: pip3 install bandit
       - name: Run bandit
-        run: bandit -r -x tests/ -f txt -o bandit-report.txt .
+        run: bandit -r -x tests/,changelogger.py -f txt -o bandit-report.txt .
       - name: Print report
         if: ${{ success() || failure() }}
         run: cat bandit-report.txt
