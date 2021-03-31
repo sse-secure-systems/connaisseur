@@ -1,12 +1,14 @@
 import base64
+import os
 from connaisseur.image import Image
 from connaisseur.key_store import KeyStore
 from connaisseur.util import normalize_delegation
 from connaisseur.notary_api import get_trust_data, get_delegation_trust_data
+from connaisseur.sigstore_validator import get_cosign_validated_digests
 from connaisseur.tuf_role import TUFRole
 from connaisseur.exceptions import (
-    NotFoundException,
     AmbiguousDigestError,
+    NotFoundException,
 )
 
 
@@ -18,34 +20,41 @@ def get_trusted_digest(host: str, image: Image, policy_rule: dict):
 
     Returns the signed digest, belonging to the `image` or throws if validation fails.
     """
-    # prepend `targets/` to the required delegation roles, if not already present
-    req_delegations = list(
-        map(normalize_delegation, policy_rule.get("delegations", []))
-    )
-
-    # get list of targets fields, containing tag to signed digest mapping from
-    # `targets.json` and all potential delegation roles
-    signed_image_targets = process_chain_of_trust(host, image, req_delegations)
-
-    # search for digests or tag, depending on given image
-    search_image_targets = (
-        search_image_targets_for_digest
-        if image.has_digest()
-        else search_image_targets_for_tag
-    )
-
-    # filter out the searched for digests, if present
-    digests = list(map(lambda x: search_image_targets(x, image), signed_image_targets))
-
-    # in case certain delegations are needed, `signed_image_targets` should only
-    # consist of delegation role targets. if searched for the signed digest, none of
-    # them should be empty
-    if req_delegations and not all(digests):
-        raise NotFoundException(
-            'not all required delegations have trust data for image "{}".'.format(
-                str(image)
-            )
+    if os.environ.get("IS_COSIGN", "0") == "1":
+        # validate with cosign
+        pubkey = KeyStore().keys["root"]
+        digests = get_cosign_validated_digests(str(image), pubkey)
+    else:
+        # prepend `targets/` to the required delegation roles, if not already present
+        req_delegations = list(
+            map(normalize_delegation, policy_rule.get("delegations", []))
         )
+
+        # get list of targets fields, containing tag to signed digest mapping from
+        # `targets.json` and all potential delegation roles
+        signed_image_targets = process_chain_of_trust(host, image, req_delegations)
+
+        # search for digests or tag, depending on given image
+        search_image_targets = (
+            search_image_targets_for_digest
+            if image.has_digest()
+            else search_image_targets_for_tag
+        )
+
+        # filter out the searched for digests, if present
+        digests = list(
+            map(lambda x: search_image_targets(x, image), signed_image_targets)
+        )
+
+        # in case certain delegations are needed, `signed_image_targets` should only
+        # consist of delegation role targets. if searched for the signed digest, none of
+        # them should be empty
+        if req_delegations and not all(digests):
+            raise NotFoundException(
+                'not all required delegations have trust data for image "{}".'.format(
+                    str(image)
+                )
+            )
 
     # filter out empty results and squash same elements
     digests = set(filter(None, digests))
