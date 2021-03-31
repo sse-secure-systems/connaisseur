@@ -1,6 +1,7 @@
 import pytest
 import json
 import connaisseur.crypto
+from connaisseur.exceptions import InvalidPublicKey
 
 root_pub = (
     "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
@@ -43,3 +44,30 @@ def get_message(path: str):
 )
 def test_verify_signature(crypto, public: str, signature: str, message: str):
     assert crypto.verify_signature(public, signature, message)
+
+
+@pytest.mark.parametrize(
+    "base64encoded_key",
+    [
+        "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbzNBp8mw"
+        "riocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==",
+        targets_pub,
+    ],
+)
+def test_decode_and_verify_ecdsa_key(base64encoded_key):
+    connaisseur.crypto.decode_and_verify_ecdsa_key(base64encoded_key)
+
+
+@pytest.mark.parametrize(
+    "base64encoded_key",
+    [
+        "somekey==",
+        "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbzNBp8mw"
+        "riocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ=",
+        "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTnb/LdrtXKTIIbzNBp8mw"
+        "riocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==",
+    ],
+)
+def test_decode_and_verify_ecdsa_key_invalid_key_error(base64encoded_key):
+    with pytest.raises(InvalidPublicKey):
+        connaisseur.crypto.decode_and_verify_ecdsa_key(base64encoded_key)

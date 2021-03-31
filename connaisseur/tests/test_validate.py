@@ -1,5 +1,6 @@
 import os
 import pytest
+import pytest_subprocess
 import re
 import json
 import requests
@@ -91,6 +92,9 @@ targets6 = [
         }
     }
 ]
+
+cosign_trust_data = '{"Critical":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
+
 
 alt_root_pub = (
     "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtkQuBJ/wL1MEDy/6kgfSBls04MT1"
@@ -254,6 +258,27 @@ def test_get_trusted_digest(
     policy_rule: dict,
     digest: str,
 ):
+    assert val.get_trusted_digest("host", Image(image), policy_rule) == digest
+
+
+@pytest.mark.parametrize(
+    "image, policy_rule, digest",
+    [
+        (
+            "docker.io/securesystemsengineering/testimage:co-signed",
+            policy_rule2,
+            "c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7",
+        ),
+    ],
+)
+def test_get_trusted_digest_cosigned(
+    fake_process, monkeypatch, image: str, policy_rule: dict, digest: str
+):
+    fake_process.register_subprocess(
+        ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image],
+        stdout=bytes(cosign_trust_data, "utf-8"),
+    )
+    monkeypatch.setenv("IS_COSIGN", "1")
     assert val.get_trusted_digest("host", Image(image), policy_rule) == digest
 
 
