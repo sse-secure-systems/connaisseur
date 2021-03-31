@@ -2,13 +2,14 @@ NAMESPACE = connaisseur
 IMAGE := $(shell yq e '.deployment.image' helm/values.yaml)
 HELM_HOOK_IMAGE := $(shell yq e '.deployment.helmHookImage' helm/values.yaml)
 CLUSTER := $(shell CONTEXT=`kubectl config current-context` && kubectl config view -ojson | jq --arg CONTEXT $$CONTEXT '.contexts[] | select(.name==$$CONTEXT) | .context.cluster')
+COSIGN_VERSION = 0.2.0
 
 .PHONY: all docker certs install unistall upgrade annihilate
 
 all: docker install
 
 docker:
-	docker build -f docker/Dockerfile -t $(IMAGE) .
+	docker build --build-arg COSIGN_VERSION=$(COSIGN_VERSION) -f docker/Dockerfile -t $(IMAGE) .
 	docker build -f docker/Dockerfile.hook -t $(HELM_HOOK_IMAGE) .
 
 certs:

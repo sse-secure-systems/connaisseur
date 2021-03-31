@@ -52,6 +52,10 @@ notary:
   # changes some behaviour, such as health probes and how to retrieve auth tokens
   # for compatibility with ACR set to `true`
   isAcr: false
+  # set to `true` if you want to use Cosign (https://github.com/sigstore/cosign)
+  # based image signature verification.
+  # NOTE: Cosign support is currently in an experimental state, as is cosign.
+  isCosign: false
 
 # the image policy, which defines all repositories that need to be
 # verified. more detail in the git repo README.md
