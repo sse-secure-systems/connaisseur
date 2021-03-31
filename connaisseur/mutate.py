@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 from connaisseur.image import Image
 from connaisseur.validate import get_trusted_digest
 from connaisseur.admission_review import get_admission_review
