@@ -22,6 +22,7 @@ class Notary:
     host: str
     pub_root_keys: list
     is_acr: bool
+    is_cosign: bool
 
     SELFSIGNED_PATH = "/etc/certs/{}.crt"
     AUTH_PATH = "/etc/creds/{}/cred.yaml"
@@ -47,6 +48,7 @@ class Notary:
         self.host = host
         self.pub_root_keys = pub_root_keys
         self.is_acr = kwargs.get("is_acr", False)
+        self.is_cosign = kwargs.get("is_cosign", False)
 
     def get_key(self, key_name: str = None):
         """

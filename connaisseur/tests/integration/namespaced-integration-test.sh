@@ -14,7 +14,7 @@ echo 'Successfully installed Connaisseur'
 echo 'Testing unsigned image in protected namespace...'
 kubectl run pod --namespace verifyns --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
 
-if [[ "$(cat output.log)" != 'Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/securesystemsengineering/testimage:unsigned" in trust data.' ]]; then
+if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
   echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
   cat output.log
   exit 1

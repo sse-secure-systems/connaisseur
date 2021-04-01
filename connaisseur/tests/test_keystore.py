@@ -1,9 +1,9 @@
 import pytest
-import json
 import ecdsa
-from connaisseur.trust_data import TrustData, TargetsData
+import conftest as fix
 import connaisseur.key_store as ks
-from connaisseur.exceptions import BaseConnaisseurException
+import connaisseur.exceptions as exc
+from connaisseur.trust_data import TrustData
 from connaisseur.crypto import load_key
 
 sample_key = (
@@ -11,19 +11,6 @@ sample_key = (
     "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
     "l+W2k3elHkPbR+gNkK2PCA=="
 )
-key3 = (
-    "-----BEGIN PUBLIC KEY-----"
-    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWGcErqaO7+y3PzNTHt7PVx0+Xtgv"
-    "LV5mFW91CxzN8uQht/Ig6+FAymrn2lOtUz5BqF4pSQizcdqN475t6raTWw=="
-    "-----END PUBLIC KEY-----"
-)
-key4 = (
-    "-----BEGIN PUBLIC KEY-----\n"
-    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWGcErqaO7+y3PzNTHt7PVx0+Xtgv\n"
-    "LV5mFW91CxzN8uQht/Ig6+FAymrn2lOtUz5BqF4pSQizcdqN475t6raTWwthismakesnosense==C\n"
-    "-----END PUBLIC KEY-----\n"
-)
-key5 = "hello! i'm happy to be here."
 pub_root_keys = {
     "7c62922e6be165f1ea08252f77410152b9e4ec0d7bf4e69c1cc43f0e6c73da20": load_key(
         (
@@ -73,146 +60,144 @@ timestamp_hashes = {
 }
 
 
-@pytest.fixture
-def key_store():
-    return ks
-
-
-@pytest.fixture
-def mock_trust_data(monkeypatch):
-    def validate_expiry(self):
-        pass
-
-    def trust_init(self, data: dict, role: str):
-        self.schema_path = "res/targets_schema.json"
-        self.kind = role
-        self._validate_schema(data)
-        self.signed = data["signed"]
-        self.signatures = data["signatures"]
-
-    monkeypatch.setattr(TrustData, "validate_expiry", validate_expiry)
-    monkeypatch.setattr(TargetsData, "__init__", trust_init)
-    TrustData.schema_path = "res/{}_schema.json"
-
-
-def trust_data(path: str):
-    with open(path, "r") as file:
-        data = json.load(file)
-    return data
-
-
 @pytest.mark.parametrize(
-    "pub_key",
+    "pub_key, exception",
     [
         (
             (
                 "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
                 "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
                 "l+W2k3elHkPbR+gNkK2PCA=="
-            )
+            ),
+            fix.no_exc(),
         ),
         (
             (
                 "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErIGdt5pelfWOSjmY7k+/TypV0IFF"
                 "9XLA+K4swhclLJb79cLoeBBDqkkUrkfhN5gxRnA//wA3amL4WXkaGsb9zQ=="
-            )
+            ),
+            fix.no_exc(),
         ),
+        (None, fix.no_exc()),
+        (
+            (
+                "-----BEGIN PUBLIC KEY-----"
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWGcErqaO7+y3PzNTHt7PVx0+Xtgv"
+                "LV5mFW91CxzN8uQht/Ig6+FAymrn2lOtUz5BqF4pSQizcdqN475t6raTWw=="
+                "-----END PUBLIC KEY-----"
+            ),
+            pytest.raises(exc.InvalidKeyFormatError),
+        ),
+        (
+            (
+                "-----BEGIN PUBLIC KEY-----\n"
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWGcErqaO7+y3PzNTHt7PVx0+Xtgv\n"
+                "LV5mFW91CxzN8uQht/Ig6+FAymrn2lOtUz5BqF4pSQizcdqN475t6raTWwthismakesnosense==C\n"
+                "-----END PUBLIC KEY-----\n"
+            ),
+            pytest.raises(exc.InvalidKeyFormatError),
+        ),
+        ("hello! i'm happy to be here.", pytest.raises(exc.InvalidKeyFormatError)),
     ],
 )
-def test_key_store(key_store, pub_key: str):
-    k = ks.KeyStore(pub_key)
-    key = ecdsa.VerifyingKey.from_pem(pub_key)
-    assert k.keys == {"root": key}
-    assert k.hashes == {}
-
-
-def test_key_store_none(key_store):
-    k = ks.KeyStore()
-    assert k.keys == {}
-    assert k.hashes == {}
-
-
-@pytest.mark.parametrize("pub_key", [(key3), (key4), (key5)])
-def test_key_store_error(key_store, pub_key: str):
-    with pytest.raises(BaseConnaisseurException) as err:
-        ks.KeyStore(pub_key)
-    assert 'error loading key "root"' in str(err.value)
-
-
-@pytest.mark.parametrize("k_id, k_value", [("1", "1"), ("2", "2")])
-def test_get_key(key_store, k_id: str, k_value: str):
-    k = ks.KeyStore(sample_key)
-    k.keys = {"1": "1", "2": "2"}
-    assert k.get_key(k_id) == k_value
-
-
-def test_get_key_error(key_store):
-    k = ks.KeyStore(sample_key)
-    with pytest.raises(BaseConnaisseurException) as err:
-        k.get_key("1")
-    assert 'could not find key id "1" in keystore.' in str(err.value)
+def test_key_store(pub_key: str, exception):
+    with exception:
+        k = ks.KeyStore(pub_key)
+        if pub_key:
+            key = ecdsa.VerifyingKey.from_pem(pub_key)
+            assert k.keys == {"root": key}
+        else:
+            assert k.keys == {}
+        assert k.hashes == {}
 
 
 @pytest.mark.parametrize(
-    "role, _hash, _len",
+    "k_id, k_value, exception",
     [
-        ("root", "wlaYz21+0NezlHjqkldQQBf3KWtifimy07A+fOEyCTo=", 2401),
-        ("targets", "QGNOSBnOmZHpn8uefASR1xw9ZrPpr0SMW+xWvY4nSAc=", 1307),
-        ("targets/releases", "pNjHgtwOrSZB5l0bzHZt9u3dUdFpKsPBhWPiVrIMm88=", 712),
+        ("root", load_key(sample_key), fix.no_exc()),
+        (
+            "7c62922e6be165f1ea08252f77410152b9e4ec0d7bf4e69c1cc43f0e6c73da20",
+            load_key(
+                (
+                    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErIGdt5pelfWOSjmY7k+/TypV0IFF"
+                    "9XLA+K4swhclLJb79cLoeBBDqkkUrkfhN5gxRnA//wA3amL4WXkaGsb9zQ=="
+                )
+            ),
+            fix.no_exc(),
+        ),
+        ("3", "", pytest.raises(exc.NotFoundException)),
     ],
 )
-def test_get_hash(key_store, role: str, _hash: str, _len: int):
-    k = ks.KeyStore(sample_key)
-    k.hashes = snapshot_hashes
-    assert k.get_hash(role) == (_hash, _len)
-
-
-def test_get_hash_error(key_store):
-    k = ks.KeyStore(sample_key)
-    with pytest.raises(BaseConnaisseurException) as err:
-        k.get_hash("timestamp")
-    assert 'could not find hash for role "timestamp" in keystore.' in str(err.value)
+def test_get_key(sample_key_store, k_id, k_value, exception):
+    with exception:
+        assert sample_key_store.get_key(k_id) == k_value
 
 
 @pytest.mark.parametrize(
-    "data, role, keys, hashes",
+    "role, _hash, _len, exception",
+    [
+        ("root", "wlaYz21+0NezlHjqkldQQBf3KWtifimy07A+fOEyCTo=", 2401, fix.no_exc()),
+        ("targets", "QGNOSBnOmZHpn8uefASR1xw9ZrPpr0SMW+xWvY4nSAc=", 1307, fix.no_exc()),
+        (
+            "targets/releases",
+            "pNjHgtwOrSZB5l0bzHZt9u3dUdFpKsPBhWPiVrIMm88=",
+            712,
+            fix.no_exc(),
+        ),
+        ("timestamp", "", None, pytest.raises(exc.NotFoundException)),
+    ],
+)
+def test_get_hash(sample_key_store, role: str, _hash: str, _len: int, exception):
+    with exception:
+        assert sample_key_store.get_hash(role) == (_hash, _len)
+
+
+@pytest.mark.parametrize(
+    "data, role, keys, hashes, exception",
     [
         (
-            trust_data("tests/data/sample_root.json"),
+            fix.get_td("sample_root"),
             "root",
             dict(**{"root": load_key(sample_key)}, **pub_root_keys),
             {},
+            fix.no_exc(),
         ),
         (
-            trust_data("tests/data/sample_targets.json"),
+            fix.get_td("sample_targets"),
             "targets",
             dict(**{"root": load_key(sample_key)}, **target_keys),
             {},
+            fix.no_exc(),
         ),
         (
-            trust_data("tests/data/sample_snapshot.json"),
+            fix.get_td("sample_snapshot"),
             "snapshot",
             {"root": load_key(sample_key)},
             snapshot_hashes,
+            fix.no_exc(),
         ),
         (
-            trust_data("tests/data/sample_timestamp.json"),
+            fix.get_td("sample_timestamp"),
             "timestamp",
             {"root": load_key(sample_key)},
             timestamp_hashes,
+            fix.no_exc(),
+        ),
+        (
+            fix.get_td("wrong_key_format"),
+            "targets",
+            {},
+            {},
+            pytest.raises(exc.InvalidKeyFormatError),
         ),
     ],
 )
 def test_update(
-    key_store,
-    mock_trust_data,
-    data: dict,
-    role: str,
-    keys: dict,
-    hashes: dict,
+    m_trust_data, sample_key_store, data, role, keys: dict, hashes: dict, exception
 ):
-    k = ks.KeyStore(sample_key)
-    trust_data_ = TrustData(data, role)
-    k.update(trust_data_)
-    assert k.keys == keys
-    assert k.hashes == hashes
+    with exception:
+        k = ks.KeyStore(sample_key)
+        trust_data = TrustData(data, role)
+        k.update(trust_data)
+        assert k.keys == keys
+        assert k.hashes == hashes

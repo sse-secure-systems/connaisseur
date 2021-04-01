@@ -258,4 +258,4 @@ def test_invoke_cosign_timeout_expired(
         sigstore_validator.invoke_cosign(image, example_pubkey)
 
     mock_kill.assert_has_calls([mocker.call()])
-    assert "cosign timed out." in str(err.value)
+    assert "Cosign timed out." in str(err.value)

@@ -19,7 +19,7 @@ echo 'Testing unsigned image...'
 kubectl run pod --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
 NUMBER_OF_INVALID_DEPLOYMENTS+=1
 
-if [[ "$(cat output.log)" != 'Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/securesystemsengineering/testimage:unsigned" in trust data.' ]]; then
+if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
   echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
   cat output.log
   exit 1
@@ -31,7 +31,7 @@ echo 'Testing image signed under different key...'
 kubectl run pod --image=library/redis >output.log 2>&1 || true
 NUMBER_OF_INVALID_DEPLOYMENTS+=1
 
-if [[ "$(cat output.log)" != 'Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: failed to verify signature of trust data.' ]]; then
+if [[ ! "$(cat output.log)" =~ 'Failed to verify signature of trust data root.' ]]; then
   echo 'Failed to deny image signed with different key or failed with unexpected error. Output:'
   cat output.log
   exit 1
@@ -55,7 +55,7 @@ echo 'Testing deployment of unsigned init container along with a valid container
 kubectl apply -f connaisseur/tests/integration/valid_container_with_unsigned_init_container_image.yml >output.log 2>&1 || true
 NUMBER_OF_INVALID_DEPLOYMENTS+=1
 
-if [[ "$(cat output.log)" != 'Error from server: error when creating "connaisseur/tests/integration/valid_container_with_unsigned_init_container_image.yml": admission webhook "connaisseur-svc.connaisseur.svc" denied the request: could not find signed digest for image "docker.io/securesystemsengineering/testimage:unsigned" in trust data.' ]]; then
+if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
   echo 'Allowed an unsigned image via init container or failed due to an unexpected error handling init containers. Output:'
   cat output.log
   exit 1

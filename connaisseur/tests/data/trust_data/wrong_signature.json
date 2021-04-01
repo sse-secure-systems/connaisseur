@@ -1,0 +1,71 @@
+{
+    "signed": {
+        "_type": "Root",
+        "consistent_snapshot": false,
+        "expires": "2030-01-10T16:54:54.556992289+01:00",
+        "keys": {
+            "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": {
+                "keytype": "ecdsa-x509",
+                "keyval": {
+                    "private": null,
+                    "public": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJlekNDQVNLZ0F3SUJBZ0lSQUtDclUxM0pNUzdHTnJMWEk2SjVvRmd3Q2dZSUtvWkl6ajBFQXdJd0pERWkKTUNBR0ExVUVBeE1aWkc5amEyVnlMbWx2TDNCb1ltVnNhWFI2TDNOaGJYQnNaVEFlRncweU1EQXhNVE14TlRVMApORFphRncwek1EQXhNVEF4TlRVME5EWmFNQ1F4SWpBZ0JnTlZCQU1UR1dSdlkydGxjaTVwYnk5d2FHSmxiR2wwCmVpOXpZVzF3YkdVd1dUQVRCZ2NxaGtqT1BRSUJCZ2dxaGtqT1BRTUJCd05DQUFTMUhtVENzTXJiWkxJSzd0WXcKWHkwS05XQjQ1RUJMWTlacHhGd0UzOVZCMVVyZzlXVFhEaWt4YVhQMEFkQzJFTWFYNWJhVGQ2VWVROXRINkEyUQpyWThJb3pVd016QU9CZ05WSFE4QkFmOEVCQU1DQmFBd0V3WURWUjBsQkF3d0NnWUlLd1lCQlFVSEF3TXdEQVlEClZSMFRBUUgvQkFJd0FEQUtCZ2dxaGtqT1BRUURBZ05IQURCRUFpQnRLN25SMGZmc2oxRlZkNFJXeXRJM0orVG8KTkxMT0lVMXJkczArQ2IxdjRnSWdiUGt5V21heGlxQW1OeFp5bnFBVHpuN3JLQ2FWRlZKWW9XZjlqeFg1elRNPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
+                }
+            },
+            "7c62922e6be165f1ea08252f77410152b9e4ec0d7bf4e69c1cc43f0e6c73da20": {
+                "keytype": "ecdsa",
+                "keyval": {
+                    "private": null,
+                    "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErIGdt5pelfWOSjmY7k+/TypV0IFF9XLA+K4swhclLJb79cLoeBBDqkkUrkfhN5gxRnA//wA3amL4WXkaGsb9zQ=="
+                }
+            },
+            "7dbacd611d5933ca3f0fad581ed233881c501229343613f63f2d4b5771ee4299": {
+                "keytype": "ecdsa",
+                "keyval": {
+                    "private": null,
+                    "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEzRo/rFtBEAJLvEFU7xem34GpEswxsw6nW9YiBqbAcba6LWZuem7slTp+List+NKAVK3EzJCjUixooO5ss4Erug=="
+                }
+            },
+            "f1997e14be3d33c5677282b6a73060d8124f4020f464644e27ab76f703eb6f7e": {
+                "keytype": "ecdsa",
+                "keyval": {
+                    "private": null,
+                    "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMza1L1+e8vfZ1q7+GA5E0st13g7jWR7fdQSsxkdrpJ6IkUq9D6f9BUopD83YvLBMEMy20MBvsICJnXMu8IZlYA=="
+                }
+            }
+        },
+        "roles": {
+            "root": {
+                "keyids": [
+                    "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798"
+                ],
+                "threshold": 1
+            },
+            "snapshot": {
+                "keyids": [
+                    "7dbacd611d5933ca3f0fad581ed233881c501229343613f63f2d4b5771ee4299"
+                ],
+                "threshold": 1
+            },
+            "targets": {
+                "keyids": [
+                    "7c62922e6be165f1ea08252f77410152b9e4ec0d7bf4e69c1cc43f0e6c73da20"
+                ],
+                "threshold": 1
+            },
+            "timestamp": {
+                "keyids": [
+                    "f1997e14be3d33c5677282b6a73060d8124f4020f464644e27ab76f703eb6f7e"
+                ],
+                "threshold": 1
+            }
+        },
+        "version": 1
+    },
+    "signatures": [
+        {
+            "keyid": "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798",
+            "method": "ecdsa",
+            "sig": "abcGn17vJPsru39/mO6quh+yuMQvhLyqz4PhvMySLpnpzYu2x+YIsXfH2gngP8hYzOWvovE6iQPKBoJv3zWMsQ=="
+        }
+    ]
+}

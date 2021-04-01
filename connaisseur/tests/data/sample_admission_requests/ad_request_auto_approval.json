@@ -1,0 +1,101 @@
+{
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1beta1",
+    "request": {
+      "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
+      "kind": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      },
+      "resource": {
+        "group": "apps",
+        "version": "v1",
+        "resource": "deployments"
+      },
+      "requestKind": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      },
+      "requestResource": {
+        "group": "apps",
+        "version": "v1",
+        "resource": "deployments"
+      },
+      "namespace": "test-connaisseur",
+      "operation": "CREATE",
+      "userInfo": {
+        "username": "admin",
+        "uid": "10000",
+        "groups": ["system:masters", "system:authenticated"]
+      },
+      "object": {
+        "kind": "Deployment",
+        "apiVersion": "apps/v1",
+        "metadata": {
+          "name": "charlie-deployment",
+          "namespace": "test-connaisseur",
+          "creationTimestamp": "",
+          "labels": {
+            "app": "test-connaisseur"
+          },
+          "annotations": {
+            
+          }
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "test-connaisseur"
+            }
+          },
+          "template": {
+            "metadata": {
+              "creationTimestamp": "",
+              "labels": {
+                "app": "test-connaisseur"
+              }
+            },
+            "spec": {
+              "containers": [{
+                "name": "test-connaisseur",
+                "image": "docker.io/securesystemsengineering/sample-san-sama",
+                "ports": [{
+                  "containerPort": 5000,
+                  "protocol": "TCP"
+                }],
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "imagePullPolicy": "Always"
+              }],
+              "restartPolicy": "Always",
+              "terminationGracePeriodSeconds": 30,
+              "dnsPolicy": "ClusterFirst",
+              "securityContext": {},
+              "schedulerName": "default-scheduler"
+            }
+          },
+          "strategy": {
+            "type": "RollingUpdate",
+            "rollingUpdate": {
+              "maxUnavailable": "25%",
+              "maxSurge": "25%"
+            }
+          },
+          "revisionHistoryLimit": 10,
+          "progressDeadlineSeconds": 600
+        },
+        "status": {}
+      },
+      "oldObject": {},
+      "dryRun": false,
+      "options": {
+        "kind": "CreateOptions",
+        "apiVersion": "meta.k8s.io/v1"
+      }
+    }
+  }
+  

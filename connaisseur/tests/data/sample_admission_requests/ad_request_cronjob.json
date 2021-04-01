@@ -1,0 +1,98 @@
+{
+  "kind": "AdmissionReview",
+  "apiVersion": "admission.k8s.io/v1beta1",
+  "request": {
+    "uid": "1d5c9e9a-a985-41ef-b87f-4bc6057e94a2",
+    "kind": {
+      "group": "batch",
+      "version": "v1beta1",
+      "kind": "CronJob"
+    },
+    "resource": {
+      "group": "batch",
+      "version": "v1beta1",
+      "resource": "cronjobs"
+    },
+    "requestKind": {
+      "group": "batch",
+      "version": "v1beta1",
+      "kind": "CronJob"
+    },
+    "requestResource": {
+      "group": "batch",
+      "version": "v1beta1",
+      "resource": "cronjobs"
+    },
+    "name": "yooob",
+    "namespace": "connaisseur",
+    "operation": "CREATE",
+    "userInfo": {
+      "username": "minikube-user",
+      "groups": [
+        "system:masters",
+        "system:authenticated"
+      ]
+    },
+    "object": {
+      "kind": "CronJob",
+      "apiVersion": "batch/v1beta1",
+      "metadata": {
+        "name": "yooob",
+        "creationTimestamp": "None",
+        "managedFields": [
+          {
+            "manager": "kubectl-create",
+            "operation": "Update",
+            "apiVersion": "batch/v1beta1",
+            "time": "2021-03-15T11:00:45Z"
+          }
+        ]
+      },
+      "spec": {
+        "schedule": "*/1 * * * *",
+        "concurrencyPolicy": "Allow",
+        "suspend": false,
+        "jobTemplate": {
+          "metadata": {
+            "name": "yooob",
+            "creationTimestamp": "None"
+          },
+          "spec": {
+            "template": {
+              "metadata": {
+                "creationTimestamp": "None"
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "name": "yooob",
+                    "image": "busybox",
+                    "resources": {},
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File",
+                    "imagePullPolicy": "Always"
+                  }
+                ],
+                "restartPolicy": "OnFailure",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "securityContext": {},
+                "schedulerName": "default-scheduler"
+              }
+            }
+          }
+        },
+        "successfulJobsHistoryLimit": 3,
+        "failedJobsHistoryLimit": 1
+      },
+      "status": {}
+    },
+    "oldObject": "None",
+    "dryRun": false,
+    "options": {
+      "kind": "CreateOptions",
+      "apiVersion": "meta.k8s.io/v1",
+      "fieldManager": "kubectl-create"
+    }
+  }
+}

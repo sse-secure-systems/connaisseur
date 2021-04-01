@@ -1,42 +1,50 @@
-import os
 import pytest
 import pytest_subprocess
-import re
-import json
-import requests
-import connaisseur.trust_data
+import conftest as fix
 import connaisseur.validate as val
+import connaisseur.exceptions as exc
 from connaisseur.image import Image
-from connaisseur.key_store import KeyStore
-from connaisseur.exceptions import BaseConnaisseurException
-from connaisseur.config import Notary
+from connaisseur.policy import Rule
 
 
-policy_rule1 = {
-    "pattern": "docker.io/securesystemsengineering/alice-image",
-    "verify": True,
-    "delegations": ["phbelitz", "chamsen"],
-    "notary": "dockerhub",
-    "key": "alice",
-}
-policy_rule2 = {
-    "pattern": "docker.io/securesystemsengineering/*:*",
-    "verify": True,
-    "notary": "dockerhub",
-    "key": "alice",
-}
-policy_rule3 = {
-    "pattern": "docker.io/securesystemsengineering/*:*",
-    "verify": True,
-    "delegations": ["del1"],
-    "key": "charlie",
-}
-policy_rule4 = {
-    "pattern": "docker.io/securesystemsengineering/*:*",
-    "verify": True,
-    "key": "charlie",
-    "delegations": ["del1", "del2"],
-}
+policy_rule1 = Rule(
+    **{
+        "pattern": "docker.io/securesystemsengineering/alice-image",
+        "verify": True,
+        "delegations": ["phbelitz", "chamsen"],
+        "notary": "dockerhub",
+    }
+)
+policy_rule2 = Rule(
+    **{
+        "pattern": "docker.io/securesystemsengineering/*:*",
+        "verify": True,
+        "notary": "dockerhub",
+    }
+)
+policy_rule3 = Rule(
+    **{
+        "pattern": "docker.io/securesystemsengineering/*:*",
+        "verify": True,
+        "delegations": ["del1"],
+        "key": "charlie",
+    }
+)
+policy_rule4 = Rule(
+    **{
+        "pattern": "docker.io/securesystemsengineering/*:*",
+        "verify": True,
+        "key": "charlie",
+        "delegations": ["del1", "del2"],
+    }
+)
+policy_rule5 = Rule(
+    **{
+        "pattern": "docker.io/securesystemsengineering/*:*",
+        "verify": True,
+        "key": "missingkey",
+    }
+)
 
 req_delegations1 = ["targets/phbelitz", "targets/chamsen"]
 req_delegations2 = []
@@ -109,7 +117,7 @@ cosign_trust_data = '{"Critical":{"Identity":{"docker-reference":""},"Image":{"D
 
 pub_root_keys = [
     {
-        "name": "alice",
+        "name": "default",
         "key": (
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
             "S2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="
@@ -125,157 +133,15 @@ pub_root_keys = [
     {"name": "cosign"},
 ]
 
-sample_notary = {
-    "name": "dockerhub",
-    "host": "notary.docker.io",
-    "pub_root_keys": pub_root_keys,
-    "is_acr": False,
-    "hasAuth": True,
-    "auth": {"USER": "bert", "PASS": "bertig"},
-    "isSelfsigned": False,
-    "selfsigned_cert": None,
-}
-
-
-@pytest.fixture
-def mock_request(monkeypatch):
-    class MockResponse:
-        content: dict
-        headers: dict
-        status_code: int = 200
-
-        def __init__(self, content: dict, headers: dict = None, status_code: int = 200):
-            self.content = content
-            self.headers = headers
-            self.status_code = status_code
-
-        def raise_for_status(self):
-            pass
-
-        def json(self):
-            return self.content
-
-    def mock_get_request(**kwargs):
-        regex = (
-            r"https:\/\/([^\/]+)\/v2\/([^\/]+)\/([^\/]+\/)?"
-            r"([^\/]+)\/_trust\/tuf\/(.+)\.json"
-        )
-        m = re.search(regex, kwargs["url"])
-
-        if m:
-            host, registry, repo, image, role = (
-                m.group(1),
-                m.group(2),
-                m.group(3),
-                m.group(4),
-                m.group(5),
-            )
-
-        if "unhealthy" in kwargs["url"]:
-            return MockResponse({}, status_code=500)
-
-        if "health" in kwargs["url"]:
-            return MockResponse(None)
-
-        if "azurecr.io" in kwargs["url"]:
-            return MockResponse({"access_token": "d.e.f"})
-
-        if "token" in kwargs["url"]:
-            auth = kwargs.get("auth")
-            if "bad" in kwargs["url"]:
-                if "no" in kwargs["url"]:
-                    return MockResponse({"nay": "butwhy"})
-                if "aint" in kwargs["url"]:
-                    return MockResponse({}, status_code=500)
-                return MockResponse({"token": "token"})
-            elif auth:
-                return MockResponse({"token": f"BA.{auth.username}.{auth.password}a"})
-            return MockResponse({"token": "no.BA.no"})
-        elif registry == "auth.io" and not kwargs.get("headers"):
-            return MockResponse(
-                {},
-                {
-                    "Www-Authenticate": (
-                        'Bearer realm="https://core.harbor.domain/service/'
-                        'token",service="harbor-notary",scope="repository:'
-                        'core.harbor.domain/connaisseur/sample-image:pull"'
-                    )
-                },
-                401,
-            )
-        elif registry == "empty.io":
-            return MockResponse({}, status_code=404)
-        else:
-            with open(f"tests/data/{image}/{role}.json", "r") as file:
-                file_content = json.load(file)
-
-        return MockResponse(file_content)
-
-    monkeypatch.setattr(requests, "get", mock_get_request)
-
-
-@pytest.fixture
-def mock_trust_data(monkeypatch):
-    def validate_expiry(self):
-        pass
-
-    def trust_init(self, data: dict, role: str):
-        self.schema_path = "res/targets_schema.json"
-        self.kind = role
-        self._validate_schema(data)
-        self.signed = data["signed"]
-        self.signatures = data["signatures"]
-
-    monkeypatch.setattr(
-        connaisseur.trust_data.TrustData, "validate_expiry", validate_expiry
-    )
-    monkeypatch.setattr(connaisseur.trust_data.TargetsData, "__init__", trust_init)
-    connaisseur.trust_data.TrustData.schema_path = "res/{}_schema.json"
-
-
-@pytest.fixture
-def mock_notary(monkeypatch):
-    def notary_init(self, name: str, host: str, pub_root_keys: list, **kwargs):
-        self.name = name
-        self.host = host
-        self.pub_root_keys = pub_root_keys
-        self.is_acr = kwargs.get("is_acr")
-        self.auth = kwargs.get("auth")
-        self.selfsigned_cert = kwargs.get("selfsigned_cert")
-
-    def notary_get_key(self, key_name: str = None):
-        if key_name:
-            key = next(
-                key_["key"] for key_ in self.pub_root_keys if key_["name"] == key_name
-            )
-        else:
-            key = self.pub_root_keys[0]["key"]
-        return key
-
-    def auth(self):
-        return self.auth
-
-    def selfsigned_cert(self):
-        return self.selfsigned_cert
-
-    monkeypatch.setattr(Notary, "__init__", notary_init)
-    monkeypatch.setattr(Notary, "get_key", notary_get_key)
-    monkeypatch.setattr(Notary, "auth", auth)
-    monkeypatch.setattr(Notary, "selfsigned_cert", selfsigned_cert)
-
-
-def trust_data(path: str):
-    with open(path, "r") as file:
-        return json.load(file)
-
 
 @pytest.mark.parametrize(
-    "image, policy_rule, digest",
+    "image, policy_rule, digest, exception",
     [
         (
             "securesystemsengineering/alice-image:test",
             policy_rule1,
             "ac904c9b191d14faf54b7952f2650a4bb21c201bf34131388b851e8ce992a652",
+            fix.no_exc(),
         ),
         (
             (
@@ -287,29 +153,60 @@ def trust_data(path: str):
             ),
             policy_rule1,
             "ac904c9b191d14faf54b7952f2650a4bb21c201bf34131388b851e8ce992a652",
+            fix.no_exc(),
         ),
         (
             "securesystemsengineering/sample-image:sign",
             policy_rule2,
             "a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+            fix.no_exc(),
         ),
         (
             "securesystemsengineering/sample-image:v1",
             policy_rule2,
             "799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+            fix.no_exc(),
+        ),
+        (
+            "securesystemsengineering/charlie-image:test2",
+            policy_rule3,
+            "",
+            pytest.raises(exc.InsufficientTrustDataError),
+        ),
+        (
+            "securesystmesengineering/dave-image:test",
+            policy_rule4,
+            "",
+            pytest.raises(exc.AmbiguousDigestError),
+        ),
+        (
+            "securesystemsengineering/alice-image:test",
+            policy_rule5,
+            "",
+            pytest.raises(exc.NotFoundException, match=r".*public root key.*"),
+        ),
+        (
+            "securesystemsengineering/alice-image:missingtag",
+            policy_rule2,
+            "ac904c9b191d14faf54b7952f2650a4bb21c201bf34131388b851e8ce992a652",
+            pytest.raises(exc.NotFoundException, match=r".*digest.*"),
         ),
     ],
 )
 def test_get_trusted_digest(
-    mock_trust_data,
-    mock_request,
-    mock_notary,
+    m_trust_data,
+    m_request,
+    m_expiry,
+    sample_notary,
     image: str,
     policy_rule: dict,
     digest: str,
+    exception,
 ):
-    notary = Notary(**sample_notary)
-    assert val.get_trusted_digest(notary, Image(image), policy_rule) == digest
+    with exception:
+        assert (
+            val.get_trusted_digest(sample_notary, Image(image), policy_rule) == digest
+        )
 
 
 @pytest.mark.parametrize(
@@ -323,157 +220,89 @@ def test_get_trusted_digest(
     ],
 )
 def test_get_trusted_digest_cosigned(
-    fake_process, mock_notary, image: str, policy_rule: dict, digest: str
+    fake_process, sample_notary, image: str, policy_rule: dict, digest: str
 ):
-    notary = Notary(**sample_notary)
-    notary.host = "host"
-    notary.is_cosign = True
+    sample_notary.host = "host"
+    sample_notary.is_cosign = True
     fake_process.register_subprocess(
         ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image],
         stdout=bytes(cosign_trust_data, "utf-8"),
     )
-    assert val.get_trusted_digest(notary, Image(image), policy_rule) == digest
+    assert val.get_trusted_digest(sample_notary, Image(image), policy_rule) == digest
 
 
 @pytest.mark.parametrize(
-    "image, policy, error",
-    [
-        (
-            "securesystemsengineering/charlie-image:test2",
-            policy_rule3,
-            (
-                "not all required delegations have trust data for image "
-                '"docker.io/securesystemsengineering/charlie-image:test2".'
-            ),
-        ),
-        (
-            "securesystmesengineering/dave-image:test",
-            policy_rule4,
-            "found multiple signed digests for the same image.",
-        ),
-    ],
-)
-def test_get_trusted_digest_error(
-    monkeypatch,
-    mock_trust_data,
-    mock_notary,
-    mock_request,
-    image: str,
-    policy: dict,
-    error: str,
-):
-    notary = Notary(**sample_notary)
-    with pytest.raises(BaseConnaisseurException) as err:
-        val.get_trusted_digest(notary, Image(image), policy)
-    assert error in str(err.value)
-
-
-@pytest.mark.parametrize(
-    "image, req_delegations, root_key, targets",
+    "image, req_delegations, root_key, targets, exception",
     [
         (
             "securesystemsengineering/alice-image",
             req_delegations1,
             pub_root_keys[0]["key"],
             targets1,
+            fix.no_exc(),
         ),
         (
             "securesystemsengineering/sample-image",
             req_delegations2,
             pub_root_keys[0]["key"],
             targets2,
+            fix.no_exc(),
         ),
         (
             "securesystemsengineering/bob-image",
             req_delegations2,
             pub_root_keys[1]["key"],
             targets3,
+            fix.no_exc(),
         ),
         (
             "securesystemsengineering/charlie-image",
             req_delegations2,
             pub_root_keys[1]["key"],
             targets4,
+            fix.no_exc(),
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations2,
             pub_root_keys[1]["key"],
             targets5,
+            fix.no_exc(),
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations4,
             pub_root_keys[1]["key"],
             targets5,
+            fix.no_exc(),
         ),
         (
             "securesystemsengineering/dave-image",
             req_delegations5,
             pub_root_keys[1]["key"],
             targets6,
+            fix.no_exc(),
         ),
     ],
 )
 def test_process_chain_of_trust(
-    monkeypatch,
-    mock_notary,
-    mock_request,
-    mock_trust_data,
+    sample_notary,
+    m_request,
+    m_trust_data,
+    m_expiry,
     image: str,
     req_delegations: dict,
     root_key: str,
     targets: list,
+    exception,
 ):
-    notary = Notary(**sample_notary)
-    assert (
-        val.process_chain_of_trust(notary, Image(image), req_delegations, root_key)
-        == targets
-    )
-
-
-@pytest.mark.parametrize(
-    "image, req_delegations, root_key, error",
-    [
-        (
-            # no delegations
-            "docker.io/securesystemsengineering/sample-image",
-            req_delegations1,
-            pub_root_keys[0]["key"],
-            "could not find any delegations in trust data.",
-        ),
-        (
-            # single invalid delegation
-            "securesystemsengineering/alice-image",
-            req_delegations3,
-            pub_root_keys[0]["key"],
-            (
-                "could not find delegation roles "
-                "['targets/someuserthatdidnotsign'] in trust data."
-            ),
-        ),
-        (
-            # invalid and valid delegations
-            "securesystemsengineering/alice-image",
-            req_delegations6,
-            pub_root_keys[0]["key"],
-            "could not find delegation roles ['targets/someuserthatdidnotsign'] in trust data.",
-        ),
-    ],
-)
-def test_process_chain_of_trust_error(
-    mock_notary,
-    mock_request,
-    mock_trust_data,
-    image: str,
-    req_delegations: list,
-    root_key: str,
-    error: str,
-):
-    notary = Notary(**sample_notary)
-    with pytest.raises(BaseConnaisseurException) as err:
-        val.process_chain_of_trust(notary, Image(image), req_delegations, root_key)
-    assert error in str(err.value)
+    with exception:
+        assert (
+            val.__process_chain_of_trust(
+                sample_notary, Image(image), req_delegations, root_key
+            )
+            == targets
+        )
 
 
 @pytest.mark.parametrize(
@@ -503,8 +332,8 @@ def test_process_chain_of_trust_error(
     ],
 )
 def test_search_image_targets_for_digest(image: str, digest: str):
-    data = trust_data("tests/data/sample_releases.json")["signed"]["targets"]
-    assert val.search_image_targets_for_digest(data, Image(image)) == digest
+    data = fix.get_td("sample_releases")["signed"]["targets"]
+    assert val.__search_image_targets_for_digest(data, Image(image)) == digest
 
 
 @pytest.mark.parametrize(
@@ -522,5 +351,45 @@ def test_search_image_targets_for_digest(image: str, digest: str):
     ],
 )
 def test_search_image_targets_for_tag(image: str, digest: str):
-    data = trust_data("tests/data/sample_releases.json")["signed"]["targets"]
-    assert val.search_image_targets_for_tag(data, Image(image)) == digest
+    data = fix.get_td("sample_releases")["signed"]["targets"]
+    assert val.__search_image_targets_for_tag(data, Image(image)) == digest
+
+
+@pytest.mark.parametrize(
+    "delegations",
+    [
+        ([]),
+        (["targets/phbelitz"]),
+        (["targets/phbelitz", "targets/chamsen"]),
+        (["targets/daugustin"]),
+    ],
+)
+def test_update_with_delegation_trust_data(
+    m_request,
+    m_trust_data,
+    m_expiry,
+    alice_key_store,
+    sample_notary,
+    delegations,
+):
+    assert (
+        val.__update_with_delegation_trust_data(
+            {}, delegations, alice_key_store, sample_notary, Image("alice-image")
+        )
+        is None
+    )
+
+
+@pytest.mark.parametrize(
+    "req_del, pre_del, exception",
+    [
+        (["phb"], ["phb", "cha"], fix.no_exc()),
+        (["phb", "cha"], ["phb", "cha"], fix.no_exc()),
+        (["phb"], ["cha"], pytest.raises(exc.NotFoundException, match=r".*phb.*")),
+        ([], [], fix.no_exc()),
+        (["phb"], [], pytest.raises(exc.NotFoundException)),
+    ],
+)
+def test_validate_all_required_delegations_present(req_del, pre_del, exception):
+    with exception:
+        assert val.__validate_all_required_delegations_present(req_del, pre_del) is None

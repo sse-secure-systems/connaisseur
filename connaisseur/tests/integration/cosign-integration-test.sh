@@ -14,7 +14,7 @@ echo 'Successfully installed Connaisseur'
 echo 'Testing unsigned image...'
 kubectl run pod --image=securesystemsengineering/testimage:co-unsigned >output.log 2>&1 || true
 
-if [[ "$(cat output.log)" != 'Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: no trust data for image "docker.io/securesystemsengineering/testimage:co-unsigned".' ]]; then
+if [[ ! "$(cat output.log)" =~ 'No trust data for image "docker.io/securesystemsengineering/testimage:co-unsigned".' ]]; then
   echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
   cat output.log
   exit 1
@@ -25,7 +25,7 @@ fi
 echo 'Testing image signed under different key...'
 kubectl run pod --image=securesystemsengineering/testimage:co-signed-alt >output.log 2>&1 || true
 
-if [[ "$(cat output.log)" != 'Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: failed to verify signature of trust data.' ]]; then
+if [[ ! "$(cat output.log)" =~ 'Failed to verify signature of trust data.' ]]; then
   echo 'Failed to deny image signed with different key or failed with unexpected error. Output:'
   cat output.log
   exit 1

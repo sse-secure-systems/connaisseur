@@ -1,5 +1,7 @@
 import pytest
-import connaisseur.policy
+import conftest as fix
+import connaisseur.policy as pol
+import connaisseur.exceptions as exc
 from connaisseur.image import Image
 from connaisseur.exceptions import BaseConnaisseurException
 
@@ -8,47 +10,6 @@ match_image_digest = (
     "docker.io/securesystemsengineering/sample@sha256:"
     "1388abc7a12532836c3a81bdb0087409b15208f5aeba7a87aedcfd56d637c145"
 )
-policy = {
-    "rules": [
-        {"pattern": "*:*", "verify": True, "delegations": ["phbelitz", "chamsen"]},
-        {"pattern": "docker.io/*:*", "verify": True, "delegations": ["phbelitz"]},
-        {"pattern": "k8s.gcr.io/*:*", "verify": False},
-        {"pattern": "gcr.io/*:*", "verify": False},
-        {
-            "pattern": "docker.io/securesystemsengineering/*:*",
-            "verify": True,
-            "delegations": ["someuserthatdidnotsign"],
-        },
-        {
-            "pattern": "docker.io/securesystemsengineering/sample",
-            "verify": True,
-            "delegations": ["phbelitz", "chamsen"],
-        },
-        {"pattern": "docker.io/securesystemsengineering/sample:v4", "verify": False},
-        {
-            "pattern": "docker.io/securesystemsengineering/connaisseur:*",
-            "verify": False,
-        },
-        {
-            "pattern": "docker.io/securesystemsengineering/sample-san-sama",
-            "verify": True,
-        },
-    ]
-}
-
-
-@pytest.fixture
-def pol():
-    return connaisseur.policy
-
-
-@pytest.fixture
-def mock_policy(monkeypatch):
-    def get_policy():
-        return policy
-
-    connaisseur.policy.ImagePolicy.get_image_policy = staticmethod(get_policy)
-    connaisseur.policy.ImagePolicy.JSON_SCHEMA_PATH = "res/policy_schema.json"
 
 
 @pytest.mark.parametrize(
@@ -61,9 +22,7 @@ def mock_policy(monkeypatch):
         ("*@sha256:*", match_image_digest, 1, [10], [0]),
     ],
 )
-def test_match(
-    pol, rule: str, image: str, comp_count: int, comp_len: list, pre_len: list
-):
+def test_match(rule: str, image: str, comp_count: int, comp_len: list, pre_len: list):
     match = pol.Match(rule, image)
     rule_with_tag = rule if ":" in rule else f"{rule}:*"
     assert match.key == rule
@@ -74,7 +33,7 @@ def test_match(
 
 
 @pytest.mark.parametrize("rule, exist", [("", False), ("*", True)])
-def test_match_bool(pol, rule: str, exist: bool):
+def test_match_bool(rule: str, exist: bool):
     match = pol.Match(rule, "image")
     assert bool(match) == exist
 
@@ -90,56 +49,46 @@ def test_match_bool(pol, rule: str, exist: bool):
         ("*/*/image:v1", "*/sam*/*", match_image_tag),
     ],
 )
-def test_match_compare(pol, rule1: str, rule2: str, image: str):
+def test_match_compare(rule1: str, rule2: str, image: str):
     m1 = pol.Match(rule1, image)
     m2 = pol.Match(rule2, image)
     fighters = [m1, m2]
     assert m1.compare(m2) == fighters[1]
 
 
-def test_image_pol(pol, mock_policy):
-    p = pol.ImagePolicy()
-    assert p.policy == policy
+@pytest.mark.parametrize(
+    "func, exception",
+    [
+        (lambda: {"rules": [{"pattern": "*:*", "verify": True}]}, fix.no_exc()),
+        (lambda: {"wrong": "format"}, pytest.raises(exc.InvalidPolicyFormatError)),
+    ],
+)
+def test_image_pol_init(m_policy, func, exception):
+    with exception:
+        pol.ImagePolicy._ImagePolicy__get_image_policy = func
+        p = pol.ImagePolicy()
+        assert p.policy
 
 
 @pytest.mark.parametrize(
     "image, rule",
     [
-        (
-            "image:tag",
-            {"pattern": "docker.io/*:*", "verify": True, "delegations": ["phbelitz"]},
-        ),
-        (
-            "reg.io/image:tag",
-            {"pattern": "*:*", "verify": True, "delegations": ["phbelitz", "chamsen"]},
-        ),
-        ("k8s.gcr.io/path/image", {"pattern": "k8s.gcr.io/*:*", "verify": False}),
+        ("image:tag", "docker.io/*:*"),
+        ("reg.io/image:tag", "*:*"),
+        ("k8s.gcr.io/path/image", "k8s.gcr.io/*:*"),
         (
             "docker.io/securesystemsengineering/sample:v4",
-            {
-                "pattern": "docker.io/securesystemsengineering/sample:v4",
-                "verify": False,
-            },
+            "docker.io/securesystemsengineering/sample:v4",
         ),
     ],
 )
-def test_get_matching_rule(pol, mock_policy, image: str, rule: dict):
+def test_get_matching_rule(m_policy, image: str, rule):
     p = pol.ImagePolicy()
-    assert p.get_matching_rule(Image(image)) == rule
+    assert str(p.get_matching_rule(Image(image))) == rule
 
 
-def test_get_matching_rule_error(pol, mock_policy):
-    p = pol.ImagePolicy()
-    p.policy["rules"] = p.policy["rules"][1:]
-    with pytest.raises(BaseConnaisseurException) as err:
-        p.get_matching_rule(Image("reg.io/image"))
-    assert (
-        "no matching rule for image " '"reg.io/image:latest" could be found.'
-    ) in str(err.value)
-
-
-def test_image_pol_error(pol, mock_policy):
-    policy["rules"] += {"pattern": "***"}
-    with pytest.raises(BaseConnaisseurException) as err:
-        assert pol.ImagePolicy()
-    assert "invalid format for image policy." in str(err.value)
+def test_get_matching_rule_error(m_policy):
+    with pytest.raises(exc.NoMatchingPolicyRuleError):
+        p = pol.ImagePolicy()
+        p.policy["rules"] = p.policy["rules"][1:]
+        assert p.get_matching_rule(Image("reg.io/image"))

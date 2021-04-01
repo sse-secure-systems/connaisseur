@@ -1,0 +1,32 @@
+name: harbor
+host: notary.harbor.domain
+selfsigned_cert: |
+  -----BEGIN CERTIFICATE-----
+  MIIDEzCCAfugAwIBAgIQEHy1Je1mbrt0RaLDjDajszANBgkqhkiG9w0BAQsFADAU
+  MRIwEAYDVQQDEwloYXJib3ItY2EwHhcNMjEwMTI2MTQyNTE5WhcNMjIwMTI2MTQy
+  NTE5WjAUMRIwEAYDVQQDEwloYXJib3ItY2EwggEiMA0GCSqGSIb3DQEBAQUAA4IB
+  DwAwggEKAoIBAQCfy2A79g4KGx1BN8LgNwF34pSJaKqzV9hsanNKi5iU6Sn2Qrjx
+  a++HlCYK8TAZ54cacP1T+d+eqlDwgMlbkXsjSFiRr3Z+KxtrrFbM9yNrNzyUiDVW
+  czUQM+PFEETk2uwp7GSHFFBXeo+6p/cI2vqSqxpkVVojKmX6vEdEdPh9mwBt9nuk
+  MNfaJxzzjpAPdH9TkWME+J+GpxuLhtRnE0PStC6ioYI4FeH5MCwLKv7ZVyxWYDpY
+  f5qG2H00rGNOHsq9jidyLbp90jboMbVHMO6ragM6sqrjPF/cLE8oifuguCR6dbVk
+  yQuIacfG/vglnp5juvFLDmf0ZVBytazWMUQzAgMBAAGjYTBfMA4GA1UdDwEB/wQE
+  AwICpDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDwYDVR0TAQH/BAUw
+  AwEB/zAdBgNVHQ4EFgQUwtWtGfG+NU6ZcqhJI+lKRHOW/qQwDQYJKoZIhvcNAQEL
+  BQADggEBABiBHCuadw+SlmQHuK9egZSzIjvaLdKcTWdYwICtzuymZyyAWxWGeY8O
+  ZRZ9ZvsVX8jgTsSlFe+nV/+3MokYCvCaaDmyre7zZmRsq65ILSrwJMWjSqyvt8/X
+  s78uvGgi8/ooP7eldlduOA3AdV81Ty9GeCWWqEVIjEgfVQhpYquNTyOcUp8Tuks6
+  5OkY1pS58NRkoIM6/jfGtgbzsvvHooZwslmq8eaT+MucuzuGpY2GelEE5pI9Q7tf
+  hMC42zeU+yxxy3vukMa4xX2BGzyjAg+qaDh6YwWui80r2/BlYXvSsSl3dIgtVwL4
+  DSo1s+3uJ4evVKDRf3vLwKLTtiYfd20=
+  -----END CERTIFICATE-----
+pub_root_keys:
+- name: library
+  key: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEH+G0yM9CQ8KjN2cF8iHpiTA9Q69q
+    3brrzLkY1kjmRNOs0c2sx2nm8j2hFZRbyaVsd52Mkw0k5WrX+9vBfbjtdQ==
+    -----END PUBLIC KEY-----
+auth:
+  secretName: harbor-creds
+is_acr: true

@@ -1,0 +1,9 @@
+name: default
+host: unhealthy.notary.io
+pub_root_keys:
+  - name: connytest
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+      BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+      -----END PUBLIC KEY-----

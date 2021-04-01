@@ -27,7 +27,7 @@
         ],
         "resourceVersion": "974168",
         "selfLink": "/apis/apps/v1/namespaces/test-connaisseur/replicasets/sample-san-sama-deployment-84d95bbc48",
-        "uid": "60c2cece-3496-411b-b83e-2f0772c15fa0"
+        "uid": "090d26f8-1812-11ea-b3fc-02897404852e"
     },
     "spec": {
         "replicas": 1,
@@ -48,7 +48,7 @@
             "spec": {
                 "containers": [
                     {
-                        "image": "securesystemsengineering/sample-san-sama:hai",
+                        "image": "securesystemsengineering/charlie-image@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff",
                         "imagePullPolicy": "Always",
                         "name": "test-connaisseur",
                         "ports": [

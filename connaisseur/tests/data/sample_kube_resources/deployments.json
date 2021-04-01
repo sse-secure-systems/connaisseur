@@ -11,11 +11,11 @@
         "labels": {
             "app": "test-connaisseur"
         },
-        "name": "sample-san-sama-deployment",
+        "name": "charlie-deployment",
         "namespace": "test-connaisseur",
         "resourceVersion": "974169",
         "selfLink": "/apis/apps/v1/namespaces/test-connaisseur/deployments/sample-san-sama-deployment",
-        "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a"
+        "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6b"
     },
     "spec": {
         "progressDeadlineSeconds": 600,

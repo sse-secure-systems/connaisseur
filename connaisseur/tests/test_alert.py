@@ -9,12 +9,17 @@ from connaisseur.alert import (
     get_alert_config_validation_schema,
     load_config,
 )
+from connaisseur.admission_request import AdmissionRequest
 from connaisseur.exceptions import AlertSendingError, ConfigurationError
 
-with open("tests/data/ad_request_deployments.json", "r") as readfile:
+with open(
+    "tests/data/sample_admission_requests/ad_request_deployments.json", "r"
+) as readfile:
     admission_request_deployment = json.load(readfile)
 
-with open("tests/data/ad_request_allowlisted.json", "r") as readfile:
+with open(
+    "tests/data/sample_admission_requests/ad_request_allowlisted.json", "r"
+) as readfile:
     admission_request_allowlisted = json.load(readfile)
 
 with open("tests/data/alerting/alertconfig_schema.json", "r") as readfile:
@@ -179,6 +184,7 @@ def mock_safe_path_func_load_config(mocker):
     ],
 )
 def test_alert(
+    m_ad_schema_path,
     mock_alertconfig_validation_schema,
     message: str,
     receiver_config: dict,
@@ -186,7 +192,7 @@ def test_alert(
     alert_payload: dict,
     alert_headers: dict,
 ):
-    alert = Alert(message, receiver_config, admission_request)
+    alert = Alert(message, receiver_config, AdmissionRequest(admission_request))
     assert alert.throw_if_alert_sending_fails == receiver_config.get(
         "fail_if_alert_sending_fails", False
     )
@@ -223,10 +229,14 @@ def test_alert(
     ],
 )
 def test_configuration_error_missing_template(
-    mock_alertconfig_validation_schema, message, receiver_config, admission_request
+    m_ad_schema_path,
+    mock_alertconfig_validation_schema,
+    message,
+    receiver_config,
+    admission_request,
 ):
     with pytest.raises(ConfigurationError) as err:
-        Alert(message, receiver_config, admission_request)
+        Alert(message, receiver_config, AdmissionRequest(admission_request))
     assert (
         "Template file for alerting payload is either missing or invalid JSON"
         in str(err.value)
@@ -290,6 +300,7 @@ def test_configuration_error_missing_or_invalid_config(
     ],
 )
 def test_alert_sending_error(
+    m_ad_schema_path,
     requests_mock,
     mock_alertconfig_validation_schema,
     message: str,
@@ -301,7 +312,7 @@ def test_alert_sending_error(
         status_code=401,
     )
     with pytest.raises(AlertSendingError) as err:
-        alert = Alert(message, receiver_config, admission_request)
+        alert = Alert(message, receiver_config, AdmissionRequest(admission_request))
         alert.send_alert()
     assert (
         "401 Client Error: None for url: https://api.eu.opsgenie.com/v2/alerts"
@@ -320,6 +331,7 @@ def test_alert_sending_error(
     ],
 )
 def test_log_alert_sending_error(
+    m_ad_schema_path,
     requests_mock,
     mocker,
     mock_alertconfig_validation_schema,
@@ -332,7 +344,7 @@ def test_log_alert_sending_error(
         "https://hooks.slack.com/services/123",
         status_code=401,
     )
-    alert = Alert(message, receiver_config, admission_request)
+    alert = Alert(message, receiver_config, AdmissionRequest(admission_request))
     alert.send_alert()
     assert mock_error_log.called is True
 
@@ -348,6 +360,7 @@ def test_log_alert_sending_error(
     ],
 )
 def test_alert_sending(
+    m_ad_schema_path,
     requests_mock,
     mocker,
     mock_alertconfig_validation_schema,
@@ -365,7 +378,7 @@ def test_alert_sending(
         },
         status_code=200,
     )
-    alert = Alert(message, receiver_config, admission_request)
+    alert = Alert(message, receiver_config, AdmissionRequest(admission_request))
     response = alert.send_alert()
     mock_info_log.assert_has_calls([mocker.call("sent alert to %s", "opsgenie")])
     assert response.status_code == 200
@@ -383,12 +396,14 @@ def test_alert_sending(
     ],
 )
 def test_alert_sending_bypass_for_only_allowlisted_images(
+    m_ad_schema_path,
     mock_alertconfig_validation_schema,
     message: str,
     receiver_config: dict,
     admission_request: dict,
 ):
-    Alert(message, receiver_config, admission_request)
+
+    Alert(message, receiver_config, AdmissionRequest(admission_request))
 
 
 @pytest.mark.parametrize(
@@ -400,22 +415,24 @@ def test_alert_sending_bypass_for_only_allowlisted_images(
 )
 def test_send_alerts(
     mocker,
+    m_ad_schema_path,
     mock_alertconfig_validation_schema,
     admission_decision: bool,
     admission_request: dict,
 ):
     mock_alert = mocker.patch("connaisseur.alert.Alert")
-    send_alerts(admission_request, admitted=True)
+    admission_request_instance = AdmissionRequest(admission_request)
+    send_alerts(admission_request_instance, admitted=True)
     admit_calls = [
         mocker.call(
             "CONNAISSEUR admitted a request.",
             opsgenie_receiver_config_throw,
-            admission_request_deployment,
+            admission_request_instance,
         ),
         mocker.call(
             "CONNAISSEUR admitted a request.",
             slack_receiver_config,
-            admission_request_deployment,
+            admission_request_instance,
         ),
     ]
     mock_alert.assert_has_calls(admit_calls, any_order=True)
@@ -425,17 +442,21 @@ def test_send_alerts(
         return_value=alertconfig_schema,
     )
     mock_alert = mocker.patch("connaisseur.alert.Alert")
-    send_alerts(admission_request, admitted=False, reason="Couldn't find trust data.")
+    send_alerts(
+        admission_request_instance,
+        admitted=False,
+        reason="Couldn't find trust data.",
+    )
     reject_calls = [
         mocker.call(
             "CONNAISSEUR rejected a request: Couldn't find trust data.",
             opsgenie_receiver_config,
-            admission_request_deployment,
+            admission_request_instance,
         ),
         mocker.call(
             "CONNAISSEUR rejected a request: Couldn't find trust data.",
             keybase_receiver_config,
-            admission_request_deployment,
+            admission_request_instance,
         ),
     ]
     mock_alert.assert_has_calls(reject_calls, any_order=True)
@@ -444,7 +465,7 @@ def test_send_alerts(
     mock_alert_sending = mocker.patch(
         "connaisseur.alert.Alert.send_alert", return_value=True
     )
-    send_alerts(admission_request, **admission_decision)
+    send_alerts(AdmissionRequest(admission_request), **admission_decision)
     assert mock_alert_sending.has_calls([mocker.call(), mocker.call()])
 
 
@@ -504,6 +525,7 @@ def test_send_alerts(
 def test_call_alerting_on_request(
     mock_alertconfig_validation_schema,
     mocker,
+    m_ad_schema_path,
     monkeypatch,
     admission_request,
     admission_decision,
@@ -511,7 +533,9 @@ def test_call_alerting_on_request(
     alert_call_decision,
 ):
     monkeypatch.setenv("ALERT_CONFIG_DIR", alert_config_dir)
-    decision = call_alerting_on_request(admission_request, **admission_decision)
+    decision = call_alerting_on_request(
+        AdmissionRequest(admission_request), **admission_decision
+    )
     assert decision == alert_call_decision
 
 

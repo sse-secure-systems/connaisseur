@@ -1,23 +1,26 @@
 import pytest
-import connaisseur.tuf_role as tuf_role
-from connaisseur.exceptions import BaseConnaisseurException
-
-
-@pytest.fixture
-def tuf():
-    return tuf_role
+import conftest as fix
+import connaisseur.tuf_role as tuf
+import connaisseur.exceptions as exc
 
 
 @pytest.mark.parametrize(
-    "role", [("root"), ("targets"), ("targets/images"), ("snapshot"), ("timestamp")]
+    "role, exception",
+    [
+        ("root", fix.no_exc()),
+        ("targets", fix.no_exc()),
+        ("targets/images", fix.no_exc()),
+        ("snapshot", fix.no_exc()),
+        ("timestamp", fix.no_exc()),
+        ("notufrole", pytest.raises(exc.InvalidFormatException)),
+    ],
 )
-def test_tuf_role(tuf, role: str):
-    t = tuf.TUFRole(role)
-    assert t.role == role
+def test_tuf_role(role: str, exception):
+    with exception:
+        t = tuf.TUFRole(role)
+        assert t.role == role
 
 
-def test_tuf_role_error(tuf):
-    role = "attacka-bonanza"
-    with pytest.raises(BaseConnaisseurException) as err:
-        assert tuf.TUFRole(role)
-    assert f'"{role}" is not a valid TUF role.' in str(err.value)
+@pytest.mark.parametrize("role", ["root", "targets"])
+def test_str(role):
+    assert str(tuf.TUFRole(role)) == role
