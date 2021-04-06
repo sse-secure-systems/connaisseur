@@ -101,18 +101,6 @@ def readyz():
     deleted. From there on the readiness probe checks the notary server and webhook as
     usual.
     """
-    sentinel = os.environ.get("CONNAISSEUR_SENTINEL")
-    sentinel_ns = os.environ.get("CONNAISSEUR_NAMESPACE")
-    sentinel_path = "api/v1/namespaces/{ns}/pods/{name}".format(
-        ns=sentinel_ns, name=sentinel
-    )
-
-    try:
-        sentinel_response = api.request_kube_api(sentinel_path)
-    except HTTPError:
-        sentinel_response = {}
-
-    sentinel_running = sentinel_response.get("status", {}).get("phase") == "Running"
 
     # create api path for the webhook configuration
     webhook = os.environ.get("CONNAISSEUR_WEBHOOK")
@@ -129,6 +117,6 @@ def readyz():
 
     return (
         ("", 200)
-        if ((webhook_response or sentinel_running) and notary_health)
+        if (webhook_response  and notary_health)
         else ("", 500)
     )

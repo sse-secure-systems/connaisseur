@@ -3,7 +3,7 @@
         "templates": [
             {
                 "custom_headers": [
-                    "Authorization: GenieKey <Your-Genie-Key>"
+                    "Authorization: GenieKey 123"
                 ],
                 "fail_if_alert_sending_fails": true,
                 "payload_fields": {
@@ -47,7 +47,7 @@
             },
             {
                 "custom_headers": [
-                    "Authorization: GenieKey <Your-Genie-Key>"
+                    "Authorization: GenieKey 123"
                 ],
                 "fail_if_alert_sending_fails": false,
                 "payload_fields": {

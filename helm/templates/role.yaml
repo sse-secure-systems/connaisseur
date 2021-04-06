@@ -12,3 +12,6 @@ rules:
 - apiGroups: ["*"]
   resources: ["deployments", "pods", "replicacontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs", "imagepolicies", "mutatingwebhookconfigurations"]
   verbs: ["get"]
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["mutatingwebhookconfigurations"]
+  verbs: ["list"]

@@ -10,6 +10,7 @@ RUN apk add --no-cache curl && \
 COPY docker/harden.sh /
 RUN sh /harden.sh && rm /harden.sh
 
-COPY scripts/helm_hook.sh /
+COPY scripts/wait-for-webhook.sh /
+RUN chmod u+x /wait-for-webhook.sh
 
-ENTRYPOINT ["ash", "/helm_hook.sh"]
+ENTRYPOINT ["ash", "/wait-for-webhook.sh"]

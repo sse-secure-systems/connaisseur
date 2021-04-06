@@ -21,7 +21,7 @@ with open("tests/data/alerting/alertconfig_schema.json", "r") as readfile:
     alertconfig_schema = json.load(readfile)
 
 opsgenie_receiver_config_throw = {
-    "custom_headers": ["Authorization: GenieKey <Your-Genie-Key>"],
+    "custom_headers": ["Authorization: GenieKey 123"],
     "fail_if_alert_sending_fails": True,
     "payload_fields": {
         "responders": [{"type": "user", "username": "testuser@testcompany.de"}],
@@ -34,7 +34,7 @@ opsgenie_receiver_config_throw = {
 }
 
 opsgenie_receiver_config = {
-    "custom_headers": ["Authorization: GenieKey <Your-Genie-Key>"],
+    "custom_headers": ["Authorization: GenieKey 123"],
     "fail_if_alert_sending_fails": False,
     "payload_fields": {
         "responders": [{"type": "user", "username": "testuser@testcompany.de"}],
@@ -73,7 +73,7 @@ missing_template_receiver_config = {
 
 alert_headers_opsgenie = {
     "Content-Type": "application/json",
-    "Authorization": "GenieKey <Your-Genie-Key>",
+    "Authorization": "GenieKey 123",
 }
 
 alert_headers_slack = {"Content-Type": "application/json"}
@@ -474,18 +474,6 @@ def test_send_alerts(
             {"admitted": False},
             "tests/data/alerting",
             True,
-        ),
-        (
-            admission_request_allowlisted,
-            {"admitted": False},
-            "tests/data/alerting",
-            False,
-        ),
-        (
-            admission_request_allowlisted,
-            {"admitted": True},
-            "tests/data/alerting",
-            False,
         ),
         (
             admission_request_allowlisted,

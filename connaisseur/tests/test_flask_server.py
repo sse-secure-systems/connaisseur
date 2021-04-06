@@ -25,6 +25,11 @@ def mock_alertconfig_schema(mocker):
 
 
 @pytest.fixture
+def mock_env_vars(monkeypatch):
+    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting")
+
+
+@pytest.fixture
 def mock_kube_request(monkeypatch):
     def m_request(path: str):
         name = path.split("/")[-1]
@@ -71,14 +76,6 @@ def mock_safe_path_func_load_config(mocker):
 
 
 @pytest.fixture
-def mock_env_vars(monkeypatch):
-    monkeypatch.setenv(
-        "HELM_HOOK_IMAGE", "securesystemsengineering/connaisseur:helm-hook"
-    )
-    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting")
-
-
-@pytest.fixture
 def mock_notary_allow_leet(monkeypatch):
     def m_get_trusted_digest(host: str, image: Image, policy_rule: dict):
         if (
@@ -114,15 +111,12 @@ def test_healthz():
 
 
 @pytest.mark.parametrize(
-    "sentinel_name, webhook, notary_health, status",
+    "webhook, notary_health, status",
     [
-        ("sample_sentinel_run", "", "healthy", 200),
-        ("sample_sentinel_fin", "", "healthy", 500),
-        ("sample_sentinel_err", "", "healthy", 500),
-        ("", "", "", 500),
-        ("sample_sentinel_fin", "sample_webhook", "healthy", 200),
-        ("sample_sentinel_fin", "", "healthy", 500),
-        ("sample_sentinel_fin", "sample_webhook", "unhealthy", 500),
+        ("", "healthy", 500),
+        ("", "", 500),
+        ("sample_webhook", "healthy", 200),
+        ("sample_webhook", "unhealthy", 500),
     ],
 )
 def test_readyz(
@@ -130,13 +124,11 @@ def test_readyz(
     mock_notary_health,
     mock_env_vars,
     monkeypatch,
-    sentinel_name,
     webhook,
     notary_health,
     status,
 ):
     monkeypatch.setenv("CONNAISSEUR_NAMESPACE", "conny")
-    monkeypatch.setenv("CONNAISSEUR_SENTINEL", sentinel_name)
     monkeypatch.setenv("CONNAISSEUR_WEBHOOK", webhook)
     monkeypatch.setenv("NOTARY_SERVER", notary_health)
 
@@ -148,7 +140,7 @@ def test_readyz(
     [("ad_request_deployments"), ("ad_request_pods"), ("ad_request_replicasets")],
 )
 def test_mutate_no_verify(
-    mocker, mock_env_vars, mock_mutate, mock_policy_no_verify, ad_request_filename
+    mocker, mock_mutate, mock_env_vars, mock_policy_no_verify, ad_request_filename
 ):
 
     client = fs.APP.test_client()
@@ -190,10 +182,10 @@ def test_mutate_no_verify(
 )
 def test_mutate_invalid(
     monkeypatch,
-    mock_env_vars,
     mocker,
     ad_request_filename,
     api_version,
+    mock_env_vars,
     allowed,
     code,
     message,
@@ -258,8 +250,8 @@ def test_mutate_verify(
     mocker,
     mock_mutate,
     mock_policy_verify,
-    mock_notary_allow_leet,
     mock_env_vars,
+    mock_notary_allow_leet,
     ad_request_filename,
     allowed,
     image,
@@ -314,9 +306,9 @@ def test_mutate_verify(
 def test_alert_sending_error_handler(
     mocker,
     requests_mock,
+    mock_env_vars,
     mock_mutate,
     mock_policy_verify,
-    mock_env_vars,
     monkeypatch,
     ad_request_filename,
 ):
@@ -354,7 +346,6 @@ def test_configuration_error_handler(
     mocker,
     mock_mutate,
     mock_policy_verify,
-    mock_env_vars,
     monkeypatch,
     ad_request_filename,
 ):

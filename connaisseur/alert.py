@@ -157,28 +157,7 @@ def send_alerts(admission_request, *, admitted, reason=None):
 
 
 def call_alerting_on_request(admission_request, *, admitted):
-    if no_alerting_configured_for_event(admitted) is True:
-        return False
-    else:
-        normalized_hook_image = Image(os.getenv("HELM_HOOK_IMAGE"))
-        hook_image = "{}/{}/{}:{}".format(
-            normalized_hook_image.registry,
-            normalized_hook_image.repository,
-            normalized_hook_image.name,
-            normalized_hook_image.tag,
-        )
-        images = []
-        for image in get_images(admission_request):
-            normalized_image = Image(image)
-            images.append(
-                "{}/{}/{}:{}".format(
-                    normalized_image.registry,
-                    normalized_image.repository,
-                    normalized_image.name,
-                    normalized_image.tag,
-                )
-            )
-        return images != [hook_image]
+    return not no_alerting_configured_for_event(admitted)
 
 
 def no_alerting_configured_for_event(admitted):

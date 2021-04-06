@@ -26,6 +26,14 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ .Chart.Name }}-serviceaccount
+      initContainers:
+        - name: {{ .Chart.Name }}-wait-for-webho
+          image: "{{ .Values.deployment.initImage }}"
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          command: ['sh', '-c', './wait-for-webhook.sh']
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-env
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.deployment.image }}"
