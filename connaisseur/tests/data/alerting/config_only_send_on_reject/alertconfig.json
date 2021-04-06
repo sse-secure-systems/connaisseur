@@ -1,0 +1,41 @@
+{
+    "reject_request": {
+        "templates": [
+            {
+                "custom_headers": [
+                    "Content-Language: de-DE"
+                ],
+                "fail_if_alert_sending_fails": false,
+                "priority": 3,
+                "receiver_url": "https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>",
+                "template": "keybase"
+            },
+            {
+                "custom_headers": [
+                    "Authorization: GenieKey <Your-Genie-Key>"
+                ],
+                "fail_if_alert_sending_fails": false,
+                "payload_fields": {
+                    "responders": [
+                        {
+                            "type": "user",
+                            "username": "testuser@testcompany.de"
+                        }
+                    ],
+                    "tags": [
+                        "image_rejected"
+                    ],
+                    "visibleTo": [
+                        {
+                            "type": "user",
+                            "username": "testuser@testcompany.de"
+                        }
+                    ]
+                },
+                "priority": 4,
+                "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                "template": "opsgenie"
+            }
+        ]
+    }
+}

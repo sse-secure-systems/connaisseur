@@ -1,6 +1,7 @@
 NAMESPACE = connaisseur
 IMAGE := $(shell yq e '.deployment.image' helm/values.yaml)
 HELM_HOOK_IMAGE := $(shell yq e '.deployment.helmHookImage' helm/values.yaml)
+CLUSTER := $(shell CONTEXT=`kubectl config current-context` && kubectl config view -ojson | jq --arg CONTEXT $$CONTEXT '.contexts[] | select(.name==$$CONTEXT) | .context.cluster')
 
 .PHONY: all docker certs install unistall upgrade annihilate
 
@@ -23,7 +24,7 @@ install: certs
 	#
 	#=============================================
 	#
-	helm install connaisseur helm --atomic
+	helm install connaisseur helm --atomic --set alerting.cluster=$(CLUSTER)
 
 uninstall:
 	kubectl config set-context --current --namespace $(NAMESPACE)
@@ -32,7 +33,7 @@ uninstall:
 
 upgrade:
 	kubectl config set-context --current --namespace $(NAMESPACE)
-	helm upgrade connaisseur helm --wait
+	helm upgrade connaisseur helm --wait --set alerting.cluster=$(CLUSTER)
 
 annihilate:
 	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies -lapp.kubernetes.io/instance=connaisseur

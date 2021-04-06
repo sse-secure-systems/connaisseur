@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-alert-templates
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  {{- (.Files.Glob "alert_payload_templates/*").AsConfig | nindent 2 }}
+
+---
+
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: {{ .Chart.Name }}-alertconfig
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "helm.name" . }}
+    helm.sh/chart: {{ include "helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Chart.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+stringData:
+  alertconfig.json: |
+    {{ mustToJson .Values.alerting | nindent 4 }}

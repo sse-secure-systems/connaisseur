@@ -1,7 +1,7 @@
 # configure connaisseur deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v1.4.7
+  image: securesystemsengineering/connaisseur:v1.5.0
   helmHookImage: securesystemsengineering/connaisseur:helm-hook-v1.0
   imagePullPolicy: Always
   resources: {}
@@ -63,6 +63,7 @@ policy:
   - pattern: "docker.io/securesystemsengineering/connaisseur:*"
     verify: false
 
+
 # in detection mode, deployment will not be denied, but only prompted
 # and logged. This allows testing the functionality without
 # interrupting operation.
@@ -73,3 +74,41 @@ detection_mode: false
 targetNamespaces: ['*']
 
 # debug: true
+
+# alerting is implemented in form of simple POST requests with json payload
+# you can use and/or adapt the predefined Slack/OpsGenie/Keybase templates and the examples below
+# to channel alert notifications to Slack/OpsGenie/Keybase or create a custom template for a customized alert
+# payload to use with a simple POST request to the receiver_url to receive alerts.
+# Parameters you can use in your templates are "alert_message", "priority", "connaisseur_pod_id", "cluster",
+# "timestamp", "request_id" and "images" each one basically meaning what their names indicate
+#
+# Below is an example config
+
+#alerting:
+#  admit_request:
+#    templates:
+#      # <template> needs to be chosen such that <template>.json matches one of the file names
+#      # in the ./alert_payload_templates directory
+#      - template: opsgenie #REQUIRED!
+#        receiver_url: https://api.eu.opsgenie.com/v2/alerts #REQUIRED!
+#        priority: 4 #(defaults to 3)
+#        custom_headers: ["Authorization: GenieKey <Your-Genie-Key>"]
+#        payload_fields:
+#          responders:
+#            - username: "testuser@testcompany.de"
+#              type: user
+#          visibleTo:
+#            - username: "testuser@testcompany.de"
+#              type: user
+#          tags:
+#            - "deployed_an_image"
+#        fail_if_alert_sending_fails: True  # (defaults to False, turning it to True will make Connaisseur deny your
+#                                           # deployment (even in detection mode))
+#      - template: slack #REQUIRED!
+#        receiver_url: https://hooks.slack.com/services/<Your-Slack-Hook-Path>
+#        priority: 1
+#  reject_request:
+#    templates:
+#      - template: keybase  #REQUIRED!
+#        receiver_url: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
+#        fail_if_alert_sending_fails: True

@@ -2,3 +2,5 @@
 pytest-cov~=2.10.0
 parsedatetime~=2.6
 pylint~=2.7.2
+requests-mock~=1.8.0
+pytest-mock~=3.3.1
