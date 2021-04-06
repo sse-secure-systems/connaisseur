@@ -6,7 +6,9 @@
 
 <!-- # Connaisseur -->
 
-Connaisseur is an admission controller for Kubernetes that integrates Image Signature Verification into a cluster, as a means to ensure that only valid images are being deployed.
+Connaisseur is an admission controller for Kubernetes that integrates Image Signature Verification and Trust Pinning into a cluster, as a means to ensure that only valid images are being deployed.
+
+🚨 🚨 We have added experimental support for [Cosign](https://github.com/sigstore/cosign) from the [Sigstore Project](https://sigstore.dev/). You can find instructions [here](setup/COSIGN.md). 🚨 🚨
 
 ## Contents
 
