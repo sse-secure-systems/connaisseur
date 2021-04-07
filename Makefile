@@ -1,7 +1,7 @@
 NAMESPACE = connaisseur
 IMAGE := $(shell yq e '.deployment.image' helm/values.yaml)
 HELM_HOOK_IMAGE := $(shell yq e '.deployment.helmHookImage' helm/values.yaml)
-CLUSTER := $(shell CONTEXT=`kubectl config current-context` && kubectl config view -ojson | jq --arg CONTEXT $$CONTEXT '.contexts[] | select(.name==$$CONTEXT) | .context.cluster')
+CLUSTER := $(shell CONTEXT=`kubectl config current-context || true` && if [[ -z ${CONTEXT} ]];then echo "cluster not discoverable";else kubectl config view -ojson | jq --arg CONTEXT $$CONTEXT '.contexts[] | select(.name==$$CONTEXT) | .context.cluster';fi)
 
 .PHONY: all docker certs install unistall upgrade annihilate
 
