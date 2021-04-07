@@ -110,7 +110,7 @@ class Alert:
 
 def load_config():
     try:
-        alert_config_dir = f'{os.getenv("ALERT_CONFIG_DIR")}'
+        alert_config_dir = f'{os.getenv("ALERT_CONFIG_DIR", "/app")}'
         with safe_path_func(
             open, alert_config_dir, f"{alert_config_dir}/alertconfig.json", "r"
         ) as configfile:
@@ -118,12 +118,20 @@ def load_config():
         schema = get_alert_config_validation_schema()
         json_validate(instance=alertconfig, schema=schema)
     except Exception as err:
-        raise ConfigurationError(
-            "Alerting configuration file either not present or not valid."
-            "Check in the 'helm/values.yml' whether everything is correctly configured. {}".format(
-                str(err)
+        if isinstance(err, FileNotFoundError):
+            logging.info(
+                "No alerting configuration file found."
+                "To use the alerting feature you need to run `make upgrade`"
+                "in a freshly pulled Connaisseur repository."
             )
-        ) from err
+            return {}
+        else:
+            raise ConfigurationError(
+                "Alerting configuration file not valid."
+                "Check in the 'helm/values.yml' whether everything is correctly configured. {}".format(
+                    str(err)
+                )
+            ) from err
     return alertconfig
 
 
@@ -149,27 +157,28 @@ def send_alerts(admission_request, *, admitted, reason=None):
 
 
 def call_alerting_on_request(admission_request, *, admitted):
-    normalized_hook_image = Image(os.getenv("HELM_HOOK_IMAGE"))
-    hook_image = "{}/{}/{}:{}".format(
-        normalized_hook_image.registry,
-        normalized_hook_image.repository,
-        normalized_hook_image.name,
-        normalized_hook_image.tag,
-    )
-    images = []
-    for image in get_images(admission_request):
-        normalized_image = Image(image)
-        images.append(
-            "{}/{}/{}:{}".format(
-                normalized_image.registry,
-                normalized_image.repository,
-                normalized_image.name,
-                normalized_image.tag,
-            )
-        )
-    if images == [hook_image]:
+    if no_alerting_configured_for_event(admitted) is True:
         return False
-    return not no_alerting_configured_for_event(admitted)
+    else:
+        normalized_hook_image = Image(os.getenv("HELM_HOOK_IMAGE"))
+        hook_image = "{}/{}/{}:{}".format(
+            normalized_hook_image.registry,
+            normalized_hook_image.repository,
+            normalized_hook_image.name,
+            normalized_hook_image.tag,
+        )
+        images = []
+        for image in get_images(admission_request):
+            normalized_image = Image(image)
+            images.append(
+                "{}/{}/{}:{}".format(
+                    normalized_image.registry,
+                    normalized_image.repository,
+                    normalized_image.name,
+                    normalized_image.tag,
+                )
+            )
+        return images != [hook_image]
 
 
 def no_alerting_configured_for_event(admitted):
