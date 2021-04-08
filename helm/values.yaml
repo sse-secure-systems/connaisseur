@@ -22,64 +22,80 @@ service:
 
 # configure access to the notary server
 validators:
-# public notary form dockerhub
 - name: allow
   type: static
   approve: true
 - name: deny
   type: static
   approve: false
-- name: default
+- name: default  # the default validator which is used, if no validators are specified
+  type: notaryv1  # cosign is also experimetally supported
+  host: notary.docker.io
+  pub_keys:
+  - name: default  # the default key which is used, if no keys are specified
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      <add your public key here>
+      -----END PUBLIC KEY-----
+  # cert: |  # for communication, using a selfsigned certificate
+  #   -----BEGIN CERTIFICATE-----
+  #   ...
+  #   -----END CERTIFICATE-----
+  # auth:  # basic authentication against the notary server
+  #   # either
+  #   username: notaryuser
+  #   password: notarypass
+  #   # or
+  #   secret_name: notarysecret  # define a k8s secret with `username` and `password` fields
+- name: docker_essentials  # public notary form dockerhub
   type: notaryv1
   host: notary.docker.io
-  root_keys:
+  pub_keys:
   # this is the public key for all official dockerhub images (e.g. redis)
-  - name: default
+  - name: docker_official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
       QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
       -----END PUBLIC KEY-----
   # this is the public key to the `securesystemsengineering` repo on dockerhub
-  - name: sse
+  - name: sse_official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
       d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
       -----END PUBLIC KEY-----
-# additional sample configuration
-# - name: sample-notary  # name for referencing in the image policy
-#   host: notary.sample.org  # host address, where to reach the notary
-#   root_keys:  # public root keys, used fo rsignature erification
-#   - name: default  # name for referencing in the image policy
-#     key: |  # key in PEM format
-#       -----BEGIN PUBLIC KEY-----
-#       ...
-#       -----END PUBLIC KEY-----
-#   selfsigned_cert: |  # selfsigned certificate in PEM format
-#     -----BEGIN CERTIFICATE-----
-#     ...
-#     -----END CERTIFICATE-----
-#   auth:  # authentication details
-#     # either
-#     user: notaryuser  # username
-#     password: notarypassword  # password
-#     # or
-#     secret_name: notary-secret  # external kubernetes secret
-#   is_acr: true  # mark notary as part of an ACR
-# set to `true` if you want to use Cosign (https://github.com/sigstore/cosign)
-# based image signature verification.
-# NOTE: Cosign support is currently in an experimental state, as is cosign.
-#   is_cosign: false
+- name: cosign_demo  # for verifying cosign signatures
+  type: cosign
+  pub_keys:
+  - name: sse
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+      -----END PUBLIC KEY-----
 
 # the image policy, which defines all repositories that need to be
 # verified. more detail in the git repo README.md
 policy:
 - pattern: "*:*"
+  validator: dockerhub
+- pattern: "docker.io/library/*:*"
+  validator: dockerhub
+  with:
+    key: docker_official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: "docker.io/securesystemsengineering/connaisseur:*"
+  validator: dockerhub
+  with:
+    key: sse
+- pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
   validator: allow
+- pattern: "docker.io/securesystemsengineering/testimage:co-*"
+  validator: cosign
+  with:
+    key: sse
 
 
 

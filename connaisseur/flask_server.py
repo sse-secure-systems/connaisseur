@@ -15,7 +15,6 @@ from connaisseur.config import Config
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.policy import ImagePolicy
 from connaisseur.image import Image
-from connaisseur.validate import get_trusted_digest
 
 
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
@@ -82,10 +81,10 @@ def healthz():
     server. Sends back either '200' for a healthy status or '500'
     otherwise.
     """
-    for notary in CONFIG.notaries:
-        if not notary.healthy:
+    for validator in CONFIG.validators:
+        if not validator.healthy:
             logging.error(  # pylint: disable=logging-fstring-interpolation
-                f"{notary.host} ({notary.name}) is unreachable."
+                f"{validator.name} is unhealthy."
             )
 
     return ("", 200)
@@ -161,31 +160,27 @@ def __admit(admission_request: AdmissionRequest):
 
             image = Image(c_image)
             policy_rule = policy.get_matching_rule(image)
-
-            if not policy_rule.verify:
-                msg = f'no verification for image "{c_image}".'
-                logging.info(__create_logging_msg(msg, **logging_context))
-                continue
-
-            notary = CONFIG.get_notary(policy_rule.notary)
+            validator = CONFIG.get_validator(policy_rule.validator)
 
             msg = (
                 f'starting verification of image "{c_image}" using rule '
-                f'"{str(policy_rule)}" and notary config "{str(notary)}".'
+                f'"{str(policy_rule)}" with arguments {str(policy_rule.arguments)}'
+                f' and validator "{str(validator)}".'
             )
             logging.debug(
                 __create_logging_msg(
-                    msg, **logging_context, policy_rule=policy_rule, notary=notary
+                    msg, **logging_context, policy_rule=policy_rule, validator=validator
                 )
             )
 
-            trusted_digest = get_trusted_digest(notary, image, policy_rule)
-            image.set_digest(trusted_digest)
-            patches += [
-                __create_json_patch(
-                    admission_request.wl_object.container_path, index, image
-                )
-            ]
+            trusted_digest = validator.validate(image, **policy_rule.arguments)
+            if trusted_digest:
+                image.set_digest(trusted_digest)
+                patches += [
+                    __create_json_patch(
+                        admission_request.wl_object.container_path, index, image
+                    )
+                ]
 
             msg = f'successful verification of image "{c_image}"'
             logging.info(__create_logging_msg(msg, **logging_context))

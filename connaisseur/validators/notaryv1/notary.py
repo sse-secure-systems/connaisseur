@@ -4,8 +4,8 @@ from urllib.parse import quote, urlencode
 import requests
 import yaml
 from connaisseur.image import Image
-from connaisseur.tuf_role import TUFRole
-from connaisseur.trust_data import TrustData
+from connaisseur.validators.notaryv1.tuf_role import TUFRole
+from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.exceptions import (
     UnreachableError,
     NotFoundException,
@@ -22,33 +22,58 @@ class Notary:
     host: str
     pub_root_keys: list
     is_acr: bool
-    is_cosign: bool
+    auth: dict
+    cert: str
 
-    SELFSIGNED_PATH = "/etc/certs/{}.crt"
-    AUTH_PATH = "/etc/creds/{}/cred.yaml"
+    CERT_PATH = "/app/connaisseur/certs/{}.crt"
 
-    def __init__(self, name: str, host: str, pub_root_keys: list, **kwargs):
+    def __init__(
+        self,
+        name: str,
+        host: str,
+        pub_keys: list,
+        is_acr: bool = False,
+        auth: dict = {},
+        cert: str = None,
+        **kwargs,
+    ):
         """
         Creates a Notary object from a dictionary.
 
         Raises `InvalidFormatException` should the mandatory fields be missing.
         """
 
-        if not (name and host and pub_root_keys):
+        if not (name and host and pub_keys):
             msg = "{validation_kind} {notary_name} has an invalid format."
             raise InvalidFormatException(
                 message=msg,
                 validation_kind="Notary configuration",
                 notary_name=name,
                 notary_host=host,
-                notary_keys=pub_root_keys,
+                notary_keys=pub_keys,
             )
 
         self.name = name
         self.host = host
-        self.pub_root_keys = pub_root_keys
-        self.is_acr = kwargs.get("is_acr", False)
-        self.is_cosign = kwargs.get("is_cosign", False)
+        self.pub_root_keys = pub_keys
+        self.is_acr = is_acr
+        self.auth = auth
+        self.cert = self.__write_cert(cert) if cert else None
+
+    def __write_cert(self, cert: str):
+        cert_path = self.CERT_PATH.format(self.name)
+
+        if not safe_path_func(os.path.exists, "/app/connaisseur/certs", cert_path):
+            safe_path_func(
+                os.makedirs,
+                "/app/connaisseur/certs",
+                os.path.dirname(cert_path),
+                exist_ok=True,
+            )
+            with safe_path_func(open, "/app/connaisseur/certs", cert_path, "w") as file:
+                file.write(cert)
+
+        return cert_path
 
     def get_key(self, key_name: str = None):
         """
@@ -59,60 +84,17 @@ class Notary:
         Raises `NotFoundException` if no top most element can be found.
         """
 
+        key_name = key_name or "default"
         try:
-            if len(self.pub_root_keys) < 2:
-                key = next(iter(self.pub_root_keys))["key"]
-            else:
-                key_name = key_name or "default"
-                key = next(
-                    key["key"] for key in self.pub_root_keys if key["name"] == key_name
-                )
-            return "".join(key)
+            key = next(
+                key["key"] for key in self.pub_root_keys if key["name"] == key_name
+            )
         except StopIteration as err:
-            if len(self.pub_root_keys) < 2:
-                msg = "Not public keys could be found."
-            else:
-                msg = "Key {key_name} could not be found."
+            msg = "Key {key_name} could not be found."
             raise NotFoundException(
                 message=msg, key_name=key_name, notary_name=self.name
             ) from err
-
-    @property
-    def auth(self):
-        """
-        Returns authentication credentials as a dict. If notary configuration has no
-        authentication, an empty dict is returned. Otherwise a YAML file with the
-        credentials is read and returned.
-
-        Raises `InvalidFormatException` if credential file has an invalid format.
-        """
-        try:
-            with safe_path_func(
-                open, "/etc/creds/", self.AUTH_PATH.format(self.name), "r"
-            ) as cred_file:
-                auth = yaml.safe_load(cred_file)
-
-                try:
-                    return auth["USER"], auth["PASS"]
-                except KeyError as err:
-                    msg = (
-                        "credentials for notary config "
-                        "{notary_name} are in wrong format."
-                    )
-                    raise InvalidFormatException(
-                        message=msg, notary_name=self.name
-                    ) from err
-        except FileNotFoundError:
-            return None
-
-    @property
-    def selfsigned_cert(self):
-        """
-        Returns the path to a selfsigned certificate, should it exist. Otherwise None is
-        returned.
-        """
-        path = self.SELFSIGNED_PATH.format(self.name)
-        return path if safe_path_func(os.path.exists, "/etc/certs/", path) else None
+        return "".join(key)
 
     @property
     def healthy(self):
@@ -121,7 +103,7 @@ class Notary:
 
         try:
             url = f"https://{self.host}/_notary_server/health"
-            request_kwargs = {"url": url, "verify": self.selfsigned_cert}
+            request_kwargs = {"url": url, "verify": self.cert}
             response = requests.get(**request_kwargs)
 
             return response.status_code == 200
@@ -143,7 +125,7 @@ class Notary:
 
         request_kwargs = {
             "url": url,
-            "verify": self.selfsigned_cert,
+            "verify": self.cert,
             "headers": ({"Authorization": f"Bearer {token}"} if token else None),
         }
 
@@ -251,7 +233,7 @@ class Notary:
         """
         request_kwargs = {
             "url": url,
-            "verify": self.selfsigned_cert,
+            "verify": self.cert,
             "auth": (requests.auth.HTTPBasicAuth(*self.auth) if self.auth else None),
         }
 
@@ -283,6 +265,3 @@ class Notary:
                 auth_url=url,
             )
         return token
-
-    def __str__(self):
-        return self.name

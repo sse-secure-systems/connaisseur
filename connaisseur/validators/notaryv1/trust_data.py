@@ -6,7 +6,7 @@ from datetime import datetime
 import pytz
 from dateutil import parser
 from connaisseur.util import validate_schema
-from connaisseur.key_store import KeyStore
+from connaisseur.validators.notaryv1.key_store import KeyStore
 from connaisseur.crypto import verify_signature
 from connaisseur.exceptions import (
     ValidationError,

@@ -29,5 +29,5 @@ if __name__ == "__main__":
     # container
     APP.run(
         host="0.0.0.0",  # nosec
-        ssl_context=("/etc/certs/tls.crt", "/etc/certs/tls.key"),
+        ssl_context=("/app/certs/tls.crt", "/app/certs/tls.key"),
     )

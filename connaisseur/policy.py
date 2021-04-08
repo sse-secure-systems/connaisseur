@@ -74,10 +74,8 @@ class ImagePolicy:
 class Rule:
     def __init__(self, pattern: str, **kwargs):
         self.pattern = pattern
-        self.verify = kwargs.get("verify", True)
-        self.delegations = kwargs.get("delegations", [])
-        self.notary = kwargs.get("notary")
-        self.key = kwargs.get("key")
+        self.validator = kwargs.get("validator")
+        self.arguments = kwargs.get("with", {})
 
     def __str__(self):
         return self.pattern

@@ -10,26 +10,15 @@
                         "type": "string",
                         "pattern": "^((\\w+\\.[\\.\\w]*\\/)?([^\\s]+\\/)?)([^\\/\\:@]+)((@sha256:([a-f0-9]{64}))|(:(.+)))?$"
                     },
-                    "delegations": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "pattern": "[\\d\\w]*"
-                        }
-                    },
-                    "verify": {
-                        "type": "boolean"
-                    },
-                    "notary": {
+                    "validator": {
                         "type": "string"
                     },
-                    "key": {
-                        "type": "string"
+                    "with": {
+                        "type": "object"
                     }
                 },
                 "required": [
-                    "pattern",
-                    "verify"
+                    "pattern"
                 ]
             }
         }

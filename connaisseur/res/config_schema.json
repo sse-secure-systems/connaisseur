@@ -12,7 +12,8 @@
                 "enum": [
                     "notaryv1",
                     "notaryv2",
-                    "cosign"
+                    "cosign",
+                    "static"
                 ]
             }
         },
@@ -35,7 +36,7 @@
                             "type": "string",
                             "pattern": "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}"
                         },
-                        "root_keys": {
+                        "pub_keys": {
                             "type": "array",
                             "items": {
                                 "type": "object",
@@ -58,8 +59,9 @@
                         "is_acr": {
                             "type": "boolean"
                         },
-                        "selfsigned_cert": {
-                            "type": "string"
+                        "cert": {
+                            "type": "string",
+                            "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\/\\s])*={0,4})\n(?:-+END\\sCERTIFICATE[-]+)"
                         },
                         "auth": {
                             "type": "object",
@@ -93,7 +95,7 @@
                     },
                     "required": [
                         "host",
-                        "root_keys"
+                        "pub_keys"
                     ]
                 }
             },
@@ -115,7 +117,50 @@
                         }
                     }
                 },
-                "then": {}
+                "then": {
+                    "properties": {
+                        "pub_keys": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "key": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "key"
+                                ]
+                            },
+                            "minItems": 1,
+                            "uniqueItems": true
+                        }
+                    },
+                    "required": [
+                        "pub_keys"
+                    ]
+                }
+            },
+            {
+                "if": {
+                    "properties": {
+                        "type": {
+                            "const": "static"
+                        }
+                    }
+                },
+                "then": {
+                    "properties": {
+                        "approve": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": ["approve"]
+                }
             }
         ]
     },
