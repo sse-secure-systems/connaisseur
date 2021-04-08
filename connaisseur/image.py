@@ -27,7 +27,11 @@ class Image:
 
     def __init__(self, image: str):
         # e.g. example.com, super.example.com:3498
-        domain_re = r"(?:[a-z0-9-]{1,63}\.){1,62}[a-z0-9-]{1,63}(?::[0-9]{1,5})?"
+        domain_with_dot_re = (
+            r"(?:[a-z0-9-]{1,63}\.){1,62}[a-z0-9-]{1,63}(?::[0-9]{1,5})?"
+        )
+        # e.g. private-registry:30000, localhost:5000
+        domain_without_dot_re = r"[a-z0-9-]{1,64}(?::[0-9]{1,5})"
         # e.g. library/, library/alpine/,
         repo_re = r"(?:[\w-]+\/)+"
         # e.g. alpine, nginx, hello-world
@@ -36,7 +40,10 @@ class Image:
         tag_re = r"(?:(?:@sha256:([a-f0-9]{64}))|(?:\:([\w.-]+)))"
 
         # e.g. docker.io/library/python:3.7-alpine
-        regex = f"^({domain_re}/)?({repo_re})?({image_re})({tag_re})?$"
+        regex = (
+            f"^((?:{domain_with_dot_re}|{domain_without_dot_re})/)?"
+            f"({repo_re})?({image_re})({tag_re})?$"
+        )
 
         match = re.search(regex, image)
         if not match:

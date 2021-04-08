@@ -57,6 +57,7 @@ def im():
             "path",
             "sub.registry.io",
         ),
+        ("registry:3000/image:tag", "image", "tag", None, "", "registry:3000"),
     ],
 )
 def test_image(
