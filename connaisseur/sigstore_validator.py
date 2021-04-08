@@ -40,9 +40,7 @@ def get_cosign_validated_digests(image: str, pubkey: str):
             "failed to verify signature of trust data.",
             {"trust_data_type": "dev.cosignproject.cosign/signature", "stderr": stderr},
         )
-    elif re.match(
-        r"^error: GET https://[^ ]+ MANIFEST_UNKNOWN:.*", stderr
-    ):
+    elif re.match(r"^error: GET https://[^ ]+ MANIFEST_UNKNOWN:.*", stderr):
         raise NotFoundException(
             f'no trust data for image "{image}".',
             {"trust_data_type": "dev.cosignproject.cosign/signature", "stderr": stderr},
