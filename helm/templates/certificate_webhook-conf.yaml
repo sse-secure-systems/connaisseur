@@ -15,9 +15,6 @@ type: Opaque
 data:
   tls.crt: {{ $certs.Cert | b64enc }}
   tls.key: {{ $certs.Key | b64enc }}
-  {{- if (include "selfsigned" . ) }}
-  {{ include "selfsigned" . }}
-  {{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap

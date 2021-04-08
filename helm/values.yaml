@@ -21,11 +21,18 @@ service:
   port: 443
 
 # configure access to the notary server
-notaries:
-# public notary from dockerhub
-- name: dockerhub
+validators:
+# public notary form dockerhub
+- name: allow
+  type: static
+  approve: true
+- name: deny
+  type: static
+  approve: false
+- name: default
+  type: notaryv1
   host: notary.docker.io
-  pub_root_keys:
+  root_keys:
   # this is the public key for all official dockerhub images (e.g. redis)
   - name: default
     key: |
@@ -69,14 +76,11 @@ notaries:
 # verified. more detail in the git repo README.md
 policy:
 - pattern: "*:*"
-  verify: true
 - pattern: "k8s.gcr.io/*:*"
-  verify: false
-- pattern: "docker.io/securesystemsengineering/connaisseur:helm-*"
-  verify: false
+  validator: allow
 - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-  verify: true
-  key: sse
+  validator: allow
+
 
 
 # in detection mode, deployment will not be denied, but only prompted

@@ -43,7 +43,7 @@ spec:
             periodSeconds: 5
           volumeMounts:
             - name: {{ .Chart.Name }}-certs
-              mountPath: /etc/certs
+              mountPath: /app/certs
               readOnly: true
             - name: {{ .Chart.Name }}-alert-templates
               mountPath: "/app/config/templates"
@@ -52,9 +52,14 @@ spec:
               mountPath: "/app/config"
               readOnly: true
             - name: {{ .Chart.Name }}-config
-              mountPath: /etc/connaisseur-config
+              mountPath: /app/connaisseur-config/config.yaml
+              subPath: config.yaml
               readOnly: true
-            {{- include "getAuthSecretVolMount" . | nindent 12 }}
+            - name: {{ .Chart.Name }}-config-secrets
+              mountPath: /app/connaisseur-config/config-secrets.yaml
+              subPath: config-secrets.yaml
+              readOnly: true
+            {{ include "external-secrets-mount" . | nindent 12}}
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-env
@@ -104,4 +109,7 @@ spec:
         - name: {{ .Chart.Name }}-config
           configMap:
             name: {{ .Chart.Name }}-config
-        {{- include "getAuthSecretVol" . | nindent 8 }}
+        - name: {{ .Chart.Name }}-config-secrets
+          secret:
+            secretName: {{ .Chart.Name }}-config-secrets
+        {{ include "external-secrets-vol" . | nindent 8}}

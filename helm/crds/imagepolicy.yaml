@@ -21,27 +21,20 @@ spec:
               type: object
               properties:
                 rules:
-                    type: array
-                    items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      pattern:
+                        type: string
+                        pattern: '^((\w+\.[\.\w]*\/)?([^\s]+\/)?)([^\/\:@]+)((@sha256:([a-f0-9]{64}))|(:(.+)))?$'
+                      validator:
+                        type: string
+                      with:
                         type: object
-                        properties:
-                            pattern:
-                                type: string
-                                pattern: '^((\w+\.[\.\w]*\/)?([^\s]+\/)?)([^\/\:@]+)((@sha256:([a-f0-9]{64}))|(:(.+)))?$'
-                            delegations:
-                                type: array
-                                items:
-                                    type: string
-                                    pattern: '[\w\d]*'
-                            verify:
-                                type: boolean
-                            notary:
-                              type: string
-                            key:
-                              type: string
-                        required:
-                          - pattern
-                          - verify
+                        additionalProperties: true
+                    required:
+                      - pattern
   # either Namespaced or Cluster
   scope: Cluster
   names:
@@ -53,4 +46,4 @@ spec:
     kind: ImagePolicy
     # shortNames allow shorter string to match your resource on the CLI
     shortNames:
-    - imgpol
+      - imgpol

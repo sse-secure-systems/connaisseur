@@ -7,22 +7,12 @@ metadata:
     {{- include "helm.labels" . | nindent 4 }}
 data:
   config.yaml: | 
-    {{- range  .Values.notaries }}
-    - {{ range $k, $v := . -}}
-      {{ if and (ne $k "auth") (ne $k "selfsigned_cert") -}}
-      {{ if eq $k "pub_root_keys" -}}
-      pub_root_keys:
-      {{ range . -}}
-      - name: {{ toYaml .name }}
-        key: |
-          {{- .key | nindent 10 }}
-      {{ end -}}
-      {{- else if eq $k "selfsigned_cert" -}}
-      {{ toYaml $k }}: |
-        {{- . | nindent 8 }}
-      {{- else -}}
-      {{ toYaml $k }}: {{ toYaml $v }}
-      {{ end -}}
-      {{ end -}}
-      {{- end -}}
-    {{- end -}}
+    {{- range .Values.validators -}}
+      {{- $validator := deepCopy . -}}
+      {{- if eq $validator.type "notaryv1" -}}
+        {{- $_ := unset $validator "auth" -}}
+      {{- else if eq $validator.type "notaryv2" -}}
+      {{- else if eq $validator.type "cosign" -}}
+      {{- end }}
+    - {{- $validator | toYaml | trim | nindent 6 -}}
+    {{- end }}

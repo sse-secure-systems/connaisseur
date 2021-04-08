@@ -40,53 +40,62 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 
-{{- define "anyIntAuth" -}}
-{{- range $i := .Values.notaries }}
-{{- if $i.auth }}
-{{- if not $i.auth.secret_name}}
-true
-{{- end }}
-{{- end }}
-{{- end }}
-{{- end -}}
-
-
-{{- define "getIntAuth" -}}
-USER: {{ .user }}
-PASS: {{ .password }}
-{{- end -}}
-
-
-{{- define "getAuthSecretVol" -}}
-{{- range $i := .Values.notaries -}}
-{{- if $i.auth }}
-- name: {{ $i.name }}-secret
-  secret:
-    {{- if $i.auth.secret_name }}
-    secretName: {{ $i.auth.secret_name }}
-    {{- else }}
-    secretName: {{ $i.name }}-host-secret
+{{- define "config-secrets" -}}
+{{- $secret_dict := dict -}}
+{{- range .Values.validators -}}
+    {{- $validator := deepCopy . -}}
+    {{- if eq $validator.type "notaryv1" -}}
+        {{- if $validator.auth -}}
+            {{- if not $validator.auth.secret_name -}}
+                {{- $_ := set $secret_dict $validator.name (dict "auth" $validator.auth) -}}
+            {{- end -}}
+        {{- end -}}
+    {{- else if eq $validator.type "notaryv2" -}}
+    {{- else if eq $validator.type "cosign" -}}
     {{- end -}}
 {{- end -}}
+{{ $secret_dict | toYaml | trim }}
+{{- end -}}
+
+{{- define "external-secrets-vol" -}}
+{{- $external_secret := dict -}}
+{{- range .Values.validators -}}
+    {{- $validator := deepCopy . -}}
+    {{- if eq $validator.type "notaryv1" -}}
+        {{- if $validator.auth -}}
+            {{- if $validator.auth.secret_name -}}
+                {{- $_ := set $external_secret $validator.name $validator.auth.secret_name -}}
+            {{- end -}}
+        {{- end -}}
+    {{- else if eq $validator.type "notaryv2" -}}
+    {{- else if eq $validator.type "cosign" -}}
+    {{- end -}}
+{{- end -}}
+{{- range $k, $v := $external_secret -}}
+    - name: {{ $k }}-vol
+  secret:
+    secretName: {{ $v }}
 {{- end -}}
 {{- end -}}
 
 
-{{- define "getAuthSecretVolMount" -}}
-{{- range $i := .Values.notaries -}}
-{{- if $i.auth }}
-- name: {{ $i.name }}-secret
-  mountPath: /etc/creds/{{ $i.name }}
-  readOnly: true
-{{ end -}}
+{{- define "external-secrets-mount" -}}
+{{- $external_secret := dict -}}
+{{- range .Values.validators -}}
+    {{- $validator := deepCopy . -}}
+    {{- if eq $validator.type "notaryv1" -}}
+        {{- if $validator.auth -}}
+            {{- if $validator.auth.secret_name -}}
+                {{- $_ := set $external_secret $validator.name $validator.auth.secret_name -}}
+            {{- end -}}
+        {{- end -}}
+    {{- else if eq $validator.type "notaryv2" -}}
+    {{- else if eq $validator.type "cosign" -}}
+    {{- end -}}
 {{- end -}}
-{{- end -}}
-
-
-{{- define "selfsigned" -}}
-{{- range $i := .Values.notaries -}}
-{{- if $i.selfsigned_cert -}}
-{{ $i.name }}.crt: {{ $i.selfsigned_cert | b64enc }} 
-{{ end -}}
+{{- range $k, $v :=  $external_secret -}}
+    - name: {{ $k }}-vol
+  mountPath: /app/connaisseur-config/{{ $k }}
+  readOnly: True
 {{- end -}}
 {{- end -}}

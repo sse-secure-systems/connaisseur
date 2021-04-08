@@ -5,49 +5,118 @@
         "properties": {
             "name": {
                 "type": "string",
-                "pattern": "^[^\/\\\\]+(?<!tls)$"
+                "pattern": "^[^\/\\\\]+$"
             },
-            "host": {
+            "type": {
                 "type": "string",
-                "pattern": "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}"
-            },
-            "pub_root_keys": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string"
-                        },
-                        "key": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "name",
-                        "key"
-                    ]
-                },
-                "minItems": 1,
-                "uniqueItems": true
-            },
-            "is_acr": {
-                "type": "boolean"
-            },
-            "selfsigned": {
-                "type": "boolean"
-            },
-            "selfsigned_cert": {
-                "type": "string"
-            },
-            "is_cosign": {
-                "type": "boolean"
+                "enum": [
+                    "notaryv1",
+                    "notaryv2",
+                    "cosign"
+                ]
             }
         },
         "required": [
             "name",
-            "host",
-            "pub_root_keys"
+            "type"
+        ],
+        "allOf": [
+            {
+                "if": {
+                    "properties": {
+                        "type": {
+                            "const": "notaryv1"
+                        }
+                    }
+                },
+                "then": {
+                    "properties": {
+                        "host": {
+                            "type": "string",
+                            "pattern": "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}"
+                        },
+                        "root_keys": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "key": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "key"
+                                ]
+                            },
+                            "minItems": 1,
+                            "uniqueItems": true
+                        },
+                        "is_acr": {
+                            "type": "boolean"
+                        },
+                        "selfsigned_cert": {
+                            "type": "string"
+                        },
+                        "auth": {
+                            "type": "object",
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "user": {
+                                            "type": "string"
+                                        },
+                                        "password": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "user",
+                                        "password"
+                                    ]
+                                },
+                                {
+                                    "properties": {
+                                        "secretName": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "secret_name"
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "host",
+                        "root_keys"
+                    ]
+                }
+            },
+            {
+                "if": {
+                    "properties": {
+                        "type": {
+                            "const": "notaryv2"
+                        }
+                    }
+                },
+                "then": {}
+            },
+            {
+                "if": {
+                    "properties": {
+                        "type": {
+                            "const": "cosign"
+                        }
+                    }
+                },
+                "then": {}
+            }
         ]
     },
     "minItems": 1,
