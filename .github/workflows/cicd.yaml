@@ -274,6 +274,7 @@ jobs:
       - name: Load Docker images
         run: |
           docker load -i ${GITHUB_SHA}_image.tar
+          docker load -i ${GITHUB_SHA}_image-exp.tar
           docker load -i ${GITHUB_SHA}_hook.tar
       - name: Install yq and bash
         run: |
