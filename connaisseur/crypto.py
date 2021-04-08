@@ -32,6 +32,6 @@ def decode_and_verify_ecdsa_key(public_base64: str):
     except ecdsa.keys.MalformedPointError as err:
         raise InvalidPublicKey(
             f"The public key provided is not a base64-encoded ECDSA key: {err}."
-        )
+        ) from err
 
     return pubkey
