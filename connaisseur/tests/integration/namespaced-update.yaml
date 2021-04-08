@@ -1,0 +1,23 @@
+deployment:
+  imagePullPolicy: Never
+notary:
+  host: notary.docker.io
+  selfsigned: false
+  auth:
+    enabled: false
+  rootPubKey: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+    d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+    -----END PUBLIC KEY-----
+policy:
+  - pattern: "*:*"
+    verify: true
+  - pattern: "k8s.gcr.io/*:*"
+    verify: false
+  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
+    verify: true
+  - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
+    verify: false
+
+targetNamespaces: ["verifyns"]
