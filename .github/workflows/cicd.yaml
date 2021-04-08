@@ -23,6 +23,7 @@ jobs:
         run: |
           mkdir images
           docker save $(yq e '.deployment.image' helm/values.yaml) -o images/${GITHUB_SHA}_image.tar
+          docker save $(yq e '.deployment.image' helm/values.yaml)-experimental -o images/${GITHUB_SHA}_image-exp.tar
           docker save $(yq e '.deployment.helmHookImage' helm/values.yaml) -o images/${GITHUB_SHA}_hook.tar
       - uses: actions/upload-artifact@v2
         with:
@@ -209,6 +210,7 @@ jobs:
       - name: Load Docker images
         run: |
           docker load -i ${GITHUB_SHA}_image.tar
+          docker load -i ${GITHUB_SHA}_image-exp.tar
           docker load -i ${GITHUB_SHA}_hook.tar
       - name: Install yq and bash
         run: |
@@ -239,6 +241,7 @@ jobs:
       - name: Load Docker images
         run: |
           docker load -i ${GITHUB_SHA}_image.tar
+          docker load -i ${GITHUB_SHA}_image-exp.tar
           docker load -i ${GITHUB_SHA}_hook.tar
       - name: Install yq and bash
         run: |
@@ -254,6 +257,7 @@ jobs:
       - name: Add images to KinD
         run: |
           kind load docker-image $(yq e '.deployment.image' helm/values.yaml)
+          kind load docker-image $(yq e '.deployment.image' helm/values.yaml)-experimental
           kind load docker-image $(yq e '.deployment.helmHookImage' helm/values.yaml)
       - name: Run actual integration test
         run: bash connaisseur/tests/integration/cosign-integration-test.sh
@@ -285,6 +289,7 @@ jobs:
       - name: Add images to KinD
         run: |
           kind load docker-image $(yq e '.deployment.image' helm/values.yaml)
+          kind load docker-image $(yq e '.deployment.image' helm/values.yaml)-experimental
           kind load docker-image $(yq e '.deployment.helmHookImage' helm/values.yaml)
       - name: Run actual integration test
         run: bash connaisseur/tests/integration/cosign-integration-test-non-exp.sh
