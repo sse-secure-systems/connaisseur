@@ -9,8 +9,9 @@ COSIGN_VERSION = 0.2.0
 all: docker install
 
 docker:
-	docker build --build-arg COSIGN_VERSION=$(COSIGN_VERSION) -f docker/Dockerfile -t $(IMAGE) .
+	docker build -f docker/Dockerfile -t $(IMAGE) .
 	docker build -f docker/Dockerfile.hook -t $(HELM_HOOK_IMAGE) .
+	docker build --build-arg COSIGN_VERSION=$(COSIGN_VERSION) -f docker/Dockerfile.experimental -t $(IMAGE)-experimental .
 
 certs:
 	bash helm/certs/gen_certs.sh
