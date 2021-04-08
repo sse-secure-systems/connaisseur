@@ -4,8 +4,7 @@ set -euo pipefail
 # This script is expected to be called from the root folder of Connaisseur
 
 echo 'Preparing Connaisseur config...'
-yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml connaisseur/tests/integration/cosign-update-non-exp.yaml
-yq eval '.deployment.image += "-experimental"' -i helm/values.yaml
+yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml connaisseur/tests/integration/cosign-update.yaml
 yq e '.deployment.image' helm/values.yaml
 echo 'Config set'
 

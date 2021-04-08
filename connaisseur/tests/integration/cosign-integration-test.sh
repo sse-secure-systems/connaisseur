@@ -5,7 +5,7 @@ set -euo pipefail
 
 echo 'Preparing Connaisseur config...'
 yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml connaisseur/tests/integration/cosign-update.yaml
-yq eval '.deployment.image += "-experimental"' -i helm/values.yaml
+yq eval '.deployment.image += "-experimental"' -i helm/values.yaml # use experimental image
 yq e '.deployment.image' helm/values.yaml
 echo 'Config set'
 
