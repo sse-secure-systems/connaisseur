@@ -19,7 +19,7 @@ RUN sh /harden.sh && rm /harden.sh
 
 # Copy source code and install packages
 COPY --from=builder /install /usr/local
-RUN mkdir /app/cosign && cp /bin/false /app/cosign/cosign
+RUN mkdir /app/cosign && echo -e "#!/bin/sh \nexit 1" > /app/cosign/cosign && chmod 777 /app/cosign/cosign
 COPY connaisseur /app/connaisseur
 
 USER 1000:2000
