@@ -37,7 +37,7 @@ def get_cosign_validated_digests(image: str, pubkey: str):
             except json.JSONDecodeError:
                 logging.info("Non-json signature data from Cosign: %s", sig)
                 pass
-    elif stderr == "error: no matching signatures:\nunable to verify signature\n":
+    elif "error: no matching signatures:\nunable to verify signature\n" in stderr:
         raise ValidationError(
             "failed to verify signature of trust data.",
             {"trust_data_type": "dev.cosignproject.cosign/signature", "stderr": stderr},
