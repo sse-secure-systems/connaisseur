@@ -1,0 +1,1 @@
+error: GET https://index.docker.io/v2/securesystemsengineering/connaisseur/manifests/sha256-495079f059a9398471a2b3eb3c27c97b160282a7bf73bd8e7b5056aa5cbb2277.cosign: MANIFEST_UNKNOWN: manifest unknown; map[Tag:sha256-495079f059a9398471a2b3eb3c27c97b160282a7bf73bd8e7b5056aa5cbb2277.cosign]
