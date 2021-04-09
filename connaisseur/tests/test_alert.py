@@ -245,6 +245,7 @@ def test_configuration_error_missing_template(
 )
 def test_configuration_error_missing_or_invalid_config(
     mock_alertconfig_validation_schema,
+    mocker,
     monkeypatch,
     message,
     receiver_config,
@@ -259,10 +260,23 @@ def test_configuration_error_missing_or_invalid_config(
         with pytest.raises(ConfigurationError) as err:
             load_config()
         assert (
-            "Alerting configuration file either not present or not valid."
+            "Alerting configuration file not valid."
             "Check in the 'helm/values.yml' whether everything is correctly configured"
             in str(err.value)
         )
+
+    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting/empty_dir")
+    mock_info_log = mocker.patch("logging.info")
+    load_config()
+    mock_info_log.assert_has_calls(
+        [
+            mocker.call(
+                "No alerting configuration file found."
+                "To use the alerting feature you need to run `make upgrade`"
+                "in a freshly pulled Connaisseur repository."
+            )
+        ]
+    )
 
 
 @pytest.mark.parametrize(
@@ -473,10 +487,23 @@ def test_send_alerts(
             "tests/data/alerting",
             False,
         ),
+        (
+            admission_request_allowlisted,
+            {"admitted": True},
+            "tests/data/alerting/empty_dir",
+            False,
+        ),
+        (
+            admission_request_allowlisted,
+            {"admitted": False},
+            "tests/data/alerting/empty_dir",
+            False,
+        ),
     ],
 )
 def test_call_alerting_on_request(
     mock_alertconfig_validation_schema,
+    mocker,
     monkeypatch,
     admission_request,
     admission_decision,
