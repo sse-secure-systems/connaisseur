@@ -1,11 +1,13 @@
 # Using Connaisseur with Cosign signatures
 
-[Sigstore](https://sigstore.dev/) is a [Linux Foundation](https://linuxfoundation.org/) project that aims to provide public software signing and transparency to improve open source supply chain security. As part of the Sigstore project, [Cosign](https://github.com/sigstore/cosign) allows seamless container signing, verification and storage. You can read more about it [here](https://blog.sigstore.dev/cosign-signed-container-images-c1016862618?gi=95796f563c9f).
+[Sigstore](https://sigstore.dev/) is a [Linux Foundation](https://linuxfoundation.org/) project that aims to provide public software signing and transparency to improve open source supply chain security. As part of the Sigstore project, [Cosign](https://github.com/sigstore/cosign) allows seamless container signing, verification and storage. You can read more about it [here](https://blog.sigstore.dev/cosign-signed-container-images-c1016862618).
 
-As a first step, we have implemented the elementary function of verifying `cosign` generated signatures against the locally created corresponding public keys. We plan to expose further features of cosign in upcoming releases, so stay tuned!
+Connaisseur currently supports the elementary function of verifying `cosign` generated signatures against the locally created corresponding public keys. We plan to expose further features of cosign in upcoming releases, so stay tuned!
+
+> :warning: `sigstore` and `cosign` are currently in *pre-release* state and so is our support for them. We therefore consider this an *experimental feature*. As such, it is not part of our semantic versioning guarantees and we take the liberty to remove it with any version at any time without incrementing MAJOR or MINOR.
 
 ## Demo
-![](../img/co-nny-sign.gif)
+![](../img/connaisseur-cosign.gif)
 
 ## Signing Container Images with Cosign
 
@@ -106,4 +108,4 @@ make uninstall
 
 Hope you enjoy the new feature and let us [know what you think](../CONTRIBUTING.md)!
 
-We are working on improving support for `cosign` and sigstore features and will also be introducing [multi-key and multi-validator support](https://github.com/sse-secure-systems/connaisseur/pull/90) in the near future. So stay tuned!
+We are working on improving support for `cosign` and `sigstore` features and will also be introducing [multi-key and multi-validator support](https://github.com/sse-secure-systems/connaisseur/pull/90) in the near future. So stay tuned!
