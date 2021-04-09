@@ -26,10 +26,10 @@ def decode_and_verify_ecdsa_key(public_base64: str):
     Verifies that the provided public key in base64 encoding qualifies as a
     proper ecdsa key and throws if not.
     """
-    public = base64.b64decode(public_base64)
     try:
+        public = base64.b64decode(public_base64)
         pubkey = ecdsa.VerifyingKey.from_der(public)
-    except ecdsa.keys.MalformedPointError as err:
+    except Exception as err:
         raise InvalidPublicKey(
             f"The public key provided is not a base64-encoded ECDSA key: {err}."
         ) from err
