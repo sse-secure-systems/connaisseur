@@ -8,6 +8,7 @@ from connaisseur.exceptions import (
     ValidationError,
     CosignError,
     CosignTimeout,
+    UnexpectedCosignData
 )
 
 cosign_payload = '{"Critical":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
@@ -15,6 +16,9 @@ cosign_multiline_payload = """
 {"Critical":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha256:2f6d89c49ad745bfd5d997f9b2d253329323da4c500c7fe343e068c0382b8df4"},"Type":"cosign container signature"},"Optional":null}
 {"Critical":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha256:2f6d89c49ad745bfd5d997f9b2d253329323da4c500c7fe343e068c0382b8df4"},"Type":"cosign container signature"},"Optional":{"foo":"bar"}}
 """
+cosign_payload_unexpected_json_format = '{"Important":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
+cosign_payload_unexpected_digest_pattern = '{"Critical":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha512:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
+
 
 cosign_nonjson_payload = "This is not json."
 cosign_combined_payload = "{}\n{}".format(cosign_payload, cosign_nonjson_payload)
@@ -120,6 +124,21 @@ def test_get_cosign_validated_digests_validation_error(
     with pytest.raises(ValidationError) as err:
         sigstore_validator.get_cosign_validated_digests(image, "sth")
     assert "failed to verify signature of trust data." in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "status_code, stdout, stderr, image",
+    [
+        (0, cosign_payload_unexpected_json_format, cosign_stderr_at_success, "testimage:v1"),
+        (0, cosign_payload_unexpected_digest_pattern, cosign_stderr_at_success, "testimage:v1"),
+    ],
+)
+def test_get_cosign_validated_digests_unexpected_cosign_data_error(
+    mock_invoke_cosign, status_code, stdout, stderr, image
+):
+    with pytest.raises(UnexpectedCosignData) as err:
+        sigstore_validator.get_cosign_validated_digests(image, "sth")
+    assert "could not retrieve valid digest from data received by cosign:" in str(err.value)
 
 
 @pytest.mark.parametrize(

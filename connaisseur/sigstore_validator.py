@@ -38,7 +38,7 @@ def get_cosign_validated_digests(image: str, pubkey: str):
                         raise Exception("digest does not match expected digest pattern.")
                 except Exception as err:
                     raise UnexpectedCosignData(
-                        f"could not retrieve valid digest from data obtained by cosign: {err}"
+                        f"could not retrieve valid digest from data received by cosign: {err}"
                         ) from err
 
                 # remove prefix 'sha256' in case it exists
