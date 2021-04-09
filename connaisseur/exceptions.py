@@ -69,6 +69,10 @@ class CosignTimeout(BaseConnaisseurException):
     pass
 
 
+class UnexpectedCosignData(BaseConnaisseurException):
+    pass
+
+
 class AlertingException(Exception):
 
     message: str
