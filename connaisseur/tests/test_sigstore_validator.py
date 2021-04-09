@@ -8,7 +8,7 @@ from connaisseur.exceptions import (
     ValidationError,
     CosignError,
     CosignTimeout,
-    UnexpectedCosignData
+    UnexpectedCosignData,
 )
 
 cosign_payload = '{"Critical":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
@@ -129,8 +129,18 @@ def test_get_cosign_validated_digests_validation_error(
 @pytest.mark.parametrize(
     "status_code, stdout, stderr, image",
     [
-        (0, cosign_payload_unexpected_json_format, cosign_stderr_at_success, "testimage:v1"),
-        (0, cosign_payload_unexpected_digest_pattern, cosign_stderr_at_success, "testimage:v1"),
+        (
+            0,
+            cosign_payload_unexpected_json_format,
+            cosign_stderr_at_success,
+            "testimage:v1",
+        ),
+        (
+            0,
+            cosign_payload_unexpected_digest_pattern,
+            cosign_stderr_at_success,
+            "testimage:v1",
+        ),
     ],
 )
 def test_get_cosign_validated_digests_unexpected_cosign_data_error(
@@ -138,7 +148,9 @@ def test_get_cosign_validated_digests_unexpected_cosign_data_error(
 ):
     with pytest.raises(UnexpectedCosignData) as err:
         sigstore_validator.get_cosign_validated_digests(image, "sth")
-    assert "could not retrieve valid digest from data received by cosign:" in str(err.value)
+    assert "could not retrieve valid digest from data received by cosign:" in str(
+        err.value
+    )
 
 
 @pytest.mark.parametrize(

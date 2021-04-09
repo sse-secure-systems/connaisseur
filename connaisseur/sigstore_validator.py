@@ -9,7 +9,7 @@ from connaisseur.exceptions import (
     CosignTimeout,
     NotFoundException,
     ValidationError,
-    UnexpectedCosignData
+    UnexpectedCosignData,
 )
 
 
@@ -33,13 +33,17 @@ def get_cosign_validated_digests(image: str, pubkey: str):
             try:
                 sig_data = json.loads(sig)
                 try:
-                    digest = sig_data["Critical"]["Image"].get("Docker-manifest-digest", "")
+                    digest = sig_data["Critical"]["Image"].get(
+                        "Docker-manifest-digest", ""
+                    )
                     if re.match(r"(sha256:)?[0-9A-Fa-f]{64}", digest) is None:
-                        raise Exception("digest does not match expected digest pattern.")
+                        raise Exception(
+                            "digest does not match expected digest pattern."
+                        )
                 except Exception as err:
                     raise UnexpectedCosignData(
                         f"could not retrieve valid digest from data received by cosign: {err}"
-                        ) from err
+                    ) from err
 
                 # remove prefix 'sha256' in case it exists
                 digests.append(digest[7:] if digest[:7] == "sha256:" else digest)
