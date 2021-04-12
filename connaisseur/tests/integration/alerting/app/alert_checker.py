@@ -69,4 +69,4 @@ def keybase_payload_verification():
 
 
 if __name__ == "__main__":
-    APP.run(debug=True, host="0.0.0.0", port=56243)
+    APP.run(host="0.0.0.0", port=56243)
