@@ -8,6 +8,8 @@
 
 Connaisseur is an admission controller for Kubernetes that integrates Image Signature Verification into a cluster, as a means to ensure that only valid images are being deployed.
 
+Have feedback? Feel free to [reach out to us](https://github.com/sse-secure-systems/connaisseur/discussions)!
+
 ## Contents
 
 - [Introduction](#introduction)
@@ -24,6 +26,7 @@ Connaisseur is an admission controller for Kubernetes that integrates Image Sign
   * [(3) Notary Server](#-3--notary-server)
   * [(4) Registry](#-4--registry)
 - [Additional Information](#additional-information)
+- [Discussions, Support & Feedback](#discussions-support--feedback)
 - [Contributing](#contributing)
 - [Security Policy](#security-policy)
 - [Contact](#contact)
@@ -219,8 +222,11 @@ The STRIDE threat model has been used as a reference for threat modeling. Each o
 - An introduction to Connaisseur is available in our [Medium article](https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce)
 - A recording on "Integrity of Docker images" diving into supply chain security, *The Update Framework*, *Notary*, *Docker Content Trust* and Connaisseur including a live demo is available on [YouTube](https://youtu.be/M3KAiBXhsPQ)
 
+## Discussions, Support & Feedback
+We hope to steer development of Connaisseur from demand of the community, are excited about your feedback and happy to help if you need support! So feel free to connect with us via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions).
+
 ## Contributing
-We hope to steer development of Connaisseur from demand of the community and are excited about direct contributions to improve the tool! Please refer to our [contributing guide](CONTRIBUTING.md) to learn how to contribute to Connaisseur.
+We are always excited about direct contributions to improve the tool! Please refer to our [contributing guide](CONTRIBUTING.md) to learn how to contribute to Connaisseur.
 
 ## Security Policy
 We are grateful for any community support reporting vulnerabilities! How to submit a report is described in our [Security Policy](SECURITY.md).

@@ -1,6 +1,6 @@
 # Setup
 
-Setting up Connaisseur for the first time can be a bit of a hassle, especially if you are not familiar with Docker Content Trust (DCT). Furthermore, Connaisseur requires/links several other services (Kubernetes cluster, container registry, notary server) for which many common providers exist. Hence, we've created multiple guides for various environments to help you on the way.
+Setting up Connaisseur for the first time can be a bit of a hassle, especially if you are not familiar with Docker Content Trust (DCT). Furthermore, Connaisseur requires/links several other services (Kubernetes cluster, container registry, notary server) for which many common providers exist. Hence, we've created multiple guides for various environments to help you on the way. If you still can't get it to work or have any feedback, feel free to reach out to us via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions)!
 
 The guide below offers a simple default configuration for setting up Connaisseur using public infrastructure and is aimed at quick testing. It uses [Docker Hub](https://hub.docker.com/) as both container registry and notary, but is expected to work for other solutions as well. It has been tested for the following Kubernetes services:
 - [x] [K3s](https://github.com/rancher/k3s)
@@ -256,4 +256,4 @@ In case you deployed the `signed` image above, you might want to clean that up b
 
 Congratulations, you have successfully deployed Connaisseur. When testing further with it, should you be missing features or run into bugs, do not hesitate to open either a Pull Request (see our [Contributing Guidelines](../CONTRIBUTING.md)) or [create an Issue](https://github.com/sse-secure-systems/connaisseur/issues/new) to let us know.
 
-Stay safe!
+Feel free to [share your feedback](https://github.com/sse-secure-systems/connaisseur/discussions) with us and stay safe!
