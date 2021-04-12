@@ -4,3 +4,8 @@
 connaisseur/tests/
 # ignore img
 img/
+# ignore coverage files
+connaisseur/coverage.xml
+connaisseur/coverage.txt
+# ignore pycache
+connaisseur/__pycache__/
