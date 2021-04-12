@@ -19,7 +19,6 @@ cosign_multiline_payload = """
 cosign_payload_unexpected_json_format = '{"Important":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
 cosign_payload_unexpected_digest_pattern = '{"Critical":{"Identity":{"docker-reference":""},"Image":{"Docker-manifest-digest":"sha512:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
 
-
 cosign_nonjson_payload = "This is not json."
 cosign_combined_payload = "{}\n{}".format(cosign_payload, cosign_nonjson_payload)
 
@@ -65,7 +64,6 @@ def mock_invoke_cosign(mocker, status_code, stdout, stderr):
             "testimage:v1",
             ["c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"],
         ),
-        (0, cosign_nonjson_payload, cosign_stderr_at_success, "testimage:v1", []),
         (
             0,
             cosign_combined_payload,
@@ -105,7 +103,7 @@ def test_get_cosign_validated_digests(
         mock_info_log.assert_has_calls(
             [
                 mocker.call(
-                    "Non-json signature data from Cosign: %s", cosign_nonjson_payload
+                    "non-json signature data from cosign: %s", cosign_nonjson_payload
                 )
             ]
         )
@@ -127,29 +125,40 @@ def test_get_cosign_validated_digests_validation_error(
 
 
 @pytest.mark.parametrize(
-    "status_code, stdout, stderr, image",
+    "status_code, stdout, stderr, image, error_message",
     [
         (
             0,
             cosign_payload_unexpected_json_format,
             cosign_stderr_at_success,
             "testimage:v1",
+            "could not retrieve valid and unambiguous digest from data received by cosign: KeyError: 'Critical'",
         ),
         (
             0,
             cosign_payload_unexpected_digest_pattern,
             cosign_stderr_at_success,
             "testimage:v1",
+            "could not retrieve valid and unambiguous digest from data received by cosign: "
+            "Exception: digest 'sha512:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7' "
+            "does not match expected digest pattern.",
+        ),
+        (
+            0,
+            cosign_nonjson_payload,
+            cosign_stderr_at_success,
+            "testimage:v1",
+            "could not extract any digest from data received by cosign "
+            "despite successful image verification.",
         ),
     ],
 )
 def test_get_cosign_validated_digests_unexpected_cosign_data_error(
-    mock_invoke_cosign, status_code, stdout, stderr, image
+    mock_invoke_cosign, mocker, status_code, stdout, stderr, image, error_message
 ):
     with pytest.raises(UnexpectedCosignData) as err:
         sigstore_validator.get_cosign_validated_digests(image, "sth")
-    assert "could not retrieve valid digest from data received by cosign:" in str(
-        err.value
+    assert (error_message in str(err.value)
     )
 
 
@@ -179,7 +188,7 @@ def test_get_cosign_validated_digests_cosign_error(
     with pytest.raises(CosignError) as err:
         sigstore_validator.get_cosign_validated_digests(image, "sth")
     assert (
-        'Unexpected Cosign Exception for image "testimage:v1": Hm. Something weird happened.'
+        'unexpected cosign exception for image "testimage:v1": Hm. Something weird happened.'
         in str(err.value)
     )
 
@@ -250,4 +259,4 @@ def test_invoke_cosign_timeout_expired(
         sigstore_validator.invoke_cosign(image, example_pubkey)
 
     mock_kill.assert_has_calls([mocker.call()])
-    assert "Cosign timed out." in str(err.value)
+    assert "cosign timed out." in str(err.value)
