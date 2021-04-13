@@ -11,6 +11,7 @@ webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
     admissionReviewVersions: ["v1", "v1beta1"]
     failurePolicy: Fail
+    sideEffects: None
     clientConfig:
       service:
         name: {{ .Chart.Name }}-svc
