@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
+    admissionReviewVersions: ["v1", "v1beta1"]
     failurePolicy: Fail
     clientConfig:
       service:
