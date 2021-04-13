@@ -9,7 +9,6 @@ from jsonschema import validate as json_validate
 
 from connaisseur.util import safe_path_func
 from connaisseur.exceptions import AlertSendingError, ConfigurationError
-from connaisseur.image import Image
 from connaisseur.mutate import get_container_specs
 
 
@@ -156,16 +155,12 @@ def send_alerts(admission_request, *, admitted, reason=None):
             alert.send_alert()
 
 
-def call_alerting_on_request(admission_request, *, admitted):
-    return not no_alerting_configured_for_event(admitted)
-
-
-def no_alerting_configured_for_event(admitted):
+def call_alerting_on_request(*, admitted):
     config = load_config()
     templates = (
         config.get("admit_request") if admitted else config.get("reject_request")
     )
-    return templates is None
+    return not templates is None
 
 
 def get_alert_config_validation_schema():

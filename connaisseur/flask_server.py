@@ -59,7 +59,7 @@ def mutate():
         else:
             err_log = str(traceback.format_exc())
             msg = "unknown error. please check the logs."
-        if call_alerting_on_request(admission_request, admitted=False):
+        if call_alerting_on_request(admitted=False):
             send_alerts(admission_request, admitted=False, reason=msg)
         logging.error(err_log)
         return jsonify(
@@ -70,7 +70,7 @@ def mutate():
                 detection_mode=DETECTION_MODE,
             )
         )
-    if call_alerting_on_request(admission_request, admitted=True):
+    if call_alerting_on_request(admitted=True):
         send_alerts(admission_request, admitted=True)
     return jsonify(response)
 
@@ -115,8 +115,4 @@ def readyz():
 
     notary_health = health_check(os.environ.get("NOTARY_SERVER"))
 
-    return (
-        ("", 200)
-        if (webhook_response  and notary_health)
-        else ("", 500)
-    )
+    return ("", 200) if (webhook_response and notary_health) else ("", 500)

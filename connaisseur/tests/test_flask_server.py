@@ -367,5 +367,5 @@ def test_configuration_error_handler(
         == "Alerting configuration is not valid. Check the logs for more details!"
     )
     mock_call_alerting_on_request.assert_has_calls(
-        [mocker.call(mock_request_data, admitted=True)]
+        [mocker.call(admitted=True)]
     )

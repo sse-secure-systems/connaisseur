@@ -449,40 +449,34 @@ def test_send_alerts(
 
 
 @pytest.mark.parametrize(
-    "admission_request, admission_decision, alert_config_dir, alert_call_decision",
+    "admission_decision, alert_config_dir, alert_call_decision",
     [
         (
-            admission_request_deployment,
             {"admitted": True},
             "tests/data/alerting/config_only_send_on_reject",
             False,
         ),
         (
-            admission_request_deployment,
             {"admitted": True},
             "tests/data/alerting/config_only_send_on_admit",
             True,
         ),
         (
-            admission_request_deployment,
             {"admitted": False},
             "tests/data/alerting/config_only_send_on_admit",
             False,
         ),
         (
-            admission_request_deployment,
             {"admitted": False},
             "tests/data/alerting",
             True,
         ),
         (
-            admission_request_allowlisted,
             {"admitted": True},
             "tests/data/alerting/empty_dir",
             False,
         ),
         (
-            admission_request_allowlisted,
             {"admitted": False},
             "tests/data/alerting/empty_dir",
             False,
@@ -493,13 +487,12 @@ def test_call_alerting_on_request(
     mock_alertconfig_validation_schema,
     mocker,
     monkeypatch,
-    admission_request,
     admission_decision,
     alert_config_dir,
     alert_call_decision,
 ):
     monkeypatch.setenv("ALERT_CONFIG_DIR", alert_config_dir)
-    decision = call_alerting_on_request(admission_request, **admission_decision)
+    decision = call_alerting_on_request(**admission_decision)
     assert decision == alert_call_decision
 
 
