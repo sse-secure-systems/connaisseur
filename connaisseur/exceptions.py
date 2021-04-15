@@ -29,6 +29,10 @@ class BaseConnaisseurException(Exception):
         return msg
 
 
+class InvalidPublicKey(BaseConnaisseurException):
+    pass
+
+
 class InvalidFormatException(BaseConnaisseurException):
     pass
 
@@ -54,6 +58,18 @@ class UnknownVersionError(Exception):
 
 
 class AmbiguousDigestError(BaseConnaisseurException):
+    pass
+
+
+class CosignError(BaseConnaisseurException):
+    pass
+
+
+class CosignTimeout(BaseConnaisseurException):
+    pass
+
+
+class UnexpectedCosignData(BaseConnaisseurException):
     pass
 
 

@@ -224,6 +224,35 @@ jobs:
         run: |
           kind load docker-image $(yq e '.deployment.image' helm/values.yaml)
           kind load docker-image $(yq e '.deployment.helmHookImage' helm/values.yaml)
-
       - name: Run actual integration test
         run: bash connaisseur/tests/integration/namespaced-integration-test.sh
+
+  cosign-integration-test:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: images
+      - name: Load Docker images
+        run: |
+          docker load -i ${GITHUB_SHA}_image.tar
+          docker load -i ${GITHUB_SHA}_hook.tar
+      - name: Install yq and bash
+        run: |
+          sudo snap install yq
+          sudo apt update
+          sudo apt install bash -y
+      - name: Create KinD cluster
+        run: |
+          GO111MODULE="on" go get sigs.k8s.io/kind
+          kind create cluster --wait 120s
+      - name: Check KinD cluster
+        run: kubectl get nodes
+      - name: Add images to KinD
+        run: |
+          kind load docker-image $(yq e '.deployment.image' helm/values.yaml)
+          kind load docker-image $(yq e '.deployment.helmHookImage' helm/values.yaml)
+      - name: Run actual integration test
+        run: bash connaisseur/tests/integration/cosign-integration-test.sh
