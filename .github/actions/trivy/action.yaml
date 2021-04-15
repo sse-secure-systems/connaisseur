@@ -1,0 +1,24 @@
+name: trivy
+description: 'action that runs trivy '
+runs:
+  using: "composite"
+  steps:
+    - name: Install trivy
+      run: |
+        apk update
+        apk add curl
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin
+        mkdir trivy-reports
+      shell: sh
+    - name: Scan Image
+      run: trivy image --input ${GITHUB_SHA}_image.tar
+              -o trivy-reports/image.txt
+              --exit-code 1
+              --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
+      shell: sh
+    - name: Scan Hook
+      run: trivy image --input ${GITHUB_SHA}_hook.tar
+              -o trivy-reports/hook.txt
+              --exit-code 1
+              --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
+      shell: sh
