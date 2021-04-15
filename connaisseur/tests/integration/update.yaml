@@ -17,6 +17,15 @@ policy:
     key: sse
   - pattern: "k8s.gcr.io/*:*"
     verify: false
+  - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
+    verify: true
+    delegations: ["starkteetje"]
+  - pattern: "docker.io/securesystemsengineering/testimage:wrong_signer"
+    verify: true
+    delegations: ["belitzphilipp"]
+  - pattern: "docker.io/securesystemsengineering/testimage:double_sig"
+    verify: true
+    delegations: ["belitzphilipp", "starkteetje"]
   - pattern: "docker.io/securesystemsengineering/connaisseur:*"
     verify: true
     notary: dockerhub

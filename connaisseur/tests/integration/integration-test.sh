@@ -51,6 +51,51 @@ else
   echo 'Successfully allowed usage of signed image'
 fi
 
+echo 'Testing edge case of tag defined in both targets and release json file...'
+DEPLOYED_SHA=$(kubectl get pod pod -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://')
+if [[ "${DEPLOYED_SHA}" != 'c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7' ]]; then
+  echo "Connaisseur substituted wrong image: ${DEPLOYED_SHA}"
+  exit 1
+else
+  echo 'Connaisseur substituted correct image'
+fi
+
+echo 'Testing signed image with designated signer...'
+kubectl run pod2 --image=securesystemsengineering/testimage:special_sig >output.log 2>&1 || true
+NUMBER_OF_VALID_DEPLOYMENTS+=1
+
+if [[ "$(cat output.log)" != 'pod/pod2 created' ]]; then
+  echo 'Failed to allow image signed by designated signer. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully allowed usage of image signed by designated signer'
+fi
+
+echo 'Testing image with missing designated signer...'
+kubectl run pod3 --image=securesystemsengineering/testimage:wrong_signer >output.log 2>&1 || true
+NUMBER_OF_INVALID_DEPLOYMENTS+=1
+
+if [[ ! "$(cat output.log)" =~ 'Not all required delegations have trust data for image docker.io/securesystemsengineering/testimage:wrong_signer.' ]]; then
+  echo 'Failed to deny image with missing designated signer or failed with unexpected error. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully denied usage of image with missing designated signer'
+fi
+
+echo 'Testing image with differing designated signers...'
+kubectl run pod3 --image=securesystemsengineering/testimage:double_sig >output.log 2>&1 || true
+NUMBER_OF_INVALID_DEPLOYMENTS+=1
+
+if [[ ! "$(cat output.log)" =~ 'Found multiple signed digests for image docker.io/securesystemsengineering/testimage:double_sig.' ]]; then
+  echo 'Failed to deny image with missing designated signer or failed with unexpected error. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully denied usage of image with differing designated signers'
+fi
+
 echo 'Testing deployment of unsigned init container along with a valid container...'
 kubectl apply -f connaisseur/tests/integration/valid_container_with_unsigned_init_container_image.yml >output.log 2>&1 || true
 NUMBER_OF_INVALID_DEPLOYMENTS+=1
