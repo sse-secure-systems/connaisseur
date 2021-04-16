@@ -1,0 +1,17 @@
+name: safety
+description: 'action that runs safety '
+runs:
+  using: "composite"
+  steps:
+    - name: Install packages
+      run: pip3 install -r requirements_dev.txt
+      shell: sh
+    - name: Freeze packages
+      run: pip3 freeze > actual_package_versions.txt
+      shell: sh
+    - name: Install safety
+      run: pip3 install safety
+      shell: sh
+    - name: Run safety
+      run: safety check -r ./actual_package_versions.txt --full-report -o safety-report.txt
+      shell: sh
