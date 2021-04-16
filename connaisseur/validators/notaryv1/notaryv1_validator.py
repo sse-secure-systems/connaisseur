@@ -13,6 +13,8 @@ from connaisseur.exceptions import (
     InvalidFormatException,
     UnknownTypeException,
     PathTraversalError,
+    AmbiguousDigestError,
+    InsufficientTrustDataError,
 )
 
 

@@ -65,31 +65,17 @@
                         },
                         "auth": {
                             "type": "object",
-                            "oneOf": [
-                                {
-                                    "properties": {
-                                        "user": {
-                                            "type": "string"
-                                        },
-                                        "password": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "user",
-                                        "password"
-                                    ]
+                            "properties": {
+                                "user": {
+                                    "type": "string"
                                 },
-                                {
-                                    "properties": {
-                                        "secretName": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "secret_name"
-                                    ]
+                                "password": {
+                                    "type": "string"
                                 }
+                            },
+                            "required": [
+                                "user",
+                                "password"
                             ]
                         }
                     },
@@ -159,7 +145,9 @@
                             "type": "boolean"
                         }
                     },
-                    "required": ["approve"]
+                    "required": [
+                        "approve"
+                    ]
                 }
             }
         ]
