@@ -33,10 +33,6 @@ class BaseConnaisseurException(Exception):
         self.context.update(dict(**kwargs))
 
 
-class InvalidPublicKey(BaseConnaisseurException):
-    pass
-
-
 class ValidationError(BaseConnaisseurException):
     pass
 

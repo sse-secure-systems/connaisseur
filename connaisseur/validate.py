@@ -9,7 +9,6 @@ from connaisseur.exceptions import (
     NotFoundException,
     InsufficientTrustDataError,
     AmbiguousDigestError,
-    NotFoundException,
 )
 from connaisseur.policy import Rule
 
