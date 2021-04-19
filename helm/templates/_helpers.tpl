@@ -39,6 +39,30 @@ app.kubernetes.io/instance: {{ .Chart.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
+{{- define "helm.webhook-securitycontext" -}}
+allowPrivilegeEscalation: false
+capabilities:
+  drop:
+    - ALL
+privileged: false
+readOnlyRootFilesystem: true
+runAsGroup: 2000
+runAsNonRoot: true
+runAsUser: 1000
+{{- if gt (.Capabilities.KubeVersion.Minor | int) 18 }}
+seccompProfile:
+  type: RuntimeDefault
+{{- end }}
+{{- end -}}
+
+{{- define "helm.webhook-resources" -}}
+requests:
+ memory: "32Mi"
+ cpu: "50m"
+limits:
+ memory: "64Mi"
+ cpu: "100m"
+{{- end -}}
 
 {{- define "config-secrets" -}}
 {{- $secret_dict := dict -}}

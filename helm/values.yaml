@@ -1,19 +1,30 @@
 # configure Connaisseur deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v2.1.0
+  image: securesystemsengineering/connaisseur:v2.1.1
   helmHookImage: securesystemsengineering/connaisseur:helm-hook-v1.0
   imagePullPolicy: Always
-  resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
   nodeSelector: {}
   tolerations: []
-  affinity: {}
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                    - connaisseur
+            topologyKey: kubernetes.io/hostname
+          weight: 100
 
 # configure Connaisseur service
 service:

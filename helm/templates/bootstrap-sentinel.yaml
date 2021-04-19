@@ -11,4 +11,25 @@ spec:
     image: busybox
     imagePullPolicy: Always
     command: ['sh', '-c', 'sleep 300s']
+    resources:
+      requests:
+        memory: "16Mi"
+        cpu: "25m"
+      limits:
+        memory: "32Mi"
+        cpu: "50m"
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsGroup: 2000
+      runAsNonRoot: true
+      runAsUser: 1000
+      {{- if gt (.Capabilities.KubeVersion.Minor | int) 18 }}
+      seccompProfile:
+        type: RuntimeDefault
+      {{- end }}
   restartPolicy: Never

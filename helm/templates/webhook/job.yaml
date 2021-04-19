@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Chart.Name }}-install-webhook-job
-  namespace: {{ .Release.namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: post-install
     helm.sh/hook-weight: "5"
@@ -14,10 +14,7 @@ spec:
     metadata:
       name: {{ .Chart.Name }}-install-webhook
       labels:
-        app.kubernetes.io/name: {{ include "helm.name" . }}
-        helm.sh/chart: {{ include "helm.chart" . }}
-        app.kubernetes.io/instance: {{ .Chart.Name }}
-        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        {{- include "helm.labels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
       containers:
@@ -34,6 +31,10 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ .Chart.Name }}-env
+          resources:
+            {{- include "helm.webhook-resources" . | nindent 12 }}
+          securityContext:
+            {{- include "helm.webhook-securitycontext" . | nindent 12 }}
       volumes:
         - name: webhook-data
           configMap:
@@ -45,25 +46,19 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Chart.Name }}-delete-webhook-job
-  namespace: {{ .Release.namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: pre-delete, pre-upgrade
     helm.sh/hook-weight: "5"
     helm.sh/hook-delete-policy: hook-succeeded, hook-failed
   labels:
-    app.kubernetes.io/name: {{ include "helm.name" . }}
-    helm.sh/chart: {{ include "helm.chart" . }}
-    app.kubernetes.io/instance: {{ .Chart.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "helm.labels" . | nindent 4 }}
 spec:
   template:
     metadata:
       name: {{ .Chart.Name }}-delete-webhook
       labels:
-        app.kubernetes.io/name: {{ include "helm.name" . }}
-        helm.sh/chart: {{ include "helm.chart" . }}
-        app.kubernetes.io/instance: {{ .Chart.Name }}
-        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        {{- include "helm.labels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
       containers:
@@ -77,6 +72,10 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ .Chart.Name }}-env
+          resources:
+            {{- include "helm.webhook-resources" . | nindent 12 }}
+          securityContext:
+            {{- include "helm.webhook-securitycontext" . | nindent 12 }}
       restartPolicy: OnFailure
 ---
 
@@ -84,25 +83,19 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Chart.Name }}-upgrade-webhook-job
-  namespace: {{ .Release.namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     helm.sh/hook: post-upgrade
     helm.sh/hook-weight: "5"
     helm.sh/hook-delete-policy: hook-succeeded, hook-failed
   labels:
-    app.kubernetes.io/name: {{ include "helm.name" . }}
-    helm.sh/chart: {{ include "helm.chart" . }}
-    app.kubernetes.io/instance: {{ .Chart.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "helm.labels" . | nindent 4 }}
 spec:
   template:
     metadata:
       name: {{ .Chart.Name }}-upgrade-webhook
       labels:
-        app.kubernetes.io/name: {{ include "helm.name" . }}
-        helm.sh/chart: {{ include "helm.chart" . }}
-        app.kubernetes.io/instance: {{ .Chart.Name }}
-        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        {{- include "helm.labels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ .Chart.Name }}-hook-serviceaccount
       containers:
@@ -119,6 +112,10 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ .Chart.Name }}-env
+          resources:
+            {{- include "helm.webhook-resources" . | nindent 12 }}
+          securityContext:
+            {{- include "helm.webhook-securitycontext" . | nindent 12 }}
       volumes:
         - name: webhook-data
           configMap:
