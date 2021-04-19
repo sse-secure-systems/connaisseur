@@ -41,6 +41,17 @@ jobs:
         run: |
           python3 -m black . 2>&1 | grep -q "reformatted" && { echo 'Not properly formatted.'; exit 1; } || true
 
+  kube-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Scan repo
+        id: kube-lint-repo
+        uses: stackrox/kube-linter-action@v1.0.0
+        with:
+          directory: helm
+          config: .kube-linter/config.yaml
+
   hadolint:
     runs-on: ubuntu-latest
     container:
