@@ -64,6 +64,7 @@ pip3 install .
 cd connaisseur
 pytest --cov=connaisseur --cov-report=xml tests/
 ```
+
 This helps identify bugs in changes before pushing.
 
 > :information_source: **INFO** We believe that testing should not only ensure functionality, but also aim to test for expected security issues like injections and appreciate if security tests are added with new functionalities.
@@ -75,7 +76,7 @@ Besides the unit testing and before any PR can be merged, an integration test is
 - a signed image is deployed to the cluster and passed
 - Connaisseur is successfully uninstalled
 
-You can also run this integration test on a local cluster after setting the necessary environment variables.
+You can also run this integration test on a local cluster. There is a more [detailed guided](connaisseur/tests/integration/LOCAL.md) on how to do that.
 
 ### Signed Commits and Pull Requests
 All changes to the `master` branch must be signed which is enforced via [branch protection](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing). This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor. Consequently, while we appreciate signed commits in PRs, we do not require it.
