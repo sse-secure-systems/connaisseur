@@ -109,7 +109,7 @@ else
 fi
 
 echo 'Checking whether alert endpoints have been called successfully'
-ENDPOINT_HITS=$(curl 127.0.0.1:56243 --header "Content-Type: application/json")
+ENDPOINT_HITS=$(curl ${ALERTING_ENDPOINT_IP}:56243 --header "Content-Type: application/json")
 let NUMBER_OF_DEPLOYMENTS=${NUMBER_OF_INVALID_DEPLOYMENTS}+${NUMBER_OF_VALID_DEPLOYMENTS}
 EXPECTED_ENDPOINT_HITS=$(jq -n \
 --argjson REQUESTS_TO_SLACK_ENDPOINT ${NUMBER_OF_DEPLOYMENTS} \
