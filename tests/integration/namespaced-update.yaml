@@ -15,17 +15,17 @@ validators:
   type: static
   approve: true
 policy:
-  - pattern: "*:*"
-    verify: true
-    notary: dockerhub
+- pattern: "*:*"
+  validator: dockerhub
+  with:
     key: sse
-  - pattern: "k8s.gcr.io/*:*"
-    verify: false
-  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-    verify: true
-    notary: dockerhub
+- pattern: "k8s.gcr.io/*:*"
+  validator: allow
+- pattern: "docker.io/securesystemsengineering/connaisseur:*"
+  validator: dockerhub
+  with:
     key: sse
-  - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
-    verify: false
+- pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
+  validator: allow
 
 targetNamespaces: ["verifyns"]

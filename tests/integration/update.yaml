@@ -16,26 +16,32 @@ validators:
     approve: true
 policy:
   - pattern: "*:*"
-    verify: true
-    notary: dockerhub
-    key: sse
+    validator: dockerhub
+    with:
+      key: sse
   - pattern: "k8s.gcr.io/*:*"
-    verify: false
+    validator: allow
   - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
-    verify: true
-    delegations: ["starkteetje"]
+    validator: dockerhub
+    with:
+      key: sse
+      delegations: ["starkteetje"]
   - pattern: "docker.io/securesystemsengineering/testimage:wrong_signer"
-    verify: true
-    delegations: ["belitzphilipp"]
+    validator: dockerhub
+    with:
+      key: sse
+      delegations: ["belitzphilipp"]
   - pattern: "docker.io/securesystemsengineering/testimage:double_sig"
-    verify: true
-    delegations: ["belitzphilipp", "starkteetje"]
+    validator: dockerhub
+    with:
+      key: sse
+      delegations: ["belitzphilipp", "starkteetje"]
   - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-    verify: true
-    notary: dockerhub
-    key: sse
+    validator: dockerhub
+    with:
+      key: sse
   - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
-    verify: false
+    validator: allow
 alerting:
   config_dir_path: "/app/config"
   cluster_name: "minikube"

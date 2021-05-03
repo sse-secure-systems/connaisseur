@@ -4,7 +4,7 @@ set -euo pipefail
 # This script is expected to be called from the root folder of Connaisseur
 
 echo 'Preparing Connaisseur config...'
-yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml connaisseur/tests/integration/namespaced-update.yaml
+yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/namespaced-update.yaml
 echo 'Config set'
 
 echo 'Installing Connaisseur...'

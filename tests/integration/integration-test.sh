@@ -6,7 +6,7 @@ declare -i NUMBER_OF_VALID_DEPLOYMENTS=0
 declare -i NUMBER_OF_INVALID_DEPLOYMENTS=0
 
 echo 'Preparing Connaisseur config...'
-envsubst < connaisseur/tests/integration/update.yaml > update
+envsubst < tests/integration/update.yaml > update
 yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
 rm update
 echo 'Config set'
@@ -97,7 +97,7 @@ else
 fi
 
 echo 'Testing deployment of unsigned init container along with a valid container...'
-kubectl apply -f connaisseur/tests/integration/valid_container_with_unsigned_init_container_image.yml >output.log 2>&1 || true
+kubectl apply -f tests/integration/valid_container_with_unsigned_init_container_image.yml >output.log 2>&1 || true
 NUMBER_OF_INVALID_DEPLOYMENTS+=1
 
 if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then

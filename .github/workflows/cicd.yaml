@@ -72,11 +72,11 @@ jobs:
       - name: Install git and curl
         run: apt update && apt install -y git curl
       - name: Test
-        run: cd connaisseur && pytest --cov=connaisseur --cov-report=xml tests/
+        run: pytest --cov=connaisseur --cov-report=xml tests/
       - name: Upload code coverage
         uses: codecov/codecov-action@v1
         with:
-          file: connaisseur/coverage.xml
+          file: coverage.xml
           fail_ci_if_error: true
 
   bandit:
@@ -88,7 +88,7 @@ jobs:
       - name: Install bandit
         run: pip3 install bandit
       - name: Run bandit
-        run: bandit -r -x tests/,changelogger.py -f txt -o bandit-report.txt .
+        run: bandit -r -f txt -o bandit-report.txt connaisseur/
       - name: Print report
         if: ${{ success() || failure() }}
         run: cat bandit-report.txt

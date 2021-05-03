@@ -45,5 +45,5 @@ runs:
       shell: bash
     - name: Run actual integration test
       run: |
-        bash connaisseur/tests/integration/${{ inputs.integration-test-script }}
+        bash tests/integration/${{ inputs.integration-test-script }}
       shell: bash
