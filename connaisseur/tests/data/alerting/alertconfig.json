@@ -40,7 +40,7 @@
                 "custom_headers": [
                     "Content-Language: de-DE"
                 ],
-                "fail_if_alert_sending_fails": true,
+                "fail_if_alert_sending_fails": false,
                 "priority": 3,
                 "receiver_url": "https://bots.keybase.io/webhookbot/123",
                 "template": "keybase"

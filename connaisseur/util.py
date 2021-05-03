@@ -1,6 +1,7 @@
 import os
 import base64
 import json
+import yaml
 from jsonschema import validate, ValidationError, FormatChecker
 from connaisseur.exceptions import PathTraversalError
 
@@ -17,6 +18,16 @@ def safe_path_func(callback: callable, base_dir: str, path: str, *args, **kwargs
         msg = "Potential path traversal in {path}."
         raise PathTraversalError(message=msg, path=path)
     return callback(path, *args, **kwargs)
+
+
+def safe_json_open(base_dir: str, path: str):
+    with safe_path_func(open, base_dir, path, "r") as file:
+        return json.load(file)
+
+
+def safe_yaml_open(base_dir: str, path: str):
+    with safe_path_func(open, base_dir, path, "r") as file:
+        return yaml.safe_load(file)
 
 
 def get_admission_review(

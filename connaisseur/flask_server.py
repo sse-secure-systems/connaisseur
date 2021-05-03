@@ -10,7 +10,7 @@ from connaisseur.exceptions import (
 )
 from connaisseur.util import get_admission_review
 import connaisseur.kube_api as k_api
-from connaisseur.alert import call_alerting_on_request, send_alerts
+from connaisseur.alert import send_alerts
 from connaisseur.config import Config
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.policy import ImagePolicy
@@ -60,8 +60,7 @@ def mutate():
         else:
             err_log = str(traceback.format_exc())
             msg = "unknown error. please check the logs."
-        if call_alerting_on_request(admission_request, admitted=False):
-            send_alerts(admission_request, admitted=False, reason=msg)
+        send_alerts(admission_request, False, msg)
         logging.error(err_log)
         return jsonify(
             get_admission_review(
@@ -71,8 +70,7 @@ def mutate():
                 detection_mode=DETECTION_MODE,
             )
         )
-    if call_alerting_on_request(admission_request, admitted=True):
-        send_alerts(admission_request, admitted=True)
+    send_alerts(admission_request, True)
     return jsonify(response)
 
 

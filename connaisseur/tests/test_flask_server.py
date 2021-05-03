@@ -30,6 +30,7 @@ def test_mutate(
     m_policy,
     m_expiry,
     m_trust_data,
+    m_alerting,
     allowed,
     status_code,
     detection_mode,
@@ -182,7 +183,7 @@ def test_admit(
         ),
         (
             {
-                "target": "connaisseur.flask_server.call_alerting_on_request",
+                "target": "connaisseur.flask_server.send_alerts",
                 "side_effect": exc.ConfigurationError(""),
             },
             "Alerting configuration is not valid. Check the logs for more details!",
