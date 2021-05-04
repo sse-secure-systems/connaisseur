@@ -157,8 +157,8 @@ def test_get_trust_data(
     with exception:
         no = notary.Notary(**sample_notaries[index])
         td = no.get_trust_data(Image(image), role)
-        assert td.signed == output["signed"]
-        assert td.signatures == output["signatures"]
+        assert td["signed"] == output["signed"]
+        assert td["signatures"] == output["signatures"]
 
 
 @pytest.mark.parametrize(
