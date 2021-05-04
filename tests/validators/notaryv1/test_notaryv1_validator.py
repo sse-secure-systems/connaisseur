@@ -1,4 +1,6 @@
+import re
 import pytest
+from aioresponses import aioresponses
 from ... import conftest as fix
 import connaisseur.validators.notaryv1.notaryv1_validator as nv1
 from connaisseur.image import Image
@@ -85,7 +87,10 @@ def test_validate(
     exception,
 ):
     with exception:
-        assert sample_nv1.validate(Image(image), key, delegations) == digest
+        with aioresponses() as aio:
+            aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+            signed_digest = sample_nv1.validate(Image(image), key, delegations)
+            assert signed_digest == digest
 
 
 @pytest.mark.parametrize(
@@ -194,6 +199,7 @@ targets6 = [
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "image, delegations, key, targets, exception",
     [
@@ -248,7 +254,7 @@ targets6 = [
         ),
     ],
 )
-def test_process_chain_of_trust(
+async def test_process_chain_of_trust(
     sample_nv1,
     m_request,
     m_trust_data,
@@ -260,12 +266,15 @@ def test_process_chain_of_trust(
     exception,
 ):
     with exception:
-        assert (
-            sample_nv1._NotaryV1Validator__process_chain_of_trust(
-                Image(image), delegations, key
+        with aioresponses() as aio:
+            aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+            signed_targets = (
+                await sample_nv1._NotaryV1Validator__process_chain_of_trust(
+                    Image(image), delegations, key
+                )
             )
-            == targets
-        )
+
+            assert signed_targets == targets
 
 
 @pytest.mark.parametrize(
@@ -326,6 +335,7 @@ def test_search_image_targets_for_tag(sample_nv1, image: str, digest: str):
     )
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "delegations",
     [
@@ -335,7 +345,7 @@ def test_search_image_targets_for_tag(sample_nv1, image: str, digest: str):
         (["targets/daugustin"]),
     ],
 )
-def test_update_with_delegation_trust_data(
+async def test_update_with_delegation_trust_data(
     m_request,
     m_trust_data,
     m_expiry,
@@ -344,7 +354,7 @@ def test_update_with_delegation_trust_data(
     delegations,
 ):
     assert (
-        sample_nv1._NotaryV1Validator__update_with_delegation_trust_data(
+        await sample_nv1._NotaryV1Validator__update_with_delegation_trust_data(
             {}, delegations, alice_key_store, Image("alice-image")
         )
         is None

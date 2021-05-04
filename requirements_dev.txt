@@ -5,3 +5,5 @@ pylint~=2.7.2
 requests-mock~=1.8.0
 pytest-mock~=3.3.1
 pytest-subprocess~=1.0.1
+pytest-asyncio~=0.15.1
+aioresponses~=0.7.2

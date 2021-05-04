@@ -1,4 +1,6 @@
+import re
 import pytest
+from aioresponses import aioresponses
 from . import conftest as fix
 import connaisseur.exceptions as exc
 import connaisseur.config as co
@@ -36,15 +38,17 @@ def test_mutate(
     status_code,
     detection_mode,
 ):
-    monkeypatch.setenv("DETECTION_MODE", str(detection_mode))
-    client = pytest.fs.APP.test_client()
-    response = client.post("/mutate", json=adm_req_samples[index])
-    admission_response = response.get_json()["response"]
+    with aioresponses() as aio:
+        aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+        monkeypatch.setenv("DETECTION_MODE", str(detection_mode))
+        client = pytest.fs.APP.test_client()
+        response = client.post("/mutate", json=adm_req_samples[index])
+        admission_response = response.get_json()["response"]
 
-    assert response.status_code == 200
-    assert response.is_json
-    assert admission_response["allowed"] == allowed
-    assert admission_response["status"]["code"] == status_code
+        assert response.status_code == 200
+        assert response.is_json
+        assert admission_response["allowed"] == allowed
+        assert admission_response["status"]["code"] == status_code
 
 
 def test_healthz():
@@ -177,7 +181,9 @@ def test_admit(
     adm_req_samples, index, m_request, m_policy, m_expiry, m_trust_data, out, exception
 ):
     with exception:
-        assert pytest.fs.__admit(AdmissionRequest(adm_req_samples[index])) == out
+        with aioresponses() as aio:
+            aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+            assert pytest.fs.__admit(AdmissionRequest(adm_req_samples[index])) == out
 
 
 @pytest.mark.parametrize(

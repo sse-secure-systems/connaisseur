@@ -1,6 +1,9 @@
 from requests.models import HTTPError
 import yaml
 import pytest
+import re
+from aioresponses import aioresponses
+from aiohttp.client_exceptions import ClientResponseError
 from ... import conftest as fix
 import connaisseur.validators.notaryv1.notary as notary
 import connaisseur.exceptions as exc
@@ -103,11 +106,16 @@ def test_get_key(sample_notaries, index, key_name, key, exception):
 
 
 @pytest.mark.parametrize(
-    "index, out", [(1, "tests/data/notary/harbor.cert"), (0, None)]
+    "index, out", [(1, "107CB525ED666EBB7445A2C38C36A3B3"), (0, None)]
 )
-def test_write_cert(sample_notaries, index, out):
+def test_get_context(sample_notaries, index, out):
     no = notary.Notary(**sample_notaries[index])
-    assert no.cert == out
+    assert (
+        getattr(no.cert, "get_ca_certs", lambda x: [{}])(None)[0].get(
+            "serialNumber", None
+        )
+        == out
+    )
 
 
 @pytest.mark.parametrize(
@@ -125,6 +133,7 @@ def test_healthy(sample_notaries, m_request, index, host, health):
     assert no.healthy == health
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "index, image, role, output, exception",
     [
@@ -148,16 +157,26 @@ def test_healthy(sample_notaries, m_request, index, host, health):
         (0, "empty.io/alice-image", "root", {}, pytest.raises(exc.NotFoundException)),
     ],
 )
-def test_get_trust_data(
-    sample_notaries, m_request, m_trust_data, index, image, role, output, exception
+async def test_get_trust_data(
+    sample_notaries,
+    m_request,
+    m_trust_data,
+    index,
+    image,
+    role,
+    output,
+    exception,
 ):
     with exception:
-        no = notary.Notary(**sample_notaries[index])
-        td = no.get_trust_data(Image(image), role)
-        assert td.signed == output["signed"]
-        assert td.signatures == output["signatures"]
+        with aioresponses() as aio:
+            aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+            no = notary.Notary(**sample_notaries[index])
+            td = await no.get_trust_data(Image(image), role)
+            assert td.signed == output["signed"]
+            assert td.signatures == output["signatures"]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "index, image, output, exception, log_lvl",
     [
@@ -172,7 +191,7 @@ def test_get_trust_data(
         ),
     ],
 )
-def test_get_delegation_trust_data(
+async def test_get_delegation_trust_data(
     monkeypatch,
     sample_notaries,
     m_request,
@@ -185,10 +204,11 @@ def test_get_delegation_trust_data(
 ):
     monkeypatch.setenv("LOG_LEVEL", log_lvl)
     with exception:
-        no = notary.Notary(**sample_notaries[index])
-        assert output is bool(
-            no.get_delegation_trust_data(Image(image), "targets/phbelitz")
-        )
+        with aioresponses() as aio:
+            aio.get(re.compile(r".*"), callback=fix.async_callback)
+            no = notary.Notary(**sample_notaries[index])
+            td = await no.get_delegation_trust_data(Image(image), "targets/phbelitz")
+            assert output is bool(td)
 
 
 @pytest.mark.parametrize(
@@ -229,6 +249,7 @@ def test_parse_auth(sample_notaries, headers, url, exception):
         assert no._Notary__parse_auth(headers) == url
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "index, url, token, exception",
     [
@@ -261,7 +282,7 @@ def test_parse_auth(sample_notaries, headers, url, exception):
             0,
             "https://notary.hans.io/token?service=notary",
             "",
-            pytest.raises(HTTPError),
+            pytest.raises(ClientResponseError),
         ),
         (
             1,
@@ -271,7 +292,10 @@ def test_parse_auth(sample_notaries, headers, url, exception):
         ),
     ],
 )
-def test_get_auth_token(sample_notaries, m_request, index, url, token, exception):
+async def test_get_auth_token(sample_notaries, m_request, index, url, token, exception):
     with exception:
-        no = notary.Notary(**sample_notaries[index])
-        assert no._Notary__get_auth_token(url) == token
+        with aioresponses() as aio:
+            aio.get(url, callback=fix.async_callback)
+            no = notary.Notary(**sample_notaries[index])
+            auth_token = await no._Notary__get_auth_token(url)
+            assert auth_token == token

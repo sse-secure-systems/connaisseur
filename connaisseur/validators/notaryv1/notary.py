@@ -1,11 +1,14 @@
+import json
 import os
 import re
+import ssl
 from urllib.parse import quote, urlencode
 import requests
 import yaml
+import aiohttp
 from connaisseur.image import Image
-from connaisseur.validators.notaryv1.tuf_role import TUFRole
 from connaisseur.validators.notaryv1.trust_data import TrustData
+from connaisseur.validators.notaryv1.tuf_role import TUFRole
 from connaisseur.exceptions import (
     UnreachableError,
     NotFoundException,
@@ -45,23 +48,14 @@ class Notary:
         self.host = host
         self.pub_root_keys = trust_roots or []
         self.is_acr = is_acr
-        self.auth = auth
-        self.cert = self.__write_cert(cert) if cert else None
+        self.auth = {"login" if k == "username" else k: v for k, v in auth.items()}
+        self.cert = self.__get_context(cert) if cert else None
 
-    def __write_cert(self, cert: str):
-        cert_path = self.CERT_PATH.format(self.name)
-
-        if not safe_path_func(os.path.exists, "/app/connaisseur/certs", cert_path):
-            safe_path_func(
-                os.makedirs,
-                "/app/connaisseur/certs",
-                os.path.dirname(cert_path),
-                exist_ok=True,
-            )
-            with safe_path_func(open, "/app/connaisseur/certs", cert_path, "w") as file:
-                file.write(cert)
-
-        return cert_path
+    def __get_context(self, cert: str):
+        try:
+            return ssl.create_default_context(cadata=cert)
+        except Exception:
+            return None
 
     def get_key(self, key_name: str = None):
         """
@@ -100,7 +94,7 @@ class Notary:
         except Exception:
             return False
 
-    def get_trust_data(self, image: Image, role: TUFRole, token: str = None):
+    async def get_trust_data(self, image: Image, role: TUFRole, token: str = None):
         if not self.healthy:
             msg = "Unable to reach notary host {notary_name}."
             raise UnreachableError(
@@ -113,38 +107,42 @@ class Notary:
             f"{image.name}/_trust/tuf/{str(role)}.json"
         )
 
-        request_kwargs = {
-            "url": url,
-            "verify": self.cert,
-            "headers": ({"Authorization": f"Bearer {token}"} if token else None),
-        }
+        async with aiohttp.ClientSession() as session:
+            request_kwargs = {
+                "url": url,
+                "ssl": self.cert,
+                "headers": ({"Authorization": f"Bearer {token}"} if token else None),
+            }
+            async with session.get(**request_kwargs) as response:
+                status = response.status
+                if (
+                    status == 401
+                    and not token
+                    and ("www-authenticate" in [k.lower() for k in response.headers])
+                ):
+                    auth_url = self.__parse_auth(
+                        {k.lower(): v for k, v in response.headers.items()}[
+                            "www-authenticate"
+                        ]
+                    )
+                    token = await self.__get_auth_token(auth_url)
+                    return await self.get_trust_data(image, role, token)
 
-        response = requests.get(**request_kwargs)
+                if status == 404:
+                    msg = "Unable to get {tuf_role} trust data from {notary_name}."
+                    raise NotFoundException(
+                        message=msg, notary_name=self.name, tuf_role=str(role)
+                    )
 
-        if (
-            response.status_code == 401
-            and not token
-            and ("www-authenticate" in [k.lower() for k in response.headers])
-        ):
-            auth_url = self.__parse_auth(
-                {k.lower(): v for k, v in response.headers.items()}["www-authenticate"]
-            )
-            token = self.__get_auth_token(auth_url)
-            return self.get_trust_data(image, role, token)
+                response.raise_for_status()
+                data = await response.text()
+                return TrustData(json.loads(data), str(role))
 
-        if response.status_code == 404:
-            msg = "Unable to get {tuf_role} trust data from {notary_name}."
-            raise NotFoundException(
-                message=msg, notary_name=self.name, tuf_role=str(role)
-            )
-
-        response.raise_for_status()
-
-        return TrustData(response.json(), str(role))
-
-    def get_delegation_trust_data(self, image: Image, role: TUFRole, token: str = None):
+    async def get_delegation_trust_data(
+        self, image: Image, role: TUFRole, token: str = None
+    ):
         try:
-            return self.get_trust_data(image, role, token)
+            return await self.get_trust_data(image, role, token)
         except Exception as ex:
             if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
                 raise ex
@@ -214,44 +212,47 @@ class Notary:
 
         return url
 
-    def __get_auth_token(self, url: str):
+    async def __get_auth_token(self, url: str):
         """
         Return the JWT from the given `url`, using user and password from
         environment variables.
 
         Raises an exception if a HTTP error status code occurs.
         """
-        request_kwargs = {
-            "url": url,
-            "verify": self.cert,
-            "auth": (requests.auth.HTTPBasicAuth(**self.auth) if self.auth else None),
-        }
+        async with aiohttp.ClientSession() as session:
+            request_kwargs = {
+                "url": url,
+                "ssl": self.cert,
+                "auth": (aiohttp.BasicAuth(**self.auth) if self.auth else None),
+            }
+            async with session.get(**request_kwargs) as response:
+                if response.status >= 500:
+                    msg = "Unable to get authentication token from {auth_url}."
+                    raise NotFoundException(
+                        message=msg, notary_name=self.name, auth_url=url
+                    )
 
-        response = requests.get(**request_kwargs)
+                response.raise_for_status()
 
-        if response.status_code >= 500:
-            msg = "Unable to get authentication token from {auth_url}."
-            raise NotFoundException(message=msg, notary_name=self.name, auth_url=url)
+                try:
+                    token_key = "access_token" if self.is_acr else "token"
+                    token = (await response.json())[token_key]
+                except KeyError as err:
+                    msg = "Unable to retrieve authentication token from {auth_url} response."
+                    raise NotFoundException(
+                        message=msg, notary_name=self.name, auth_url=url
+                    ) from err
 
-        response.raise_for_status()
+                token_re = (
+                    r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$"  # nosec
+                )
 
-        try:
-            token_key = "access_token" if self.is_acr else "token"
-            token = response.json()[token_key]
-        except KeyError as err:
-            msg = "Unable to retrieve authentication token from {auth_url} response."
-            raise NotFoundException(
-                message=msg, notary_name=self.name, auth_url=url
-            ) from err
-
-        token_re = r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$"  # nosec
-
-        if not re.match(token_re, token):
-            msg = "{validation_kind} has an invalid format."
-            raise InvalidFormatException(
-                message=msg,
-                validation_kind="Authentication token",
-                notary_name=self.name,
-                auth_url=url,
-            )
-        return token
+                if not re.match(token_re, token):
+                    msg = "{validation_kind} has an invalid format."
+                    raise InvalidFormatException(
+                        message=msg,
+                        validation_kind="Authentication token",
+                        notary_name=self.name,
+                        auth_url=url,
+                    )
+                return token

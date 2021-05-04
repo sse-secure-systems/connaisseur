@@ -57,7 +57,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install packages
-        run: pip3 install -r requirements_dev.txt
+        # Since we run inside an alpine based container, we cannot compile yarl and multidic
+        run: YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
       - name: Lint
         run: cd connaisseur && pylint --ignore-patterns=tests,coverage *.*
 
@@ -102,6 +103,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: python:alpine
+    env:
+      YARL_NO_EXTENSIONS: 1
+      MULTIDICT_NO_EXTENSIONS: 1
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/safety

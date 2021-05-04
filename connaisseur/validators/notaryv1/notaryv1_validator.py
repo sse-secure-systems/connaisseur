@@ -1,5 +1,8 @@
 import os
 import base64
+import asyncio
+import datetime as dt
+import logging
 from connaisseur.validators.interface import ValidatorInterface
 from connaisseur.image import Image
 from connaisseur.admission_request import AdmissionRequest
@@ -7,6 +10,7 @@ from connaisseur.validators.notaryv1.notary import Notary
 from connaisseur.util import safe_path_func
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
 from connaisseur.validators.notaryv1.key_store import KeyStore
+from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.exceptions import (
     UnreachableError,
     NotFoundException,
@@ -43,8 +47,8 @@ class NotaryV1Validator(ValidatorInterface):
 
         # get list of targets fields, containing tag to signed digest mapping from
         # `targets.json` and all potential delegation roles
-        signed_image_targets = self.__process_chain_of_trust(
-            image, req_delegations, pub_key
+        signed_image_targets = asyncio.run(
+            self.__process_chain_of_trust(image, req_delegations, pub_key)
         )
 
         # search for digests or tag, depending on given image
@@ -92,7 +96,7 @@ class NotaryV1Validator(ValidatorInterface):
             delegation_role = prefix + delegation_role
         return delegation_role
 
-    def __process_chain_of_trust(
+    async def __process_chain_of_trust(
         self, image: Image, req_delegations: list, pub_root_key: str
     ):  # pylint: disable=too-many-branches
         """
@@ -113,8 +117,13 @@ class NotaryV1Validator(ValidatorInterface):
         tuf_roles = ["root", "snapshot", "timestamp", "targets"]
 
         # load all trust data
-        for role in tuf_roles:
-            trust_data[role] = self.notary.get_trust_data(image, TUFRole(role))
+        t1 = dt.datetime.now()
+        trust_data_list = await asyncio.gather(
+            *[self.notary.get_trust_data(image, TUFRole(role)) for role in tuf_roles]
+        )
+        t2 = (dt.datetime.now() - t1).total_seconds()
+        logging.debug(f"Pulled trust data for image {str(image)} in {t2} seconds.")
+        trust_data = {tuf_roles[i]: trust_data_list[i] for i in range(len(tuf_roles))}
 
         # validate signature and expiry data of and load root file
         # this does NOT conclude the validation of the root file. To prevent
@@ -164,7 +173,7 @@ class NotaryV1Validator(ValidatorInterface):
         # as well
         delegations = trust_data["targets"].get_delegations()
         if trust_data["targets"].has_delegations():
-            self.__update_with_delegation_trust_data(
+            await self.__update_with_delegation_trust_data(
                 trust_data, delegations, key_store, image
             )
 
@@ -239,19 +248,28 @@ class NotaryV1Validator(ValidatorInterface):
         base64_digest = trust_data[image_tag]["hashes"]["sha256"]
         return base64.b64decode(base64_digest).hex()
 
-    def __update_with_delegation_trust_data(
+    async def __update_with_delegation_trust_data(
         self, trust_data, delegations, key_store, image
     ):
-        for delegation in delegations:
-            delegation_trust_data = self.notary.get_delegation_trust_data(
-                image, TUFRole(delegation)
-            )
-            # when delegations are added to the repository, but weren't yet used for
-            # signing, the delegation files don't exist yet and are `None`. in this
-            # case validation must be skipped
-            if delegation_trust_data is not None:
-                delegation_trust_data.validate(key_store)
-            trust_data[delegation] = delegation_trust_data
+        delegation_trust_data_list = await asyncio.gather(
+            *[
+                self.notary.get_delegation_trust_data(image, TUFRole(delegation))
+                for delegation in delegations
+            ]
+        )
+
+        # when delegations are added to the repository, but weren't yet used for signing,
+        # the delegation files don't exist yet and are `None`. in this case they are
+        # skipped
+        delegation_trust_data = {
+            delegations[i]: delegation_trust_data_list[i]
+            for i in range(len(delegations))
+            if delegation_trust_data_list[i]
+        }
+
+        for delegation in delegation_trust_data:
+            delegation_trust_data[delegation].validate(key_store)
+        trust_data.update(delegation_trust_data)
 
     @staticmethod
     def __validate_all_required_delegations_present(
