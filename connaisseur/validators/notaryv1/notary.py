@@ -5,7 +5,6 @@ import requests
 import yaml
 from connaisseur.image import Image
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
-from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.exceptions import (
     UnreachableError,
     NotFoundException,
@@ -150,7 +149,7 @@ class Notary:
 
         response.raise_for_status()
 
-        return TrustData(response.json(), str(role))
+        return response.json()
 
     def get_delegation_trust_data(self, image: Image, role: TUFRole, token: str = None):
         try:

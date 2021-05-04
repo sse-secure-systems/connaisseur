@@ -1,5 +1,6 @@
 import os
 import base64
+from multiprocessing import Pool
 from connaisseur.validators.interface import ValidatorInterface
 from connaisseur.image import Image
 from connaisseur.admission_request import AdmissionRequest
@@ -7,6 +8,7 @@ from connaisseur.validators.notaryv1.notary import Notary
 from connaisseur.util import safe_path_func
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
 from connaisseur.validators.notaryv1.key_store import KeyStore
+from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.exceptions import (
     UnreachableError,
     NotFoundException,
@@ -111,8 +113,22 @@ class NotaryV1Validator(ValidatorInterface):
         tuf_roles = ["root", "snapshot", "timestamp", "targets"]
 
         # load all trust data
-        for role in tuf_roles:
-            trust_data[role] = self.notary.get_trust_data(image, TUFRole(role))
+        with Pool() as pool:
+            try:
+                result = pool.starmap_async(
+                    self.notary.get_trust_data,
+                    [(image, TUFRole(role)) for role in tuf_roles],
+                )
+                trust_data_list = result.get(timeout=30)
+            except Exception as err:
+                msg = "Error retrieving trust data form notary."
+                raise NotFoundException(
+                    message=msg, notary=str(self.notary.name)
+                ) from err
+        trust_data = {
+            tuf_roles[i]: TrustData(trust_data_list[i], tuf_roles[i])
+            for i in range(len(tuf_roles))
+        }
 
         # validate signature and expiry data of and load root file
         # this does NOT conclude the validation of the root file. To prevent
@@ -240,16 +256,31 @@ class NotaryV1Validator(ValidatorInterface):
     def __update_with_delegation_trust_data(
         self, trust_data, delegations, key_store, image
     ):
-        for delegation in delegations:
-            delegation_trust_data = self.notary.get_delegation_trust_data(
-                image, TUFRole(delegation)
-            )
-            # when delegations are added to the repository, but weren't yet used for
-            # signing, the delegation files don't exist yet and are `None`. in this
-            # case validation must be skipped
-            if delegation_trust_data is not None:
-                delegation_trust_data.validate(key_store)
-            trust_data[delegation] = delegation_trust_data
+        with Pool() as pool:
+            try:
+                result = pool.starmap_async(
+                    self.notary.get_delegation_trust_data,
+                    [(image, TUFRole(delegation)) for delegation in delegations],
+                )
+                delegation_trust_data_list = result.get(timeout=30)
+            except Exception as err:
+                msg = "Error retrieving delegation trust data form notary."
+                raise NotFoundException(
+                    message=msg, notary=str(self.notary.name)
+                ) from err
+
+        # when delegations are added to the repository, but weren't yet used for signing,
+        # the delegation files don't exist yet and are `None`. in this case validation
+        # must be skipped
+        delegation_trust_data = {
+            delegations[i]: TrustData(delegation_trust_data_list[i], delegations[i])
+            for i in range(len(delegations))
+            if delegation_trust_data_list[i]
+        }
+
+        for delegation in delegation_trust_data:
+            delegation_trust_data[delegation].validate(key_store)
+        trust_data.update(delegation_trust_data)
 
     @staticmethod
     def __validate_all_required_delegations_present(
