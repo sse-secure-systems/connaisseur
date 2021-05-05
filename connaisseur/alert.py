@@ -74,6 +74,15 @@ class Alert:
     def __init__(
         self, alert_message, receiver_config, admission_request: AdmissionRequest
     ):
+        try:
+            images = str(
+                [
+                    str(image)
+                    for image in admission_request.wl_object.containers.values()
+                ]
+            )
+        except InvalidImageFormatError:
+            images = "Error retrieving images."
         self.context = {
             "alert_message": alert_message,
             "priority": str(receiver_config.get("priority", 3)),
@@ -82,9 +91,7 @@ class Alert:
             "namespace": admission_request.namespace,
             "timestamp": datetime.now(),
             "request_id": admission_request.uid or "No given UID",
-            "images": (
-                str(admission_request.wl_object.container_images) or "No given images"
-            ),
+            "images": images,
         }
         self.receiver_url = receiver_config["receiver_url"]
         self.template = receiver_config["template"]
@@ -169,7 +176,7 @@ def __is_hook_image(admission_request: AdmissionRequest):
     try:
         normalized_hook_image = Image(os.getenv("HELM_HOOK_IMAGE"))
         return [
-            str(Image(image)) for image in admission_request.wl_object.container_images
+            str(image) for image in admission_request.wl_object.containers.values()
         ] == [str(normalized_hook_image)]
     except InvalidImageFormatError:
         return False

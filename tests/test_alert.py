@@ -80,8 +80,8 @@ alert_headers_slack = {"Content-Type": "application/json"}
 
 alert_payload_opsgenie_deployment = {
     "message": "CONNAISSEUR admitted a request",
-    "alias": "CONNAISSEUR admitted a request to deploy the images ['securesystemsengineering/alice-image:test'].",
-    "description": "CONNAISSEUR admitted a request to deploy the following images:\n ['securesystemsengineering/alice-image:test'] \n\n Please check the logs of the `connaisseur-pod-123` for more details.",
+    "alias": "CONNAISSEUR admitted a request to deploy the images ['docker.io/securesystemsengineering/alice-image:test'].",
+    "description": "CONNAISSEUR admitted a request to deploy the following images:\n ['docker.io/securesystemsengineering/alice-image:test'] \n\n Please check the logs of the `connaisseur-pod-123` for more details.",
     "responders": [{"type": "user", "username": "testuser@testcompany.de"}],
     "visibleTo": [{"type": "user", "username": "testuser@testcompany.de"}],
     "actions": [],
@@ -104,7 +104,7 @@ alert_payload_slack_deployment = {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*CONNAISSEUR admitted a request* \n\n_*Cluster*_:                           minikube\n_*Request ID*_:                     3a3a7b38-5512-4a85-94bb-3562269e0a6a\n_*Images*_:                           ['securesystemsengineering/alice-image:test']\n_*Connaisseur Pod ID*_:       connaisseur-pod-123\n_*Created*_:                          ${datetime.now()}\n_*Severity*_:                          4\n\nCheck the logs of `connaisseur-pod-123` for more details!",
+                "text": "*CONNAISSEUR admitted a request* \n\n_*Cluster*_:                           minikube\n_*Request ID*_:                     3a3a7b38-5512-4a85-94bb-3562269e0a6a\n_*Images*_:                           ['docker.io/securesystemsengineering/alice-image:test']\n_*Connaisseur Pod ID*_:       connaisseur-pod-123\n_*Created*_:                          ${datetime.now()}\n_*Severity*_:                          4\n\nCheck the logs of `connaisseur-pod-123` for more details!",
             },
         },
     ],

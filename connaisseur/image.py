@@ -86,3 +86,6 @@ class Image:
         )
         tag = f":{self.tag}" if not self.digest else f"@sha256:{self.digest}"
         return f"{repo_reg}{self.name}{tag}"
+
+    def __eq__(self, other):
+        return str(self) == str(other)

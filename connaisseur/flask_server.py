@@ -14,7 +14,6 @@ from connaisseur.alert import send_alerts
 from connaisseur.config import Config
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.policy import ImagePolicy
-from connaisseur.image import Image
 
 
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
@@ -130,35 +129,32 @@ def __create_logging_msg(msg: str, **kwargs):
     return str({"message": msg, "context": dict(**kwargs)})
 
 
-def __create_json_patch(path: str, index: int, image: Image):
-    return {"op": "replace", "path": path.format(str(index)), "value": str(image)}
-
-
 def __admit(admission_request: AdmissionRequest):
+    logging_context = dict(admission_request.context)
     policy = ImagePolicy()
-    parent_images = admission_request.wl_object.parent_images
     patches = []
 
-    for index, c_image in enumerate(admission_request.wl_object.container_images):
+    for type_index, image in admission_request.wl_object.containers.items():
+        original_image = str(image)
+        type_, index = type_index
+        logging_context.update(image=original_image)
+
+        # child resources have mutated image names, as their parents got mutated
+        # before their creation. this may result in mismatch of rules or duplicate
+        # lookups for already approved images. so child resources are automatically
+        # approved without further check ups, when their parents were approved
+        # earlier.
+        if image in admission_request.wl_object.parent_containers.values():
+            msg = f'automatic child approval for "{original_image}".'
+            logging.info(__create_logging_msg(msg, **logging_context))
+            continue
+
         try:
-            logging_context = dict(admission_request.context, image=c_image)
-
-            # child resources have mutated image names, as their parents got mutated
-            # before their creation. this may result in mismatch of rules or duplicate
-            # lookups for already approved images. so child resources are automatically
-            # approved without further check ups, when their parents were approved
-            # earlier.
-            if c_image in parent_images:
-                msg = f'automatic child approval for "{c_image}".'
-                logging.info(__create_logging_msg(msg, **logging_context))
-                continue
-
-            image = Image(c_image)
             policy_rule = policy.get_matching_rule(image)
             validator = CONFIG.get_validator(policy_rule.validator)
 
             msg = (
-                f'starting verification of image "{c_image}" using rule '
+                f'starting verification of image "{original_image}" using rule '
                 f'"{str(policy_rule)}" with arguments {str(policy_rule.arguments)}'
                 f' and validator "{str(validator)}".'
             )
@@ -169,17 +165,15 @@ def __admit(admission_request: AdmissionRequest):
             )
 
             trusted_digest = validator.validate(image, **policy_rule.arguments)
-            if trusted_digest:
-                image.set_digest(trusted_digest)
-                patches += [
-                    __create_json_patch(
-                        admission_request.wl_object.container_path, index, image
-                    )
-                ]
-
-            msg = f'successful verification of image "{c_image}"'
-            logging.info(__create_logging_msg(msg, **logging_context))
         except BaseConnaisseurException as err:
             err.update_context(**logging_context)
             raise err
+
+        if trusted_digest:
+            image.set_digest(trusted_digest)
+            patches.append(
+                admission_request.wl_object.get_json_patch(image, type_, index)
+            )
+        msg = f'successful verification of image "{original_image}"'
+        logging.info(__create_logging_msg(msg, **logging_context))
     return get_admission_review(admission_request.uid, True, patch=patches)

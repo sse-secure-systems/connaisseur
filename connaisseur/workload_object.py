@@ -1,4 +1,5 @@
 import connaisseur.kube_api as k_api
+from connaisseur.image import Image
 from connaisseur.exceptions import UnknownAPIVersionError, ParentNotFoundError
 
 
@@ -15,7 +16,7 @@ SUPPORTED_API_VERSIONS = {
 
 
 class WorkloadObject:
-    container_path = "/spec/template/spec/containers/{}/image"
+    container_path = "/spec/template/spec/{container_type}/{index}/image"
 
     def __new__(
         cls, request_object: dict, namespace: str
@@ -49,8 +50,8 @@ class WorkloadObject:
             )
 
     @property
-    def parent_images(self):
-        parent_images = []
+    def parent_containers(self):
+        parent_containers = {}
         for owner in self._owner:
             api_version = owner["apiVersion"]
             kind = owner["kind"].lower() + "s"
@@ -70,38 +71,42 @@ class WorkloadObject:
                     message=msg, parent_kind=kind, parent_name=name, parent_uid=uid
                 )
 
-            parent_images += WorkloadObject(parent, self.namespace).container_images
-        return parent_images
+            parent_containers.update(WorkloadObject(parent, self.namespace).containers)
+        return parent_containers
 
     @property
-    def container_images(self):
-        spec = self._spec["template"]["spec"]
-        return [
-            container["image"]
-            for container in (spec["containers"] + spec.get("initContainers", []))
-        ]
+    def spec(self):
+        return self._spec["template"]["spec"]
+
+    @property
+    def containers(self):
+        return {
+            (container_type, index): Image(container["image"])
+            for container_type in ["containers", "initContainers"]
+            for index, container in enumerate(self.spec.get(container_type, []))
+        }
+
+    def get_json_patch(self, image: Image, type_: str, index: int):
+        return {
+            "op": "replace",
+            "path": self.container_path.format(container_type=type_, index=index),
+            "value": str(image),
+        }
 
 
 class Pod(WorkloadObject):
-    container_path = "/spec/containers/{}/image"
+    container_path = "/spec/{container_type}/{index}/image"
 
     @property
-    def container_images(self):
-        return [
-            container["image"]
-            for container in (
-                self._spec["containers"] + self._spec.get("initContainers", [])
-            )
-        ]
+    def spec(self):
+        return self._spec
 
 
 class CronJob(WorkloadObject):
-    container_path = "/spec/jobTemplate/spec/template/spec/containers/{}/image"
+    container_path = (
+        "/spec/jobTemplate/spec/template/spec/{container_type}/{index}/image"
+    )
 
     @property
-    def container_images(self):
-        spec = self._spec["jobTemplate"]["spec"]["template"]["spec"]
-        return [
-            container["image"]
-            for container in (spec["containers"] + spec.get("initContainers", []))
-        ]
+    def spec(self):
+        return self._spec["jobTemplate"]["spec"]["template"]["spec"]

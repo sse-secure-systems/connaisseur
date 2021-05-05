@@ -97,33 +97,6 @@ def test_create_logging_msg(msg, kwargs, out):
 
 
 @pytest.mark.parametrize(
-    "path, index, image, out",
-    [
-        (
-            "/sample/path/{}/image",
-            3,
-            (
-                "sample-image@sha256:aaaaaaaaaaaaaaaaaaaaa"
-                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            ),
-            {
-                "op": "replace",
-                "path": "/sample/path/3/image",
-                "value": (
-                    "docker.io/library/sample-image@sha256:aaaaaaaaaaaaaaa"
-                    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                ),
-            },
-        ),
-    ],
-)
-def test_create_json_patch(path, index, image, out):
-
-    patches = pytest.fs.__create_json_patch(path, index, Image(image))
-    assert patches == out
-
-
-@pytest.mark.parametrize(
     "index, out, exception",
     [
         (
