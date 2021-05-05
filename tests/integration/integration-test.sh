@@ -108,6 +108,18 @@ else
   echo 'Successfully denied unsigned image in init container'
 fi
 
+echo 'Testing deployment of valid init container along with a valid container...'
+kubectl apply -f tests/integration/valid_init_container.yaml >output.log 2>&1 || true
+NUMBER_OF_VALID_DEPLOYMENTS+=1
+
+if [[ "$(cat output.log)" != 'pod/connaisseur-integration-test-pod-valid-init created' ]]; then
+  echo 'Failed to deploy a valid initContainer along with a valid container. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully allowed valid image in init container and container'
+fi
+
 echo 'Checking whether alert endpoints have been called successfully'
 ENDPOINT_HITS=$(curl ${ALERTING_ENDPOINT_IP}:56243 --header "Content-Type: application/json")
 let NUMBER_OF_DEPLOYMENTS=${NUMBER_OF_INVALID_DEPLOYMENTS}+${NUMBER_OF_VALID_DEPLOYMENTS}
