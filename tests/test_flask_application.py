@@ -58,9 +58,9 @@ def m_config(monkeypatch, sample_nv1):
     monkeypatch.setattr(co.Config, "__init__", mock_init)
     monkeypatch.setenv("KUBE_VERSION", "v1.20.0")
 
-    import connaisseur.flask_server as fs
+    import connaisseur.flask_application as fa
 
-    pytest.fs = fs
+    pytest.fa = fa
 
 
 @pytest.mark.parametrize(
@@ -82,7 +82,7 @@ def test_mutate(
     with aioresponses() as aio:
         aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
         monkeypatch.setenv("DETECTION_MODE", str(detection_mode))
-        client = pytest.fs.APP.test_client()
+        client = pytest.fa.APP.test_client()
         response = client.post("/mutate", json=adm_req_samples[index])
         admission_response = response.get_json()["response"]
 
@@ -102,7 +102,7 @@ def test_mutate_calls_send_alert_for_invalid_admission_request(
     with aioresponses() as aio:
         aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
         monkeypatch.setenv("DETECTION_MODE", "0")
-        client = pytest.fs.APP.test_client()
+        client = pytest.fa.APP.test_client()
         response = client.post("/mutate", json=adm_req_samples[7])
         admission_response = response.get_json()["response"]
 
@@ -116,11 +116,11 @@ def test_mutate_calls_send_alert_for_invalid_admission_request(
 
 
 def test_healthz():
-    assert pytest.fs.healthz() == ("", 200)
+    assert pytest.fa.healthz() == ("", 200)
 
 
 def test_readyz():
-    assert pytest.fs.readyz() == ("", 200)
+    assert pytest.fa.readyz() == ("", 200)
 
 
 @pytest.mark.parametrize(
@@ -134,7 +134,7 @@ def test_readyz():
     ],
 )
 def test_create_logging_msg(msg, kwargs, out):
-    assert pytest.fs.__create_logging_msg(msg, **kwargs) == str(out)
+    assert pytest.fa.__create_logging_msg(msg, **kwargs) == str(out)
 
 
 @pytest.mark.asyncio
@@ -198,7 +198,7 @@ async def test_admit(
     with exception:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-            response = await pytest.fs.__admit(AdmissionRequest(adm_req_samples[index]))
+            response = await pytest.fa.__admit(AdmissionRequest(adm_req_samples[index]))
             assert response == out
 
 
@@ -207,14 +207,14 @@ async def test_admit(
     [
         (
             {
-                "target": "connaisseur.flask_server.send_alerts",
+                "target": "connaisseur.flask_application.send_alerts",
                 "side_effect": exc.AlertSendingError(""),
             },
             "Alert could not be sent. Check the logs for more details!",
         ),
         (
             {
-                "target": "connaisseur.flask_server.send_alerts",
+                "target": "connaisseur.flask_application.send_alerts",
                 "side_effect": exc.ConfigurationError(""),
             },
             "Alerting configuration is not valid. Check the logs for more details!",
@@ -229,9 +229,9 @@ def test_error_handler(
     err,
 ):
 
-    mocker.patch("connaisseur.flask_server.__admit", return_value=True)
+    mocker.patch("connaisseur.flask_application.__admit", return_value=True)
     mock_function = mocker.patch(**function)
-    client = pytest.fs.APP.test_client()
+    client = pytest.fa.APP.test_client()
     mock_request_data = fix.get_admreq("deployments")
     response = client.post("/mutate", json=mock_request_data)
     assert response.status_code == 500
