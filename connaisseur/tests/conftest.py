@@ -59,12 +59,13 @@ def m_request(monkeypatch):
             self.status_code = status_code
 
         def raise_for_status(self):
-            pass
+            if self.status_code != 200:
+                raise requests.exceptions.HTTPError
 
         def json(self):
             return self.content
 
-    def mock_request(url, **kwargs):
+    def mock_get_request(url, **kwargs):
         notary_regex = [
             (
                 r"https:\/\/([^\/]+)\/v2\/([^\/]+)\/([^\/]+\/)?"
@@ -179,7 +180,32 @@ def m_request(monkeypatch):
         name = match.group(2)
         return MockResponse(get_k8s_res(name))
 
-    monkeypatch.setattr(requests, "get", mock_request)
+    def mock_post_request(url, **kwargs):
+        opsgenie_regex = [
+            (r"https:\/\/api\.eu\.opsgenie\.com\/v2\/alerts"),
+            mock_opsgenie_request,
+        ]
+
+        for reg in [opsgenie_regex]:
+            match = re.search(reg[0], url)
+
+            if match:
+                return reg[1](match, **kwargs)
+        return MockResponse({}, status_code=500)
+
+    def mock_opsgenie_request(match: re.Match, **kwargs):
+        if kwargs.get("headers", {}).get("Authorization"):
+            return MockResponse(
+                {
+                    "result": "Request will be processed",
+                    "took": 0.302,
+                    "requestId": "43a29c5c-3dbf-4fa4-9c26-f4f71023e120",
+                }
+            )
+        return MockResponse({}, status_code=401)
+
+    monkeypatch.setattr(requests, "get", mock_get_request)
+    monkeypatch.setattr(requests, "post", mock_post_request)
     monkeypatch.setattr(connaisseur.kube_api, "__get_token", kube_token)
 
 
@@ -367,20 +393,25 @@ def adm_req_samples(m_ad_schema_path):
 
 
 @pytest.fixture()
-def mock_safe_path_func_load_config(mocker):
+def m_safe_path_func(monkeypatch):
     side_effect = lambda callback, base_dir, path, *args, **kwargs: callback(
         path, *args, **kwargs
     )
-    mocker.patch("connaisseur.alert.safe_path_func", side_effect)
+    monkeypatch.setattr(connaisseur.util, "safe_path_func", side_effect)
 
 
 @pytest.fixture
-def m_alerting(monkeypatch, mock_safe_path_func_load_config):
+def m_alerting(monkeypatch, m_safe_path_func):
     monkeypatch.setenv("DETECTION_MODE", "0")
     monkeypatch.setenv(
         "HELM_HOOK_IMAGE", "securesystemsengineering/connaisseur:helm-hook"
     )
-    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting")
     monkeypatch.setenv("POD_NAME", "connaisseur-pod-123")
     monkeypatch.setenv("CLUSTER_NAME", "minikube")
-    alert.__SCHEMA_PATH = "res/alertconfig_schema.json"
+    connaisseur.alert.AlertingConfiguration._AlertingConfiguration__PATH = (
+        "tests/data/alerting/alertconfig.json"
+    )
+    connaisseur.alert.AlertingConfiguration._AlertingConfiguration__SCHEMA_PATH = (
+        "res/alertconfig_schema.json"
+    )
+    connaisseur.alert.Alert._Alert__TEMPLATE_PATH = "tests/data/alerting/templates"

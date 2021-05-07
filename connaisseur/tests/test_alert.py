@@ -2,13 +2,8 @@ import pytest
 from datetime import datetime, timedelta
 import json
 
-from connaisseur.alert import (
-    Alert,
-    send_alerts,
-    call_alerting_on_request,
-    get_alert_config_validation_schema,
-    load_config,
-)
+import conftest as fix
+import connaisseur.alert as alert
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.exceptions import AlertSendingError, ConfigurationError
 
@@ -118,34 +113,64 @@ alert_payload_slack_deployment = {
 injection_string = '"]}, "test": "Can I inject into json?", "cluster":'
 
 
-@pytest.fixture(autouse=True)
-def mock_env_vars(monkeypatch):
-    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting")
-    monkeypatch.setenv("POD_NAME", "connaisseur-pod-123")
-    monkeypatch.setenv("CLUSTER_NAME", "minikube")
-    monkeypatch.setenv(
-        "HELM_HOOK_IMAGE", "securesystemsengineering/connaisseur:helm-hook"
-    )
-
-
-@pytest.fixture()
-def mock_alertconfig_validation_schema(mocker):
-    mocker.patch(
-        "connaisseur.alert.get_alert_config_validation_schema",
-        return_value=alertconfig_schema,
-    )
-
-
-@pytest.fixture(autouse=True)
-def mock_safe_path_func_load_config(mocker):
-    side_effect = lambda callback, base_dir, path, *args, **kwargs: callback(
-        path, *args, **kwargs
-    )
-    mocker.patch("connaisseur.alert.safe_path_func", side_effect)
+@pytest.mark.parametrize(
+    "alerting_path, empty, exception",
+    [
+        ("tests/data/alerting/alertconfig.json", False, fix.no_exc()),
+        ("tests/data/alerting/missing.json", True, fix.no_exc()),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/invalid_config/alertconfig.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        ("/", True, pytest.raises(ConfigurationError, match=r".*error occurred.*")),
+    ],
+)
+def test_alert_config_init(
+    monkeypatch, m_alerting, m_ad_schema_path, alerting_path, empty, exception
+):
+    with exception:
+        alert.AlertingConfiguration._AlertingConfiguration__PATH = alerting_path
+        conf = alert.AlertingConfiguration()
+        assert bool(conf.config) is not empty
 
 
 @pytest.mark.parametrize(
-    "message, receiver_config, admission_request, alert_payload, alert_headers",
+    "alerting_path, admission_request, event_category, out",
+    [
+        (
+            "tests/data/alerting/alertconfig.json",
+            admission_request_deployment,
+            "admit_request",
+            True,
+        ),
+        (
+            "tests/data/alerting/config_only_send_on_admit/alertconfig.json",
+            admission_request_deployment,
+            "reject_request",
+            False,
+        ),
+    ],
+)
+def test_alerting_required(
+    m_alerting,
+    m_ad_schema_path,
+    alerting_path,
+    admission_request,
+    event_category,
+    out,
+):
+    alert.AlertingConfiguration._AlertingConfiguration__PATH = alerting_path
+    assert alert.AlertingConfiguration().alerting_required(event_category) is out
+
+
+@pytest.mark.parametrize(
+    "message, receiver_config, admission_request, alert_payload, alert_headers, exception",
     [
         (
             "CONNAISSEUR admitted a request",
@@ -153,6 +178,7 @@ def mock_safe_path_func_load_config(mocker):
             admission_request_deployment,
             alert_payload_opsgenie_deployment,
             alert_headers_opsgenie,
+            fix.no_exc(),
         ),
         (
             "CONNAISSEUR admitted a request",
@@ -160,6 +186,7 @@ def mock_safe_path_func_load_config(mocker):
             admission_request_deployment,
             alert_payload_slack_deployment,
             alert_headers_slack,
+            fix.no_exc(),
         ),
         (
             "CONNAISSEUR does great",
@@ -170,6 +197,7 @@ def mock_safe_path_func_load_config(mocker):
                 {"test1": ["CONNAISSEUR does great", "minikube"]},
             ],
             {"Content-Type": "application/json"},
+            fix.no_exc(),
         ),
         (
             injection_string,
@@ -180,367 +208,139 @@ def mock_safe_path_func_load_config(mocker):
                 {"test1": [injection_string, "minikube"]},
             ],
             {"Content-Type": "application/json"},
+            fix.no_exc(),
+        ),
+        (
+            "CONNAISSEUR admitted a request",
+            missing_template_receiver_config,
+            admission_request_deployment,
+            {},
+            {},
+            pytest.raises(ConfigurationError, match=r".*Unable.*"),
         ),
     ],
 )
-def test_alert(
+def test_alert_init(
     m_ad_schema_path,
-    mock_alertconfig_validation_schema,
+    m_alerting,
     message: str,
     receiver_config: dict,
     admission_request: dict,
     alert_payload: dict,
     alert_headers: dict,
+    exception,
 ):
-    alert = Alert(message, receiver_config, AdmissionRequest(admission_request))
-    assert alert.throw_if_alert_sending_fails == receiver_config.get(
-        "fail_if_alert_sending_fails", False
-    )
-    assert alert.receiver_url == receiver_config["receiver_url"]
-    assert alert.headers == alert_headers
-    payload = json.loads(alert.payload)
-    if receiver_config["template"] == "opsgenie":
-        assert payload["details"]["alert_created"] is not None
-        assert datetime.strptime(
-            payload["details"]["alert_created"], "%Y-%m-%d %H:%M:%S.%f"
-        ) > datetime.now() - timedelta(seconds=30)
-        payload["details"].pop("alert_created")
-        alert_payload["details"].pop("alert_created")
-        assert payload == alert_payload
-    if receiver_config["template"] == "slack":
-        assert (
-            alert_payload_slack_deployment["blocks"][1]["text"]["text"].split(
-                "Created"
-            )[0]
-            in json.loads(alert.payload)["blocks"][1]["text"]["text"]
+    with exception:
+        alert_ = alert.Alert(
+            message, receiver_config, AdmissionRequest(admission_request)
         )
-    if receiver_config["template"] == "custom":
-        assert alert_payload == json.loads(alert.payload)
-
-
-@pytest.mark.parametrize(
-    "message, receiver_config, admission_request",
-    [
-        (
-            "CONNAISSEUR admitted a request",
-            missing_template_receiver_config,
-            admission_request_deployment,
-        ),
-    ],
-)
-def test_configuration_error_missing_template(
-    m_ad_schema_path,
-    mock_alertconfig_validation_schema,
-    message,
-    receiver_config,
-    admission_request,
-):
-    with pytest.raises(ConfigurationError) as err:
-        Alert(message, receiver_config, AdmissionRequest(admission_request))
-    assert (
-        "Template file for alerting payload is either missing or invalid JSON"
-        in str(err.value)
-    )
-
-
-@pytest.mark.parametrize(
-    "message, receiver_config, admission_request",
-    [
-        (
-            "CONNAISSEUR admitted a request",
-            slack_receiver_config,
-            admission_request_deployment,
-        ),
-    ],
-)
-def test_configuration_error_missing_or_invalid_config(
-    mock_alertconfig_validation_schema,
-    mocker,
-    monkeypatch,
-    message,
-    receiver_config,
-    admission_request,
-):
-    alert_config_dirs = [
-        "tests/data/alerting/misconfigured_config",
-        "tests/data/alerting/invalid_config",
-    ]
-    for alert_config_dir in alert_config_dirs:
-        monkeypatch.setenv("ALERT_CONFIG_DIR", alert_config_dir)
-        with pytest.raises(ConfigurationError) as err:
-            load_config()
-        assert (
-            "Alerting configuration file not valid."
-            "Check in the 'helm/values.yml' whether everything is correctly configured"
-            in str(err.value)
+        assert alert_.throw_if_alert_sending_fails == receiver_config.get(
+            "fail_if_alert_sending_fails", False
         )
-
-    monkeypatch.setenv("ALERT_CONFIG_DIR", "tests/data/alerting/empty_dir")
-    mock_info_log = mocker.patch("logging.info")
-    load_config()
-    mock_info_log.assert_has_calls(
-        [
-            mocker.call(
-                "No alerting configuration file found."
-                "To use the alerting feature you need to run `make upgrade`"
-                "in a freshly pulled Connaisseur repository."
+        assert alert_.receiver_url == receiver_config["receiver_url"]
+        assert alert_.headers == alert_headers
+        payload = json.loads(alert_.payload)
+        if receiver_config["template"] == "opsgenie":
+            assert payload["details"]["alert_created"] is not None
+            assert datetime.strptime(
+                payload["details"]["alert_created"], "%Y-%m-%d %H:%M:%S.%f"
+            ) > datetime.now() - timedelta(seconds=30)
+            payload["details"].pop("alert_created")
+            alert_payload["details"].pop("alert_created")
+            assert payload == alert_payload
+        if receiver_config["template"] == "slack":
+            assert (
+                alert_payload_slack_deployment["blocks"][1]["text"]["text"].split(
+                    "Created"
+                )[0]
+                in json.loads(alert_.payload)["blocks"][1]["text"]["text"]
             )
-        ]
-    )
+        if receiver_config["template"] == "custom":
+            assert alert_payload == json.loads(alert_.payload)
 
 
 @pytest.mark.parametrize(
-    "message, receiver_config, admission_request",
+    "receiver_config, key, status, out, exception",
     [
         (
-            "CONNAISSEUR admitted a request",
-            opsgenie_receiver_config_throw,
-            admission_request_deployment,
-        ),
-    ],
-)
-def test_alert_sending_error(
-    m_ad_schema_path,
-    requests_mock,
-    mock_alertconfig_validation_schema,
-    message: str,
-    receiver_config: dict,
-    admission_request: dict,
-):
-    requests_mock.post(
-        "https://api.eu.opsgenie.com/v2/alerts",
-        status_code=401,
-    )
-    with pytest.raises(AlertSendingError) as err:
-        alert = Alert(message, receiver_config, AdmissionRequest(admission_request))
-        alert.send_alert()
-    assert (
-        "401 Client Error: None for url: https://api.eu.opsgenie.com/v2/alerts"
-        in str(err.value)
-    )
-
-
-@pytest.mark.parametrize(
-    "message, receiver_config, admission_request",
-    [
-        (
-            "CONNAISSEUR admitted a request",
-            slack_receiver_config,
-            admission_request_deployment,
-        ),
-    ],
-)
-def test_log_alert_sending_error(
-    m_ad_schema_path,
-    requests_mock,
-    mocker,
-    mock_alertconfig_validation_schema,
-    message: str,
-    receiver_config: dict,
-    admission_request: dict,
-):
-    mock_error_log = mocker.patch("logging.error")
-    requests_mock.post(
-        "https://hooks.slack.com/services/123",
-        status_code=401,
-    )
-    alert = Alert(message, receiver_config, AdmissionRequest(admission_request))
-    alert.send_alert()
-    assert mock_error_log.called is True
-
-
-@pytest.mark.parametrize(
-    "message, receiver_config, admission_request",
-    [
-        (
-            "CONNAISSEUR admitted a request.",
             opsgenie_receiver_config,
-            admission_request_deployment,
-        )
-    ],
-)
-def test_alert_sending(
-    m_ad_schema_path,
-    requests_mock,
-    mocker,
-    mock_alertconfig_validation_schema,
-    message: str,
-    receiver_config: dict,
-    admission_request: dict,
-):
-    mock_info_log = mocker.patch("logging.info")
-    requests_mock.post(
-        "https://api.eu.opsgenie.com/v2/alerts",
-        json={
-            "result": "Request will be processed",
-            "took": 0.302,
-            "requestId": "43a29c5c-3dbf-4fa4-9c26-f4f71023e120",
-        },
-        status_code=200,
-    )
-    alert = Alert(message, receiver_config, AdmissionRequest(admission_request))
-    response = alert.send_alert()
-    mock_info_log.assert_has_calls([mocker.call("sent alert to %s", "opsgenie")])
-    assert response.status_code == 200
-    assert response.json()["result"] == "Request will be processed"
-
-
-@pytest.mark.parametrize(
-    "message, receiver_config, admission_request",
-    [
+            "key",
+            200,
+            {
+                "result": "Request will be processed",
+                "took": 0.302,
+                "requestId": "43a29c5c-3dbf-4fa4-9c26-f4f71023e120",
+            },
+            fix.no_exc(),
+        ),
         (
-            "CONNAISSEUR admitted a request.",
+            opsgenie_receiver_config,
+            "",
+            401,
+            {},
+            fix.no_exc(),
+        ),
+        (
             opsgenie_receiver_config_throw,
-            admission_request_allowlisted,
+            "",
+            401,
+            {},
+            pytest.raises(AlertSendingError),
         ),
     ],
 )
-def test_alert_sending_bypass_for_only_allowlisted_images(
+def test_alert_send_alert(
+    m_request,
     m_ad_schema_path,
-    mock_alertconfig_validation_schema,
-    message: str,
+    m_alerting,
     receiver_config: dict,
-    admission_request: dict,
+    key: str,
+    status: int,
+    out: dict,
+    exception,
 ):
-
-    Alert(message, receiver_config, AdmissionRequest(admission_request))
+    with exception:
+        receiver_config["custom_headers"] = [f"Authorization: {key}"]
+        alert_ = alert.Alert(
+            "CONNAISSEUR admitted a request.",
+            receiver_config,
+            AdmissionRequest(admission_request_deployment),
+        )
+        response = alert_.send_alert()
+        assert response.status_code == status
+        assert response.json() == out
 
 
 @pytest.mark.parametrize(
-    "admission_request, admission_decision",
+    "admission_request, admit_event, message, exception",
     [
-        (admission_request_deployment, {"admitted": True}),
-        (admission_request_deployment, {"admitted": False}),
+        (fix.get_admreq("deployments"), True, None, fix.no_exc()),
+        (fix.get_admreq("invalid_image"), False, "ERROR", fix.no_exc()),
     ],
 )
 def test_send_alerts(
-    mocker,
+    m_request,
     m_ad_schema_path,
-    mock_alertconfig_validation_schema,
-    admission_decision: bool,
-    admission_request: dict,
+    m_alerting,
+    admission_request,
+    admit_event,
+    message,
+    exception,
 ):
-    mock_alert = mocker.patch("connaisseur.alert.Alert")
-    admission_request_instance = AdmissionRequest(admission_request)
-    send_alerts(admission_request_instance, admitted=True)
-    admit_calls = [
-        mocker.call(
-            "CONNAISSEUR admitted a request.",
-            opsgenie_receiver_config_throw,
-            admission_request_instance,
-        ),
-        mocker.call(
-            "CONNAISSEUR admitted a request.",
-            slack_receiver_config,
-            admission_request_instance,
-        ),
-    ]
-    mock_alert.assert_has_calls(admit_calls, any_order=True)
-    mocker.resetall()
-    mocker.patch(
-        "connaisseur.alert.get_alert_config_validation_schema",
-        return_value=alertconfig_schema,
-    )
-    mock_alert = mocker.patch("connaisseur.alert.Alert")
-    send_alerts(
-        admission_request_instance,
-        admitted=False,
-        reason="Couldn't find trust data.",
-    )
-    reject_calls = [
-        mocker.call(
-            "CONNAISSEUR rejected a request: Couldn't find trust data.",
-            opsgenie_receiver_config,
-            admission_request_instance,
-        ),
-        mocker.call(
-            "CONNAISSEUR rejected a request: Couldn't find trust data.",
-            keybase_receiver_config,
-            admission_request_instance,
-        ),
-    ]
-    mock_alert.assert_has_calls(reject_calls, any_order=True)
-    mocker.resetall()
-
-    mock_alert_sending = mocker.patch(
-        "connaisseur.alert.Alert.send_alert", return_value=True
-    )
-    send_alerts(AdmissionRequest(admission_request), **admission_decision)
-    assert mock_alert_sending.has_calls([mocker.call(), mocker.call()])
+    with exception:
+        assert (
+            alert.send_alerts(AdmissionRequest(admission_request), admit_event, message)
+            is None
+        )
 
 
 @pytest.mark.parametrize(
-    "admission_request, admission_decision, alert_config_dir, alert_call_decision",
+    "admission_request, out",
     [
-        (
-            admission_request_deployment,
-            {"admitted": True},
-            "tests/data/alerting/config_only_send_on_reject",
-            False,
-        ),
-        (
-            admission_request_deployment,
-            {"admitted": True},
-            "tests/data/alerting/config_only_send_on_admit",
-            True,
-        ),
-        (
-            admission_request_deployment,
-            {"admitted": False},
-            "tests/data/alerting/config_only_send_on_admit",
-            False,
-        ),
-        (
-            admission_request_deployment,
-            {"admitted": False},
-            "tests/data/alerting",
-            True,
-        ),
-        (
-            admission_request_allowlisted,
-            {"admitted": False},
-            "tests/data/alerting",
-            False,
-        ),
-        (
-            admission_request_allowlisted,
-            {"admitted": True},
-            "tests/data/alerting",
-            False,
-        ),
-        (
-            admission_request_allowlisted,
-            {"admitted": True},
-            "tests/data/alerting/empty_dir",
-            False,
-        ),
-        (
-            admission_request_allowlisted,
-            {"admitted": False},
-            "tests/data/alerting/empty_dir",
-            False,
-        ),
+        (fix.get_admreq("deployments"), True),
+        (fix.get_admreq("allowlisted"), False),
+        (fix.get_admreq("invalid_image"), True),
     ],
 )
-def test_call_alerting_on_request(
-    mock_alertconfig_validation_schema,
-    mocker,
-    m_ad_schema_path,
-    monkeypatch,
-    admission_request,
-    admission_decision,
-    alert_config_dir,
-    alert_call_decision,
-):
-    monkeypatch.setenv("ALERT_CONFIG_DIR", alert_config_dir)
-    decision = call_alerting_on_request(
-        AdmissionRequest(admission_request), **admission_decision
-    )
-    assert decision == alert_call_decision
-
-
-def test_get_alert_config_validation_schema(mocker, mock_env_vars):
-    with open("tests/data/alerting/alertconfig_schema.json") as f:
-        content = f.read()
-    mocker.patch("builtins.open", mocker.mock_open(read_data=content))
-    assert get_alert_config_validation_schema() == alertconfig_schema
+def test_is_not_hook_image(m_ad_schema_path, m_alerting, admission_request, out):
+    assert alert.__is_not_hook_image(AdmissionRequest(admission_request)) is out

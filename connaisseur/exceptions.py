@@ -109,6 +109,10 @@ class UnexpectedCosignData(BaseConnaisseurException):
     pass
 
 
+class UnreachableError(BaseConnaisseurException):
+    pass
+
+
 class AlertingException(Exception):
 
     message: str
@@ -118,7 +122,7 @@ class AlertingException(Exception):
         super().__init__()
 
     def __str__(self):
-        return str(self.__dict__)
+        return str(self.message)
 
 
 class ConfigurationError(AlertingException):
@@ -126,8 +130,4 @@ class ConfigurationError(AlertingException):
 
 
 class AlertSendingError(AlertingException):
-    pass
-
-
-class UnreachableError(BaseConnaisseurException):
     pass
