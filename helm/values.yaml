@@ -100,6 +100,7 @@ targetNamespaces: ['*']
 # Below is an example config
 
 #alerting:
+#  cluster_identifier: example-cluster-staging-europe # defaults to "not specified"
 #  admit_request:
 #    templates:
 #      # <template> needs to be chosen such that <template>.json matches one of the file names

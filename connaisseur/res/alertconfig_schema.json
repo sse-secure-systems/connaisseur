@@ -1,6 +1,9 @@
 {
   "type": "object",
   "properties": {
+    "cluster_identifier": {
+      "type": "string"
+    },
     "admit_request": {
       "type": "object",
       "properties": {

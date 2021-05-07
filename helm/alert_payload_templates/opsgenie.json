@@ -10,7 +10,7 @@
     ],
     "tags": [
     ],
-    "details":{"pod":"{{ connaisseur_pod_id }}","cluster":"{{ cluster }}", "alert_created": "{{ timestamp }}", "request_id": "{{ request_id }}"},
+    "details":{"pod":"{{ connaisseur_pod_id }}","cluster":"{{ cluster }}", "namespace": "{{ namespace }}","alert_created": "{{ timestamp }}", "request_id": "{{ request_id }}"},
     "entity":"Connaisseur",
     "priority":"P{{ priority }}"
 }

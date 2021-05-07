@@ -9,6 +9,7 @@
     "details": {
         "pod": "connaisseur-pod-123",
         "cluster": "minikube",
+        "namespace": "connaisseur",
         "request_id": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
         "alert_created": "now"
     },
