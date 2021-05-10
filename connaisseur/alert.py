@@ -79,6 +79,7 @@ class Alert:
             "priority": str(receiver_config.get("priority", 3)),
             "connaisseur_pod_id": os.getenv("POD_NAME"),
             "cluster": os.getenv("CLUSTER_NAME"),
+            "namespace": admission_request.namespace,
             "timestamp": datetime.now(),
             "request_id": admission_request.uid or "No given UID",
             "images": (

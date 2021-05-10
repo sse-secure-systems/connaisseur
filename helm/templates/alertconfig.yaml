@@ -25,5 +25,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Chart.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 stringData:
+  {{- if .Values.alerting}}
   alertconfig.json: |
     {{ mustToJson .Values.alerting | nindent 4 }}
+  {{- end }}
