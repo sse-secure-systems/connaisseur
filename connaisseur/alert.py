@@ -151,11 +151,11 @@ class Alert:
 def send_alerts(
     admission_request: AdmissionRequest, admit_event: bool, reason: str = None
 ):
+    if __is_hook_image(admission_request):
+        return
     al_config = AlertingConfiguration()
     event_category = "admit_request" if admit_event else "reject_request"
-    if al_config.alerting_required(event_category) and __is_not_hook_image(
-        admission_request
-    ):
+    if al_config.alerting_required(event_category):
         for receiver in al_config.config[event_category]["templates"]:
             message = (
                 "CONNAISSEUR admitted a request."
@@ -165,11 +165,11 @@ def send_alerts(
             Alert(message, receiver, admission_request).send_alert()
 
 
-def __is_not_hook_image(admission_request: AdmissionRequest):
+def __is_hook_image(admission_request: AdmissionRequest):
     try:
         normalized_hook_image = Image(os.getenv("HELM_HOOK_IMAGE"))
         return [
             str(Image(image)) for image in admission_request.wl_object.container_images
-        ] != [str(normalized_hook_image)]
+        ] == [str(normalized_hook_image)]
     except InvalidImageFormatError:
-        return True
+        return False
