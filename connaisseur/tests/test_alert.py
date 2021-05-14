@@ -337,10 +337,10 @@ def test_send_alerts(
 @pytest.mark.parametrize(
     "admission_request, out",
     [
-        (fix.get_admreq("deployments"), True),
-        (fix.get_admreq("allowlisted"), False),
-        (fix.get_admreq("invalid_image"), True),
+        (fix.get_admreq("deployments"), False),
+        (fix.get_admreq("allowlisted"), True),
+        (fix.get_admreq("invalid_image"), False),
     ],
 )
-def test_is_not_hook_image(m_ad_schema_path, m_alerting, admission_request, out):
-    assert alert.__is_not_hook_image(AdmissionRequest(admission_request)) is out
+def test_is_hook_image(m_ad_schema_path, m_alerting, admission_request, out):
+    assert alert.__is_hook_image(AdmissionRequest(admission_request)) is out
