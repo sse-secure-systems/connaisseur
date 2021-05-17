@@ -1,4 +1,4 @@
-FROM python:alpine as base
+FROM python:3-alpine as base
 
 # build dependencies
 FROM base as builder
