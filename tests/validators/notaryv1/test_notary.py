@@ -1,3 +1,4 @@
+from requests.models import HTTPError
 import yaml
 import pytest
 from ... import conftest as fix
@@ -258,6 +259,18 @@ def test_parse_auth(sample_notaries, headers, url, exception):
             "https://sample.notary.io/token?scope=invalid_token",
             "",
             pytest.raises(exc.InvalidFormatException),
+        ),
+        (
+            0,
+            "https://notary.hans.io/token?service=notary",
+            "",
+            pytest.raises(HTTPError),
+        ),
+        (
+            1,
+            "https://notary.hans.io/token?service=notary",
+            "a.valid.token",
+            fix.no_exc(),
         ),
     ],
 )

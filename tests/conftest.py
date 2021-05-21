@@ -172,11 +172,19 @@ def m_request(monkeypatch):
 
     def mock_request_notary_token(match: re.Match, **kwargs):
         host, scope, service = match.group(1), match.group(2), match.group(3)
+        auth = kwargs.get("auth")
 
         if host == "notary.acr.io":
             return MockResponse({"access_token": "a.valid.token"})
         if host == "empty.io":
             return MockResponse({}, status_code=500)
+        if host == "notary.hans.io":
+            if (
+                getattr(auth, "username", None) == "hans"
+                and getattr(auth, "password", None) == "wurst"
+            ):
+                return MockResponse({"access_token": "a.valid.token"})
+            return MockResponse({}, status_code=401)
         if "wrong_token" in scope:
             return MockResponse({"tocken": "a.valid.token"})
         if "invalid_token" in scope:
@@ -355,7 +363,7 @@ def sample_nv1(m_notary):
             {"name": "missingkey", "key": ""},
         ],
         "is_acr": False,
-        "auth": {"USER": "bert", "PASS": "bertig"},
+        "auth": {"username": "bert", "password": "bertig"},
         "cert": None,
     }
     return nv1.NotaryV1Validator(**sample_notary)

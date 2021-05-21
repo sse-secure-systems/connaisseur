@@ -28,6 +28,6 @@ pub_keys:
       3brrzLkY1kjmRNOs0c2sx2nm8j2hFZRbyaVsd52Mkw0k5WrX+9vBfbjtdQ==
       -----END PUBLIC KEY-----
 auth:
-  user: hans
-  pass: wurst
+  username: hans
+  password: wurst
 is_acr: true

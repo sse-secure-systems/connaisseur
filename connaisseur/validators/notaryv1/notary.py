@@ -234,7 +234,7 @@ class Notary:
         request_kwargs = {
             "url": url,
             "verify": self.cert,
-            "auth": (requests.auth.HTTPBasicAuth(*self.auth) if self.auth else None),
+            "auth": (requests.auth.HTTPBasicAuth(**self.auth) if self.auth else None),
         }
 
         response = requests.get(**request_kwargs)
