@@ -20,20 +20,24 @@ service:
   type: ClusterIP
   port: 443
 
-# configure access to the notary server
+### VALIDATORS ###
+# validators are a set of configurations (hosts, types, public keys) that can be
+# used for validating one or multiple images (or image signatures). They are tied
+# to their respective image(s) via the image policy below. There are a few handy
+# validators pre-configured.
 validators:
-- name: allow
+- name: allow     # always allow image
   type: static
   approve: true
-- name: deny
+- name: deny      # always deny image
   type: static
   approve: false
-- name: default  # the default validator which is used, if no validators are specified
+- name: default   # the default validator which is always used, if no validator is specified in image policy
   type: notaryv1  # cosign is also experimetally supported
   host: notary.docker.io
   pub_keys:
-  - name: default  # the default key which is used, if no keys are specified
-    key: |
+  - name: default   # the default key which is always used, if no key is specified in image policy
+    key: |          # enter your key here
       -----BEGIN PUBLIC KEY-----
       <add your public key here>
       -----END PUBLIC KEY-----
@@ -47,55 +51,58 @@ validators:
   #   password: notarypass
   #   # or
   #   secret_name: notarysecret  # define a k8s secret with `username` and `password` fields
-- name: docker_essentials  # public notary form dockerhub
+- name: dockerhub_essentials   # pre-configured validator for public notary from dockerhub
   type: notaryv1
   host: notary.docker.io
   pub_keys:
-  # this is the public key for all official dockerhub images (e.g. redis)
-  - name: docker_official
+  - name: docker_official   # public key for official docker images (e.g. redis)
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
       QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
       -----END PUBLIC KEY-----
-  # this is the public key to the `securesystemsengineering` repo on dockerhub
-  - name: sse_official
+  - name: sse_official      # public key for connaisseur images
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
       d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
       -----END PUBLIC KEY-----
-- name: cosign_demo  # for verifying cosign signatures
+- name: cosign_essentials   # pre-configured validator for public cosign signatures
   type: cosign
   pub_keys:
-  - name: sse
+  - name: sse_official      # public key for connaisseur images (currently only testimages)
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
       qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
       -----END PUBLIC KEY-----
 
-# the image policy, which defines all repositories that need to be
-# verified. more detail in the git repo README.md
+### IMAGE POLICY ###
+# the image policy ties validators and images together whereby always only the most
+# specific rule (pattern) is applied. Specify if and how images should be validated
+# by which validator.
 policy:
 - pattern: "*:*"
-  validator: dockerhub
 - pattern: "docker.io/library/*:*"
-  validator: dockerhub
+  validator: dockerhub_essentials
   with:
     key: docker_official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-  validator: dockerhub
+  validator: dockerhub_essentials
   with:
-    key: sse
+    key: sse_official
 - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
   validator: allow
-- pattern: "docker.io/securesystemsengineering/testimage:co-*"
-  validator: cosign
+- pattern: "docker.io/securesystemsengineering/testimage:*"
+  validator: dockerhub_essentials
   with:
-    key: sse
+    key: sse_official
+- pattern: "docker.io/securesystemsengineering/testimage:co-*"
+  validator: cosign_essentials
+  with:
+    key: sse_official
 
 
 
