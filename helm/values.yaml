@@ -1,4 +1,4 @@
-# configure connaisseur deployment
+# configure Connaisseur deployment
 deployment:
   replicasCount: 3
   image: securesystemsengineering/connaisseur:v2.0.0
@@ -15,7 +15,7 @@ deployment:
   tolerations: []
   affinity: {}
 
-# configure connaisseur service
+# configure Connaisseur service
 service:
   type: ClusterIP
   port: 443
@@ -26,18 +26,22 @@ service:
 # to their respective image(s) via the image policy below. There are a few handy
 # validators pre-configured.
 validators:
-- name: allow     # always allow image
+# static validator that allows each image
+- name: allow
   type: static
   approve: true
-- name: deny      # always deny image
+# static validator that denies each image
+- name: deny
   type: static
   approve: false
-- name: default   # the default validator which is always used, if no validator is specified in image policy
+# the `default` validator is used if no validator is specified in image policy
+- name: default
   type: notaryv1  # cosign is also experimetally supported
   host: notary.docker.io
   pub_keys:
-  - name: default   # the default key which is always used, if no key is specified in image policy
-    key: |          # enter your key here
+  # the `default` key is used if no key is specified in image policy
+  - name: default
+    key: |  # enter your key below
       -----BEGIN PUBLIC KEY-----
       <add your public key here>
       -----END PUBLIC KEY-----
@@ -51,26 +55,31 @@ validators:
   #   password: notarypass
   #   # or
   #   secret_name: notarysecret  # define a k8s secret with `username` and `password` fields
-- name: dockerhub_essentials   # pre-configured validator for public notary from dockerhub
+# pre-configured nv1 validator for public notary from Docker Hub
+- name: dockerhub_essentials
   type: notaryv1
   host: notary.docker.io
   pub_keys:
-  - name: docker_official   # public key for official docker images (e.g. redis)
+    # public key for official docker images (https://hub.docker.com/search?q=&type=image&image_filter=official)
+  - name: docker_official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
       QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
       -----END PUBLIC KEY-----
-  - name: sse_official      # public key for connaisseur images
+  # public key for Connaisseur images
+  - name: sse_official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
       d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
       -----END PUBLIC KEY-----
-- name: cosign_essentials   # pre-configured validator for public cosign signatures
+# pre-configured cosign validator for public images
+- name: cosign_essentials
   type: cosign
   pub_keys:
-  - name: sse_official      # public key for connaisseur images (currently only testimages)
+  # public key for SSE images
+  - name: sse_official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
@@ -78,9 +87,8 @@ validators:
       -----END PUBLIC KEY-----
 
 ### IMAGE POLICY ###
-# the image policy ties validators and images together whereby always only the most
-# specific rule (pattern) is applied. Specify if and how images should be validated
-# by which validator.
+# the image policy ties validators and images together whereby always only the most specific rule (pattern)
+# is applied. Specify if and how images should be validated by which validator.
 policy:
 - pattern: "*:*"
 - pattern: "docker.io/library/*:*"
