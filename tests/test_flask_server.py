@@ -47,7 +47,7 @@ def test_mutate(
     assert admission_response["status"]["code"] == status_code
 
 
-def test_healthz(m_config):
+def test_healthz():
     assert pytest.fs.healthz() == ("", 200)
 
 

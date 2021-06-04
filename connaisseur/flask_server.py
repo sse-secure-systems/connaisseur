@@ -81,11 +81,6 @@ def healthz():
     server. Sends back either '200' for a healthy status or '500'
     otherwise.
     """
-    for validator in CONFIG.validators:
-        if not validator.healthy:
-            logging.error(  # pylint: disable=logging-fstring-interpolation
-                f"{validator.name} is unhealthy."
-            )
 
     return ("", 200)
 
