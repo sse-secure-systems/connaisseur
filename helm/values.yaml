@@ -37,7 +37,7 @@ validators:
 # the `default` validator is used if no validator is specified in image policy
 - name: default
   type: notaryv1  # cosign is also experimetally supported
-  host: notary.docker.io
+  host: notary.docker.io # configure the notary server to be used
   pub_keys:
   # the `default` key is used if no key is specified in image policy
   - name: default
@@ -74,17 +74,6 @@ validators:
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
       d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
       -----END PUBLIC KEY-----
-# pre-configured cosign validator for public images
-- name: cosign_essentials
-  type: cosign
-  pub_keys:
-  # public key for SSE images
-  - name: sse_official
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-      -----END PUBLIC KEY-----
 
 ### IMAGE POLICY ###
 # the image policy ties validators and images together whereby always only the most specific rule (pattern)
@@ -97,21 +86,12 @@ policy:
     key: docker_official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
-- pattern: "docker.io/securesystemsengineering/connaisseur:*"
+- pattern: "docker.io/securesystemsengineering/*:*"
   validator: dockerhub_essentials
   with:
     key: sse_official
 - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
   validator: allow
-- pattern: "docker.io/securesystemsengineering/testimage:*"
-  validator: dockerhub_essentials
-  with:
-    key: sse_official
-- pattern: "docker.io/securesystemsengineering/testimage:co-*"
-  validator: cosign_essentials
-  with:
-    key: sse_official
-
 
 
 # in detection mode, deployment will not be denied, but only prompted

@@ -11,28 +11,6 @@ echo 'Installing Connaisseur...'
 make install || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
-echo 'Testing cosign unsigned image...'
-kubectl run pod --image=securesystemsengineering/testimage:co-unsigned >output.log 2>&1 || true
-
-if [[ ! "$(cat output.log)" =~ 'No trust data for image "docker.io/securesystemsengineering/testimage:co-unsigned".' ]]; then
-  echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
-  cat output.log
-  exit 1
-else
-  echo 'Successfully denied usage of cosign unsigned image'
-fi
-
-echo 'Testing cosign signed image...'
-kubectl run cpod --image=securesystemsengineering/testimage:co-signed >output.log 2>&1 || true
-
-if [[ "$(cat output.log)" != 'pod/cpod created' ]]; then
-  echo 'Failed to allow signed image. Output:'
-  cat output.log
-  exit 1
-else
-  echo 'Successfully allowed usage of signed image'
-fi
-
 echo 'Testing nv1 unsigned image...'
 kubectl run pod --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
 
