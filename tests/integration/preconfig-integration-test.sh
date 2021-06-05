@@ -8,7 +8,7 @@ yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/val
 echo 'Config set'
 
 echo 'Installing Connaisseur...'
-helm install connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE) || { echo 'Failed to install Connaisseur'; exit 1; }
+helm install connaisseur helm --atomic --create-namespace --namespace connaisseur || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
 echo 'Testing nv1 unsigned image...'

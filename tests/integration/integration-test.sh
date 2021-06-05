@@ -12,7 +12,7 @@ rm update
 echo 'Config set'
 
 echo 'Installing Connaisseur...'
-helm install connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE) || { echo 'Failed to install Connaisseur'; exit 1; }
+helm install connaisseur helm --atomic --create-namespace --namespace connaisseur || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
 echo 'Testing unsigned image...'
