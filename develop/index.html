@@ -775,6 +775,7 @@
 <li><a href="features/namespaced_validation/">Namespaced Validation</a>: <em>restrict validation to dedicated namespaces</em></li>
 <li><a href="features/alerting/">Alerting</a>: <em>send alerts based on verification result</em></li>
 </ul>
+<p>Feel free to reach out to us via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a>!</p>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">⚓︎</a></h2>
 <p>Getting started to verify image signatures is only a matter of minutes: </p>
 <p><img alt="" src="assets/connaisseur_demo.gif" /></p>
@@ -803,7 +804,12 @@ For a quick start, clone the Connaisseur repository:</p>
 <div class="codehilite"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
 </code></pre></div>
 
-<p>Connaisseur returns an error <code>(...) Unable to find signed digest (...)</code>.</p>
+<p>Connaisseur returns an error <code>(...) Unable to find signed digest (...)</code>. Since the images above are signed using Docker Content Trust, you can inspect the trust data using <code>docker trust inspect --pretty &lt;image-name&gt;</code>.</p>
+<p>To uninstall Connaisseur use:</p>
+<div class="codehilite"><pre><span></span><code>helm uninstall connaisseur --namespace connaisseur
+</code></pre></div>
+
+<p>To uninstall all components add the <code>--purge</code> flag.</p>
 <p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster! To get started configuring and verifying your own images and signatures, please follow our full <a href="getting_started/">setup guide</a>.</p>
 <h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">⚓︎</a></h2>
 <p>write how it works</p>
