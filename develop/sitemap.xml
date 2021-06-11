@@ -81,6 +81,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/namespaced_validation/</loc>
+         <lastmod>2021-06-11</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/validators/</loc>
          <lastmod>2021-06-11</lastmod>
          <changefreq>daily</changefreq>

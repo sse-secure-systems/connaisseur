@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#overview" class="md-skip">
+        <a href="#welcome-to-connaisseur" class="md-skip">
           Skip to content
         </a>
       
@@ -741,17 +741,35 @@
               
                 
                 
-                <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">⚓︎</a></h1>
+                <h1 id="welcome-to-connaisseur">Welcome to Connaisseur<a class="headerlink" href="#welcome-to-connaisseur" title="Permanent link">⚓︎</a></h1>
+<p>A Kubernetes admission controller to integrate container image signature verification and trust pinning into a cluster.</p>
 <h2 id="what-is-connaisseur">What is Connaisseur?<a class="headerlink" href="#what-is-connaisseur" title="Permanent link">⚓︎</a></h2>
+<p>Connaisseur ensures integrity and provenance of container images in a Kubernetes cluster. To do so, it intercepts resource creation or update requests sent to the Kubernetes cluster, identifies all container images and verifies their signatures against pre-configured public keys. Based on the result, it either accepts or denies those requests.</p>
+<p>It is developed under 3 core values:</p>
 <ul>
-<li>1 sentence intro</li>
-<li>demo video</li>
-<li>mission and values</li>
-<li>features</li>
+<li>Security</li>
+<li>Usability</li>
+<li>Compatibility</li>
 </ul>
-<p><img alt="" src="assets/connaisseur_demo.gif" /></p>
+<p>Connaisseur supports the following signing solutions:</p>
+<ul>
+<li><a href="https://github.com/theupdateframework/notary">Notary V1</a> / <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a></li>
+<li><a href="https://sigstore.dev/">Sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a> (EXPERIMENTAL)</li>
+<li><a href="https://github.com/notaryproject/nv2">Notary V2</a> (PLANNED)</li>
+</ul>
+<p>It provides several additional features:</p>
+<ul>
+<li><a href="features/detection_mode/">Detection Mode</a>: <em>warn but do not block invalid images</em></li>
+<li><a href="features/namespaced_validation/">Namespaced Validation</a>: <em>restrict validation to dedicated namespaces</em></li>
+<li><a href="features/alerting/">Alerting</a>: <em>send alerts based on verification result</em></li>
+</ul>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">⚓︎</a></h2>
-<p>quick start guide</p>
+<p>Getting started to verify image signatures is only a matter of minutes: </p>
+<p><img alt="" src="assets/connaisseur_demo.gif" /></p>
+<blockquote>
+<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> Only try this out on a test cluster as deployments with unsigned images will be blocked. <img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /></p>
+</blockquote>
+<p>Connaisseur comes pre-configured with public keys for itself and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">Official images</a></p>
 <h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">⚓︎</a></h2>
 <p>write how it works</p>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
