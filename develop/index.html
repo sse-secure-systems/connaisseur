@@ -769,7 +769,30 @@
 <blockquote>
 <p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> Only try this out on a test cluster as deployments with unsigned images will be blocked. <img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /></p>
 </blockquote>
-<p>Connaisseur comes pre-configured with public keys for itself and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">Official images</a></p>
+<p>Connaisseur comes pre-configured with public keys for its own repository and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> (for a list of official images check <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">here</a>).
+It can be fully configured via <code>helm/values.yaml</code>.
+For a quick start, clone the Connaisseur repository:</p>
+<div class="codehilite"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
+</code></pre></div>
+
+<p>Next, install Connaisseur via <a href="https://helm.sh">Helm</a>:</p>
+<div class="codehilite"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+</code></pre></div>
+
+<p>Once installation has finished, you are good to go. Successful verification can be tested via official Docker images like <code>hello-world</code>:</p>
+<div class="codehilite"><pre><span></span><code>kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
+</code></pre></div>
+
+<p>Or our signed <code>testimage</code>:</p>
+<div class="codehilite"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:signed
+</code></pre></div>
+
+<p>Both will return <code>pod/&lt;name&gt; created</code>. However, when trying to deploy an unsigned image:</p>
+<div class="codehilite"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
+</code></pre></div>
+
+<p>Connaisseur returns an error <code>(...) Unable to find signed digest (...)</code>.</p>
+<p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster! To get started configuring and verifying your own images and signatures, please follow our full <a href="getting_started/">setup guide</a>.</p>
 <h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">⚓︎</a></h2>
 <p>write how it works</p>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
