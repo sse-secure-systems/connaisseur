@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/">
       
       <link rel="icon" href="assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.8">
     
     
       
@@ -46,6 +46,8 @@
     
     
       
+
+
     
     
   </head>
@@ -248,8 +250,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    How it works
+  <a href="#how-does-it-work" class="md-nav__link">
+    How does it work?
   </a>
   
 </li>
@@ -713,8 +715,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    How it works
+  <a href="#how-does-it-work" class="md-nav__link">
+    How does it work?
   </a>
   
 </li>
@@ -757,13 +759,7 @@
 <p>A Kubernetes admission controller to integrate container image signature verification and trust pinning into a cluster.</p>
 <h2 id="what-is-connaisseur">What is Connaisseur?<a class="headerlink" href="#what-is-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>Connaisseur ensures integrity and provenance of container images in a Kubernetes cluster. To do so, it intercepts resource creation or update requests sent to the Kubernetes cluster, identifies all container images and verifies their signatures against pre-configured public keys. Based on the result, it either accepts or denies those requests.</p>
-<p>It is developed under 3 core values:</p>
-<ul>
-<li>Security</li>
-<li>Usability</li>
-<li>Compatibility</li>
-</ul>
-<p>Connaisseur supports the following signing solutions:</p>
+<p>Connaisseur is developed under three core values: <em>Security</em>, <em>Usability</em>, <em>Compatibility</em>. It is built to be extendable and currently aims to support the following signing solutions:</p>
 <ul>
 <li><a href="https://github.com/theupdateframework/notary">Notary V1</a> / <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a></li>
 <li><a href="https://sigstore.dev/">Sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a> (EXPERIMENTAL)</li>
@@ -811,14 +807,29 @@ For a quick start, clone the Connaisseur repository:</p>
 
 <p>To uninstall all components add the <code>--purge</code> flag.</p>
 <p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster! To get started configuring and verifying your own images and signatures, please follow our full <a href="getting_started/">setup guide</a>.</p>
-<h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">⚓︎</a></h2>
+<h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">⚓︎</a></h2>
 <p>write how it works</p>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
-<p>signature schemes, (managed) k8s, registries</p>
+<p>Connaisseur is assumed to be compatible with most common Kubernetes services. It has been successfully tested with:</p>
+<ul>
+<li><a href="https://github.com/rancher/k3s">K3s</a> ✅</li>
+<li><a href="https://kind.sigs.k8s.io/">kind</a> ✅</li>
+<li><a href="https://github.com/ubuntu/microk8s">MicroK8s</a> ✅</li>
+<li><a href="https://github.com/kubernetes/minikube">minikube</a> ✅</li>
+<li><a href="https://docs.aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (EKS)</a> ✅</li>
+<li><a href="https://docs.microsoft.com/en-us/azure/aks/">Azure Kubernetes Service (AKS)</a> ✅</li>
+<li><a href="https://cloud.google.com/kubernetes-engine/docs/">Google Kubernetes Engine</a> ✅</li>
+<li><a href="https://docs.syseleven.de/metakube">SysEleven MetaKube</a> ✅</li>
+</ul>
 <h2 id="development">Development<a class="headerlink" href="#development" title="Permanent link">⚓︎</a></h2>
 <p>Contributing, ADRs, ...</p>
 <h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">⚓︎</a></h2>
-<p>blog posts, videos, ...</p>
+<p>Several resources are available to learn more about connaisseur and related topics:</p>
+<ul>
+<li>"<a href="https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce"><em>Container Image Signatures in Kubernetes</em></a>" - blog post (full introduction)</li>
+<li>"<a href="https://berlin-crypto.github.io/event/dockerimagesignatures.html"><em>Integrity of Docker images</em></a>" - talk at Berlin Crypto Meetup (<em>The Update Framework</em>, <em>Notary</em>, <em>Docker Content Trust</em> &amp; Connaisseur [live demo])</li>
+<li>"<a href="https://blog.sigstore.dev/verify-oci-container-image-signatures-in-kubernetes-33663a9ec7d8"><em>Verifying Container Image Signatures from an OCI Registry in Kubernetes</em></a>" - blog post (experimental support of SigStore/Cosign)</li>
+</ul>
                 
               
               
