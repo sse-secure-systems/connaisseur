@@ -265,8 +265,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#admission-control" class="md-nav__link">
-    Admission control
+  <a href="#admission-controllers" class="md-nav__link">
+    Admission controllers
   </a>
   
 </li>
@@ -760,8 +760,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#admission-control" class="md-nav__link">
-    Admission control
+  <a href="#admission-controllers" class="md-nav__link">
+    Admission controllers
   </a>
   
 </li>
@@ -815,8 +815,11 @@
                 <h1 id="welcome-to-connaisseur">Welcome to Connaisseur<a class="headerlink" href="#welcome-to-connaisseur" title="Permanent link">⚓︎</a></h1>
 <p>A Kubernetes admission controller to integrate container image signature verification and trust pinning into a cluster.</p>
 <h2 id="what-is-connaisseur">What is Connaisseur?<a class="headerlink" href="#what-is-connaisseur" title="Permanent link">⚓︎</a></h2>
-<p>Connaisseur ensures integrity and provenance of container images in a Kubernetes cluster. To do so, it intercepts resource creation or update requests sent to the Kubernetes cluster, identifies all container images and verifies their signatures against pre-configured public keys. Based on the result, it either accepts or denies those requests.</p>
-<p>Connaisseur is developed under three core values: <em>Security</em>, <em>Usability</em>, <em>Compatibility</em>. It is built to be extendable and currently aims to support the following signing solutions:</p>
+<p>Connaisseur ensures integrity and provenance of container images in a Kubernetes cluster.
+To do so, it intercepts resource creation or update requests sent to the Kubernetes cluster, identifies all container images and verifies their signatures against pre-configured public keys.
+Based on the result, it either accepts or denies those requests.</p>
+<p>Connaisseur is developed under three core values: <em>Security</em>, <em>Usability</em>, <em>Compatibility</em>.
+It is built to be extendable and currently aims to support the following signing solutions:</p>
 <ul>
 <li><a href="https://github.com/theupdateframework/notary">Notary V1</a> / <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a></li>
 <li><a href="https://sigstore.dev/">Sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a> (EXPERIMENTAL)</li>
@@ -845,7 +848,8 @@ For a quick start, clone the Connaisseur repository:</p>
 <div class="codehilite"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
 </code></pre></div>
 
-<p>Once installation has finished, you are good to go. Successful verification can be tested via official Docker images like <code>hello-world</code>:</p>
+<p>Once installation has finished, you are good to go.
+Successful verification can be tested via official Docker images like <code>hello-world</code>:</p>
 <div class="codehilite"><pre><span></span><code>kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
 </code></pre></div>
 
@@ -863,27 +867,51 @@ For a quick start, clone the Connaisseur repository:</p>
 </code></pre></div>
 
 <p>To uninstall all components add the <code>--purge</code> flag.</p>
-<p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster! To get started configuring and verifying your own images and signatures, please follow our full <a href="getting_started/">setup guide</a>.</p>
+<p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster!
+To get started configuring and verifying your own images and signatures, please follow our full <a href="getting_started/">setup guide</a>.</p>
 <h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">⚓︎</a></h2>
-<p>Digital signatures can be used to ensure integrity and provenance of container images deployed to a Kubernetes cluster. On a very basic level, this requires two steps:</p>
+<p>Integrity and provenance of container images deployed to a Kubernetes cluster can be ensured via digital signatures.
+On a very basic level, this requires two steps:</p>
 <ol>
 <li>Signing container images <em>after building</em></li>
 <li>Verifying the image signatures <em>before deployment</em></li>
 </ol>
-<p>Connaisseur dedicatedly solves the second step. It implements signature verification via several available signing schemes that we refer to as <em>validators</em>.
-While the specific security primitives mainly depend on the applied signing scheme, Connaisseur in general verifies the signature over the container image content against a trust anchor (e.g. public key) and thus let's you ensure that images have not been tampered with (integrity) and come from a valid source (provenance). </p>
+<p>Connaisseur aims to solve step two.
+This is achieved by implementing several <em>validators</em>, i.e. configurable signature verification modules for different signing schemes (e.g. Notary V1).
+While the detailed security considerations mainly depend on the applied scheme, Connaisseur in general verifies the signature over the container image content against a trust anchor (e.g. public key) and thus let's you ensure that images have not been tampered with (integrity) and come from a valid source (provenance). </p>
 <p><img alt="" src="assets/sign-verify.png" /></p>
 <h3 id="trusted-digests">Trusted digests<a class="headerlink" href="#trusted-digests" title="Permanent link">⚓︎</a></h3>
-<p>Container images can be referenced in two different ways based on their registry, repository, image name (<code>&lt;registry&gt;/&lt;repository&gt;/&lt;image name&gt;</code>) followed by tag or digest:</p>
+<p>But what is actually verified?
+Container images can be referenced in two different ways based on their registry, repository, image name (<code>&lt;registry&gt;/&lt;repository&gt;/&lt;image name&gt;</code>) followed by either tag or digest:</p>
 <ul>
 <li>tag: <em>docker.io/library/nginx:</em><strong><em>1.20.1</em></strong></li>
 <li>digest: <em>docker.io/library/nginx@</em><strong><em>sha256:af9c...69ce</em></strong></li>
 </ul>
 <p>While the tag is a mutable, human readable description, the digest is an immutable, inherent property of the image, namely the SHA256 hash of its content.
-As a result a tag can have multiple digests whereas digests are unique for each image.
-In fact, the container runtime (e.g. containerd) compares the image content against the digest before spinning up the container (CHECK!!).
-As a consequence, the image digest can be signed and Connaisseur just needs to either translate an image referenced by tag to a trusted (signed by a trusted entity) digest or, in case of an image referenced by digest, validate whether the digest is trusted.</p>
-<h3 id="admission-control">Admission control<a class="headerlink" href="#admission-control" title="Permanent link">⚓︎</a></h3>
+This also means that a tag can correspond to multiple digests whereas digests are unique for each image.
+The container runtime (e.g. containerd) compares the image content against the received digest before spinning up the container (CHECK!!).
+As a result, Connaisseur just needs to make sure that only <em>trusted digests</em> (signed by a trusted entity) are passed to the container runtime.
+Depending on how an image for deployment is referenced, it will either attempt to translate the tag to a trusted digest or validate whether the digest is trusted.
+How the digest is signed in detail, what the signature is verfied against and how different attempts to inject malicious images are mitigated depends on the signature schemes.</p>
+<h3 id="admission-controllers">Admission controllers<a class="headerlink" href="#admission-controllers" title="Permanent link">⚓︎</a></h3>
+<p>How to validate images <em>before</em> deployment to a cluster?
+The <a href="https://kubernetes.io/docs/concepts/overview/kubernetes-api/">Kubernetes API</a> is the fundamental fabric behind the control plane.
+It allows operators and cluster components to communicate with each other and, for example, query, create, modify or delete Kubernetes resources.
+Each request passes through several phases such as authentication and authorization before it is persisted.
+Among those phases are two steps of <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">admission control</a>: mutating and validating admission.
+In those phases the API sends admission requests to configured webhooks (admission controllers) and receives admission responses (admit, deny, or modify).
+Connaisseur uses a mutating admission webhook, as requests are not only admitted or denied based on the validation result but might also require modification of contained images referenced by tags to trusted digests.
+The webhook is configured to only forward resource creation or update requests to the Connaisseur pods (SERVICE??) running inside the cluster, since only deployments of images to the cluster are relevant for signature verification.
+This allows Connaisseur to intercept requests before deployment and based on the validation: </p>
+<ul>
+<li><em>admit</em> if all images are referenced by trusted digests (CHECK!)</li>
+<li><em>modify</em> if all images can be translated to trusted digests</li>
+<li><em>deny</em> if at least one of the requested images does not have a trusted digest</li>
+</ul>
+<p>While validating admission controllers can only admit or deny, mutating admission controllers can also modify the request.
+As Connaisseur might have to modify a request containing a container image referenced by tag to a trusted digest, it uses a mutating admission webhook which passes the request to its pods running inside the cluster.
+The webhook is configured to only intercept resource creation or update requests, since only those are relevant for signature verification.</p>
+<p><img alt="" src="assets/admission-controller.png" /></p>
 <h3 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">⚓︎</a></h3>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
 <p>Supported signature solutions and configuration options are documented under <a href="validators/">Validators</a>.</p>
@@ -907,8 +935,10 @@ For using Notary V1 as a signature solution, some registries provide the require
 </ul>
 <p>In case you identify any incompatibilities, please <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">create an issue</a> <img alt="♥" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2665.svg" title=":hearts:" /></p>
 <h2 id="development">Development<a class="headerlink" href="#development" title="Permanent link">⚓︎</a></h2>
-<p>Connaisseur is open source and open development. We try to make major changes transparent via <a href="adr/"><em>Architecture Decision Records</em> (ADRs)</a> and announce developments via <a href="https://github.com/sse-secure-systems/connaisseur/discussions/categories/announcements">GitHub Discussions</a>.</p>
-<p>We hope to get as many direct contributions and insights from the community as possible to steer further development. Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">create an issue</a> or <a href="https://github.com/sse-secure-systems/connaisseur/discussions">reach out to us via GitHub Discussions</a> <img alt="🙏" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f64f.svg" title=":pray:" /></p>
+<p>Connaisseur is open source and open development.
+We try to make major changes transparent via <a href="adr/"><em>Architecture Decision Records</em> (ADRs)</a> and announce developments via <a href="https://github.com/sse-secure-systems/connaisseur/discussions/categories/announcements">GitHub Discussions</a>.</p>
+<p>We hope to get as many direct contributions and insights from the community as possible to steer further development.
+Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">create an issue</a> or <a href="https://github.com/sse-secure-systems/connaisseur/discussions">reach out to us via GitHub Discussions</a> <img alt="🙏" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f64f.svg" title=":pray:" /></p>
 <h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">⚓︎</a></h2>
 <p>Several resources are available to learn more about connaisseur and related topics:</p>
 <ul>
