@@ -910,6 +910,15 @@ This allows Connaisseur to intercept requests before deployment and based on the
 </ul>
 <p><img alt="" src="assets/admission-controller.png" /></p>
 <h3 id="image-policy-and-validators">Image Policy and Validators<a class="headerlink" href="#image-policy-and-validators" title="Permanent link">⚓︎</a></h3>
+<p>Now, how does Connaisseur process admission requests?
+When a request is processed it is inspected for container image references that need to be validated.
+The resulting list of images referenced by tag or digest is passed to the image policy.
+The image policy matches the identified images to the configured validators and corresponding trust anchors (e.g. public keys) to be used for verification.
+Image policy and validator configuration form the central logic behind Connaisseur and are described in full detail under <a href="core_concepts/">core concepts</a>.
+Validation is the step where the actual signature verification takes place.
+For each image, the required trust data is retrieved from external sources such as Notary server, registry or Sigstore transparency log and validated against the preconfigured trust anchor (e.g. public key).
+In case, no trusted digest is found for any of the images (i.e. either no signed digest available or no signature matching the public key) the whole request will be denied.
+Otherwise, Connaisseur will translate all image references in the original request to trusted digests and admit it.</p>
 <p><img alt="" src="assets/connaisseur-overview.png" /></p>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
 <p>Supported signature solutions and configuration options are documented under <a href="validators/">Validators</a>.</p>
