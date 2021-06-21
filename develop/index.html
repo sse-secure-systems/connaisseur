@@ -265,15 +265,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#admission-controllers" class="md-nav__link">
-    Admission controllers
+  <a href="#mutating-admission-controller" class="md-nav__link">
+    Mutating Admission controller
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#workflow" class="md-nav__link">
-    Workflow
+  <a href="#image-policy-and-validators" class="md-nav__link">
+    Image Policy and Validators
   </a>
   
 </li>
@@ -760,15 +760,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#admission-controllers" class="md-nav__link">
-    Admission controllers
+  <a href="#mutating-admission-controller" class="md-nav__link">
+    Mutating Admission controller
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#workflow" class="md-nav__link">
-    Workflow
+  <a href="#image-policy-and-validators" class="md-nav__link">
+    Image Policy and Validators
   </a>
   
 </li>
@@ -893,7 +893,7 @@ The container runtime (e.g. containerd) compares the image content against the r
 As a result, Connaisseur just needs to make sure that only <em>trusted digests</em> (signed by a trusted entity) are passed to the container runtime.
 Depending on how an image for deployment is referenced, it will either attempt to translate the tag to a trusted digest or validate whether the digest is trusted.
 How the digest is signed in detail, where the signature is stored, what it is verfied against and how different image distribution and updating attacks are mitigated depends on the signature schemes.</p>
-<h3 id="admission-controllers">Admission controllers<a class="headerlink" href="#admission-controllers" title="Permanent link">⚓︎</a></h3>
+<h3 id="mutating-admission-controller">Mutating Admission controller<a class="headerlink" href="#mutating-admission-controller" title="Permanent link">⚓︎</a></h3>
 <p>How to validate images <em>before</em> deployment to a cluster?
 The <a href="https://kubernetes.io/docs/concepts/overview/kubernetes-api/">Kubernetes API</a> is the fundamental fabric behind the control plane.
 It allows operators and cluster components to communicate with each other and, for example, query, create, modify or delete Kubernetes resources.
@@ -909,7 +909,8 @@ This allows Connaisseur to intercept requests before deployment and based on the
 <li><em>deny</em> if at least one of the requested images does not have a trusted digest</li>
 </ul>
 <p><img alt="" src="assets/admission-controller.png" /></p>
-<h3 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">⚓︎</a></h3>
+<h3 id="image-policy-and-validators">Image Policy and Validators<a class="headerlink" href="#image-policy-and-validators" title="Permanent link">⚓︎</a></h3>
+<p><img alt="" src="assets/connaisseur-overview.png" /></p>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
 <p>Supported signature solutions and configuration options are documented under <a href="validators/">Validators</a>.</p>
 <p>Connaisseur is expected to be compatible with most Kubernetes services. It has been successfully tested with:</p>
