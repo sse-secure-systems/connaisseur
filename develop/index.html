@@ -831,14 +831,14 @@ It is built to be extendable and currently aims to support the following signing
 <li><a href="features/namespaced_validation/">Namespaced Validation</a>: <em>restrict validation to dedicated namespaces</em></li>
 <li><a href="features/alerting/">Alerting</a>: <em>send alerts based on verification result</em></li>
 </ul>
-<p>Feel free to reach out to us via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a>!</p>
+<p>Feel free to reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a>!</p>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">⚓︎</a></h2>
 <p>Getting started to verify image signatures is only a matter of minutes: </p>
 <p><img alt="" src="assets/connaisseur_demo.gif" /></p>
 <blockquote>
 <p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> Only try this out on a test cluster as deployments with unsigned images will be blocked. <img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /></p>
 </blockquote>
-<p>Connaisseur comes pre-configured with public keys for its own repository and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> (for a list of official images check <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">here</a>).
+<p>Connaisseur comes pre-configured with public keys for its own repository and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> (official images can be found <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">here</a>).
 It can be fully configured via <code>helm/values.yaml</code>.
 For a quick start, clone the Connaisseur repository:</p>
 <div class="codehilite"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
@@ -868,7 +868,7 @@ Successful verification can be tested via official Docker images like <code>hell
 
 <p>To uninstall all components add the <code>--purge</code> flag.</p>
 <p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster!
-To get started configuring and verifying your own images and signatures, please follow our full <a href="getting_started/">setup guide</a>.</p>
+To get started configuring and verifying your own images and signatures, please follow our <a href="getting_started/">setup guide</a>.</p>
 <h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">⚓︎</a></h2>
 <p>Integrity and provenance of container images deployed to a Kubernetes cluster can be ensured via digital signatures.
 On a very basic level, this requires two steps:</p>
@@ -888,8 +888,8 @@ Container images can be referenced in two different ways based on their registry
 <li>digest: <em>docker.io/library/nginx@</em><strong><em>sha256:af9c...69ce</em></strong></li>
 </ul>
 <p>While the tag is a mutable, human readable description, the digest is an immutable, inherent property of the image, namely the SHA256 hash of its content.
-This also means that a tag can correspond to multiple digests whereas digests are unique for each image.
-The container runtime (e.g. containerd) compares the image content against the received digest before spinning up the container (CHECK!!).
+This also means that a tag can correspond to varying digests whereas digests are unique for each image.
+The container runtime (e.g. containerd) compares the image content with the received digest before spinning up the container (TODO).
 As a result, Connaisseur just needs to make sure that only <em>trusted digests</em> (signed by a trusted entity) are passed to the container runtime.
 Depending on how an image for deployment is referenced, it will either attempt to translate the tag to a trusted digest or validate whether the digest is trusted.
 How the digest is signed in detail, where the signature is stored, what it is verfied against and how different image distribution and updating attacks are mitigated depends on the signature schemes.</p>
@@ -901,24 +901,25 @@ Each request passes through several phases such as authentication and authorizat
 Among those phases are two steps of <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">admission control</a>: mutating and validating admission.
 In those phases the API sends admission requests to configured webhooks (admission controllers) and receives admission responses (admit, deny, or modify).
 Connaisseur uses a mutating admission webhook, as requests are not only admitted or denied based on the validation result but might also require modification of contained images referenced by tags to trusted digests.
-The webhook is configured to only forward resource creation or update requests to the Connaisseur pods (SERVICE??) running inside the cluster, since only deployments of images to the cluster are relevant for signature verification.
+The webhook is configured to only forward resource creation or update requests to the Connaisseur pods running inside the cluster, since only deployments of images to the cluster are relevant for signature verification.
 This allows Connaisseur to intercept requests before deployment and based on the validation: </p>
 <ul>
-<li><em>admit</em> if all images are referenced by trusted digests (CHECK!)</li>
+<li><em>admit</em> if all images are referenced by trusted digests (TODO)</li>
 <li><em>modify</em> if all images can be translated to trusted digests</li>
 <li><em>deny</em> if at least one of the requested images does not have a trusted digest</li>
 </ul>
 <p><img alt="" src="assets/admission-controller.png" /></p>
 <h3 id="image-policy-and-validators">Image Policy and Validators<a class="headerlink" href="#image-policy-and-validators" title="Permanent link">⚓︎</a></h3>
 <p>Now, how does Connaisseur process admission requests?
-When a request is processed it is inspected for container image references that need to be validated.
-The resulting list of images referenced by tag or digest is passed to the image policy.
+A newly received request is first inspected for container image references that need to be validated (1).
+The resulting list of images referenced by tag or digest is passed to the image policy (2).
 The image policy matches the identified images to the configured validators and corresponding trust anchors (e.g. public keys) to be used for verification.
-Image policy and validator configuration form the central logic behind Connaisseur and are described in full detail under <a href="core_concepts/">core concepts</a>.
-Validation is the step where the actual signature verification takes place.
+Image policy and validator configuration form the central logic behind Connaisseur and are described in detail under <a href="core_concepts/">core concepts</a>.
+Validation is the step where the actual signature verification takes place (3).
 For each image, the required trust data is retrieved from external sources such as Notary server, registry or Sigstore transparency log and validated against the preconfigured trust anchor (e.g. public key).
-In case, no trusted digest is found for any of the images (i.e. either no signed digest available or no signature matching the public key) the whole request will be denied.
-Otherwise, Connaisseur will translate all image references in the original request to trusted digests and admit it.</p>
+This forms the basis for deciding on the request (4).
+In case no trusted digest is found for any of the images (i.e. either no signed digest available or no signature matching the public key), the whole request will be denied.
+Otherwise, Connaisseur will translate all image references in the original request to trusted digests and admit it (5).</p>
 <p><img alt="" src="assets/connaisseur-overview.png" /></p>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
 <p>Supported signature solutions and configuration options are documented under <a href="validators/">Validators</a>.</p>
