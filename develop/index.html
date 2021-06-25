@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/">
       
       <link rel="icon" href="assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.8">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.9">
     
     
       
@@ -286,6 +286,13 @@
         <li class="md-nav__item">
   <a href="#compatibility" class="md-nav__link">
     Compatibility
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versions" class="md-nav__link">
+    Versions
   </a>
   
 </li>
@@ -786,6 +793,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#versions" class="md-nav__link">
+    Versions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#development" class="md-nav__link">
     Development
   </a>
@@ -927,7 +941,7 @@ Otherwise, Connaisseur will translate all image references in the original reque
 <ul>
 <li><a href="https://github.com/rancher/k3s">K3s</a> ✅</li>
 <li><a href="https://kind.sigs.k8s.io/">kind</a> ✅</li>
-<li><a href="https://github.com/ubuntu/microk8s">MicroK8s</a> ✅</li>
+<li><a href="https://github.com/ubuntu/microk8s">MicroK8s</a> ✅ (enable DNS addon via <code>sudo microk8s enable dns</code>)</li>
 <li><a href="https://github.com/kubernetes/minikube">minikube</a> ✅</li>
 <li><a href="https://docs.aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (EKS)</a> ✅</li>
 <li><a href="https://docs.microsoft.com/en-us/azure/aks/">Azure Kubernetes Service (AKS)</a> ✅</li>
@@ -935,16 +949,23 @@ Otherwise, Connaisseur will translate all image references in the original reque
 <li><a href="https://docs.syseleven.de/metakube">SysEleven MetaKube</a> ✅</li>
 </ul>
 <p>All registry interactions use the <a href="https://github.com/opencontainers/distribution-spec/blob/main/spec.md">OCI Distribution Specification</a> that is based on the <a href="https://docs.docker.com/registry/spec/api/">Docker Registry HTTP API V2</a> which is the standard for all common image registries.
-For using Notary V1 as a signature solution, some registries provide the required Notary server attached to the registry with e.g. shared authentication. Connaisseur has been tested with the following Notary V1 supporting image registries:</p>
+For using Notary V1 as a signature solution, only some registries provide the required Notary server attached to the registry with e.g. shared authentication. Connaisseur has been tested with the following Notary V1 supporting image registries:</p>
 <ul>
 <li><a href="https://hub.docker.com/">Docker Hub</a> ✅</li>
 <li><a href="https://goharbor.io/">Harbor</a> ✅ (check our <a href="validators/notaryv1/#using-harbor-container-registry">configuration notes</a>)</li>
 <li><a href="https://docs.microsoft.com/en-us/azure/container-registry/">Azure Container Registry (ACR)</a> ✅ (check our <a href="validators/notaryv1/#using-azure-container-registry">configuration notes</a>)</li>
 </ul>
 <p>In case you identify any incompatibilities, please <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">create an issue</a> <img alt="♥" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2665.svg" title=":hearts:" /></p>
+<h2 id="versions">Versions<a class="headerlink" href="#versions" title="Permanent link">⚓︎</a></h2>
+<p>The latest stable version of Connaisseur is available on the <a href="https://github.com/sse-secure-systems/connaisseur"><code>master</code></a> branch.
+<a href="https://github.com/sse-secure-systems/connaisseur/releases">Releases</a> follow <a href="https://semver.org/">semantic versioning</a> standards to facilitate compatibility.
+For each release, a signed container image tagged with the version is published in the <a href="https://hub.docker.com/repository/docker/securesystemsengineering/connaisseur">Connaisseur Docker Hub repository</a>.
+Latest developments are available on the <a href="https://github.com/sse-secure-systems/connaisseur/tree/develop"><code>develop</code></a> branch, but should be considered unstable and no pre-built container image is provided.</p>
 <h2 id="development">Development<a class="headerlink" href="#development" title="Permanent link">⚓︎</a></h2>
 <p>Connaisseur is open source and open development.
-We try to make major changes transparent via <a href="adr/"><em>Architecture Decision Records</em> (ADRs)</a> and announce developments via <a href="https://github.com/sse-secure-systems/connaisseur/discussions/categories/announcements">GitHub Discussions</a>.</p>
+We try to make major changes transparent via <a href="adr/"><em>Architecture Decision Records</em> (ADRs)</a> and announce developments via <a href="https://github.com/sse-secure-systems/connaisseur/discussions/categories/announcements">GitHub Discussions</a>.
+Information on responsible disclosure of vulnerabilities and tracking of past findings is available in the <a href="SECURITY/">Security Policy</a>.
+Bug reports should be filed as <a href="https://github.com/sse-secure-systems/connaisseur/issues/new?assignees=&amp;labels=&amp;template=bug_report.md&amp;title=">GitHub issues</a> to share status and potential fixes with other users.</p>
 <p>We hope to get as many direct contributions and insights from the community as possible to steer further development.
 Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">create an issue</a> or <a href="https://github.com/sse-secure-systems/connaisseur/discussions">reach out to us via GitHub Discussions</a> <img alt="🙏" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f64f.svg" title=":pray:" /></p>
 <h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">⚓︎</a></h2>
@@ -1065,10 +1086,10 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.b0710199.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.76f349be.min.js"></script>
+      <script src="assets/javascripts/bundle.82b56eb2.min.js"></script>
       
     
   </body>

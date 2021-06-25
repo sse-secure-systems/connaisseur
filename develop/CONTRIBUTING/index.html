@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/CONTRIBUTING/">
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.8">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.9">
     
     
       
@@ -545,13 +545,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#contents" class="md-nav__link">
-    Contents
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#discuss-problems-raise-bugs-and-propose-feature-ideas" class="md-nav__link">
     Discuss Problems, Raise Bugs and Propose Feature Ideas
   </a>
@@ -724,13 +717,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#contents" class="md-nav__link">
-    Contents
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#discuss-problems-raise-bugs-and-propose-feature-ideas" class="md-nav__link">
     Discuss Problems, Raise Bugs and Propose Feature Ideas
   </a>
@@ -802,16 +788,6 @@
 <p>We hope to steer development of Connaisseur from demand of the community and are excited about direct contributions to improve the tool!</p>
 <p>The following guide is meant to help you get started with contributing to Connaisseur. In case of questions or feedback, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/discussions">reach out to us</a>.</p>
 <p>We are committed to positive interactions between all contributors of the project. To ensure this, please follow the <a href="../CODE_OF_CONDUCT/">Code of Conduct</a> in all communications.</p>
-<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">⚓︎</a></h2>
-<ul>
-<li><a href="#discuss-problems-raise-bugs-and-propose-feature-ideas">Discuss Problems, Raise Bugs and Propose Feature Ideas</a></li>
-<li><a href="#contribute-to-source-code">Contribute to Source Code</a></li>
-<li><a href="#setup-the-environment">Setup the Environment</a></li>
-<li><a href="#test-changes">Test Changes</a></li>
-<li><a href="#signed-commits-and-pull-requests">Signed Commits and Pull Requests</a></li>
-<li><a href="#semantic-and-conventional-commits">Semantic and Conventional Commits</a></li>
-<li><a href="#enjoy">Enjoy!</a></li>
-</ul>
 <h2 id="discuss-problems-raise-bugs-and-propose-feature-ideas">Discuss Problems, Raise Bugs and Propose Feature Ideas<a class="headerlink" href="#discuss-problems-raise-bugs-and-propose-feature-ideas" title="Permanent link">⚓︎</a></h2>
 <p>We are happy you made it here! In case you want to share your feedback, need support, want to discuss issues from using Connaisseur in your own projects, have ideas for new features or just want to connect with us, please reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a>. If you want to raise any bugs you found or make a feature request, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/issues/new">create an issue</a> with an informative title and description.</p>
 <p>While issues are a great way to discuss problems, bugs and new features, a direct proposal via a pull request can sometimes say more than a thousand words. So be bold and contribute to the code as described in the <a href="#contribute-to-source-code">next section</a>!</p>
@@ -823,7 +799,7 @@
 <li><strong>Make atomic changes</strong>: Changes should be atomic. As such, pull requests should contain only few commits, and each commit should only fix one issue or implement one feature, with a concise commit message.</li>
 <li><strong>Test your changes</strong>: Test any changes locally for code quality and functionality and add new tests for any additional code. How to test is described <a href="#test-changes">below</a>.</li>
 <li><strong>Create semantic, conventional and signed commits</strong>: Any commits should follow a simple semantic convention to help structure the work on Connaisseur. The convention is described <a href="#semantic-and-conventional-commits">below</a>. For security reasons and since integrity is at the core of this project, code merged into master must be signed. How we achieve this is described <a href="#signed-commits-and-pull-requests">below</a>.</li>
-<li><strong>Create Pull Request</strong>: We consider code review central to quality and security of code. Therefore, a pull request (PR) should be created for each contribution. It will be reviewed, and potential improvements may be discussed within the PR. After approval, changes will be merged into the <code>master</code> branch.</li>
+<li><strong>Create Pull Request</strong>: We consider code review central to quality and security of code. Therefore, a pull request (PR) to the <code>develop</code> branch should be created for each contribution. It will be reviewed, and potential improvements may be discussed within the PR. After approval, changes will be merged and moved to the <code>master</code> branch with the next release.</li>
 </ol>
 <h3 id="setup-the-environment">Setup the Environment<a class="headerlink" href="#setup-the-environment" title="Permanent link">⚓︎</a></h3>
 <p>To start contributing, you will need to setup your local environment. First step is to get the source code by cloning this repository:</p>
@@ -873,7 +849,7 @@ pytest --cov=connaisseur --cov-report=xml tests/
 </code></pre></div>
 
 <h3 id="signed-commits-and-pull-requests">Signed Commits and Pull Requests<a class="headerlink" href="#signed-commits-and-pull-requests" title="Permanent link">⚓︎</a></h3>
-<p>All changes to the <code>master</code> branch must be signed which is enforced via <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing">branch protection</a>. This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor. Consequently, while we appreciate signed commits in PRs, we do not require it.</p>
+<p>All changes to the <code>develop</code> and <code>master</code> branch must be signed which is enforced via <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing">branch protection</a>. This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor. Consequently, while we appreciate signed commits in PRs, we do not require it.</p>
 <p>A general introduction into signing commits can for example be found in the <a href="https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html">With Blue Ink blog</a>. For details on setting everything up for GitHub, please follow the steps in the <a href="https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification">Documentation</a>.</p>
 <p>Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are setup to create signed commits. We recommend to configure Git to sign commits by default via:</p>
 <div class="codehilite"><pre><span></span><code>git config commit.gpgsign <span class="nb">true</span>
@@ -1038,10 +1014,10 @@ pytest --cov=connaisseur --cov-report=xml tests/
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.b0710199.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.76f349be.min.js"></script>
+      <script src="../assets/javascripts/bundle.82b56eb2.min.js"></script>
       
     
   </body>
