@@ -646,7 +646,77 @@
                 
                 
                 <h1 id="alerting">Alerting<a class="headerlink" href="#alerting" title="Permanent link">⚓︎</a></h1>
-<p>description of alerting</p>
+<p>You can receive notification on the admission decisions made by Connaisseur on basically every REST endpoint that accepts JSON payload.
+For Slack, Opsgenie and Keybase we have preconfigured payloads that are ready to use, but you can also use the existing payload templates as an example how to create your own custom one.
+It is also possible to configure multiple different interfaces you want to receive alerts at for each event category (admit/deny) in the <code>helm/values.yaml</code>.</p>
+<p>If you for example would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to to following snippet:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">alerting</span><span class="o">:</span>
+  <span class="n">admit_request</span><span class="o">:</span>
+    <span class="n">templates</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">template</span><span class="o">:</span> <span class="n">keybase</span>
+        <span class="n">receiver_url</span><span class="o">:</span> <span class="n">https</span><span class="o">://</span><span class="n">bots</span><span class="o">.</span><span class="na">keybase</span><span class="o">.</span><span class="na">io</span><span class="sr">/webhookbot/</span><span class="o">&lt;</span><span class="n">Your</span><span class="o">-</span><span class="n">Keybase</span><span class="o">-</span><span class="n">Hook</span><span class="o">-</span><span class="n">Token</span><span class="o">&gt;</span>
+</code></pre></div>
+
+<p>For each element in <code>templates</code>, both <code>template</code> as well as <code>receiver_url</code> are required.
+The value for <code>template</code> needs to match an existing file of the pattern <code>helm/alert_payload_templates/&lt;template&gt;.json</code>; so if you want to use a predefined one it needs to be one of <code>slack</code>, <code>keybase</code> or <code>opsgenie</code>.
+For some REST endpoints like e.g. Opsgenie you need to configure a additional headers which you can pass to <code>custom_headers</code> as a list of plain string like e.g. <code>["Authorization: GenieKey &lt;Your-Genie-Key&gt;"]</code>.
+Setting <code>fail_if_alert_sending_fails</code> to <code>True</code> will make Connaisseur deny images if the corresponding alert cannot be successfully sent.
+This, obviously, makes sense only for requests that Connaisseur would have admitted as other requests would have been denied in the first place.
+The setting can come handy if you want to run Connaisseur in detection mode but still make sure that you get notified about what is going on in your cluster.
+<em>However, this setting will block everyone from contributing if the alert sending fails permanently. It could occur that your developers are blocked if the third party interface is down because somebody accidentally deleted your Slack Webhook App or your configuration has expired because your GenieKey expired!</em></p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>accepted values</th>
+<th>required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alerting.cluster_identifier</code></td>
+<td>string</td>
+<td>no (default: "not specified")</td>
+</tr>
+<tr>
+<td><code>alerting.&lt;category&gt;.template</code></td>
+<td><code>opsgenie</code>, <code>slack</code>, <code>keybase</code> or custom <sup>*</sup></td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>alerting.&lt;category&gt;.receiver_url</code></td>
+<td>string</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>alerting.&lt;category&gt;.priority</code></td>
+<td>int</td>
+<td>no (default: <code>3</code>)</td>
+</tr>
+<tr>
+<td><code>alerting.&lt;category&gt;.custom_headers</code></td>
+<td>list[string]</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>alerting.&lt;category&gt;.payload_fields</code></td>
+<td>subyaml</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>alerting.&lt;category&gt;.fail_if_alert_sending_fails</code></td>
+<td>bool</td>
+<td>no (default: <code>False</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><sup>* the basename of a custom template file in <code>helm/alerting_payload_templates</code> without file extension </sup></p>
+<p>Along the lines of the templates that are already there you can easily define your custom template for your own endpoint.
+The following variables can be rendered during runtime into your payload: <code>alert_message</code>, <code>priority</code>, <code>connaisseur_pod_id</code>, <code>cluster</code>, <code>timestamp</code>, <code>request_id</code> and <code>images</code>.
+Rendering is done by Jinja2; so if you want to have a timestamp in your payload later on you can use <code>{{ timestamp }}</code> in your template.
+You can update your payload dynamically by adding payload fields in <code>yaml</code> presentation in the <code>payload_fields</code> key which will be translated to JSON by helm as is.
+If your REST endpoint requires particular headers, your can specify them as described above in <code>custom_headers</code>.</p>
+<p>Feel free to open a PR if you add new neat templates for other third parties!</p>
                 
               
               

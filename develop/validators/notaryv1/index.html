@@ -324,6 +324,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#getting-the-root-key" class="md-nav__link">
+    Getting the Root Key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#using-harbor-container-registry" class="md-nav__link">
     Using Harbor container registry
   </a>
@@ -699,6 +706,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#getting-the-root-key" class="md-nav__link">
+    Getting the Root Key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#using-harbor-container-registry" class="md-nav__link">
     Using Harbor container registry
   </a>
@@ -738,6 +752,17 @@
 <li>...</li>
 </ul>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
+<h3 id="getting-the-root-key">Getting the Root Key<a class="headerlink" href="#getting-the-root-key" title="Permanent link">⚓︎</a></h3>
+<p>For verifying the signatures of images, a public root key is needed, but from where do you get this, especially for public images whose signatures you didn't create? For this we created the <em>get_root_key</em> utility. You can use it by building the docker image with <code>docker build -t get-root-key -f docker/Dockerfile.getRoot .</code> and the running the image:</p>
+<div class="codehilite"><pre><span></span><code>$ docker run --rm notaryrootkey -i securesystemsengineering/testimage
+KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
+Key: -----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</span>
+-----END PUBLIC KEY-----
+</code></pre></div>
+
+<p>The <code>-i</code> (<code>--image</code>) option is required and takes the image, for which you want the public key. There is also the <code>-s</code> (<code>--server</code>) option, which defines the notary server that should be used and which defaults to <code>notary.docker.io</code>.</p>
 <h3 id="using-harbor-container-registry">Using Harbor container registry<a class="headerlink" href="#using-harbor-container-registry" title="Permanent link">⚓︎</a></h3>
 <h3 id="using-azure-container-registry">Using Azure Container Registry<a class="headerlink" href="#using-azure-container-registry" title="Permanent link">⚓︎</a></h3>
 <p>Azure Container Registry (ACR)</p>

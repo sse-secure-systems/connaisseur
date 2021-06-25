@@ -266,8 +266,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#basic-setup" class="md-nav__link">
+    Basic setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#makefile-and-helm" class="md-nav__link">
+    Makefile and Helm
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#image-policy" class="md-nav__link">
-    image policy
+    Image Policy
   </a>
   
 </li>
@@ -676,8 +690,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#basic-setup" class="md-nav__link">
+    Basic setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#makefile-and-helm" class="md-nav__link">
+    Makefile and Helm
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#image-policy" class="md-nav__link">
-    image policy
+    Image Policy
   </a>
   
 </li>
@@ -704,7 +732,84 @@
                 
                 <h1 id="core-concepts">Core Concepts<a class="headerlink" href="#core-concepts" title="Permanent link">⚓︎</a></h1>
 <p>description of core concepts (image policy, validators), scope, ...</p>
-<h2 id="image-policy">image policy<a class="headerlink" href="#image-policy" title="Permanent link">⚓︎</a></h2>
+<h2 id="basic-setup">Basic setup<a class="headerlink" href="#basic-setup" title="Permanent link">⚓︎</a></h2>
+<p>Connaisseur can be integrated into a multitude of different systems, with a few requirements and a bit of configurational effort. It was tested on a Linux Mint 19.2, but other distributions should work just fine. We provide a <a href="setup/README.md">full setup guide</a> with detailed instructions for various environments. In short:</p>
+<ol>
+<li><strong>Requirements</strong>: First of all you'll need an image with an exiting signature. If you don't have one, head to the <a href="setup/README.md">full setup guide</a> where creating Docker Content Trust keys and signing images is explained. Also a few tools are needed in advance. You'll need <code>git</code> for getting the source code and <code>make</code> for a convenient setup. Since Connaisseur will be deployed as a container to a Kubernetes cluster, <a href="https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/">docker</a>, <a href="https://helm.sh/docs/intro/install/">helm</a> and <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> are required for building the image, generating a Deployment file and deploying it to the cluster. During the deployment, some certificates need to be created, which requires <code>openssl</code>. To install everything except docker, helm and kubectl, use</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>sudo apt install git make openssl -y
+sudo snap install yq
+</code></pre></div>
+
+<ol>
+<li><strong>Getting the code</strong>: Clone this repository to your favorite location.</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
+</code></pre></div>
+
+<ol>
+<li>
+<p><strong>Configure deployment</strong>: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. Open <code>helm/values.yaml</code>, which is Connaisseur's configuration file.</p>
+<ol>
+<li>
+<p><strong>Configure notary instances</strong>: The <code>.notaries</code> field specifies different notary configurations, with the official DockerHub notary instance predefined. When wanting to add a new (e.g. private) notary instance, create a new entry and define a <code>name</code> and add the host address in the <code>host</code> field. Should the new instance use a self-signed certificate, add it with the <code>selfsigned_cert</code> field in a PEM format. Also should the instance need authentication, an <code>auth</code> field can be added, containing either an <code>auth.user</code> and <code>auth.password</code> with the credentials, or an <code>auth.secretName</code> referencing a predefined secret. Regardless of whether you want to add a new instance or use the DockerHub one, you'll probably want to add at least one public root key, used for verifying the signatures. Root keys reside in the <code>root_keys</code> field as a list. The public key for all official images on DockerHub is already defined with the name <code>default</code>. Simply add a new entry, give it a <code>name</code> and add the key in PEM format in the <code>key</code> field. For retrieving a public root key you can use the <em>get_root_key</em> utility described <a href="#getting-the-root-key">here</a>.</p>
+</li>
+<li>
+<p><strong>Configure the policy</strong>: To actually use the newly defined notary instances or public keys, they have to be referenced in the image policy. How the image policy is setup, is described in the <a href="#image-policy">image policy</a> section. Make sure to reference the instance and key via the <code>notary</code> and <code>key</code> fields, or leave them out should you want to use the default ones, which are identified by their <code>name</code> fields set to <code>default</code>.</p>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>Deploy</strong>: Switch to the cluster where you would like to install Connaisseur, and run <code>make install</code>. This may take some seconds, as the installation order of the Connaisseur components is critical. Only when the Connaisseur pods are ready and running, the Admission Webhook can be applied for intercepting requests.</p>
+</li>
+</ol>
+<blockquote>
+<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> <strong>WARNING!</strong> Be careful when installing Connaisseur, as it will block unsigned images and may for example even block some resources during a restart of <code>minikube</code>! In such a situation you should still be able to fix it by deleting Connaisseur manually. You can use <a href="#detection-mode">Detection Mode</a> to avoid interruptions during testing.</p>
+</blockquote>
+<h2 id="makefile-and-helm">Makefile and Helm<a class="headerlink" href="#makefile-and-helm" title="Permanent link">⚓︎</a></h2>
+<p>The recommended approach on installing Connaisseur is using the Makefile, as it conveniently creates the <code>connaisseur</code> namespace, switches to it and then uses Helm to install Connaisseur. Some useful commands are:</p>
+<ul>
+<li><code>install</code> - for installation Connaisseur, including its namespace</li>
+<li><code>upgrade</code> - for upgrading your currently installed Connaisseur release</li>
+<li><code>uninstall</code> - for uninstalling Connaisseur and deleting the <code>connaisseur</code> namespace</li>
+<li><code>annihilate</code> - for deleting all Connaisseur related resources, whether they are namespaced or not (usually only used when something went wrong during installation)</li>
+</ul>
+<p>Another way is to just use Helm for this, without relying on the Makefile. When doing so, make sure to add the <code>--wait</code> flag for <code>install</code> and <code>upgrade</code> commands, as the installation order and readiness states of all components are critical. Otherwise your installation/upgrade will probably fail.</p>
+<h2 id="image-policy">Image Policy<a class="headerlink" href="#image-policy" title="Permanent link">⚓︎</a></h2>
+<p>Connaisseur allows defining an image policy, for fine-grained control over Connaisseur's judgments on different images. When installing the tool, a default policy (<code>helm/values.yaml#policy</code>), is applied to the cluster:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+  <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+  <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/connaisseur:*&quot;</span>
+  <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;sample.registry.io/image:*&quot;</span>
+  <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="nt">delegations</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">lou</span> 
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">max</span>
+  <span class="nt">notary</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sample-notary</span>
+  <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sample-key</span>
+</code></pre></div>
+
+<p>The policy consists of a set of rules. Each rule starts with a pattern that needs to be matched to an image name (such as <code>"*:*"</code> and <code>"docker.io/*:*"</code>). Only the most specific rule, with the most specific matching pattern, is chosen for any given image. This is determined by the following algorithm:</p>
+<ol>
+<li>A given image is matched against all rule patterns.</li>
+<li>All matching patterns are compared to one another to determine the most specific one (see below). Only two patterns are compared at a time; the more specific one then is compared to the next one and so forth. Specificity is determined as follows:<ol>
+<li>Patterns are split into components (delimited by "/"). The pattern that has a higher number of components wins (is considered more specific).</li>
+<li>Should the two patterns that are being compared have equal number of components, the longest common prefix between each pattern component and corresponding image component are calculated (for this purpose, image identifiers are also split into components). The pattern with the longest common prefix in one component, starting from the leftmost, wins.</li>
+<li>Should all longest common prefixes of all components between the two compared patterns be equal, the pattern with a longer component, starting from the leftmost, wins.</li>
+<li>The rule whose pattern has won all comparisons is considered the most specific rule.</li>
+</ol>
+</li>
+<li>Return the most specific rule.</li>
+</ol>
+<p>In addition to the pattern, rules can also contain a <code>verify</code> flag which specifies whether the image requires a signature or can skip verification. If <code>verify</code> is set to <code>true</code>, a valid signature is required; otherwise, the image is admitted without verification. The default value for <code>verify</code> is <code>true</code>. Additionally, a rule can have <code>delegations</code> which correspond to Notary delegation roles. These are to be understood as specific signers that need to be present in the Notary trust data in order for signature verification to be successful (for a more detailed documentation see the <a href="ADVANCED.md#delegation-feature">ADVANCED.md</a>). Lastly a <code>notary</code> and <code>key</code> field can be added, which reference which of the notaries should be consulted when accessing signatures for a given image, and which of the keys should be used to verify these signatures. Make sure that the <code>notary</code> field references one of the notaries <code>name</code> fields and the <code>key</code> field references of the public root keys <code>name</code> field, within the given notary configuration. If no <code>notary</code> or <code>key</code> fields are given, Connaisseur will either do one of two things:</p>
+<ol>
+<li>Should there only be one notary configuration or only one key defined within a given configuration, this configuration or key will be taken by default for verification purposes.</li>
+<li>Should there be more then one notary configuration or key and if one of the <code>name</code> fields is set to <code>default</code>, Connaisseur will take this one. If no default is specified and no specific entry defined, Connaisseur will abort the validation with an error.</li>
+</ol>
 <h2 id="validators">validators<a class="headerlink" href="#validators" title="Permanent link">⚓︎</a></h2>
                 
               
