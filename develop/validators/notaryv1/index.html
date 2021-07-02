@@ -18,7 +18,7 @@
     
     
       
-        <title>Notary v1 - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
+        <title>Notary V1 - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
       
     
     
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Notary v1
+              Notary V1
             
           </span>
         </div>
@@ -231,19 +231,39 @@
 
   
   
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3">
+        Usage
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Usage" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
   
     <li class="md-nav__item">
-      <a href="../../core_concepts/" class="md-nav__link">
-        Core Concepts
+      <a href="../../basics/" class="md-nav__link">
+        Basics
       </a>
     </li>
   
 
-    
-      
-      
-      
-
+          
+            
   
   
     
@@ -253,14 +273,14 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
       
-      <label class="md-nav__link" for="__nav_4">
+      <label class="md-nav__link" for="__nav_3_2">
         Validators
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Validators" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
+      <nav class="md-nav" aria-label="Validators" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
           <span class="md-nav__icon md-icon"></span>
           Validators
         </label>
@@ -293,12 +313,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Notary v1
+          Notary V1
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Notary v1
+        Notary V1
       </a>
       
         
@@ -314,6 +334,20 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    Basic usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#additional-notes" class="md-nav__link">
@@ -349,6 +383,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#advanced-use-cases" class="md-nav__link">
+    Advanced Use-Cases
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#delegation-feature" class="md-nav__link">
+    Delegation feature
+  </a>
+  
+    <nav class="md-nav" aria-label="Delegation feature">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-policy-example" class="md-nav__link">
+    Image Policy Example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    Limits
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#delegation-feature_1" class="md-nav__link">
+    Delegation feature
+  </a>
+  
+    <nav class="md-nav" aria-label="Delegation feature">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-policy-example_1" class="md-nav__link">
+    Image Policy Example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limits_1" class="md-nav__link">
+    Limits
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -363,7 +458,7 @@
   
     <li class="md-nav__item">
       <a href="../notaryv2/" class="md-nav__link">
-        Notary v2
+        Notary V2
       </a>
     </li>
   
@@ -386,11 +481,8 @@
     </li>
   
 
-    
-      
-      
-      
-
+          
+            
   
   
   
@@ -398,14 +490,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
       
-      <label class="md-nav__link" for="__nav_5">
+      <label class="md-nav__link" for="__nav_3_3">
         Features
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="Features" data-md-level="1">
-        <label class="md-nav__title" for="__nav_5">
+      <nav class="md-nav" aria-label="Features" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
           <span class="md-nav__icon md-icon"></span>
           Features
         </label>
@@ -464,33 +556,9 @@
     </li>
   
 
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../threat_model/" class="md-nav__link">
-        Threat Model
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../SECURITY/" class="md-nav__link">
-        Security Policy
-      </a>
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -506,14 +574,113 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
       
-      <label class="md-nav__link" for="__nav_8">
+      <label class="md-nav__link" for="__nav_4">
+        Security
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Security" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Security
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../threat_model/" class="md-nav__link">
+        Threat Model
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SECURITY/" class="md-nav__link">
+        Security Policy
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      <label class="md-nav__link" for="__nav_5">
+        Development
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Development" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Development
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CONTRIBUTING/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../RELEASING/" class="md-nav__link">
+        Releasing
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      <label class="md-nav__link" for="__nav_5_3">
         ADRs
         <span class="md-nav__icon md-icon"></span>
       </label>
-      <nav class="md-nav" aria-label="ADRs" data-md-level="1">
-        <label class="md-nav__title" for="__nav_8">
+      <nav class="md-nav" aria-label="ADRs" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
           <span class="md-nav__icon md-icon"></span>
           ADRs
         </label>
@@ -572,18 +739,9 @@
     </li>
   
 
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../CONTRIBUTING/" class="md-nav__link">
-        Contributing
-      </a>
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -618,60 +776,6 @@
   
 
     
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
-      
-      <label class="md-nav__link" for="__nav_12">
-        Unsorted
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Unsorted" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
-          <span class="md-nav__icon md-icon"></span>
-          Unsorted
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../validation/" class="md-nav__link">
-        Validation
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ADVANCED/" class="md-nav__link">
-        Advanced Use-Cases
-      </a>
-    </li>
-  
-
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -696,6 +800,20 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    Basic usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#additional-notes" class="md-nav__link">
@@ -731,6 +849,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#advanced-use-cases" class="md-nav__link">
+    Advanced Use-Cases
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#delegation-feature" class="md-nav__link">
+    Delegation feature
+  </a>
+  
+    <nav class="md-nav" aria-label="Delegation feature">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-policy-example" class="md-nav__link">
+    Image Policy Example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    Limits
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#delegation-feature_1" class="md-nav__link">
+    Delegation feature
+  </a>
+  
+    <nav class="md-nav" aria-label="Delegation feature">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-policy-example_1" class="md-nav__link">
+    Image Policy Example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limits_1" class="md-nav__link">
+    Limits
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -744,13 +923,41 @@
               
                 
                 
-                <h1 id="notary-v1">Notary v1<a class="headerlink" href="#notary-v1" title="Permanent link">⚓︎</a></h1>
+                <h1 id="notary-v1">Notary V1<a class="headerlink" href="#notary-v1" title="Permanent link">⚓︎</a></h1>
 <p>nv1 guide</p>
+<p>currently just a copy-paste of former nv1 docs to below the dashed line and provide a prepared structure above. Please refactor or write new and use the former docs as input.</p>
 <p>notes:</p>
 <ul>
 <li>how to get pub keys for existing keys: https://github.com/sse-secure-systems/connaisseur/tree/master/setup#manual</li>
 <li>...</li>
 </ul>
+<h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
+<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
+<p><code>policy</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>default</th>
+<th>required</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>policy.pattern</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>image pattern description (incl. example)</td>
+</tr>
+<tr>
+<td><code>policy.validator</code></td>
+<td><code>default</code></td>
+<td></td>
+<td>valditator key description (incl. example)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="getting-the-root-key">Getting the Root Key<a class="headerlink" href="#getting-the-root-key" title="Permanent link">⚓︎</a></h3>
 <p>For verifying the signatures of images, a public root key is needed, but from where do you get this, especially for public images whose signatures you didn't create? For this we created the <em>get_root_key</em> utility. You can use it by building the docker image with <code>docker build -t get-root-key -f docker/Dockerfile.getRoot .</code> and the running the image:</p>
@@ -766,6 +973,61 @@ d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</sp
 <h3 id="using-harbor-container-registry">Using Harbor container registry<a class="headerlink" href="#using-harbor-container-registry" title="Permanent link">⚓︎</a></h3>
 <h3 id="using-azure-container-registry">Using Azure Container Registry<a class="headerlink" href="#using-azure-container-registry" title="Permanent link">⚓︎</a></h3>
 <p>Azure Container Registry (ACR)</p>
+<hr />
+<h2 id="advanced-use-cases">Advanced Use-Cases<a class="headerlink" href="#advanced-use-cases" title="Permanent link">⚓︎</a></h2>
+<p>This document details some more advanced use-cases of Connaisseur.</p>
+<h2 id="delegation-feature">Delegation feature<a class="headerlink" href="#delegation-feature" title="Permanent link">⚓︎</a></h2>
+<p>Signatures in Docker Content Trust or Notary v1 are based on <a href="https://github.com/theupdateframework/specification">The Update Framework (TUF)</a>. TUF allows delegating signature permissions to other people. Connaisseur supports requiring delegations for Notary v1 via the <code>policy</code> definition:</p>
+<h3 id="image-policy-example">Image Policy Example<a class="headerlink" href="#image-policy-example" title="Permanent link">⚓︎</a></h3>
+<p>Let's say you have an organizational root key pinned in the <a href="helm/values.yaml">helm/values.yaml</a>, which you use to delegate to individual developers, i.e. via <code>docker trust key load delegation.key --name charlie</code> (see <a href="https://docs.docker.com/engine/security/trust/trust_delegation/">the Docker documentation</a> for the docker CLI commands).</p>
+<p>Now, given an image policy</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+</code></pre></div>
+
+<p>the signature of every single developer to whom you delegated signature rights will be considered valid. That might be fine for most use-cases, but for <code>trusted-thing</code>, which runs as a privileged container on all k8s nodes, you really want to limit yourself to Alice from the security team, whom you trust to have properly reviewed it. And also to Bob, your most senior developer, because they got that eye for detail and they really don't do the "It's friday, force push master, I'm outta here" stuff, that Charlie did last month... Anyways, Connaisseur can handle this:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;your.org/trusted-thing:*&quot;</span>
+    <span class="nt">delegations</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+
+<p>Connaisseur will make sure, that both Alice and Bob have a current signature on the same digest for any tagged <code>trusted-thing</code> image you deploy.
+If one of their signatures is missing or if they point to different digests for the same tag, Connaisseur will block the deployment.
+In the meantime, for all other images any delegated individual key, repository key or the root key will be accepted.</p>
+<p>The list you add in the <code>delegations</code> field can contain any number of delegations. Just remember that it is a logical <code>AND</code>, so <em>all</em> delegations will have to verify correctly. </p>
+<p>Another potential use-case is to use delegations to sign an image in various stages of your CI, i.e. requiring the signature of your linter, your security scanner and your software lisence compliance check.</p>
+<h3 id="limits">Limits<a class="headerlink" href="#limits" title="Permanent link">⚓︎</a></h3>
+<p>Q: Is a logical <code>OR</code> possible? Are there n-of-m thresholds? Is there <code>insert-arbitrary-logical-function</code>?</p>
+<p>A: No, currently not. If you have the use-case, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/discussions">hit us up</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">open an issue</a> or open a pull request.</p>
+<p>Q: Will delegations work with Cosign or Notary v2?</p>
+<p>A: Currently, Cosign does not natively support delegations, so Connaisseur doesn't either. For Notary v2, it looks like they will support delegations and so Connaisseur will most likely support them as in Notary v1.</p>
+<h2 id="delegation-feature_1">Delegation feature<a class="headerlink" href="#delegation-feature_1" title="Permanent link">⚓︎</a></h2>
+<p>Signatures in Docker Content Trust or Notary v1 are based on <a href="https://github.com/theupdateframework/specification">The Update Framework (TUF)</a>. TUF allows delegating signature permissions to other people. Connaisseur supports requiring delegations for Notary v1 via the <code>policy</code> definition:</p>
+<h3 id="image-policy-example_1">Image Policy Example<a class="headerlink" href="#image-policy-example_1" title="Permanent link">⚓︎</a></h3>
+<p>Let's say you have an organizational root key pinned in the <a href="helm/values.yaml">helm/values.yaml</a>, which you use to delegate to individual developers, i.e. via <code>docker trust key load delegation.key --name charlie</code> (see <a href="https://docs.docker.com/engine/security/trust/trust_delegation/">the Docker documentation</a> for the docker CLI commands).</p>
+<p>Now, given an image policy</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+</code></pre></div>
+
+<p>the signature of every single developer to whom you delegated signature rights will be considered valid. That might be fine for most use-cases, but for <code>trusted-thing</code>, which runs as a privileged container on all k8s nodes, you really want to limit yourself to Alice from the security team, whom you trust to have properly reviewed it. And also to Bob, your most senior developer, because they got that eye for detail and they really don't do the "It's friday, force push master, I'm outta here" stuff, that Charlie did last month... Anyways, Connaisseur can handle this:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;your.org/trusted-thing:*&quot;</span>
+    <span class="nt">delegations</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+
+<p>Connaisseur will make sure, that both Alice and Bob have a current signature on the same digest for any tagged <code>trusted-thing</code> image you deploy.
+If one of their signatures is missing or if they point to different digests for the same tag, Connaisseur will block the deployment.
+In the meantime, for all other images any delegated individual key, repository key or the root key will be accepted.</p>
+<p>The list you add in the <code>delegations</code> field can contain any number of delegations. Just remember that it is a logical <code>AND</code>, so <em>all</em> delegations will have to verify correctly. </p>
+<p>Another potential use-case is to use delegations to sign an image in various stages of your CI, i.e. requiring the signature of your linter, your security scanner and your software lisence compliance check.</p>
+<h3 id="limits_1">Limits<a class="headerlink" href="#limits_1" title="Permanent link">⚓︎</a></h3>
+<p>Q: Is a logical <code>OR</code> possible? Are there n-of-m thresholds? Is there <code>insert-arbitrary-logical-function</code>?</p>
+<p>A: No, currently not. If you have the use-case, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/discussions">hit us up</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">open an issue</a> or open a pull request.</p>
+<p>Q: Will delegations work with Cosign or Notary v2?</p>
+<p>A: Currently, Cosign does not natively support delegations, so Connaisseur doesn't either. For Notary v2, it looks like they will support delegations and so Connaisseur will most likely support them as in Notary v1.</p>
                 
               
               
@@ -801,13 +1063,13 @@ d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</sp
       
       
         
-        <a href="../notaryv2/" class="md-footer__link md-footer__link--next" aria-label="Next: Notary v2" rel="next">
+        <a href="../notaryv2/" class="md-footer__link md-footer__link--next" aria-label="Next: Notary V2" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Notary v2
+              Notary V2
             </div>
           </div>
           <div class="md-footer__button md-icon">
