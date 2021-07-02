@@ -43,6 +43,9 @@ runs:
         sed s+/.*++g)
         echo ALERTING_ENDPOINT_IP=${ALERTING_ENDPOINT_IP} >> $GITHUB_ENV
       shell: bash
+    - name: Give it some time ...
+      run: sleep 5
+      shell: bash
     - name: Run actual integration test
       run: |
         bash tests/integration/${{ inputs.integration-test-script }}
