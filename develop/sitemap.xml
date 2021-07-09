@@ -61,6 +61,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-4_modular/</loc>
+         <lastmod>2021-07-09</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/</loc>
          <lastmod>2021-07-09</lastmod>
          <changefreq>daily</changefreq>

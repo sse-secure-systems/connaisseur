@@ -559,7 +559,7 @@
   
     <li class="md-nav__item">
       <a href="../validators/notaryv1/" class="md-nav__link">
-        Notary V1
+        DCT / Notary V1
       </a>
     </li>
   
@@ -842,6 +842,18 @@
     <li class="md-nav__item">
       <a href="../adr/ADR-3_multi_notary_config/" class="md-nav__link">
         ADR 3: Multiple Notary Configuration
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-4_modular/" class="md-nav__link">
+        ADR 4: Modular Validation
       </a>
     </li>
   
@@ -1195,7 +1207,7 @@
 </tbody>
 </table>
 <h5 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h5>
-<div class="codehilite"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
   <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
   <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
@@ -1203,7 +1215,6 @@
   <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
   <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
-
 <h3 id="specific-validators">Specific Validators<a class="headerlink" href="#specific-validators" title="Permanent link">⚓︎</a></h3>
 <p>Specific validators now define the method on how signatures are to be validated and what kind of signatures are to be expected in the first place. Images signed with Docker Content Trust need to be validated with a Notary V1 validator, whereas images signed with Cosign need a Cosign validator.</p>
 <p>A list of available validators can be found <a href="../validators/">here</a>, but independently of which ever one you choose, they all have a similar structure with the following supported fields:</p>
@@ -1282,7 +1293,7 @@
 <p>Any further configuration fields are specific to their validator type and are described in the relevant chapters.</p>
 <p>Additionally there is a special behavior, when a validator or one of the trust roots is named <code>"default"</code> . In this case, should an image policy rule not specify a validator or trust roots to use, the one named <code>"default"</code> will be used instead. This also means there can only be one validator named <code>"default"</code> and for the trust roots, there can only be one called <code>"default"</code> within a single validator.</p>
 <h4 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">⚓︎</a></h4>
-<div class="codehilite"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
   <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
   <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
@@ -1305,7 +1316,6 @@
       <span class="no">&lt;add your public key here&gt;</span>
       <span class="no">-----END PUBLIC KEY-----</span>
 </code></pre></div>
-
 <h3 id="image-policy">Image policy<a class="headerlink" href="#image-policy" title="Permanent link">⚓︎</a></h3>
 <p>The image policy is defined in the <code>policy</code> field and acts as a list of rule objects. Each rule supports the following fields:</p>
 <table>
@@ -1357,7 +1367,7 @@
 <li>Return the most specific rule.</li>
 </ol>
 <h4 id="example_2">Example<a class="headerlink" href="#example_2" title="Permanent link">⚓︎</a></h4>
-<div class="codehilite"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/library/*:*&quot;</span>
   <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub</span>
@@ -1371,7 +1381,6 @@
     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">beliztphilipp</span>
     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">starkteetje</span>
 </code></pre></div>
-
 <h3 id="features">Features<a class="headerlink" href="#features" title="Permanent link">⚓︎</a></h3>
 <p>Further configuration for some of Connaisseur's features can be found <a href="../features/">here</a>.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">⚓︎</a></h2>
@@ -1379,16 +1388,14 @@
 <p>There are some requirements before you can install Connaisseur. These include: <a href="https://git-scm.com/">Git</a>, a <a href="https://kubernetes.io/">Kubernetes</a> cluster, <a href="https://helm.sh/">Helm</a> and <a href="https://www.docker.com/">Docker</a> (only for local setups). Install these and you should be good to go. </p>
 <h3 id="getting-the-code">Getting The Code<a class="headerlink" href="#getting-the-code" title="Permanent link">⚓︎</a></h3>
 <p>The Connaisseur source code can be cloned directly from github and includes the application and helm charts in a single repository.</p>
-<div class="codehilite"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
+<div class="highlight"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
 </code></pre></div>
-
 <h3 id="configure-deployment">Configure Deployment<a class="headerlink" href="#configure-deployment" title="Permanent link">⚓︎</a></h3>
 <p>The configuration of Connaisseur is done in the <code>helm/values.yaml</code>. How to configure the validators and image policy is described <a href="#configuration">above</a>.</p>
 <h3 id="deploy">Deploy<a class="headerlink" href="#deploy" title="Permanent link">⚓︎</a></h3>
 <p>Install Connaisseur by using Helm (alternatively use <a href="#makefile">Makefile</a>).</p>
-<div class="codehilite"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+<div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
 </code></pre></div>
-
 <p>This will install Connaisseur in its own namespace called <code>connaisseur</code>. The installation itself may take some minutes, as the installation order of the Connaisseur components is critical. Only when the Connaisseur pods are ready and running, the Admission Webhook can be applied for intercepting requests.</p>
 <h3 id="check-installation">Check Installation<a class="headerlink" href="#check-installation" title="Permanent link">⚓︎</a></h3>
 <h2 id="use">Use<a class="headerlink" href="#use" title="Permanent link">⚓︎</a></h2>
@@ -1402,16 +1409,14 @@
 <ol>
 <li><strong>Requirements</strong>: First of all you'll need an image with an exiting signature. If you don't have one, head to the <a href="setup/README.md">full setup guide</a> where creating Docker Content Trust keys and signing images is explained. Also a few tools are needed in advance. You'll need <code>git</code> for getting the source code and <code>make</code> for a convenient setup. Since Connaisseur will be deployed as a container to a Kubernetes cluster, <a href="https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/">docker</a>, <a href="https://helm.sh/docs/intro/install/">helm</a> and <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> are required for building the image, generating a Deployment file and deploying it to the cluster. During the deployment, some certificates need to be created, which requires <code>openssl</code>. To install everything except docker, helm and kubectl, use</li>
 </ol>
-<div class="codehilite"><pre><span></span><code>sudo apt install git make openssl -y
+<div class="highlight"><pre><span></span><code>sudo apt install git make openssl -y
 sudo snap install yq
 </code></pre></div>
-
 <ol>
 <li><strong>Getting the code</strong>: Clone this repository to your favorite location.</li>
 </ol>
-<div class="codehilite"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
+<div class="highlight"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
 </code></pre></div>
-
 <ol>
 <li>
 <p><strong>Configure deployment</strong>: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. Open <code>helm/values.yaml</code>, which is Connaisseur's configuration file.</p>
@@ -1442,7 +1447,7 @@ sudo snap install yq
 <p>Another way is to just use Helm for this, without relying on the Makefile. When doing so, make sure to add the <code>--wait</code> flag for <code>install</code> and <code>upgrade</code> commands, as the installation order and readiness states of all components are critical. Otherwise your installation/upgrade will probably fail.</p>
 <h2 id="image-policy_1">Image Policy<a class="headerlink" href="#image-policy_1" title="Permanent link">⚓︎</a></h2>
 <p>Connaisseur allows defining an image policy, for fine-grained control over Connaisseur's judgments on different images. When installing the tool, a default policy (<code>helm/values.yaml#policy</code>), is applied to the cluster:</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
   <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
@@ -1457,7 +1462,6 @@ sudo snap install yq
   <span class="nt">notary</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sample-notary</span>
   <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sample-key</span>
 </code></pre></div>
-
 <p>The policy consists of a set of rules. Each rule starts with a pattern that needs to be matched to an image name (such as <code>"*:*"</code> and <code>"docker.io/*:*"</code>). Only the most specific rule, with the most specific matching pattern, is chosen for any given image. This is determined by the following algorithm:</p>
 <ol>
 <li>A given image is matched against all rule patterns.</li>
@@ -1506,6 +1510,10 @@ sudo snap install yq
             </article>
           </div>
         </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
         
       </main>
       
@@ -1622,7 +1630,7 @@ sudo snap install yq
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.82b56eb2.min.js"></script>

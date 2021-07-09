@@ -302,7 +302,7 @@
   
     <li class="md-nav__item">
       <a href="../../validators/notaryv1/" class="md-nav__link">
-        Notary V1
+        DCT / Notary V1
       </a>
     </li>
   
@@ -639,6 +639,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
+        ADR 4: Modular Validation
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -742,12 +754,11 @@ Namespaced validation offers two modes:</p>
 <li><code>validate</code>: only validate namespaces with label <code>securesystemsengineering.connaisseur/webhook: validate</code></li>
 </ul>
 <p>The desired namespaces must be labelled accordingly, e.g. via:</p>
-<div class="codehilite"><pre><span></span><code># either
+<div class="highlight"><pre><span></span><code># either
 kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhook=ignore
 # or
 kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhook=validate
 </code></pre></div>
-
 <p>Configure namespaced validation via the <code>namespacedValidation</code> in <code>helm/values.yaml</code>.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
 <p><code>namespacedValidation</code> in <code>helm/values.yaml</code> supports the following keys:</p>
@@ -777,13 +788,12 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
 </table>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
 <p>In <code>helm/values.yaml</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">namespacedValidation</span><span class="o">:</span>
-  <span class="n">enabled</span><span class="o">:</span> <span class="kc">true</span>
-  <span class="n">mode</span><span class="o">:</span> <span class="n">validate</span>
+<div class="highlight"><pre><span></span><code>namespacedValidation:
+  enabled: true
+  mode: validate
 </code></pre></div>
-
 <p>Labelling target namespace to be validated:</p>
-<div class="codehilite"><pre><span></span><code>kubectl namespaces validateme securesystemsengineering.connaisseur/webhook=validate
+<div class="highlight"><pre><span></span><code>kubectl namespaces validateme securesystemsengineering.connaisseur/webhook=validate
 </code></pre></div>
                 
               
@@ -795,6 +805,10 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
             </article>
           </div>
         </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
         
       </main>
       
@@ -911,7 +925,7 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.82b56eb2.min.js"></script>

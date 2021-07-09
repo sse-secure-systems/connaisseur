@@ -409,7 +409,7 @@
   
     <li class="md-nav__item">
       <a href="validators/notaryv1/" class="md-nav__link">
-        Notary V1
+        DCT / Notary V1
       </a>
     </li>
   
@@ -697,6 +697,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="adr/ADR-4_modular/" class="md-nav__link">
+        ADR 4: Modular Validation
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -862,7 +874,7 @@ Based on the result, it either accepts or denies those requests.</p>
 <p>Connaisseur is developed under three core values: <em>Security</em>, <em>Usability</em>, <em>Compatibility</em>.
 It is built to be extendable and currently aims to support the following signing solutions:</p>
 <ul>
-<li><a href="https://github.com/theupdateframework/notary">Notary V1</a> / <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a></li>
+<li><a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a> / <a href="https://github.com/theupdateframework/notary">Notary V1</a></li>
 <li><a href="https://sigstore.dev/">Sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a> (EXPERIMENTAL)</li>
 <li><a href="https://github.com/notaryproject/nv2">Notary V2</a> (PLANNED)</li>
 </ul>
@@ -882,31 +894,25 @@ It is built to be extendable and currently aims to support the following signing
 <p>Connaisseur comes pre-configured with public keys for its own repository and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> (official images can be found <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">here</a>).
 It can be fully configured via <code>helm/values.yaml</code>.
 For a quick start, clone the Connaisseur repository:</p>
-<div class="codehilite"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
+<div class="highlight"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
 </code></pre></div>
-
 <p>Next, install Connaisseur via <a href="https://helm.sh">Helm</a>:</p>
-<div class="codehilite"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+<div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
 </code></pre></div>
-
 <p>Once installation has finished, you are good to go.
 Successful verification can be tested via official Docker images like <code>hello-world</code>:</p>
-<div class="codehilite"><pre><span></span><code>kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
+<div class="highlight"><pre><span></span><code>kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
 </code></pre></div>
-
 <p>Or our signed <code>testimage</code>:</p>
-<div class="codehilite"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:signed
+<div class="highlight"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:signed
 </code></pre></div>
-
 <p>Both will return <code>pod/&lt;name&gt; created</code>. However, when trying to deploy an unsigned image:</p>
-<div class="codehilite"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
+<div class="highlight"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
 </code></pre></div>
-
 <p>Connaisseur returns an error <code>(...) Unable to find signed digest (...)</code>. Since the images above are signed using Docker Content Trust, you can inspect the trust data using <code>docker trust inspect --pretty &lt;image-name&gt;</code>.</p>
 <p>To uninstall Connaisseur use:</p>
-<div class="codehilite"><pre><span></span><code>helm uninstall connaisseur --namespace connaisseur
+<div class="highlight"><pre><span></span><code>helm uninstall connaisseur --namespace connaisseur
 </code></pre></div>
-
 <p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster!
 To get started configuring and verifying your own images and signatures, please follow our <a href="getting_started/">setup guide</a>.</p>
 <h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">⚓︎</a></h2>
@@ -1012,6 +1018,10 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
           </div>
         </div>
         
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
+        
       </main>
       
         
@@ -1112,7 +1122,7 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
       <script src="assets/javascripts/bundle.82b56eb2.min.js"></script>

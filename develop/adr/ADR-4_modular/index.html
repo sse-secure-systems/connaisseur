@@ -11,14 +11,14 @@
       
       
       
-        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/features/detection_mode/">
+        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-4_modular/">
       
       <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.9">
     
     
       
-        <title>Detection Mode - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
+        <title>ADR 4: Modular Validation - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#detection-mode" class="md-skip">
+        <a href="#adr-4-modular-validation" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Detection Mode
+              ADR 4: Modular Validation
             
           </span>
         </div>
@@ -231,14 +231,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
       
       <label class="md-nav__link" for="__nav_3">
         Usage
@@ -341,14 +339,12 @@
             
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
       
       <label class="md-nav__link" for="__nav_3_3">
         Features
@@ -366,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../features/" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -376,58 +372,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Detection Mode
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../features/detection_mode/" class="md-nav__link">
         Detection Mode
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    Configuration options
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -437,7 +386,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../namespaced_validation/" class="md-nav__link">
+      <a href="../../features/namespaced_validation/" class="md-nav__link">
         Namespaced Validation
       </a>
     </li>
@@ -449,7 +398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../alerting/" class="md-nav__link">
+      <a href="../../features/alerting/" class="md-nav__link">
         Alerting
       </a>
     </li>
@@ -528,12 +477,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
       
       <label class="md-nav__link" for="__nav_5">
         Development
@@ -573,12 +524,14 @@
             
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
       
       <label class="md-nav__link" for="__nav_5_3">
         ADRs
@@ -596,7 +549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Architecture Decision Records
       </a>
     </li>
@@ -608,7 +561,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-1_connaisseur-bootstrap-sentinel/" class="md-nav__link">
+      <a href="../ADR-1_connaisseur-bootstrap-sentinel/" class="md-nav__link">
         ADR 1: Bootstrap Sentinel
       </a>
     </li>
@@ -620,7 +573,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-2_release-management/" class="md-nav__link">
+      <a href="../ADR-2_release-management/" class="md-nav__link">
         ADR 2: Release Management
       </a>
     </li>
@@ -632,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-3_multi_notary_config/" class="md-nav__link">
+      <a href="../ADR-3_multi_notary_config/" class="md-nav__link">
         ADR 3: Multiple Notary Configuration
       </a>
     </li>
@@ -642,11 +595,263 @@
             
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ADR 4: Modular Validation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         ADR 4: Modular Validation
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#considered-options" class="md-nav__link">
+    Considered Options
+  </a>
+  
+    <nav class="md-nav" aria-label="Considered Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-changes-choice-1" class="md-nav__link">
+    Configuration Changes (Choice 1)
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Changes (Choice 1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#notary-configuration-11" class="md-nav__link">
+    "Notary" Configuration (1.1)
+  </a>
+  
+    <nav class="md-nav" aria-label=""Notary" Configuration (1.1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#111-structure" class="md-nav__link">
+    1.1.1 Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1111" class="md-nav__link">
+    Option 1.1.1.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#112-sensitive-values" class="md-nav__link">
+    1.1.2 Sensitive values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1121" class="md-nav__link">
+    Option 1.1.2.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1122" class="md-nav__link">
+    Option 1.1.2.2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_1" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-policy-12" class="md-nav__link">
+    Image policy (1.2)
+  </a>
+  
+    <nav class="md-nav" aria-label="Image policy (1.2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proposition" class="md-nav__link">
+    Proposition
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1211" class="md-nav__link">
+    Option 1.2.1.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1212" class="md-nav__link">
+    Option 1.2.1.2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_2" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1221" class="md-nav__link">
+    Option 1.2.2.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1222" class="md-nav__link">
+    Option 1.2.2.2
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_3" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1231" class="md-nav__link">
+    Option 1.2.3.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1232" class="md-nav__link">
+    Option 1.2.3.2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_4" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validator-interface-choice-2" class="md-nav__link">
+    Validator interface (Choice 2)
+  </a>
+  
+    <nav class="md-nav" aria-label="Validator interface (Choice 2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-211" class="md-nav__link">
+    Option 2.1.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-212" class="md-nav__link">
+    Option 2.1.2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_5" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -719,16 +924,221 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    Configuration options
+  <a href="#status" class="md-nav__link">
+    Status
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#context" class="md-nav__link">
+    Context
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#considered-options" class="md-nav__link">
+    Considered Options
+  </a>
+  
+    <nav class="md-nav" aria-label="Considered Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-changes-choice-1" class="md-nav__link">
+    Configuration Changes (Choice 1)
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Changes (Choice 1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#notary-configuration-11" class="md-nav__link">
+    "Notary" Configuration (1.1)
+  </a>
+  
+    <nav class="md-nav" aria-label=""Notary" Configuration (1.1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#111-structure" class="md-nav__link">
+    1.1.1 Structure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1111" class="md-nav__link">
+    Option 1.1.1.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#112-sensitive-values" class="md-nav__link">
+    1.1.2 Sensitive values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1121" class="md-nav__link">
+    Option 1.1.2.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1122" class="md-nav__link">
+    Option 1.1.2.2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_1" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-policy-12" class="md-nav__link">
+    Image policy (1.2)
+  </a>
+  
+    <nav class="md-nav" aria-label="Image policy (1.2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proposition" class="md-nav__link">
+    Proposition
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1211" class="md-nav__link">
+    Option 1.2.1.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1212" class="md-nav__link">
+    Option 1.2.1.2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_2" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1221" class="md-nav__link">
+    Option 1.2.2.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1222" class="md-nav__link">
+    Option 1.2.2.2
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_3" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1231" class="md-nav__link">
+    Option 1.2.3.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-1232" class="md-nav__link">
+    Option 1.2.3.2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_4" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validator-interface-choice-2" class="md-nav__link">
+    Validator interface (Choice 2)
+  </a>
+  
+    <nav class="md-nav" aria-label="Validator interface (Choice 2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-211" class="md-nav__link">
+    Option 2.1.1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-212" class="md-nav__link">
+    Option 2.1.2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision_5" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -745,34 +1155,122 @@
               
                 
                 
-                <h1 id="detection-mode">Detection Mode<a class="headerlink" href="#detection-mode" title="Permanent link">⚓︎</a></h1>
-<p>A detection mode is available in order to avoid interruptions of a running cluster, to support initial rollout or for testing purposes.
-In detection mode, Connaisseur will admit all images to the cluster, but issues a warning and logs an error message for images that do not comply with the policy or in case of other unexpected failures.</p>
-<p>To activate the detection mode, set the <code>detectionMode</code> flag to <code>true</code> in <code>helm/values.yaml</code>.</p>
-<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>detectionMode</code> in <code>helm/values.yaml</code> supports the following keys:</p>
-<table>
-<thead>
-<tr>
-<th>key</th>
-<th>default</th>
-<th>required</th>
-<th>description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>detectionMode</code></td>
-<td>false</td>
-<td></td>
-<td><code>true</code>/<code>false</code>; when detection mode is enabled, Connaisseur will warn but not deny requests with untrusted images</td>
-</tr>
-</tbody>
-</table>
-<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
-<p>In <code>helm/values.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code>detectionMode: true
+                <h1 id="adr-4-modular-validation">ADR 4: Modular Validation<a class="headerlink" href="#adr-4-modular-validation" title="Permanent link">⚓︎</a></h1>
+<h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">⚓︎</a></h2>
+<p>Accepted</p>
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">⚓︎</a></h2>
+<p>With the upcoming of <a href="https://github.com/notaryproject/nv2">notaryv2</a> and similar projects like <a href="https://github.com/sigstore/cosign">cosign</a> the opportunity for Connaisseur arises to support multiple signing mechanisms, and combine all into a single validation tool. For that to work, the internal validation mechanism of connaisseur needs to be more modular, so we can easily swap in and out different methods.</p>
+<h2 id="considered-options">Considered Options<a class="headerlink" href="#considered-options" title="Permanent link">⚓︎</a></h2>
+<h3 id="configuration-changes-choice-1">Configuration Changes (Choice 1)<a class="headerlink" href="#configuration-changes-choice-1" title="Permanent link">⚓︎</a></h3>
+<p>Obviously some changes have to be made to the configuration of Connaisseur, but this splits into changes for the previous notary configurations and the image policy.</p>
+<h4 id="notary-configuration-11">"Notary" Configuration (1.1)<a class="headerlink" href="#notary-configuration-11" title="Permanent link">⚓︎</a></h4>
+<p>With notaryv1 all trust data always resided in a notary server for which Connaisseur needed the URL, authentication credentials, etc. This isn't true anymore for notaryv2 or cosign. Here Connaisseur may need other data, meaning the configuration is dependent on the type of validation method used here. Also other mechanisms such as digest whitelisting which doesn't even include cryptographic material might be considered in the future.</p>
+<h5 id="111-structure">1.1.1 Structure<a class="headerlink" href="#111-structure" title="Permanent link">⚓︎</a></h5>
+<h5 id="option-1111">Option 1.1.1.1<a class="headerlink" href="#option-1111" title="Permanent link">⚓︎</a></h5>
+<p>The previous <code>notaries</code> section in the <em>values.yaml</em> changes to <code>validators</code>, in which different validation methods (validators) can be defined. The least required fields a validator needs are a <code>name</code> for later referencing and a <code>type</code> for knowing its correct kind.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;dockerhub-nv2&quot;</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;notaryv2&quot;</span>
+  <span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;harbor-nv1&quot;</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;notaryv1&quot;</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="s">&quot;notary.harbor.io&quot;</span>
+  <span class="nt">root_keys</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
+      <span class="nt">key</span><span class="p">:</span> <span class="s">&quot;...&quot;</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;cosign&quot;</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;cosign&quot;</span>
+  <span class="l l-Scalar l-Scalar-Plain">...</span>
 </code></pre></div>
+<p>Depending on the type, additional fields might be required, e.g. the notaryv1 type requires a <code>host</code> and <code>root_keys</code> field.</p>
+<p>NB: JSON schema validation works for the above and can easily handle various configurations based on type in there.</p>
+<h5 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">⚓︎</a></h5>
+<p>We are going with this structure (<strong>option 1.1.1.1</strong>) due to the lack of other alternatives. It provides all needed information and the flexibility to use multiple validation methods, as needed.</p>
+<h5 id="112-sensitive-values">1.1.2 Sensitive values<a class="headerlink" href="#112-sensitive-values" title="Permanent link">⚓︎</a></h5>
+<p>If we allow multiple validators that may contain different forms of sensitive values, i.e. notary credentials, symmetric keys, service principals, ..., they need to be properly handled within the Helm chart with respect to ConfigMaps and Secrets. Currently, the distinction is hard-coded.</p>
+<h5 id="option-1121">Option 1.1.2.1<a class="headerlink" href="#option-1121" title="Permanent link">⚓︎</a></h5>
+<p>Add an optional <code>sensitive([-_]fields)</code> field at the validator config top level. Any sensitive values go in there and will be handled by the Helm chart to go into a secret. Any other values are treated as public and go into the ConfigMap.</p>
+<p>Advantages:
+- Generic configuration
+  - Could be used by potential plugin validators to have their data properly handled (potential future)
+- Hard to forget the configuration for newly implemented validators</p>
+<p>Disadvantage: If implemented in a <code>config = merge(secret, configmap)</code> way, might allow sensitive values in configmap and Connaisseur still working</p>
+<h5 id="option-1122">Option 1.1.2.2<a class="headerlink" href="#option-1122" title="Permanent link">⚓︎</a></h5>
+<p>Hard-code sensitive values based on validator type</p>
+<p>Advantages: Can do very strict validation on fields without extra work</p>
+<p>Disadvantages:
+- Helm chart change might be forgotten for new validator
+- Helm chart release required for new validator
+- Does not "natively" allow plugins</p>
+<h5 id="decision_1">Decision<a class="headerlink" href="#decision_1" title="Permanent link">⚓︎</a></h5>
+<p>We are going with <strong>option 1.1.2.2</strong> and hard code the sensitive fields, to prevent users from misconfigure and accidentally but sensitive parts into configmaps.</p>
+<h4 id="image-policy-12">Image policy (1.2)<a class="headerlink" href="#image-policy-12" title="Permanent link">⚓︎</a></h4>
+<p>For the image policy similar changes to the notary configuration have to be made.</p>
+<h5 id="proposition">Proposition<a class="headerlink" href="#proposition" title="Permanent link">⚓︎</a></h5>
+<p>The previous <code>notary</code> field in the image policy will be changed to <code>validator</code>, referencing a <code>name</code> field of one item in the validators list. Any additional fields, e.g. required delegation roles for a notaryv1 validator will be given in a <code>with</code> field. This will look similar to this:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.harbor.io/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="s">&quot;harbor-nv1&quot;</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
+    <span class="nt">delegations</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">lou</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">max</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="s">&quot;dockerhub-nv2&quot;</span>
+</code></pre></div>
+<h5 id="option-1211">Option 1.2.1.1<a class="headerlink" href="#option-1211" title="Permanent link">⚓︎</a></h5>
+<p>Besides the self configured validator, two additional validators will be available: <em>allow</em> and <em>deny</em>. The allow validator will allow any image and the deny validator will deny anything.</p>
+<p>Advantages: More powerful than <code>verify</code> flag, i.e. has explicit deny option.</p>
+<p>Disadvantages: More config changes for users</p>
+<h5 id="option-1212">Option 1.2.1.2<a class="headerlink" href="#option-1212" title="Permanent link">⚓︎</a></h5>
+<p>Stick with current <code>verify</code> flag.</p>
+<p>Advantages: Config known for current users</p>
+<p>Disadvantages: No explicit deny option</p>
+<h5 id="decision_2">Decision<a class="headerlink" href="#decision_2" title="Permanent link">⚓︎</a></h5>
+<p>We are going with <strong>option 1.2.1.1</strong>, as we don't have to use additional fields and offer more powerful configuration options.</p>
+<h5 id="option-1221">Option 1.2.2.1<a class="headerlink" href="#option-1221" title="Permanent link">⚓︎</a></h5>
+<p>When no validator given, default to deny validator.</p>
+<p>Advantages: Easy</p>
+<p>Disadvantages: Not explicit</p>
+<h5 id="option-1222">Option 1.2.2.2<a class="headerlink" href="#option-1222" title="Permanent link">⚓︎</a></h5>
+<p>Require validator in policy config.</p>
+<p>Advantages: Explicit configuration, no accidental denying images</p>
+<p>Disadvantages: ?</p>
+<h4 id="decision_3">Decision<a class="headerlink" href="#decision_3" title="Permanent link">⚓︎</a></h4>
+<p>We are going with <strong>option 1.2.2.1</strong> as it reduces configurational effort and is consistent with the key selection behavior.</p>
+<h4 id="option-1231">Option 1.2.3.1<a class="headerlink" href="#option-1231" title="Permanent link">⚓︎</a></h4>
+<p>The validators from option 1.2.1.1 (<em>allow</em> and <em>deny</em>) will be purely internal, and additional validator can not be named "allow" or "deny".</p>
+<p>Advantages: Less configurational effort</p>
+<p>Disadvantage: A bit obscure for users</p>
+<h4 id="option-1232">Option 1.2.3.2<a class="headerlink" href="#option-1232" title="Permanent link">⚓︎</a></h4>
+<p>The <em>allow</em> and <em>deny</em> validator will be added to the default configuration as <code>type: static</code> with an extra argument (name up for discussion) that specifies whether everything should be denied or allowed. E.g.:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+<p>Advantages: No obscurity, if user don't need these they can delete them.</p>
+<p>Disadvantage: Bigger config file ...?</p>
+<h4 id="decision_4">Decision<a class="headerlink" href="#decision_4" title="Permanent link">⚓︎</a></h4>
+<p>We are going with <strong>option 1.2.3.2</strong> as we favor less obscurity over the "bigger" configurational "effort".</p>
+<h3 id="validator-interface-choice-2">Validator interface (Choice 2)<a class="headerlink" href="#validator-interface-choice-2" title="Permanent link">⚓︎</a></h3>
+<p>See <a href="../connaisseur/validators/validator.py">validator interface</a></p>
+<p>Should validation return JSON patch or digest?</p>
+<h4 id="option-211">Option 2.1.1<a class="headerlink" href="#option-211" title="Permanent link">⚓︎</a></h4>
+<p><code>Validator.validate</code> creates a JSON patch for the k8s request. Hence, different validators might make changes in addition to transforming tag to digest.</p>
+<p>Advantages: More flexibility in the future</p>
+<p>Disadvantages: We open the door to changes that are not core to Connaisseur functionality</p>
+<h4 id="option-212">Option 2.1.2<a class="headerlink" href="#option-212" title="Permanent link">⚓︎</a></h4>
+<p><code>Validator.validate</code> returns a digest and Connaisseur uses the digest in a "standardized" way to create a JSON patch for the k8s request.</p>
+<p>Advantage: No code duplication and we stay with core feature of translating input data to trusted digest</p>
+<p>Disadvantages: Allowing additional changes would require additional work if we wanted to allow them in the future</p>
+<h4 id="decision_5">Decision<a class="headerlink" href="#decision_5" title="Permanent link">⚓︎</a></h4>
+<p>We are going with <strong>option 2.1.2</strong> as all current and upcoming validation methods return a digest.</p>
                 
               
               
@@ -796,7 +1294,7 @@ In detection mode, Connaisseur will admit all images to the cluster, but issues 
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview" rel="prev">
+        <a href="../ADR-3_multi_notary_config/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ADR 3: Multiple Notary Configuration" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -805,26 +1303,11 @@ In detection mode, Connaisseur will admit all images to the cluster, but issues 
               <span class="md-footer__direction">
                 Previous
               </span>
-              Overview
+              ADR 3: Multiple Notary Configuration
             </div>
           </div>
         </a>
       
-      
-        
-        <a href="../namespaced_validation/" class="md-footer__link md-footer__link--next" aria-label="Next: Namespaced Validation" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Namespaced Validation
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
       
     </nav>
   

@@ -300,7 +300,7 @@
   
     <li class="md-nav__item">
       <a href="../validators/notaryv1/" class="md-nav__link">
-        Notary V1
+        DCT / Notary V1
       </a>
     </li>
   
@@ -678,6 +678,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-4_modular/" class="md-nav__link">
+        ADR 4: Modular Validation
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -848,10 +860,9 @@ This includes the following steps:</p>
 <h3 id="setup-the-environment">Setup the Environment<a class="headerlink" href="#setup-the-environment" title="Permanent link">⚓︎</a></h3>
 <p>To start contributing, you will need to setup your local environment.
 First step is to get the source code by cloning this repository:</p>
-<div class="codehilite"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
+<p><div class="highlight"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
 </code></pre></div>
-
-<p>In order to review the effects of your changes, you should create your own Kubernetes cluster and install Connaisseur.
+In order to review the effects of your changes, you should create your own Kubernetes cluster and install Connaisseur.
 This is described in the <a href="../getting_started/">getting started</a>.
 A simple starting point may be a minikube cluster with e.g. a <a href="https://hub.docker.com/">Docker Hub</a> repository for maintaining your test images and trust data.</p>
 <p>In case you make changes to the Connaisseur Docker image itself or code for that matter, you need to re-build the image and install it locally for testing.
@@ -868,23 +879,20 @@ We therefore aim to keep the code coverage high.
 We are running several automated tests in the <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/.github/workflows/cicd.yaml">CI pipeline</a>.
 Application code is tested via <a href="https://docs.pytest.org/">pytest</a> and linted via <a href="https://pylint.org/">pylint</a>.
 When making changes to the application code, please directly provide tests for your changes.</p>
-<p>We recommend using <a href="https://pypi.org/project/black/">black</a> for autoformatting to simplify linting and reduce review effort. It can be installed via:</p>
-<div class="codehilite"><pre><span></span><code>pip3 install black
+<p>We recommend using <a href="https://pypi.org/project/black/">black</a> for autoformatting to simplify linting and reduce review effort. It can be installed via:
+<div class="highlight"><pre><span></span><code>pip3 install black
 </code></pre></div>
-
-<p>To autoformat the code:</p>
-<div class="codehilite"><pre><span></span><code>black &lt;path-to-repository&gt;/connaisseur
-</code></pre></div>
-
+To autoformat the code:
+<div class="highlight"><pre><span></span><code>black &lt;path-to-repository&gt;/connaisseur
+</code></pre></div></p>
 <p>Changes can also be tested locally.
-We recommend the following approach for running pytest in a docker container:</p>
-<div class="codehilite"><pre><span></span><code>docker run -it --rm -v &lt;path-to-repository&gt;:/data --entrypoint=ash python:alpine
+We recommend the following approach for running pytest in a docker container:
+<div class="highlight"><pre><span></span><code>docker run -it --rm -v &lt;path-to-repository&gt;:/data --entrypoint=ash python:alpine
 cd data
 pip3 install -r requirements_dev.txt
 pytest --cov=connaisseur --cov-report=xml tests/
 </code></pre></div>
-
-<p>This helps identify bugs in changes before pushing.</p>
+This helps identify bugs in changes before pushing.</p>
 <blockquote>
 <p><img alt="ℹ" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2139.svg" title=":information_source:" /> <strong>INFO</strong> We believe that testing should not only ensure functionality, but also aim to test for expected security issues like injections and appreciate if security tests are added with new functionalities.</p>
 </blockquote>
@@ -898,38 +906,33 @@ pytest --cov=connaisseur --cov-report=xml tests/
 </ul>
 <p>You can also run this integration test on a local cluster after setting the necessary environment variables.</p>
 <p>If you are changing documentation, you can simply inspect your changes locally via:</p>
-<div class="codehilite"><pre><span></span><code>docker run --rm -it -p <span class="m">8000</span>:8000 -v <span class="si">${</span><span class="nv">PWD</span><span class="si">}</span>:/docs squidfunk/mkdocs-material
+<div class="highlight"><pre><span></span><code>docker run --rm -it -p <span class="m">8000</span>:8000 -v <span class="si">${</span><span class="nv">PWD</span><span class="si">}</span>:/docs squidfunk/mkdocs-material
 </code></pre></div>
-
 <h3 id="signed-commits-and-pull-requests">Signed Commits and Pull Requests<a class="headerlink" href="#signed-commits-and-pull-requests" title="Permanent link">⚓︎</a></h3>
 <p>All changes to the <code>develop</code> and <code>master</code> branch must be signed which is enforced via <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing">branch protection</a>.
 This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor.
 Consequently, while we appreciate signed commits in PRs, we do not require it.</p>
 <p>A general introduction into signing commits can for example be found in the <a href="https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html">With Blue Ink blog</a>. For details on setting everything up for GitHub, please follow the steps in the <a href="https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification">Documentation</a>.</p>
 <p>Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are setup to create signed commits.
-We recommend to configure Git to sign commits by default via:</p>
-<div class="codehilite"><pre><span></span><code>git config commit.gpgsign <span class="nb">true</span>
+We recommend to configure Git to sign commits by default via:
+<div class="highlight"><pre><span></span><code>git config commit.gpgsign <span class="nb">true</span>
 </code></pre></div>
-
-<p>This avoids forgetting to use the <code>-S</code> flag when committing changes.
-In case it happens anyways, you can always rebase to sign earlier commits:</p>
-<div class="codehilite"><pre><span></span><code>git rebase -i master
+This avoids forgetting to use the <code>-S</code> flag when committing changes.
+In case it happens anyways, you can always rebase to sign earlier commits:
+<div class="highlight"><pre><span></span><code>git rebase -i master
 </code></pre></div>
-
-<p>You can then mark all commits that need to be signed as <code>edit</code> and sign them without any other changes via:</p>
-<div class="codehilite"><pre><span></span><code>git commit -S --amend --no-edit
+You can then mark all commits that need to be signed as <code>edit</code> and sign them without any other changes via:
+<div class="highlight"><pre><span></span><code>git commit -S --amend --no-edit
 </code></pre></div>
-
-<p>Finally, you force push to overwrite the unsigned commits via <code>git push -f</code>.</p>
+Finally, you force push to overwrite the unsigned commits via <code>git push -f</code>.</p>
 <h3 id="semantic-and-conventional-commits">Semantic and Conventional Commits<a class="headerlink" href="#semantic-and-conventional-commits" title="Permanent link">⚓︎</a></h3>
 <p>For Connaisseur, we want to use semantic and conventional commits to ensure good readability of code changes.
 A good introduction to the topic can be found in <a href="https://nitayneeman.com/posts/understanding-semantic-commit-messages-using-git-and-angular/">this blog post</a>.</p>
 <p>Commit messages should consist of header, body and footer.
 Such a commit message takes the following form:</p>
-<div class="codehilite"><pre><span></span><code>git commit -m &quot;&lt;header&gt;&quot; -m &quot;&lt;body&gt;&quot; -m &quot;&lt;footer&gt;&quot;
+<p><div class="highlight"><pre><span></span><code>git commit -m &quot;&lt;header&gt;&quot; -m &quot;&lt;body&gt;&quot; -m &quot;&lt;footer&gt;&quot;
 </code></pre></div>
-
-<p>The three parts should consist of the following:</p>
+The three parts should consist of the following:</p>
 <ul>
 <li><em>header</em>: Comprises of a commit type (common types are described below) and a concise description of the actual change, e.g. <code>fix: extend registry validation regex to custom ports</code>.</li>
 <li><em>body</em> (optional): Contains information on the motivation behind the change and considerations for the resolution, <code>The current regex used for validation of the image name does not allow using non-default ports for the image repository name. The regex is extended to optionally provide a port number.</code>.</li>
@@ -945,10 +948,9 @@ Such a commit message takes the following form:</p>
 <li><em>refactor</em>: adjustment of code base to improve code quality or performance but not adding a feature or fixing a bug</li>
 <li><em>test</em>: testing related changes</li>
 </ul>
-<p>A complete commit message could therefore look as follows:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;fix: extend registry validation regex to custom ports&quot;</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;The current regex used for validation of the image name does not allow using non-default ports for the image repository name. The regex is extended to optionally provide a port number.&quot;</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;Fix #3&quot;</span>
-</code></pre></div>
-
+<p>A complete commit message could therefore look as follows:
+<div class="highlight"><pre><span></span><code>git commit -m &quot;fix: extend registry validation regex to custom ports&quot; -m &quot;The current regex used for validation of the image name does not allow using non-default ports for the image repository name. The regex is extended to optionally provide a port number.&quot; -m &quot;Fix #3&quot;
+</code></pre></div></p>
 <h2 id="enjoy">Enjoy!<a class="headerlink" href="#enjoy" title="Permanent link">⚓︎</a></h2>
 <p>Please be <strong>bold</strong> and contribute!</p>
                 
@@ -961,6 +963,10 @@ Such a commit message takes the following form:</p>
             </article>
           </div>
         </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
         
       </main>
       
@@ -1077,7 +1083,7 @@ Such a commit message takes the following form:</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.82b56eb2.min.js"></script>

@@ -304,7 +304,7 @@
   
     <li class="md-nav__item">
       <a href="../notaryv1/" class="md-nav__link">
-        Notary V1
+        DCT / Notary V1
       </a>
     </li>
   
@@ -378,40 +378,32 @@
     Additional notes
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#demo" class="md-nav__link">
-    Demo
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    Authentication
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#signing-container-images-with-cosign" class="md-nav__link">
-    Signing Container Images with Cosign
+        
+          <li class="md-nav__item">
+  <a href="#verification-against-transparency-log" class="md-nav__link">
+    Verification against Transparency Log
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#configuring-connaisseur-for-cosign-signatures" class="md-nav__link">
-    Configuring Connaisseur for Cosign Signatures
+        
+          <li class="md-nav__item">
+  <a href="#keyless-signatures" class="md-nav__link">
+    Keyless signatures
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#test-signature-verification" class="md-nav__link">
-    Test Signature Verification
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#end" class="md-nav__link">
-    End
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -681,6 +673,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
+        ADR 4: Modular Validation
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -767,40 +771,32 @@
     Additional notes
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#demo" class="md-nav__link">
-    Demo
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    Authentication
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#signing-container-images-with-cosign" class="md-nav__link">
-    Signing Container Images with Cosign
+        
+          <li class="md-nav__item">
+  <a href="#verification-against-transparency-log" class="md-nav__link">
+    Verification against Transparency Log
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#configuring-connaisseur-for-cosign-signatures" class="md-nav__link">
-    Configuring Connaisseur for Cosign Signatures
+        
+          <li class="md-nav__item">
+  <a href="#keyless-signatures" class="md-nav__link">
+    Keyless signatures
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#test-signature-verification" class="md-nav__link">
-    Test Signature Verification
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#end" class="md-nav__link">
-    End
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -818,10 +814,49 @@
                 
                 
                 <h1 id="sigstore-cosign">SigStore / Cosign<a class="headerlink" href="#sigstore-cosign" title="Permanent link">⚓︎</a></h1>
-<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> upper part gives the basic structure, lower part contains former description</p>
+<p><a href="https://sigstore.dev/">Sigstore</a> is a <a href="https://linuxfoundation.org/">Linux Foundation</a> project that aims to provide public software signing and transparency to improve open source supply chain security.
+As part of the Sigstore project, <a href="https://github.com/sigstore/cosign">Cosign</a> allows seamless container signing, verification and storage.
+You can read more about it <a href="https://blog.sigstore.dev/cosign-signed-container-images-c1016862618">here</a>.</p>
+<p>Connaisseur currently supports the elementary function of verifying Cosign-generated signatures against the locally created corresponding public keys.
+We plan to expose further features of Cosign and Sigstore in upcoming releases, so stay tuned!</p>
+<blockquote>
+<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> Sigstore and Cosign are currently in <em>pre-release</em> state and under heavy development and so is our support for them. We therefore consider this an <em>experimental feature</em> that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
+</blockquote>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
+<p>Getting started with Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>.
+Please check there for detailed instructions.
+The currently supported version can be found in our <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/Makefile/#L5">Makefile</a>.
+In short: After installation, a keypair is generated via:</p>
+<div class="highlight"><pre><span></span><code>cosign generate-key-pair
+</code></pre></div>
+<p>You will be prompted to set a password, after which a private (<code>cosign.key</code>) and public (<code>cosign.pub</code>) key are created.
+You can then use Cosign to sign a container image using:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Here, $IMAGE is REPOSITORY/IMAGE_NAME:TAG</span>
+cosign sign -key cosign.key <span class="nv">$IMAGE</span>
+</code></pre></div>
+<p>The created signature can be verfied via:</p>
+<div class="highlight"><pre><span></span><code>cosign verify -key cosign.pub <span class="nv">$IMAGE</span>
+</code></pre></div>
+<p>To use Connaisseur with Cosign, configure a validator in <code>helm/values.yaml</code> with the generated public key (<code>cosign.pub</code>) as a trust root.
+The entry in <code>.validators</code> should look something like this (make sure to add your own public key to trust root <code>default</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosign</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># YOUR KEY BELOW</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEl55QIJHXUiCvVY/7550FWXUwL3jr</span>
+      <span class="no">QJOFdFv47H/7QT7ZMgID7kEZ7N4Qo8y9AydEvzb6nj3pgzv5XaC0/BZNew==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+</code></pre></div>
+<p>In <code>.policy</code>, add a pattern to match your public key to your own repository:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/xoph/*:*&quot;</span>  <span class="c1"># YOUR REPOSITORY</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
+</code></pre></div>
+<p>After installation, you are ready to verify your images against your public key.
+A quick guide for installation and testing is available in <a href="../../getting_started/#deploy-connaisseur">getting started</a>.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>policy</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<p><code>.validators[]</code> in <code>helm/values.yaml</code> supports the following keys for cosign (refer to <a href="../../basics/">basics</a> for more information on default keys):</p>
 <table>
 <thead>
 <tr>
@@ -833,93 +868,51 @@
 </thead>
 <tbody>
 <tr>
-<td><code>policy.pattern</code></td>
-<td>-</td>
+<td><code>name</code></td>
+<td></td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>image pattern description (incl. example)</td>
+<td>see <a href="../../basics/">basics</a></td>
 </tr>
 <tr>
-<td><code>policy.validator</code></td>
-<td><code>default</code></td>
+<td><code>type</code></td>
 <td></td>
-<td>valditator key description (incl. example)</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><code>cosign</code>; the validator type must be set to <code>cosign</code></td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td></td>
+<td></td>
+<td>NOT YET IMPLEMENTED</td>
+</tr>
+<tr>
+<td><code>auth</code></td>
+<td></td>
+<td></td>
+<td>NOT YET IMPLEMENTED</td>
+</tr>
+<tr>
+<td><code>trust_roots[*].name</code></td>
+<td></td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>see <a href="../../basics/">basics</a></td>
+</tr>
+<tr>
+<td><code>trust_roots[*].key</code></td>
+<td></td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>ECDSA public key from <code>cosign.pub</code> file</td>
 </tr>
 </tbody>
 </table>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
-<hr />
-<p><a href="https://sigstore.dev/">Sigstore</a> is a <a href="https://linuxfoundation.org/">Linux Foundation</a> project that aims to provide public software signing and transparency to improve open source supply chain security. As part of the Sigstore project, <a href="https://github.com/sigstore/cosign">Cosign</a> allows seamless container signing, verification and storage. You can read more about it <a href="https://blog.sigstore.dev/cosign-signed-container-images-c1016862618">here</a>.</p>
-<p>Connaisseur currently supports the elementary function of verifying Cosign-generated signatures against the locally created corresponding public keys. We plan to expose further features of Cosign and Sigstore in upcoming releases, so stay tuned!</p>
-<blockquote>
-<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> Sigstore and Cosign are currently in <em>pre-release</em> state and under heavy development and so is our support for them. We therefore consider this an <em>experimental feature</em> that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
-</blockquote>
-<h2 id="demo">Demo<a class="headerlink" href="#demo" title="Permanent link">⚓︎</a></h2>
-<p><img alt="" src="../img/connaisseur_cosign.gif" /></p>
-<h2 id="signing-container-images-with-cosign">Signing Container Images with Cosign<a class="headerlink" href="#signing-container-images-with-cosign" title="Permanent link">⚓︎</a></h2>
-<blockquote>
-<p><strong>NOTE</strong>: You can also do a minimal test without installing Cosign locally. In that case, skip this step and use our provided public key and <code>testimage</code>s below.</p>
-</blockquote>
-<p>Getting started with Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>. Please check there for detailed instructions. The currently supported version can be found in our <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/Makefile/#L5">Makefile</a>. In short: After installation, a keypair is generated via:</p>
-<div class="codehilite"><pre><span></span><code>cosign generate-key-pair
-</code></pre></div>
-
-<p>You will be prompted to set a password, after which a private (<code>cosign.key</code>) and public (<code>cosign.pub</code>) key are created. You can then use Cosign to sign a container image using:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Here, $IMAGE is REPOSITORY/IMAGE_NAME:TAG</span>
-cosign sign -key cosign.key <span class="nv">$IMAGE</span>
-</code></pre></div>
-
-<p>The created signature can be verfied via:</p>
-<div class="codehilite"><pre><span></span><code>cosign verify -key cosign.pub <span class="nv">$IMAGE</span>
-</code></pre></div>
-
-<h2 id="configuring-connaisseur-for-cosign-signatures">Configuring Connaisseur for Cosign Signatures<a class="headerlink" href="#configuring-connaisseur-for-cosign-signatures" title="Permanent link">⚓︎</a></h2>
-<p>Setting up Connaisseur for Cosign signatures only requires minor changes. In case of questions, please refer to the <a href="../">default guide</a>. In essence, you can just clone this repository:</p>
-<div class="codehilite"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
-<span class="nb">cd</span> connaisseur
-</code></pre></div>
-
-<p>Next, configure Connaisseur to use Cosign and the previously created public key for validation via the <code>helm/values.yaml</code>.  To do so, copy your <code>cosign.pub</code> key into <code>notary.rootPubkey</code>. Here, at the example of our public key for our <code>testimage</code>s (you can also use this key and test with our images):</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Replace the actual key part with your own key</span>
-  <span class="nt">rootPubKey</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-    <span class="no">-----BEGIN PUBLIC KEY-----</span>
-    <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
-    <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
-    <span class="no">-----END PUBLIC KEY-----</span>
-</code></pre></div>
-
-<p>Next, set <code>notary.isCosign</code> to <code>true</code>:</p>
-<div class="codehilite"><pre><span></span><code>  <span class="nt">isCosign</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-</code></pre></div>
-
-<p>And finally, install Connaisseur via:</p>
-<div class="codehilite"><pre><span></span><code>make install
-</code></pre></div>
-
-<h2 id="test-signature-verification">Test Signature Verification<a class="headerlink" href="#test-signature-verification" title="Permanent link">⚓︎</a></h2>
-<p>You can now test signature verification by deploying the signed image from above:</p>
-<div class="codehilite"><pre><span></span><code>kubectl run signed --image<span class="o">=</span><span class="nv">$IMAGE</span>
-</code></pre></div>
-
-<p>Or attempt to deploy any another unsigned image which will fail.</p>
-<p>For the lazy ones, you can configure our public key provided in the previous section and test with our signed <code>testimage</code>:</p>
-<div class="codehilite"><pre><span></span><code>kubectl run signed --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed
-</code></pre></div>
-
-<p>and compare to the unsigned <code>testimage</code>:</p>
-<div class="codehilite"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-unsigned
-</code></pre></div>
-
-<p>or a <code>testimage</code> signed with a different key:</p>
-<div class="codehilite"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed-alt
-</code></pre></div>
-
-<p>Once finished, you can clean up your cluster via:</p>
-<div class="codehilite"><pre><span></span><code>make uninstall
-</code></pre></div>
-
-<h2 id="end">End<a class="headerlink" href="#end" title="Permanent link">⚓︎</a></h2>
-<p>Hope you enjoy the new feature and let us <a href="https://github.com/sse-secure-systems/connaisseur/discussions/137">know what you think</a>!</p>
-<p>We are working on improving support for Cosign and Sigstore features. So stay tuned!</p>
+<h3 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">⚓︎</a></h3>
+<p>Authentication has not yet been implemented for Cosign, but is planned in upcoming releases.</p>
+<h3 id="verification-against-transparency-log">Verification against Transparency Log<a class="headerlink" href="#verification-against-transparency-log" title="Permanent link">⚓︎</a></h3>
+<p>Connaisseur already verifies signatures against the transparency log.
+However, optional enforcement of transparency log is only planned in upcoming releases.</p>
+<h3 id="keyless-signatures">Keyless signatures<a class="headerlink" href="#keyless-signatures" title="Permanent link">⚓︎</a></h3>
+<p>Keyless signatures have not yet been implementd but are planned in upcoming releases.</p>
                 
               
               
@@ -930,6 +923,10 @@ cosign sign -key cosign.key <span class="nv">$IMAGE</span>
             </article>
           </div>
         </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
         
       </main>
       
@@ -1046,7 +1043,7 @@ cosign sign -key cosign.key <span class="nv">$IMAGE</span>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.82b56eb2.min.js"></script>

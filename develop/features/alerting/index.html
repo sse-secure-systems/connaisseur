@@ -302,7 +302,7 @@
   
     <li class="md-nav__item">
       <a href="../../validators/notaryv1/" class="md-nav__link">
-        Notary V1
+        DCT / Notary V1
       </a>
     </li>
   
@@ -653,6 +653,18 @@
   
 
           
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
+        ADR 4: Modular Validation
+      </a>
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -848,13 +860,12 @@ one it needs to be one of <code>slack</code>, <code>keybase</code> or <code>opsg
 </ul>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
 <p>If you for example would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to to following snippet:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">alerting</span><span class="o">:</span>
-  <span class="n">admit_request</span><span class="o">:</span>
-    <span class="n">templates</span><span class="o">:</span>
-      <span class="o">-</span> <span class="n">template</span><span class="o">:</span> <span class="n">keybase</span>
-        <span class="n">receiver_url</span><span class="o">:</span> <span class="n">https</span><span class="o">://</span><span class="n">bots</span><span class="o">.</span><span class="na">keybase</span><span class="o">.</span><span class="na">io</span><span class="sr">/webhookbot/</span><span class="o">&lt;</span><span class="n">Your</span><span class="o">-</span><span class="n">Keybase</span><span class="o">-</span><span class="n">Hook</span><span class="o">-</span><span class="n">Token</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><code>alerting:
+  admit_request:
+    templates:
+      - template: keybase
+        receiver_url: https://bots.keybase.io/webhookbot/&lt;Your-Keybase-Hook-Token&gt;
 </code></pre></div>
-
 <h2 id="creating-a-custom-template">Creating a custom template<a class="headerlink" href="#creating-a-custom-template" title="Permanent link">⚓︎</a></h2>
 <p>Along the lines of the templates that are already there you can easily define
 custom templates for other endpoints. The following variables can be rendered
@@ -884,6 +895,10 @@ specify them as described above in <code>custom_headers</code>.</p>
             </article>
           </div>
         </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
         
       </main>
       
@@ -1000,7 +1015,7 @@ specify them as described above in <code>custom_headers</code>.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.82b56eb2.min.js"></script>
