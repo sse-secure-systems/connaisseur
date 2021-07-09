@@ -923,7 +923,7 @@ The result should look similar to this:</p>
 <p>We have now configured the validator <code>default</code> with trust root <code>default</code>.
 This will automatically be used if no validator and trust root is specified in the image policy.
 Per default, Connaisseur's image policy under <code>.policy</code> in <code>helm/values.yaml</code> comes with a pattern <code>"*:*"</code> that does not specify a validator or trust root and thus all images that do not meet a more specific configuration will be verified using this validator.
-Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the <a href="../basics/">Basics</a> to leverage the full potential of Connaisseur.</p>
+Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the <a href="../basics/">basics</a> to leverage the full potential of Connaisseur.</p>
 <h2 id="deploy-connaisseur">Deploy Connaisseur<a class="headerlink" href="#deploy-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>So let's deploy Connaisseur to the cluster:</p>
 <div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
