@@ -815,30 +815,47 @@
                 
                 <h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">⚓︎</a></h1>
 <p>We hope to steer development of Connaisseur from demand of the community and are excited about direct contributions to improve the tool!</p>
-<p>The following guide is meant to help you get started with contributing to Connaisseur. In case of questions or feedback, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/discussions">reach out to us</a>.</p>
+<p>The following guide is meant to help you get started with contributing to Connaisseur.
+In case of questions or feedback, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/discussions">reach out to us</a>.</p>
 <p>We are committed to positive interactions between all contributors of the project. To ensure this, please follow the <a href="../CODE_OF_CONDUCT/">Code of Conduct</a> in all communications.</p>
 <h2 id="discuss-problems-raise-bugs-and-propose-feature-ideas">Discuss Problems, Raise Bugs and Propose Feature Ideas<a class="headerlink" href="#discuss-problems-raise-bugs-and-propose-feature-ideas" title="Permanent link">⚓︎</a></h2>
-<p>We are happy you made it here! In case you want to share your feedback, need support, want to discuss issues from using Connaisseur in your own projects, have ideas for new features or just want to connect with us, please reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a>. If you want to raise any bugs you found or make a feature request, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/issues/new">create an issue</a> with an informative title and description.</p>
-<p>While issues are a great way to discuss problems, bugs and new features, a direct proposal via a pull request can sometimes say more than a thousand words. So be bold and contribute to the code as described in the <a href="#contribute-to-source-code">next section</a>!</p>
+<p>We are happy you made it here!
+In case you want to share your feedback, need support, want to discuss issues from using Connaisseur in your own projects, have ideas for new features or just want to connect with us, please reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a>.
+If you want to raise any bugs you found or make a feature request, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/issues/new">create an issue</a> with an informative title and description.</p>
+<p>While issues are a great way to discuss problems, bugs and new features, a direct proposal via a pull request can sometimes say more than a thousand words.
+So be bold and contribute to the code as described in the <a href="#contribute-to-source-code">next section</a>!</p>
 <p>In case you require a more private communication, you can reach us via <a href="mailto:connaisseur@securesystems.dev">connaisseur@securesystems.dev</a>.</p>
 <h2 id="contribute-to-source-code">Contribute to Source Code<a class="headerlink" href="#contribute-to-source-code" title="Permanent link">⚓︎</a></h2>
-<p>The following steps will help you make code contributions to Connaisseur and ensure good code quality and workflow. This includes the following steps:</p>
+<p>The following steps will help you make code contributions to Connaisseur and ensure good code quality and workflow.
+This includes the following steps:</p>
 <ol>
-<li><strong>Setup your environment</strong>: Setup up your local environment to best interact with the code. Further information is given <a href="#setup-the-environment">below</a>.</li>
-<li><strong>Make atomic changes</strong>: Changes should be atomic. As such, pull requests should contain only few commits, and each commit should only fix one issue or implement one feature, with a concise commit message.</li>
-<li><strong>Test your changes</strong>: Test any changes locally for code quality and functionality and add new tests for any additional code. How to test is described <a href="#test-changes">below</a>.</li>
-<li><strong>Create semantic, conventional and signed commits</strong>: Any commits should follow a simple semantic convention to help structure the work on Connaisseur. The convention is described <a href="#semantic-and-conventional-commits">below</a>. For security reasons and since integrity is at the core of this project, code merged into master must be signed. How we achieve this is described <a href="#signed-commits-and-pull-requests">below</a>.</li>
-<li><strong>Create Pull Request</strong>: We consider code review central to quality and security of code. Therefore, a pull request (PR) to the <code>develop</code> branch should be created for each contribution. It will be reviewed, and potential improvements may be discussed within the PR. After approval, changes will be merged and moved to the <code>master</code> branch with the next release.</li>
+<li><strong>Setup your environment</strong>:
+   Setup up your local environment to best interact with the code.
+   Further information is given <a href="#setup-the-environment">below</a>.</li>
+<li><strong>Make atomic changes</strong>:
+   Changes should be atomic.
+   As such, pull requests should contain only few commits, and each commit should only fix one issue or implement one feature, with a concise commit message.</li>
+<li><strong>Test your changes</strong>:
+   Test any changes locally for code quality and functionality and add new tests for any additional code.
+   How to test is described <a href="#test-changes">below</a>.</li>
+<li><strong>Create semantic, conventional and signed commits</strong>:
+   Any commits should follow a simple semantic convention to help structure the work on Connaisseur. The convention is described <a href="#semantic-and-conventional-commits">below</a>. For security reasons and since integrity is at the core of this project, code merged into master must be signed.
+   How we achieve this is described <a href="#signed-commits-and-pull-requests">below</a>.</li>
+<li><strong>Create Pull Request</strong>:
+   We consider code review central to quality and security of code.
+   Therefore, a pull request (PR) to the <code>develop</code> branch should be created for each contribution. It will be reviewed, and potential improvements may be discussed within the PR. After approval, changes will be merged and moved to the <code>master</code> branch with the next release.</li>
 </ol>
 <h3 id="setup-the-environment">Setup the Environment<a class="headerlink" href="#setup-the-environment" title="Permanent link">⚓︎</a></h3>
-<p>To start contributing, you will need to setup your local environment. First step is to get the source code by cloning this repository:</p>
+<p>To start contributing, you will need to setup your local environment.
+First step is to get the source code by cloning this repository:</p>
 <div class="codehilite"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
 </code></pre></div>
 
 <p>In order to review the effects of your changes, you should create your own Kubernetes cluster and install Connaisseur.
 This is described in the <a href="../getting_started/">getting started</a>.
 A simple starting point may be a minikube cluster with e.g. a <a href="https://hub.docker.com/">Docker Hub</a> repository for maintaining your test images and trust data.</p>
-<p>In case you make changes to the Connaisseur Docker image itself or code for that matter, you need to re-build the image and install it locally for testing. This requires a few steps:</p>
+<p>In case you make changes to the Connaisseur Docker image itself or code for that matter, you need to re-build the image and install it locally for testing.
+This requires a few steps:</p>
 <ol>
 <li>In <code>helm/values.yaml</code>, set <code>imagePullPolicy</code> to <code>IfNotPresent</code>.</li>
 <li>Configure your local environment to use the Kubernetes Docker daemon. In minikube, this can be done via <code>eval (minikube docker-env)</code>.</li>
@@ -846,7 +863,11 @@ A simple starting point may be a minikube cluster with e.g. a <a href="https://h
 <li>Install Connaisseur as usual via <code>make install</code>.</li>
 </ol>
 <h3 id="test-changes">Test Changes<a class="headerlink" href="#test-changes" title="Permanent link">⚓︎</a></h3>
-<p>Tests and linting are important to ensure code quality, functionality and security. We therefore aim to keep the code coverage high. We are running several automated tests in the <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/.github/workflows/cicd.yaml">CI pipeline</a>. Application code is tested via <a href="https://docs.pytest.org/">pytest</a> and linted via <a href="https://pylint.org/">pylint</a>. When making changes to the application code, please directly provide tests for your changes.</p>
+<p>Tests and linting are important to ensure code quality, functionality and security.
+We therefore aim to keep the code coverage high.
+We are running several automated tests in the <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/.github/workflows/cicd.yaml">CI pipeline</a>.
+Application code is tested via <a href="https://docs.pytest.org/">pytest</a> and linted via <a href="https://pylint.org/">pylint</a>.
+When making changes to the application code, please directly provide tests for your changes.</p>
 <p>We recommend using <a href="https://pypi.org/project/black/">black</a> for autoformatting to simplify linting and reduce review effort. It can be installed via:</p>
 <div class="codehilite"><pre><span></span><code>pip3 install black
 </code></pre></div>
@@ -855,12 +876,11 @@ A simple starting point may be a minikube cluster with e.g. a <a href="https://h
 <div class="codehilite"><pre><span></span><code>black &lt;path-to-repository&gt;/connaisseur
 </code></pre></div>
 
-<p>Changes can also be tested locally. We recommend the following approach for running pytest in a docker container:</p>
+<p>Changes can also be tested locally.
+We recommend the following approach for running pytest in a docker container:</p>
 <div class="codehilite"><pre><span></span><code>docker run -it --rm -v &lt;path-to-repository&gt;:/data --entrypoint=ash python:alpine
 cd data
 pip3 install -r requirements_dev.txt
-pip3 install .
-cd connaisseur
 pytest --cov=connaisseur --cov-report=xml tests/
 </code></pre></div>
 
@@ -868,25 +888,31 @@ pytest --cov=connaisseur --cov-report=xml tests/
 <blockquote>
 <p><img alt="ℹ" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2139.svg" title=":information_source:" /> <strong>INFO</strong> We believe that testing should not only ensure functionality, but also aim to test for expected security issues like injections and appreciate if security tests are added with new functionalities.</p>
 </blockquote>
-<p>Besides the unit testing and before any PR can be merged, an integration test is carried out whereby:
-- Connaisseur is successfully installed in a test cluster
-- a non-signed image is deployed to the cluster and denied
-- an image signed with an unrelated key is denied
-- a signed image is deployed to the cluster and passed
-- Connaisseur is successfully uninstalled</p>
+<p>Besides the unit testing and before any PR can be merged, an integration test is carried out whereby:</p>
+<ul>
+<li>Connaisseur is successfully installed in a test cluster</li>
+<li>a non-signed image is deployed to the cluster and denied</li>
+<li>an image signed with an unrelated key is denied</li>
+<li>a signed image is deployed to the cluster and passed</li>
+<li>Connaisseur is successfully uninstalled</li>
+</ul>
 <p>You can also run this integration test on a local cluster after setting the necessary environment variables.</p>
 <p>If you are changing documentation, you can simply inspect your changes locally via:</p>
 <div class="codehilite"><pre><span></span><code>docker run --rm -it -p <span class="m">8000</span>:8000 -v <span class="si">${</span><span class="nv">PWD</span><span class="si">}</span>:/docs squidfunk/mkdocs-material
 </code></pre></div>
 
 <h3 id="signed-commits-and-pull-requests">Signed Commits and Pull Requests<a class="headerlink" href="#signed-commits-and-pull-requests" title="Permanent link">⚓︎</a></h3>
-<p>All changes to the <code>develop</code> and <code>master</code> branch must be signed which is enforced via <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing">branch protection</a>. This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor. Consequently, while we appreciate signed commits in PRs, we do not require it.</p>
+<p>All changes to the <code>develop</code> and <code>master</code> branch must be signed which is enforced via <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing">branch protection</a>.
+This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor.
+Consequently, while we appreciate signed commits in PRs, we do not require it.</p>
 <p>A general introduction into signing commits can for example be found in the <a href="https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html">With Blue Ink blog</a>. For details on setting everything up for GitHub, please follow the steps in the <a href="https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification">Documentation</a>.</p>
-<p>Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are setup to create signed commits. We recommend to configure Git to sign commits by default via:</p>
+<p>Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are setup to create signed commits.
+We recommend to configure Git to sign commits by default via:</p>
 <div class="codehilite"><pre><span></span><code>git config commit.gpgsign <span class="nb">true</span>
 </code></pre></div>
 
-<p>This avoids forgetting to use the <code>-S</code> flag when committing changes. In case it happens anyways, you can always rebase to sign earlier commits:</p>
+<p>This avoids forgetting to use the <code>-S</code> flag when committing changes.
+In case it happens anyways, you can always rebase to sign earlier commits:</p>
 <div class="codehilite"><pre><span></span><code>git rebase -i master
 </code></pre></div>
 
@@ -896,23 +922,29 @@ pytest --cov=connaisseur --cov-report=xml tests/
 
 <p>Finally, you force push to overwrite the unsigned commits via <code>git push -f</code>.</p>
 <h3 id="semantic-and-conventional-commits">Semantic and Conventional Commits<a class="headerlink" href="#semantic-and-conventional-commits" title="Permanent link">⚓︎</a></h3>
-<p>For Connaisseur, we want to use semantic and conventional commits to ensure good readability of code changes. A good introduction to the topic can be found in <a href="https://nitayneeman.com/posts/understanding-semantic-commit-messages-using-git-and-angular/">this blog post</a>.</p>
-<p>Commit messages should consist of header, body and footer. Such a commit message takes the following form:</p>
+<p>For Connaisseur, we want to use semantic and conventional commits to ensure good readability of code changes.
+A good introduction to the topic can be found in <a href="https://nitayneeman.com/posts/understanding-semantic-commit-messages-using-git-and-angular/">this blog post</a>.</p>
+<p>Commit messages should consist of header, body and footer.
+Such a commit message takes the following form:</p>
 <div class="codehilite"><pre><span></span><code>git commit -m &quot;&lt;header&gt;&quot; -m &quot;&lt;body&gt;&quot; -m &quot;&lt;footer&gt;&quot;
 </code></pre></div>
 
-<p>The three parts should consist of the following:
-- <em>header</em>: Comprises of a commit type (common types are described below) and a concise description of the actual change, e.g. <code>fix: extend registry validation regex to custom ports</code>.
-- <em>body</em> (optional): Contains information on the motivation behind the change and considerations for the resolution, <code>The current regex used for validation of the image name does not allow using non-default ports for the image repository name. The regex is extended to optionally provide a port number.</code>.
-- <em>footer</em> (optional): Used to reference PRs, issues or contributors and mark consequences such as breaking changes, e.g. <code>Fix #&lt;issue-number&gt;</code></p>
-<p>We want to use the following common types in the header:
-- <em>build</em>: changes to development and building
-- <em>ci</em>: CI related changes
-- <em>docs</em>: changes in the documentation
-- <em>feat</em>: adding of new features
-- <em>fix</em>: fixing an issue or bug
-- <em>refactor</em>: adjustment of code base to improve code quality or performance but not adding a feature or fixing a bug
-- <em>test</em>: testing related changes</p>
+<p>The three parts should consist of the following:</p>
+<ul>
+<li><em>header</em>: Comprises of a commit type (common types are described below) and a concise description of the actual change, e.g. <code>fix: extend registry validation regex to custom ports</code>.</li>
+<li><em>body</em> (optional): Contains information on the motivation behind the change and considerations for the resolution, <code>The current regex used for validation of the image name does not allow using non-default ports for the image repository name. The regex is extended to optionally provide a port number.</code>.</li>
+<li><em>footer</em> (optional): Used to reference PRs, issues or contributors and mark consequences such as breaking changes, e.g. <code>Fix #&lt;issue-number&gt;</code></li>
+</ul>
+<p>We want to use the following common types in the header:</p>
+<ul>
+<li><em>build</em>: changes to development and building</li>
+<li><em>ci</em>: CI related changes</li>
+<li><em>docs</em>: changes in the documentation</li>
+<li><em>feat</em>: adding of new features</li>
+<li><em>fix</em>: fixing an issue or bug</li>
+<li><em>refactor</em>: adjustment of code base to improve code quality or performance but not adding a feature or fixing a bug</li>
+<li><em>test</em>: testing related changes</li>
+</ul>
 <p>A complete commit message could therefore look as follows:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;fix: extend registry validation regex to custom ports&quot;</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;The current regex used for validation of the image name does not allow using non-default ports for the image repository name. The regex is extended to optionally provide a port number.&quot;</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;Fix #3&quot;</span>
 </code></pre></div>
