@@ -924,14 +924,17 @@
                 
                 
                 <h1 id="notary-v1">Notary V1<a class="headerlink" href="#notary-v1" title="Permanent link">⚓︎</a></h1>
-<p>nv1 guide</p>
-<p>currently just a copy-paste of former nv1 docs to below the dashed line and provide a prepared structure above. Please refactor or write new and use the former docs as input.</p>
-<p>notes:</p>
+<p>The Notary V1 (nv1) validator will be used in conjunction with a external Notary V1 instance, which can be found in any <a href="https://goharbor.io/">Harbor</a> instance or when using the public DockerHub Notary (notary.docker.io). This will be the default validator, when signing images using Docker Content Trust (DCT).</p>
 <ul>
 <li>how to get pub keys for existing keys: https://github.com/sse-secure-systems/connaisseur/tree/master/setup#manual</li>
 <li>...</li>
 </ul>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
+<p>Before you can start validating images using the nv1 validator, you'll first need an image which has been signed using DCT. Easiest way to do this is by pushing an image of your choice (e.g. <code>busybox:stable</code>) to your private DockerHub repository, while having the <code>DOCKER_CONTENT_TRUST</code> environment variable set to <code>1</code>. If you haven't created any signatures for this repository yet, you'll be asked to enter a passphrase for a root key and targets key, which get generated on your machine. What these are can be seen in the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a>. If you already have these keys, just enter the required passphrase.</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span> docker push &lt;your-private-repo&gt;/busybox:stable
+</code></pre></div>
+
+<p>After doing so, the signature for your image will reside in the public DockerHub Notary (notary.docker.io). </p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
 <p><code>policy</code> in <code>helm/values.yaml</code> supports the following keys:</p>
 <table>
