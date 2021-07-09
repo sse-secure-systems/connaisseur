@@ -399,9 +399,46 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Namespaced Validation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Namespaced Validation
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -663,6 +700,28 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -675,7 +734,57 @@
                 
                 
                 <h1 id="namespaced-validation">Namespaced Validation<a class="headerlink" href="#namespaced-validation" title="Permanent link">⚓︎</a></h1>
-<p>description of namespaced validation</p>
+<p>Namespaced validation allows restricting validation to specific namespaces.
+Connaisseur will only verify trust of images deployed to the configured namespaces.
+Namespaced validation offers two modes:</p>
+<ul>
+<li><code>ignore</code>: ignore all namespaces with label <code>securesystemsengineering.connaisseur/webhook: ignore</code></li>
+<li><code>validate</code>: only validate namespaces with label <code>securesystemsengineering.connaisseur/webhook: validate</code></li>
+</ul>
+<p>The desired namespaces must be labelled accordingly, e.g. via:</p>
+<div class="codehilite"><pre><span></span><code># either
+kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhook=ignore
+# or
+kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhook=validate
+</code></pre></div>
+
+<p>Configure namespaced validation via the <code>namespacedValidation</code> in <code>helm/values.yaml</code>.</p>
+<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
+<p><code>namespacedValidation</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>default</th>
+<th>required</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>false</td>
+<td></td>
+<td><code>true</code>/<code>false</code>; enable namespaced validation otherwise images in all namespaces will be validated</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>ignore</td>
+<td></td>
+<td><code>ignore</code>/<code>validate</code>; configure mode of exclusion to either ignore all namespaces with label <code>securesystemsengineering.connaisseur/webhook</code> set to <code>ignore</code> or only validate namespaces with the label set to <code>validate</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
+<p>In <code>helm/values.yaml</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">namespacedValidation</span><span class="o">:</span>
+  <span class="n">enabled</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="n">mode</span><span class="o">:</span> <span class="n">validate</span>
+</code></pre></div>
+
+<p>Labelling target namespace to be validated:</p>
+<div class="codehilite"><pre><span></span><code>kubectl namespaces validateme securesystemsengineering.connaisseur/webhook=validate
+</code></pre></div>
                 
               
               
