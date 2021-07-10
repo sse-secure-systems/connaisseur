@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/">
       
       <link rel="icon" href="assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.9">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.10">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.ca7ac06f.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.1fe995fd.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.f1a3b89f.min.css">
@@ -947,7 +947,7 @@ Each request passes through several phases such as authentication and authorizat
 Among those phases are two steps of <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">admission control</a>: mutating and validating admission.
 In those phases the API sends admission requests to configured webhooks (admission controllers) and receives admission responses (admit, deny, or modify).
 Connaisseur uses a mutating admission webhook, as requests are not only admitted or denied based on the validation result but might also require modification of contained images referenced by tags to trusted digests.
-The webhook is configured to only forward resource creation or update requests to the Connaisseur pods running inside the cluster, since only deployments of images to the cluster are relevant for signature verification.
+The webhook is configured to only forward resource creation or update requests to the Connaisseur service running inside the cluster, since only deployments of images to the cluster are relevant for signature verification.
 This allows Connaisseur to intercept requests before deployment and based on the validation: </p>
 <ul>
 <li><em>admit</em> if all images are referenced by trusted digests (TODO)</li>
@@ -1005,7 +1005,7 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
 <ul>
 <li>"<a href="https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce"><em>Container Image Signatures in Kubernetes</em></a>" - blog post (full introduction)</li>
 <li>"<a href="https://berlin-crypto.github.io/event/dockerimagesignatures.html"><em>Integrity of Docker images</em></a>" - talk at Berlin Crypto Meetup (<em>The Update Framework</em>, <em>Notary</em>, <em>Docker Content Trust</em> &amp; Connaisseur [live demo])</li>
-<li>"<a href="https://blog.sigstore.dev/verify-oci-container-image-signatures-in-kubernetes-33663a9ec7d8"><em>Verifying Container Image Signatures from an OCI Registry in Kubernetes</em></a>" - blog post (experimental support of SigStore/Cosign)</li>
+<li>"<a href="https://blog.sigstore.dev/verify-oci-container-image-signatures-in-kubernetes-33663a9ec7d8"><em>Verifying Container Image Signatures from an OCI Registry in Kubernetes</em></a>" - blog post (experimental support of <em>Sigstore</em>/<em>Cosign</em>)</li>
 </ul>
                 
               
@@ -1018,8 +1018,9 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
           </div>
         </div>
         
-          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            Back to top
           </a>
         
       </main>
@@ -1125,7 +1126,7 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
     <script id="__config" type="application/json">{"base": ".", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.82b56eb2.min.js"></script>
+      <script src="assets/javascripts/bundle.ddd52ceb.min.js"></script>
       
     
   </body>

@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/getting_started/">
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.9">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.10">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ca7ac06f.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.1fe995fd.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.f1a3b89f.min.css">
@@ -798,13 +798,13 @@
                 
                 
                 <h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">⚓︎</a></h1>
-<p>This guide offers a simple default configuration for setting up Connaisseur using public infrastructure and verifying your first own signed images.
+<p>This guide offers a simple default configuration for setting up Connaisseur using public infrastructure and verifying your first self-signed images.
 You will learn how to:</p>
 <ol>
 <li><a href="#create-signing-key-pairs">Create signing key pairs</a></li>
 <li><a href="#configure-connaisseur">Configure Connaisseur</a></li>
 <li><a href="#deploy-connaisseur">Deploy Connaisseur</a></li>
-<li><a href="#test-connaisseur">Test Connaisseur</a></li>
+<li><a href="#test-connaisseur">Test Connaisseur</a> <em>(and sign images)</em></li>
 <li><a href="#cleanup">Cleanup</a></li>
 </ol>
 <p>In the tutorial, you can choose to use either Docker Content Trust (DCT) based on Notary V1 or Cosign from the Sigstore project as a signing solution referred to as DCT and Cosign from here on.
@@ -813,25 +813,28 @@ However, feel free to bring your own solutions for registry or cluster and check
 <p>In general, Connaisseur can be fully configured via <code>helm/values.yaml</code>, so feel free to take a look and try for yourself.
 For more advanced usage in more complex cases (e.g. authentication, multiple registries, signers, validators, additional features), we strongly advise to review the following pages:</p>
 <ul>
-<li><a href="../basics/">Basics</a>: <em>understanding and configuring of image policy and validators</em></li>
+<li><a href="../basics/">Basics</a>: <em>understanding and configuring Connaisseur (e.g. image policy and validators)</em></li>
 <li><a href="../validators/">Validators</a>: <em>applying different signature solutions and specific configurations</em></li>
 <li><a href="../features/">Features</a>: <em>using additional features (e.g. alerting)</em></li>
 </ul>
 <p>In case you need help, feel free to reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a> <img alt="👋" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f44b.svg" title=":wave:" /></p>
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h2>
-<p>You should have a running Kubernetes cluster for testing.
+<p>You should have a Kubernetes test cluster running.
 Furthermore, <code>docker</code>, <code>git</code>, <code>helm</code> and <code>kubectl</code> should be installed and usable, i.e. having run <code>docker login</code> and switched to the appropriate <code>kubectl</code> context.</p>
 <h2 id="create-signing-key-pairs">Create signing key pairs<a class="headerlink" href="#create-signing-key-pairs" title="Permanent link">⚓︎</a></h2>
 <p>Before getting started with Connaisseur, we need to create our signing key pair.
-In case you have already worked with Docker Content Trust or Cosign before, you can skip this step (how to retrieve a previously created DCT key is described <a href="../validators/notaryv1/#getting-the-root-key">here</a>.
-Otherwise, pick your preferred signing scheme below.
-In case you are uncertain which solution to go with, you might be better of to start with DCT, as it comes packaged with <code>docker</code>.</p>
+This obviously depends on the signing solution.
+Here, we will walk you through it for DCT and Cosign.
+In case you have already worked with Docker Content Trust or Cosign before and already possess key pairs, you can skip this step (how to retrieve a previously created DCT key is described <a href="../validators/notaryv1/#getting-the-root-key">here</a>.
+Otherwise, pick your preferred signing scheme below.</p>
+<p>In case you are uncertain which solution to go with, you might be better of to start with DCT, as it comes packaged with <code>docker</code>.
+Cosign on the other hand is somewhat more straightforward to use.</p>
 <div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Docker Content Trust</label><div class="tabbed-content">
 <p>General usage of DCT is described in the <a href="https://docs.docker.com/engine/security/trust/">docker documentation</a>.
 For now, we just need to generate a public-private root key pair via:</p>
 <div class="highlight"><pre><span></span><code>docker trust key generate root
 </code></pre></div>
-<p>You will be prompted for a password, the private key is automatically imported and a <code>root.pub</code> file is created in your current folder that contains your public key which should look something like:</p>
+<p>You will be prompted for a password, the private key is automatically imported and a <code>root.pub</code> file is created in your current folder that contains your public key which should look similar to:</p>
 <div class="highlight"><pre><span></span><code>-----BEGIN PUBLIC KEY-----
 role: root
 
@@ -839,7 +842,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5
 YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ<span class="o">==</span>
 -----END PUBLIC KEY-----
 </code></pre></div>
-<p>We will only need the actual base64 encoded key later.</p>
+<p>We will only need the actual base64 encoded part of the key later.</p>
 </div>
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Cosign</label><div class="tabbed-content">
 <p>Usage of Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>.
@@ -849,7 +852,7 @@ A keypair is generated via:</p>
 <div class="highlight"><pre><span></span><code>cosign generate-key-pair
 </code></pre></div>
 <p>You will be prompted to set a password, after which a private (<code>cosign.key</code>) and public (<code>cosign.pub</code>) key are created.
-In the next step, we will need the public key that should look similar to the following:</p>
+In the next step, we will need the public key that should look similar to:</p>
 <div class="highlight"><pre><span></span><code>-----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
 <span class="nv">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA</span><span class="o">==</span>
@@ -904,8 +907,8 @@ The result should look similar to this:</p>
   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
     <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># enter your key below</span>
       <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5</span>
-      <span class="no">YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+      <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
       <span class="no">-----END PUBLIC KEY-----</span>
   <span class="c1"># cert: |  # for communication, using a selfsigned certificate</span>
   <span class="c1">#   -----BEGIN CERTIFICATE-----</span>
@@ -922,7 +925,7 @@ The result should look similar to this:</p>
 </div>
 <p>We have now configured the validator <code>default</code> with trust root <code>default</code>.
 This will automatically be used if no validator and trust root is specified in the image policy.
-Per default, Connaisseur's image policy under <code>.policy</code> in <code>helm/values.yaml</code> comes with a pattern <code>"*:*"</code> that does not specify a validator or trust root and thus all images that do not meet a more specific configuration will be verified using this validator.
+Per default, Connaisseur's image policy under <code>.policy</code> in <code>helm/values.yaml</code> comes with a pattern <code>"*:*"</code> that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
 Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the <a href="../basics/">basics</a> to leverage the full potential of Connaisseur.</p>
 <h2 id="deploy-connaisseur">Deploy Connaisseur<a class="headerlink" href="#deploy-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>So let's deploy Connaisseur to the cluster:</p>
@@ -953,11 +956,10 @@ NAME                                                DESIRED   CURRENT   READY   
 replicaset.apps/connaisseur-deployment-6876c87c8c   <span class="m">3</span>         <span class="m">3</span>         <span class="m">3</span>       2m9s
 </code></pre></div>
 <h2 id="test-connaisseur">Test Connaisseur<a class="headerlink" href="#test-connaisseur" title="Permanent link">⚓︎</a></h2>
-<p>Now, we have created our key pairs, configured and deployed Connaisseur.
-The next step is to validate our setup.
+<p>Now that we created our key pairs, configured and deployed Connaisseur, the next step is to test our setup.
 So let's create and push a testimage.
-Feel free to use our simple test Dockerfile under <code>tests/Dockerfile</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Typically, IMAGE_PATH=&lt;REGISTRY&gt;/&lt;REPOSITORY-NAME&gt;/&lt;IMAGE-NAME&gt;:&lt;TAG&gt;, like</span>
+Feel free to use our simple test Dockerfile under <code>tests/Dockerfile</code> (make sure to set your own <code>IMAGE</code> name):</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Typically, IMAGE=&lt;REGISTRY&gt;/&lt;REPOSITORY-NAME&gt;/&lt;IMAGE-NAME&gt;:&lt;TAG&gt;, like</span>
 <span class="nv">IMAGE</span><span class="o">=</span>docker.io/xoph/demo:test
 docker build -f tests/Dockerfile -t <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span> .
 docker push <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
@@ -965,30 +967,33 @@ docker push <span class="si">${</span><span class="nv">IMAGE</span><span class="
 <blockquote>
 <p>In case you have DCT turned on per default via environment variable <code>DOCKER_CONTENT_TRUST=1</code>, you should disable for now during the <code>docker push</code> by adding the <code>--disable-content-trust=true</code>.</p>
 </blockquote>
-<p>We can now try to deploy this unsigned image:</p>
+<p>If we try to deploy this unsigned image:</p>
 <div class="highlight"><pre><span></span><code>kubectl run <span class="nb">test</span> --image<span class="o">=</span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
-<p>Connaisseur should deny the request due to lack of trust data or signed digest, e.g.:</p>
+<p>Connaisseur denies the request due to lack of trust data or signed digest, e.g.:</p>
 <div class="highlight"><pre><span></span><code>Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: could not find signed digest <span class="k">for</span> image <span class="s2">&quot;docker.io/xoph/demo:test&quot;</span> <span class="k">in</span> trust data.
 <span class="c1"># or</span>
 Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: No trust data <span class="k">for</span> image <span class="s2">&quot;docker.io/xoph/demo:test&quot;</span>.
 </code></pre></div>
 <p>So let's sign the image and try again.</p>
 <div class="tabbed-set" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Docker Content Trust</label><div class="tabbed-content">
-<p>In case of DCT, do (you will be prompted to provide your password and might be asked to set a new repository key):</p>
+<p>In DCT signing works via <code>docker push</code> using the <code>--disable-content-trust</code> flag:</p>
 <div class="highlight"><pre><span></span><code>docker push <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span> --disable-content-trust<span class="o">=</span><span class="nb">false</span>
 </code></pre></div>
+<p>You will be prompted to provide your password and might be asked to set a new repository key.
+The trust data will then be pushed to the DockerHub Notary server.</p>
 </div>
 <input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">Cosign</label><div class="tabbed-content">
-<p>For Cosign, we use the private key file from the first step (you will be asked to enter your password):</p>
+<p>For Cosign, we use the private key file from the first step:</p>
 <div class="highlight"><pre><span></span><code>cosign sign -key cosign.key <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
+<p>You will be asked to enter your password after wich the signature data will be pushed to your repository.</p>
 </div>
 </div>
 <p>After successful signing, we try again:</p>
 <div class="highlight"><pre><span></span><code>kubectl run <span class="nb">test</span> --image<span class="o">=</span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
-<p>Now, the request should be admitted and Kubernetes returns:</p>
+<p>Now, the request is admitted to the cluster and Kubernetes returns:</p>
 <div class="highlight"><pre><span></span><code>pod/test created
 </code></pre></div>
 <p>You did it <img alt="🥳" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f973.svg" title=":partying_face:" /> you just verified your first signed images in your Kuberenetes cluster <img alt="👯" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f46f.svg" title=":people_with_bunny_ears_partying:" /></p>
@@ -997,7 +1002,7 @@ Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.conn
 <p>To uninstall Connaisseur, use:</p>
 <div class="highlight"><pre><span></span><code>helm uninstall connaisseur --namespace connaisseur
 </code></pre></div>
-<p>Uninstallation can take a moment as Connaisseur needs to validate the deletion webhook.</p>
+<p>Uninstallation can take a moment as Connaisseur needs to validate the deletion webhook <img alt="🤷" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f937.svg" title=":shrug:" /></p>
                 
               
               
@@ -1009,8 +1014,9 @@ Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.conn
           </div>
         </div>
         
-          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            Back to top
           </a>
         
       </main>
@@ -1131,7 +1137,7 @@ Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.conn
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.82b56eb2.min.js"></script>
+      <script src="../assets/javascripts/bundle.ddd52ceb.min.js"></script>
       
     
   </body>
