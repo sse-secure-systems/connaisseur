@@ -62,8 +62,8 @@ class CosignValidator(ValidatorInterface):
                 try:
                     sig_data = json.loads(sig)
                     try:
-                        digest = sig_data["Critical"]["Image"].get(
-                            "Docker-manifest-digest", ""
+                        digest = sig_data["critical"]["image"].get(
+                            "docker-manifest-digest", ""
                         )
                         if re.match(r"sha256:[0-9A-Fa-f]{64}", digest) is None:
                             msg = "Digest '{digest}' does not match expected digest pattern."
@@ -81,14 +81,17 @@ class CosignValidator(ValidatorInterface):
                 except json.JSONDecodeError:
                     logging.info("non-json signature data from cosign: %s", sig)
                     pass
-        elif "error: no matching signatures:\nunable to verify signature\n" in stderr:
+        elif "error: no matching signatures:\nfailed to verify signature\n" in stderr:
             msg = "Failed to verify signature of trust data."
             raise ValidationError(
                 message=msg,
                 trust_data_type="dev.cosignproject.cosign/signature",
                 stderr=stderr,
             )
-        elif re.match(r"^error: GET https://[^ ]+ MANIFEST_UNKNOWN:.*", stderr):
+        elif re.match(
+            r"^error: fetching signatures: getting signature manifest: GET https://[^ ]+ MANIFEST_UNKNOWN:.*",
+            stderr,
+        ):
             msg = 'No trust data for image "{image}".'
             raise NotFoundException(
                 message=msg,
