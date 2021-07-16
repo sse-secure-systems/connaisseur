@@ -11,7 +11,7 @@ yq e '.policy[4].validator = "allow"' -i helm/values.yaml
 echo 'Config set'
 
 echo 'Installing Connaisseur...'
-make install || { echo 'Failed to install Connaisseur'; exit 1; }
+helm install connaisseur helm --atomic || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
 echo 'Testing nv1 unsigned image...'
@@ -48,7 +48,7 @@ else
 fi
 
 echo 'Uninstalling Connaisseur...'
-make uninstall || { echo 'Failed to uninstall Connaisseur'; exit 1; }
+helm uninstall connaisseur || { echo 'Failed to uninstall Connaisseur'; exit 1; }
 echo 'Successfully uninstalled Connaisseur'
 
 rm output.log
