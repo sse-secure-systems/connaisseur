@@ -16,11 +16,11 @@ echo 'Config set'
 echo '### Testing "ignore" label ###'
 
 echo 'Installing Connaisseur...'
-make install || { echo 'Failed to install Connaisseur'; exit 1; }
+helm install connaisseur helm --atomic --create-namespace --namespace connaisseur || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
 echo 'Testing unsigned image in unlabelled namespace...'
-kubectl run pod --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
+kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
 
 if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
   echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
@@ -31,7 +31,7 @@ else
 fi
 
 echo 'Testing signed image in unlabelled namespace...'
-kubectl run pod --image=securesystemsengineering/testimage:signed >output.log 2>&1 || true
+kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:signed >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
   echo 'Failed to allow signed image. Output:'
@@ -53,7 +53,8 @@ else
 fi
 
 echo 'Uninstalling Connaisseur...'
-make uninstall || { echo 'Failed to uninstall Connaisseur'; exit 1; }
+helm uninstall connaisseur --namespace connaisseur || { echo 'Failed to uninstall Connaisseur'; exit 1; }
+kubectl delete ns connaisseur
 echo 'Successfully uninstalled Connaisseur'
 
 echo '### Testing "validate" label ###'
@@ -61,7 +62,7 @@ echo '### Testing "validate" label ###'
 yq e '.namespacedValidation.mode="validate"' -i "helm/values.yaml"
 
 echo 'Installing Connaisseur...'
-make install || { echo 'Failed to install Connaisseur'; exit 1; }
+helm install connaisseur helm --atomic --create-namespace --namespace connaisseur || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
 echo 'Testing unsigned image in enabled namespace...'
@@ -87,7 +88,7 @@ else
 fi
 
 echo 'Testing unsigned image in unlabelled namespace...'
-kubectl run pod --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
+kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
   echo 'Failed to allow unsigned image in ignored namespace. Output:'
@@ -98,7 +99,7 @@ else
 fi
 
 echo 'Uninstalling Connaisseur...'
-make uninstall || { echo 'Failed to uninstall Connaisseur'; exit 1; }
+helm uninstall connaisseur --namespace connaisseur || { echo 'Failed to uninstall Connaisseur'; exit 1; }
 echo 'Successfully uninstalled Connaisseur'
 
 rm output.log
