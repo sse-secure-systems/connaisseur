@@ -98,9 +98,15 @@ policy:
 # interrupting operation.
 detectionMode: false
 
-# A list of namespaces that will be subject to Connaisseur verification.
-# If the list contains '*' - all namespaces will be monitored.
-targetNamespaces: ['*']
+# namespaced validation allows to restrict the namespaces that will be subject to Connaisseur verification.
+# when enabled, based on namespaced validation mode ('ignore' or 'validate')
+# - either all namespaces with label "securesystemsengineering.connaisseur/webhook=ignore" are ignored
+# - or only namespaces with label "securesystemsengineering.connaisseur/webhook=validate" are validated.
+# warning: enabling namespaced validation, allows roles with edit permission on a namespace to disable
+# validation for that namespace
+namespacedValidation:
+  enabled: false
+  mode: ignore  # 'ignore' or 'validate'
 
 # debug: true
 

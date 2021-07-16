@@ -28,4 +28,7 @@ policy:
 - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
   validator: allow
 
-targetNamespaces: ["verifyns"]
+namespacedValidation:
+  enabled: true
+  mode: ignore
+

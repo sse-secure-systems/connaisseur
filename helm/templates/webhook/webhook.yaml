@@ -20,9 +20,24 @@ webhooks:
         apiVersions: ["*"]
         resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
     sideEffects: None
-  {{- if not (has "*" .context.Values.targetNamespaces) }}
+    {{- if .context.Values.namespacedValidation }}
+    {{- if .context.Values.namespacedValidation.enabled }}
     namespaceSelector:
-      matchLabels:
-       {{- include  "connaisseur.namespaceLabels" .context | indent 8 }}
-  {{- end }}
+      matchExpressions:
+      - key: securesystemsengineering.connaisseur/webhook
+    {{- if not .context.Values.namespacedValidation.mode}}
+        operator: NotIn
+        values:
+          - ignore
+    {{- else if eq .context.Values.namespacedValidation.mode "ignore"}}
+        operator: NotIn
+        values:
+          - ignore
+    {{- else if eq .context.Values.namespacedValidation.mode "validate"}}
+        operator: In
+        values:
+          - validate
+   {{- end }}
+   {{- end }}
+   {{- end }}
 {{ end }}
