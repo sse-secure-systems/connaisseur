@@ -4,7 +4,7 @@ validators:
   - name: dockerhub
     type: notaryv1
     host: notary.docker.io
-    pub_keys:
+    trust_roots:
       - name: sse
         key: |
           -----BEGIN PUBLIC KEY-----
@@ -18,28 +18,28 @@ policy:
   - pattern: "*:*"
     validator: dockerhub
     with:
-      key: sse
+      trust_root: sse
   - pattern: "k8s.gcr.io/*:*"
     validator: allow
   - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
     validator: dockerhub
     with:
-      key: sse
+      trust_root: sse
       delegations: ["starkteetje"]
   - pattern: "docker.io/securesystemsengineering/testimage:wrong_signer"
     validator: dockerhub
     with:
-      key: sse
+      trust_root: sse
       delegations: ["belitzphilipp"]
   - pattern: "docker.io/securesystemsengineering/testimage:double_sig"
     validator: dockerhub
     with:
-      key: sse
+      trust_root: sse
       delegations: ["belitzphilipp", "starkteetje"]
   - pattern: "docker.io/securesystemsengineering/connaisseur:*"
     validator: dockerhub
     with:
-      key: sse
+      trust_root: sse
   - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
     validator: allow
 alerting:

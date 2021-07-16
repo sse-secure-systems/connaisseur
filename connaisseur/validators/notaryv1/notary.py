@@ -31,7 +31,7 @@ class Notary:
         self,
         name: str,
         host: str,
-        pub_keys: list,
+        trust_roots: list,
         is_acr: bool = False,
         auth: dict = {},
         cert: str = None,
@@ -39,23 +39,11 @@ class Notary:
     ):
         """
         Creates a Notary object from a dictionary.
-
-        Raises `InvalidFormatException` should the mandatory fields be missing.
         """
-
-        if not (name and host and pub_keys):
-            msg = "{validation_kind} {notary_name} has an invalid format."
-            raise InvalidFormatException(
-                message=msg,
-                validation_kind="Notary configuration",
-                notary_name=name,
-                notary_host=host,
-                notary_keys=pub_keys,
-            )
 
         self.name = name
         self.host = host
-        self.pub_root_keys = pub_keys
+        self.pub_root_keys = trust_roots or []
         self.is_acr = is_acr
         self.auth = auth
         self.cert = self.__write_cert(cert) if cert else None
@@ -90,7 +78,9 @@ class Notary:
                 key["key"] for key in self.pub_root_keys if key["name"] == key_name
             )
         except StopIteration as err:
-            msg = "Key {key_name} could not be found."
+            msg = (
+                'Trust root "{key_name}" not configured for validator "{notary_name}".'
+            )
             raise NotFoundException(
                 message=msg, key_name=key_name, notary_name=self.name
             ) from err

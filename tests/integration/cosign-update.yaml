@@ -3,7 +3,7 @@ deployment:
 validators:
 - name: cosign
   type: cosign
-  pub_keys: 
+  trust_roots: 
   - name: sse
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -17,12 +17,12 @@ policy:
 - pattern: "*:*"
   validator: cosign
   with:
-    key: sse
+    trust_root: sse
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: "docker.io/securesystemsengineering/connaisseur:*"
   validator: cosign
   with:
-    key: sse
+    trust_root: sse
 - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
   validator: allow

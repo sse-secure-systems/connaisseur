@@ -20,7 +20,7 @@ def mock_safe_path_func(monkeypatch):
 def sample_notaries(mock_safe_path_func):
     notary.Notary.CERT_PATH = "tests/data/notary/{}.cert"
     li = []
-    for file_name in ("notary1", "notary2", "err1", "err2", "err3", "unhealthy_notary"):
+    for file_name in ("notary1", "notary2", "unhealthy_notary"):
         with open(f"tests/data/notary/{file_name}.yaml") as file:
             li.append(yaml.safe_load(file))
     return li
@@ -30,7 +30,7 @@ static_notaries = [
     {
         "name": "default",
         "host": "notary.docker.io",
-        "pub_keys": [
+        "trust_roots": [
             {
                 "name": "default",
                 "key": (
@@ -55,7 +55,7 @@ static_notaries = [
     {
         "name": "harbor",
         "host": "notary.harbor.domain",
-        "pub_keys": [
+        "trust_roots": [
             {
                 "name": "library",
                 "key": "-----BEGIN PUBLIC KEY-----\n"
@@ -74,9 +74,6 @@ static_notaries = [
     [
         (0, fix.no_exc()),
         (1, fix.no_exc()),
-        (2, pytest.raises(exc.InvalidFormatException)),
-        (3, pytest.raises(exc.InvalidFormatException)),
-        (4, pytest.raises(exc.InvalidFormatException)),
     ],
 )
 def test_notary(sample_notaries, index, exception):
@@ -84,7 +81,7 @@ def test_notary(sample_notaries, index, exception):
         no = notary.Notary(**sample_notaries[index])
         assert no.name == static_notaries[index]["name"]
         assert no.host == static_notaries[index]["host"]
-        assert no.pub_root_keys == static_notaries[index]["pub_keys"]
+        assert no.pub_root_keys == static_notaries[index]["trust_roots"]
         assert no.is_acr == static_notaries[index].get("is_acr", False)
 
 
@@ -102,7 +99,7 @@ def test_notary(sample_notaries, index, exception):
 def test_get_key(sample_notaries, index, key_name, key, exception):
     no = notary.Notary(**sample_notaries[index])
     with exception:
-        assert no.get_key(key_name) == static_notaries[index]["pub_keys"][key]["key"]
+        assert no.get_key(key_name) == static_notaries[index]["trust_roots"][key]["key"]
 
 
 @pytest.mark.parametrize(
@@ -140,7 +137,7 @@ def test_healthy(sample_notaries, m_request, index, host, health):
             fix.no_exc(),
         ),
         (0, "bob-image", "root", fix.get_td("bob-image/root"), fix.no_exc()),
-        (5, "irrelevant", "", {}, pytest.raises(exc.UnreachableError)),
+        (2, "irrelevant", "", {}, pytest.raises(exc.UnreachableError)),
         (
             0,
             "auth.io/alice-image",

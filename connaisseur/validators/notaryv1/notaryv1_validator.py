@@ -31,9 +31,11 @@ class NotaryV1Validator(ValidatorInterface):
         super().__init__(name, **kwargs)
         self.notary = Notary(name, **kwargs)
 
-    def validate(self, image: Image, key: str = None, delegations: list = [], **kwargs):
+    def validate(
+        self, image: Image, trust_root: str = None, delegations: list = [], **kwargs
+    ):
         # get the public root key
-        pub_key = self.notary.get_key(key)
+        pub_key = self.notary.get_key(trust_root)
         # prepend `targets/` to the required delegation roles, if not already present
         req_delegations = list(
             map(NotaryV1Validator.__normalize_delegation, delegations)

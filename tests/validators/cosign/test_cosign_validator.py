@@ -14,7 +14,7 @@ static_cosigns = [
     {
         "name": "cosign1",
         "type": "cosign",
-        "pub_keys": [
+        "trust_roots": [
             {
                 "name": "default",
                 "key": example_key,
@@ -25,7 +25,7 @@ static_cosigns = [
     {
         "name": "cosign2",
         "type": "cosign",
-        "pub_keys": [
+        "trust_roots": [
             {
                 "name": "test",
                 "key": "...",
@@ -35,7 +35,7 @@ static_cosigns = [
     {
         "name": "cosign1",
         "type": "cosign",
-        "pub_keys": [
+        "trust_roots": [
             {"name": "megatest", "key": "..."},
             {"name": "test", "key": "..."},
         ],
@@ -43,7 +43,7 @@ static_cosigns = [
     {
         "name": "cosign1",
         "type": "cosign",
-        "pub_keys": [],
+        "trust_roots": [],
     },
 ]
 
@@ -91,7 +91,7 @@ def mock_add_kill_fake_process(monkeypatch):
 def test_init(index: int):
     val = co.CosignValidator(**static_cosigns[index])
     assert val.name == static_cosigns[index]["name"]
-    assert val.keys == static_cosigns[index]["pub_keys"]
+    assert val.trust_roots == static_cosigns[index]["trust_roots"]
 
 
 @pytest.mark.parametrize(
@@ -103,9 +103,14 @@ def test_init(index: int):
             0,
             "non_existing",
             None,
-            pytest.raises(exc.NotFoundException, match=r".*Key non_existing.*"),
+            pytest.raises(exc.NotFoundException, match=r'.*Trust root "non_existing.*'),
         ),
-        (2, None, None, pytest.raises(exc.NotFoundException, match=r".*Key default.*")),
+        (
+            2,
+            None,
+            None,
+            pytest.raises(exc.NotFoundException, match=r'.*Trust root "default".*'),
+        ),
     ],
 )
 def test_get_key(index: int, key_name: str, key: str, exception):

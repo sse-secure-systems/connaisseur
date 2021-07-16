@@ -1,6 +1,6 @@
 name: default
 host: notary.docker.io
-pub_keys:
+trust_roots:
 - name: default
   key: |
     -----BEGIN PUBLIC KEY-----

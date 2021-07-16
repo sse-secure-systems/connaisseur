@@ -345,7 +345,7 @@ def sample_nv1(m_notary):
     sample_notary = {
         "name": "dockerhub",
         "host": "notary.docker.io",
-        "pub_keys": [
+        "trust_roots": [
             {
                 "name": "default",
                 "key": (

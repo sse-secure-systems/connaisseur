@@ -1,7 +1,7 @@
 - name: default
   type: notaryv1
   host: notary.docker.io
-  pub_keys:
+  trust_roots:
     - name: default
       key: |
         -----BEGIN PUBLIC KEY-----
@@ -38,7 +38,7 @@
     hMC42zeU+yxxy3vukMa4xX2BGzyjAg+qaDh6YwWui80r2/BlYXvSsSl3dIgtVwL4
     DSo1s+3uJ4evVKDRf3vLwKLTtiYfd20=
     -----END CERTIFICATE-----
-  pub_keys:
+  trust_roots:
   - name: library
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -53,7 +53,7 @@
   approve: False
 - name: cosign-example
   type: cosign
-  pub_keys:
+  trust_roots:
   - name: default
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -63,7 +63,7 @@
 - name: ext
   type: notaryv1
   host: notary.external.domain
-  pub_keys:
+  trust_roots:
     - name: default
       key: |
         -----BEGIN PUBLIC KEY-----

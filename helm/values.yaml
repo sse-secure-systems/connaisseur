@@ -1,4 +1,4 @@
-# configure connaisseur deployment
+# configure Connaisseur deployment
 deployment:
   replicasCount: 3
   image: securesystemsengineering/connaisseur:v2.0.0
@@ -15,28 +15,36 @@ deployment:
   tolerations: []
   affinity: {}
 
-# configure connaisseur service
+# configure Connaisseur service
 service:
   type: ClusterIP
   port: 443
 
-# configure access to the notary server
+### VALIDATORS ###
+# validators are a set of configurations (hosts, types, public keys) that can be
+# used for validating one or multiple images (or image signatures). they are tied
+# to their respective image(s) via the image policy below. there are a few handy
+# validators pre-configured.
 validators:
+# static validator that allows each image
 - name: allow
   type: static
   approve: true
+# static validator that denies each image
 - name: deny
   type: static
   approve: false
-- name: default  # the default validator which is used, if no validators are specified
-  type: notaryv1  # cosign is also experimetally supported
-  host: notary.docker.io
-  pub_keys:
-  - name: default  # the default key which is used, if no keys are specified
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      <add your public key here>
-      -----END PUBLIC KEY-----
+# the `default` validator is used if no validator is specified in image policy
+- name: default
+  type: notaryv1  # or other supported validator (e.g. "cosign")
+  host: notary.docker.io # configure the notary server to be used
+  trust_roots:
+  # the `default` key is used if no key is specified in image policy
+  #- name: default
+  #  key: |  # enter your key below
+  #    -----BEGIN PUBLIC KEY-----
+  #    <add your public key here>
+  #    -----END PUBLIC KEY-----
   # cert: |  # for communication, using a selfsigned certificate
   #   -----BEGIN CERTIFICATE-----
   #   ...
@@ -47,60 +55,46 @@ validators:
   #   password: notarypass
   #   # or
   #   secret_name: notarysecret  # define a k8s secret with `username` and `password` fields
-- name: docker_essentials  # public notary form dockerhub
+# pre-configured nv1 validator for public notary from Docker Hub
+- name: dockerhub_basics
   type: notaryv1
   host: notary.docker.io
-  pub_keys:
-  # this is the public key for all official dockerhub images (e.g. redis)
+  trust_roots:
+    # public key for official docker images (https://hub.docker.com/search?q=&type=image&image_filter=official)
+    # !if not needed feel free to remove the key!
   - name: docker_official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
       QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
       -----END PUBLIC KEY-----
-  # this is the public key to the `securesystemsengineering` repo on dockerhub
-  - name: sse_official
+  # public key securesystemsengineering repo including Connaisseur images
+  # !this key is critical for Connaisseur!
+  - name: securesystemsengineering_official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
       d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
       -----END PUBLIC KEY-----
-- name: cosign_demo  # for verifying cosign signatures
-  type: cosign
-  pub_keys:
-  - name: sse
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-      -----END PUBLIC KEY-----
 
-# the image policy, which defines all repositories that need to be
-# verified. more detail in the git repo README.md
+### IMAGE POLICY ###
+# the image policy ties validators and images together whereby always only the most specific rule (pattern)
+# is applied. specify if and how images should be validated by which validator.
 policy:
 - pattern: "*:*"
-  validator: dockerhub
 - pattern: "docker.io/library/*:*"
-  validator: dockerhub
+  validator: dockerhub_basics
   with:
-    key: docker_official
+    trust_root: docker_official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
-- pattern: "docker.io/securesystemsengineering/connaisseur:*"
-  validator: dockerhub
+- pattern: "docker.io/securesystemsengineering/*:*"
+  validator: dockerhub_basics
   with:
-    key: sse
-- pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
-  validator: allow
-- pattern: "docker.io/securesystemsengineering/testimage:co-*"
-  validator: cosign
-  with:
-    key: sse
-
-
+    trust_root: securesystemsengineering_official
 
 # in detection mode, deployment will not be denied, but only prompted
-# and logged. This allows testing the functionality without
+# and logged. this allows testing the functionality without
 # interrupting operation.
 detection_mode: false
 

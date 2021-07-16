@@ -17,25 +17,29 @@ from connaisseur.crypto import load_key
 
 class CosignValidator(ValidatorInterface):
     name: str
-    keys: list
+    trust_roots: list
 
-    def __init__(self, name: str, pub_keys: list, **kwargs):
+    def __init__(self, name: str, trust_roots: list, **kwargs):
         self.name = name
-        self.keys = pub_keys
+        self.trust_roots = trust_roots
 
     def __get_key(self, key_name: str = None):
         key_name = key_name or "default"
         try:
-            key = next(key["key"] for key in self.keys if key["name"] == key_name)
+            key = next(
+                key["key"] for key in self.trust_roots if key["name"] == key_name
+            )
         except StopIteration as err:
-            msg = "Key {key_name} could not be found."
+            msg = (
+                'Trust root "{key_name}" not configured for validator "{notary_name}".'
+            )
             raise NotFoundException(
                 message=msg, key_name=key_name, notary_name=self.name
             ) from err
         return "".join(key)
 
-    def validate(self, image: Image, key: str = None, **kwargs):
-        pub_key = self.__get_key(key)
+    def validate(self, image: Image, trust_root: str = None, **kwargs):
+        pub_key = self.__get_key(trust_root)
         return self.__get_cosign_validated_digests(str(image), pub_key).pop()
 
     def __get_cosign_validated_digests(self, image: str, pubkey: str):

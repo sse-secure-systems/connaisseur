@@ -53,7 +53,10 @@ static_config = [
             "err3",
             pytest.raises(exc.InvalidConfigurationFormatError, match=r".*validator.*"),
         ),
-        ("err4", pytest.raises(exc.InvalidConfigurationFormatError, match=r".*keys.*")),
+        (
+            "err4",
+            pytest.raises(exc.InvalidConfigurationFormatError, match=r".*roots.*"),
+        ),
     ],
 )
 def test_config(config_path, exception):

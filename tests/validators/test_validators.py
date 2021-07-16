@@ -12,7 +12,7 @@ import connaisseur.exceptions as exc
                 "type": "notaryv1",
                 "name": "notary1",
                 "host": "me",
-                "pub_keys": [{"name": "i'm", "key": "not_empty"}],
+                "trust_roots": [{"name": "i'm", "key": "not_empty"}],
             },
             val.NotaryV1Validator,
             fix.no_exc(),
@@ -26,7 +26,7 @@ import connaisseur.exceptions as exc
             {
                 "type": "cosign",
                 "name": "cosigngn",
-                "pub_keys": [{"name": "i'm", "key": "not_empty"}],
+                "trust_roots": [{"name": "i'm", "key": "not_empty"}],
             },
             val.CosignValidator,
             fix.no_exc(),
