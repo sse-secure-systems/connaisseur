@@ -935,7 +935,7 @@ Container images can be referenced in two different ways based on their registry
 </ul>
 <p>While the tag is a mutable, human readable description, the digest is an immutable, inherent property of the image, namely the SHA256 hash of its content.
 This also means that a tag can correspond to varying digests whereas digests are unique for each image.
-The container runtime (e.g. containerd) compares the image content with the received digest before spinning up the container (TODO).
+The container runtime (e.g. containerd) compares the image content with the received digest before spinning up the container.
 As a result, Connaisseur just needs to make sure that only <em>trusted digests</em> (signed by a trusted entity) are passed to the container runtime.
 Depending on how an image for deployment is referenced, it will either attempt to translate the tag to a trusted digest or validate whether the digest is trusted.
 How the digest is signed in detail, where the signature is stored, what it is verfied against and how different image distribution and updating attacks are mitigated depends on the signature schemes.</p>
@@ -950,7 +950,7 @@ Connaisseur uses a mutating admission webhook, as requests are not only admitted
 The webhook is configured to only forward resource creation or update requests to the Connaisseur service running inside the cluster, since only deployments of images to the cluster are relevant for signature verification.
 This allows Connaisseur to intercept requests before deployment and based on the validation: </p>
 <ul>
-<li><em>admit</em> if all images are referenced by trusted digests (TODO)</li>
+<li><em>admit</em> if all images are referenced by trusted digests</li>
 <li><em>modify</em> if all images can be translated to trusted digests</li>
 <li><em>deny</em> if at least one of the requested images does not have a trusted digest</li>
 </ul>
