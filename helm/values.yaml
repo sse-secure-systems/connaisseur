@@ -96,7 +96,7 @@ policy:
 # in detection mode, deployment will not be denied, but only prompted
 # and logged. this allows testing the functionality without
 # interrupting operation.
-detection_mode: false
+detectionMode: false
 
 # A list of namespaces that will be subject to Connaisseur verification.
 # If the list contains '*' - all namespaces will be monitored.
