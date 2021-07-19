@@ -45,16 +45,16 @@ validators:
   #    -----BEGIN PUBLIC KEY-----
   #    <add your public key here>
   #    -----END PUBLIC KEY-----
-  # cert: |  # for communication, using a selfsigned certificate
-  #   -----BEGIN CERTIFICATE-----
-  #   ...
-  #   -----END CERTIFICATE-----
-  # auth:  # basic authentication against the notary server
-  #   # either
-  #   username: notaryuser
-  #   password: notarypass
-  #   # or
-  #   secret_name: notarysecret  # define a k8s secret with `username` and `password` fields
+  #cert: |  # for communication, using a selfsigned certificate
+  #  -----BEGIN CERTIFICATE-----
+  #  ...
+  #  -----END CERTIFICATE-----
+  #auth:  # basic authentication against the notary server
+  #  # either
+  #  username: notaryuser
+  #  password: notarypass
+  #  # or
+  #  secret_name: notarysecret  # define a k8s secret with `username` and `password` fields
 # pre-configured nv1 validator for public notary from Docker Hub
 - name: dockerhub_basics
   type: notaryv1
