@@ -64,17 +64,24 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
     {{- if eq $validator.type "notaryv1" -}}
         {{- if $validator.auth -}}
             {{- if $validator.auth.secret_name -}}
-                {{- $_ := set $external_secret $validator.name $validator.auth.secret_name -}}
+    - name: {{ $validator.name }}-vol
+  secret:
+    secretName: {{ $validator.auth.secret_name }}
             {{- end -}}
         {{- end -}}
     {{- else if eq $validator.type "notaryv2" -}}
     {{- else if eq $validator.type "cosign" -}}
-    {{- end -}}
-{{- end -}}
-{{- range $k, $v := $external_secret -}}
-    - name: {{ $k }}-vol
+        {{- if $validator.auth -}}
+            {{- if $validator.auth.secret_name -}}
+    - name: {{ $validator.name }}-vol
   secret:
-    secretName: {{ $v }}
+    secretName: {{ $validator.auth.secret_name }}
+    items:
+      - key: .dockerconfigjson
+        path: config.json
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -86,16 +93,20 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
     {{- if eq $validator.type "notaryv1" -}}
         {{- if $validator.auth -}}
             {{- if $validator.auth.secret_name -}}
-                {{- $_ := set $external_secret $validator.name $validator.auth.secret_name -}}
+    - name: {{ $validator.name }}-vol
+  mountPath: /app/connaisseur-config/{{ $validator.name }}
+  readOnly: True
             {{- end -}}
         {{- end -}}
     {{- else if eq $validator.type "notaryv2" -}}
     {{- else if eq $validator.type "cosign" -}}
-    {{- end -}}
-{{- end -}}
-{{- range $k, $v :=  $external_secret -}}
-    - name: {{ $k }}-vol
-  mountPath: /app/connaisseur-config/{{ $k }}
+        {{- if $validator.auth -}}
+            {{- if $validator.auth.secret_name -}}
+    - name: {{ $validator.name }}-vol
+  mountPath: /app/connaisseur-config/{{ $validator.name }}/.docker/
   readOnly: True
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
 {{- end -}}
 {{- end -}}

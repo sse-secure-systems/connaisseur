@@ -122,10 +122,15 @@ class CosignValidator(ValidatorInterface):
         """
 
         key = load_key(pubkey)  # raises if invalid; return value not used
+        home = f"/app/connaisseur-config/{self.name}"
         cmd = ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image]
 
         with subprocess.Popen(  # nosec
-            cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            cmd,
+            env={"HOME": home},
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         ) as process:
             try:
                 stdout, stderr = process.communicate(key.to_pem(), timeout=60)
