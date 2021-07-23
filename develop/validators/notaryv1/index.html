@@ -429,13 +429,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-harbor-container-registry" class="md-nav__link">
-    Using Harbor container registry
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#using-azure-container-registry" class="md-nav__link">
     Using Azure Container Registry
   </a>
@@ -933,13 +926,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-harbor-container-registry" class="md-nav__link">
-    Using Harbor container registry
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#using-azure-container-registry" class="md-nav__link">
     Using Azure Container Registry
   </a>
@@ -1148,13 +1134,14 @@ d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</sp
     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">starkteetje</span>
 </code></pre></div>
 <h3 id="validation-in-action">Validation in Action<a class="headerlink" href="#validation-in-action" title="Permanent link">⚓︎</a></h3>
-<p>To test the validator, simply try deploying a pod.</p>
+<p>To test the validator, simply try deploying a pod:</p>
 <div class="highlight"><pre><span></span><code>&gt; k run redis --image redis:alpine
 pod/redis created
 
 &gt; k run nginx --image phbelitz/image:signed
 Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: Failed to verify signature of trust data root.
 </code></pre></div>
+<p>What happens in the background is that Connaisseur looks up trust data of the image in the <code>root</code>, <code>snapshot</code>, <code>timestamp</code> and <code>targets</code> files by querying the API of the notary server. Trust data syntax is validated against their known schemas and the files' signatures are validated against the pinned root key for the root file and against the respective keys for the other files which have been validating during validation of the <code>root</code> file beforehand. Furthermore, Connaisseur gathers trust data of potential delegations linked in the targets file. For an introduction to the trust data formats see <a href="https://berlin-crypto.github.io/assets/Berlin%20Crypto%20Connaisseur.pdf">the presentation of our colleague Philipp Belitz</a>.</p>
 <h2 id="additional-features">Additional Features<a class="headerlink" href="#additional-features" title="Permanent link">⚓︎</a></h2>
 <h3 id="delegations">Delegations<a class="headerlink" href="#delegations" title="Permanent link">⚓︎</a></h3>
 <p>Notary (V1) offers the functionality to delegate trust. To better understand this feature, it's best to have a basic understanding of the TUF key hierarchy, or more specifically the purpose of the root, targets and delegation keys. If you are more interested in this topic, please read the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a>.</p>
@@ -1185,7 +1172,6 @@ Successfully added signer: &lt;your-name&gt; to &lt;your-private-repo&gt;/busybo
     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;your-name&gt;</span>
 </code></pre></div>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
-<h3 id="using-harbor-container-registry">Using Harbor container registry<a class="headerlink" href="#using-harbor-container-registry" title="Permanent link">⚓︎</a></h3>
 <h3 id="using-azure-container-registry">Using Azure Container Registry<a class="headerlink" href="#using-azure-container-registry" title="Permanent link">⚓︎</a></h3>
 <p>Using Azure Container Registry (ACR) must be specified in the <a href="./#configuration-options">validator configuration</a> by setting <code>is_acr</code> to <code>true</code>.</p>
 <p>Moreover, you need to provide credentials of an Azure Identity having at least <code>read</code> access to the ACR (and, thus, to the associated notary instance). Assuming you have the <code>az cli</code> installed you can create a Service Principal for this by running:</p>
