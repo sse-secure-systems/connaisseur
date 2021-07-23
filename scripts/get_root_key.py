@@ -1,17 +1,19 @@
-import base64
 import argparse
-import connaisseur.notary_api as api
+import asyncio
+import base64
+
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+
 from connaisseur.image import Image
-from connaisseur.tuf_role import TUFRole
-from connaisseur.config import Notary
+from connaisseur.validators.notaryv1.notary import Notary
+from connaisseur.validators.notaryv1.tuf_role import TUFRole
 
 
-def get_pub_root_key(host: str, image: Image):
+async def get_pub_root_key(host: str, image: Image):
     notary = Notary("no", host, ["not_empty"])
-    root_td = api.get_trust_data(notary, image, TUFRole("root"))
+    root_td = await notary.get_trust_data(image, TUFRole("root"))
 
     root_key_id = root_td.signatures[0].get("keyid")
     root_cert_base64 = (
@@ -49,5 +51,7 @@ if __name__ == "__main__":
         "--image", "-i", help="name of the image", type=str, required=True
     )
     args = parser.parse_args()
-    root_key_id, root_key = get_pub_root_key(args.server, Image(args.image))
+    root_key_id, root_key = asyncio.run(
+        get_pub_root_key(args.server, Image(args.image))
+    )
     print(f"KeyID: {root_key_id}\nKey: {root_key}")

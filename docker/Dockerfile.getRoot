@@ -1,8 +1,7 @@
-FROM python:alpine
+FROM python:3-slim
+# based on debian as alpine needs compilation of cryptography package, which bloats image and increases build time immensely
 
 WORKDIR /app
-
-RUN ["apk", "add", "gcc", "musl-dev", "libffi-dev", "openssl-dev", "python3-dev"]
 
 COPY requirements.txt setup.py scripts/get_root_key.py /app/
 COPY connaisseur /app/connaisseur

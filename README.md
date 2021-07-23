@@ -223,7 +223,7 @@ Feel free to open a PR if you add new neat templates for other third parties!
 For verifying the signatures of images, a public root key is needed, but from where do you get this, especially for public images whose signatures you didn't create? For this we created the *get_root_key* utility. You can use it by building the docker image with `docker build -t get-root-key -f docker/Dockerfile.getRoot .` and the running the image:
 
 ```bash
-$ docker run --rm notaryrootkey -i securesystemsengineering/testimage
+$ docker run --rm get-root-key -i securesystemsengineering/testimage
 KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
 Key: -----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
