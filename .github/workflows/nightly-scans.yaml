@@ -61,3 +61,16 @@ jobs:
         with:
            name: trivy-reports
            path: trivy-reports
+
+  get-root:
+    runs-on: ubuntu-latest
+    container:
+      image: docker:stable
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and test get-root utility
+        run: |
+          docker build -t get-root-key -f docker/Dockerfile.getRoot .
+          docker run --rm get-root-key -i securesystemsengineering/testimage > output
+          cat output | grep "KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508"
+          cat output | grep "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe"
