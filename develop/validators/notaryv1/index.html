@@ -14,18 +14,18 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/validators/notaryv1/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.10">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.0">
     
     
       
-        <title>DCT / Notary V1 - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
+        <title>Notary (V1) / DCT - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.1fe995fd.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.fe914879.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.f1a3b89f.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ba0d045b.min.css">
         
           
           
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dct-notary-v1" class="md-skip">
+        <a href="#notary-v1-dct" class="md-skip">
           Skip to content
         </a>
       
@@ -80,7 +80,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../../assets/logo.svg" alt="logo">
 
@@ -92,13 +92,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CONNAISSEUR - Verify Container Signatures in Kubernetes
+            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DCT / Notary V1
+              Notary (V1) / DCT
             
           </span>
         </div>
@@ -115,14 +115,18 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
       </label>
-      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-      </button>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -172,12 +176,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../../assets/logo.svg" alt="logo">
 
     </a>
-    CONNAISSEUR - Verify Container Signatures in Kubernetes
+    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
   </label>
   
     <div class="md-nav__source">
@@ -313,12 +317,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          DCT / Notary V1
+          Notary (V1) / DCT
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        DCT / Notary V1
+        Notary (V1) / DCT
       </a>
       
         
@@ -340,12 +344,72 @@
     Basic usage
   </a>
   
+    <nav class="md-nav" aria-label="Basic usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-the-signature" class="md-nav__link">
+    Creating the signature
+  </a>
+  
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
+  <a href="#getting-the-root-key" class="md-nav__link">
+    Getting the Root Key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#configuration-options" class="md-nav__link">
     Configuration options
   </a>
+  
+    <nav class="md-nav" aria-label="Configuration options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validator-mapping-configuration-options" class="md-nav__link">
+    Validator mapping configuration options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-features" class="md-nav__link">
+    Additional Features
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#delegations" class="md-nav__link">
+    Delegations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -356,13 +420,6 @@
   
     <nav class="md-nav" aria-label="Additional notes">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#getting-the-root-key" class="md-nav__link">
-    Getting the Root Key
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#using-harbor-container-registry" class="md-nav__link">
@@ -380,13 +437,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#advanced-use-cases" class="md-nav__link">
-    Advanced Use-Cases
-  </a>
   
 </li>
       
@@ -417,33 +467,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#delegation-feature_1" class="md-nav__link">
-    Delegation feature
-  </a>
-  
-    <nav class="md-nav" aria-label="Delegation feature">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#image-policy-example_1" class="md-nav__link">
-    Image Policy Example
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#limits_1" class="md-nav__link">
-    Limits
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -457,8 +480,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../notaryv2/" class="md-nav__link">
-        Notary V2
+      <a href="../sigstore_cosign/" class="md-nav__link">
+        SigStore / Cosign
       </a>
     </li>
   
@@ -469,8 +492,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+      <a href="../notaryv2/" class="md-nav__link">
+        Notary V2
       </a>
     </li>
   
@@ -703,7 +726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-1_connaisseur-bootstrap-sentinel/" class="md-nav__link">
+      <a href="../../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
         ADR 1: Bootstrap Sentinel
       </a>
     </li>
@@ -818,12 +841,72 @@
     Basic usage
   </a>
   
+    <nav class="md-nav" aria-label="Basic usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-the-signature" class="md-nav__link">
+    Creating the signature
+  </a>
+  
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
+  <a href="#getting-the-root-key" class="md-nav__link">
+    Getting the Root Key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#configuration-options" class="md-nav__link">
     Configuration options
   </a>
+  
+    <nav class="md-nav" aria-label="Configuration options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validator-mapping-configuration-options" class="md-nav__link">
+    Validator mapping configuration options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-features" class="md-nav__link">
+    Additional Features
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#delegations" class="md-nav__link">
+    Delegations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -834,13 +917,6 @@
   
     <nav class="md-nav" aria-label="Additional notes">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#getting-the-root-key" class="md-nav__link">
-    Getting the Root Key
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#using-harbor-container-registry" class="md-nav__link">
@@ -858,13 +934,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#advanced-use-cases" class="md-nav__link">
-    Advanced Use-Cases
-  </a>
   
 </li>
       
@@ -895,33 +964,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#delegation-feature_1" class="md-nav__link">
-    Delegation feature
-  </a>
-  
-    <nav class="md-nav" aria-label="Delegation feature">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#image-policy-example_1" class="md-nav__link">
-    Image Policy Example
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#limits_1" class="md-nav__link">
-    Limits
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -935,19 +977,42 @@
               
                 
                 
-                <h1 id="dct-notary-v1">DCT / Notary V1<a class="headerlink" href="#dct-notary-v1" title="Permanent link">⚓︎</a></h1>
-<p>The Notary V1 (nv1) validator will be used in conjunction with a external Notary V1 instance, which can be found in any <a href="https://goharbor.io/">Harbor</a> instance or when using the public DockerHub Notary (notary.docker.io). This will be the default validator, when signing images using Docker Content Trust (DCT).</p>
-<ul>
-<li>how to get pub keys for existing keys: https://github.com/sse-secure-systems/connaisseur/tree/master/setup#manual</li>
-<li>...</li>
-</ul>
+                <h1 id="notary-v1-dct">Notary (V1) / DCT<a class="headerlink" href="#notary-v1-dct" title="Permanent link">⚓︎</a></h1>
+<p>Notary works as an external service holding signatures and trust data based on <a href="https://theupdateframework.io/">TUF</a> of any kind of data. Official DockerHub uses "Docker Content Trust" (DCT) to sign its docker images and pushes the repository's signature data to its associated Notary server (notary.docker.io). Validating a single docker image requires the public repository root key as well as fetching the repository's trust data from the associated Notary server. Besides of public Notary instaces as e.g. notary.docker.io being ready to use, Notary can as well be run as a private instance. Harbor for  instance comes along with an associated Notary instance. Notary (v1) will be the default validator when signing images using Docker Content Trust (DCT).</p>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
-<p>Before you can start validating images using the nv1 validator, you'll first need an image which has been signed using DCT. Easiest way to do this is by pushing an image of your choice (e.g. <code>busybox:stable</code>) to your private DockerHub repository, while having the <code>DOCKER_CONTENT_TRUST</code> environment variable set to <code>1</code>. If you haven't created any signatures for this repository yet, you'll be asked to enter a passphrase for a root key and targets key, which get generated on your machine. What these are can be seen in the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a>. If you already have these keys, just enter the required passphrase.</p>
-<div class="highlight"><pre><span></span><code><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span> docker push &lt;your-private-repo&gt;/busybox:stable
+<h3 id="creating-the-signature">Creating the signature<a class="headerlink" href="#creating-the-signature" title="Permanent link">⚓︎</a></h3>
+<p>Before you can start validating images using the Notary (v1) validator, you'll first need an image which has been signed using DCT. Easiest way to do this is by pushing an image of your choice (e.g. <code>busybox:stable</code>) to your private DockerHub repository while having the <code>DOCKER_CONTENT_TRUST</code> environment variable set to <code>1</code>. If you haven't created any signatures for images in the current repository yet, you'll be asked to enter a passphrase for a root key and targets key, which get generated on your machine. Have a look into the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a> to read more about TUF roles and their meanings. If you already have these keys, just enter the required passphrase.</p>
+<div class="highlight"><pre><span></span><code>&gt; <span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span> docker push &lt;your-private-repo&gt;/busybox:stable
+The push refers to repository <span class="o">[</span>&lt;your-private-repo&gt;/busybox<span class="o">]</span>
+5b8c72934dfc: Pushed 
+stable: digest: sha256:dca71257cd2e72840a21f0323234bb2e33fea6d949fa0f21c5102146f583486b size: <span class="m">527</span>
+Signing and pushing trust metadata
+You are about to create a new root signing key passphrase. This passphrase
+will be used to protect the most sensitive key <span class="k">in</span> your signing system. Please
+choose a long, complex passphrase and be careful to keep the password and the
+key file itself secure and backed up. It is highly recommended that you use a
+password manager to generate the passphrase and keep it safe. There will be no
+way to recover this key. You can find the key <span class="k">in</span> your config directory.
+Enter passphrase <span class="k">for</span> new root key with ID 5fb3e1e: 
+Repeat passphrase <span class="k">for</span> new root key with ID 5fb3e1e: 
+Enter passphrase <span class="k">for</span> new repository key with ID 6c2a04c: 
+Repeat passphrase <span class="k">for</span> new repository key with ID 6c2a04c: 
+Finished initializing <span class="s2">&quot;&lt;your-private-repo&gt;/busybox&quot;</span>
 </code></pre></div>
-<p>After doing so, the signature for your image will reside in the public DockerHub Notary (notary.docker.io). </p>
-<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>policy</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<p>After doing so, the signature for your image will reside in the public DockerHub Notary (notary.docker.io). Your newly created private keys will be needed whenever you push a new version of your image. They reside in your <code>~/.docker/trust/private</code> directory.</p>
+<h3 id="getting-the-root-key">Getting the Root Key<a class="headerlink" href="#getting-the-root-key" title="Permanent link">⚓︎</a></h3>
+<p>For verifying the signatures of images, a public <a href="https://theupdateframework.github.io/specification/latest/#root">root key</a> is needed to verify the signature data with it. But from where do you get this, especially for public images whose signatures you didn't create? For this we created the <em>get_root_key</em> utility. You can use it by building the docker image with <code>docker build -t get-root-key -f docker/Dockerfile.getRoot .</code> and the running the image:</p>
+<div class="highlight"><pre><span></span><code>$ docker run --rm get-root-key -i securesystemsengineering/testimage
+KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
+Key: -----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</span>
+-----END PUBLIC KEY-----
+</code></pre></div>
+<p>The <code>-i</code> (<code>--image</code>) option is required and takes the image, for which you want the public key. There is also the <code>-s</code> (<code>--server</code>) option, which defines the notary server that should be used and which defaults to <code>notary.docker.io</code>.</p>
+<p>The public repository root key resides with the signature data in the notary instance, so what the <em>get_root_key</em> utility does in the background is just fetching, locating and parsing the public repository root key for the given image.</p>
+<h3 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h3>
+<p>The Notary (V1) validator supports the following fields (refer to <a href="../../basics/">basics</a> for more information on default keys):</p>
 <table>
 <thead>
 <tr>
@@ -959,36 +1024,157 @@
 </thead>
 <tbody>
 <tr>
-<td><code>policy.pattern</code></td>
+<td><code>name</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>image pattern description (incl. example)</td>
+<td>Unique name of the validator</td>
 </tr>
 <tr>
-<td><code>policy.validator</code></td>
-<td><code>default</code></td>
-<td></td>
-<td>valditator key description (incl. example)</td>
+<td><code>type</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>This must be set to <code>notaryv1</code></td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>URL of the Notary instance, in which the signatures reside.</td>
+</tr>
+<tr>
+<td><code>trust_roots[*].name</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>see <a href="../../basics/">basics</a></td>
+</tr>
+<tr>
+<td><code>trust_roots[*].key</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>see <a href="../../basics/">basics</a></td>
+</tr>
+<tr>
+<td><code>auth</code></td>
+<td>-</td>
+<td>-</td>
+<td>Should the validator need to authenticate against some service, the credentials can be entered here.</td>
+</tr>
+<tr>
+<td><code>auth.secret_name</code></td>
+<td>-</td>
+<td>-</td>
+<td>(Preferred over <code>username</code> + <code>password</code> combination.) References a Kubernetes secret that must exist beforehand. Create a file <code>auth.yaml</code> containing <br/>&nbsp;&nbsp; <code>username: &lt;user&gt;</code> <br/>&nbsp;&nbsp; <code>password: &lt;password&gt;</code> <br/> and run <code>kubectl create secret generic &lt;kube-secret-name&gt; --from-file auth.yaml</code>.</td>
+</tr>
+<tr>
+<td><code>auth.username</code></td>
+<td>-</td>
+<td>-</td>
+<td>The username to authenticate with. It is recommended to use <code>auth.secret_name</code> instead.</td>
+</tr>
+<tr>
+<td><code>auth.password</code></td>
+<td>-</td>
+<td>-</td>
+<td>The password or access token to authenticate with. It is recommended to use <code>auth.secret_name</code> instead.</td>
+</tr>
+<tr>
+<td><code>cert</code></td>
+<td>-</td>
+<td>-</td>
+<td>If the notary instance uses a self-signed certificate, that cert must be supplied here in <code>.pem</code> format.</td>
+</tr>
+<tr>
+<td><code>is_acr</code></td>
+<td><code>false</code></td>
+<td>-</td>
+<td>Using Azure Container Registry (ACR) must be specified as ACR does not offer a health probe according to notary API specs.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
-<h3 id="getting-the-root-key">Getting the Root Key<a class="headerlink" href="#getting-the-root-key" title="Permanent link">⚓︎</a></h3>
-<p>For verifying the signatures of images, a public root key is needed, but from where do you get this, especially for public images whose signatures you didn't create? For this we created the <em>get_root_key</em> utility. You can use it by building the docker image with <code>docker build -t get-root-key -f docker/Dockerfile.getRoot .</code> and the running the image:</p>
-<div class="highlight"><pre><span></span><code>$ docker run --rm notaryrootkey -i securesystemsengineering/testimage
-KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
-Key: -----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</span>
------END PUBLIC KEY-----
+<h4 id="validator-mapping-configuration-options">Validator mapping configuration options<a class="headerlink" href="#validator-mapping-configuration-options" title="Permanent link">⚓︎</a></h4>
+<p>How to map validators on images is documented <a href="../../basics/#image-policy">here</a>. However, the image policy also has some additional fields regarding the delegation feature of Notary (V1), which is further explained <a href="">down below</a>.</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>default</th>
+<th>required</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>with.delegations</code></td>
+<td>-</td>
+<td>-</td>
+<td>A list of delegation names, which are required to be present as signers.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_essentials</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sse</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+      <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/connaisseur:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_essentials</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sse</span>
+    <span class="nt">delegations</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">belitzphilipp</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">starkteetje</span>
 </code></pre></div>
-<p>The <code>-i</code> (<code>--image</code>) option is required and takes the image, for which you want the public key. There is also the <code>-s</code> (<code>--server</code>) option, which defines the notary server that should be used and which defaults to <code>notary.docker.io</code>.</p>
+<h2 id="additional-features">Additional Features<a class="headerlink" href="#additional-features" title="Permanent link">⚓︎</a></h2>
+<h3 id="delegations">Delegations<a class="headerlink" href="#delegations" title="Permanent link">⚓︎</a></h3>
+<p>Notary (V1) offers the functionality to delegate trust. To better understand this feature, it's best to have a basic understanding of the TUF key hierarchy, or more specifically the purpose of the root, targets and delegation keys. If you are more interested in this topic, please read the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a>.</p>
+<p>When creating the signatures of your docker images earlier, two keys were generated -- the root key and the targets key. The root key is the root of all trust and will be used whenever a new image repository is created and needs to be signed. It's also used to rotate all other kinds of keys, thus there is usually only one root key present. The targets key is needed for new signatures on one specific image repository, hence every image repository has its own targets key. Hierarchically speaking, the targets keys are below the root key, as the root key can be used to rotate the targets keys should they get compromised.</p>
+<p>Delegations will now go one level deeper, meaning they can be used to sign individual image repositories and only need the targets key for rotation purposes, instead of the root key. Also delegation keys are not bound to individual image repositories, so they can be reused multiple times over different image repositories. So in a sense they can be understood as keys for individual signers. </p>
+<p>To create a delegation key run:</p>
+<div class="highlight"><pre><span></span><code>&gt; docker trust key generate &lt;your-name&gt;
+Generating key <span class="k">for</span> &lt;your-name&gt;...
+Enter passphrase <span class="k">for</span> new &lt;your-name&gt; key with ID 9deed25: 
+Repeat passphrase <span class="k">for</span> new &lt;your-name&gt; key with ID 9deed25: 
+Successfully generated and loaded private key. Corresponding public key available: /home/ubuntu/Documents/mytrustdir/&lt;your-name&gt;.pub
+</code></pre></div>
+<p>This delegation key now needs to be added as a signer to a respective image repository, like the <code>busybox</code> one from above. In doing so, you'll be ask for the targets key.</p>
+<div class="highlight"><pre><span></span><code>&gt; docker trust signer add --key &lt;your-name&gt;.pub &lt;your-name&gt; &lt;your-private-repo&gt;/busybox
+
+Adding signer <span class="s2">&quot;&lt;your-name&gt;&quot;</span> to &lt;your-private-repo&gt;/busybox...
+Enter passphrase <span class="k">for</span> repository key with ID b0014f8: 
+Successfully added signer: &lt;your-name&gt; to &lt;your-private-repo&gt;/busybox
+</code></pre></div>
+<p>If you create a new signature for the image now, you'll be ask for your delegation key instead of the targets key, therefore creating a signature using the delegation.</p>
+<div class="highlight"><pre><span></span><code>&gt; <span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span> docker push &lt;your-private-repo&gt;/busybox:stable
+</code></pre></div>
+<p>To tell Connaisseur that this signer/delegation is required to be present on an images' signature, the <code>with.delegations</code> list inside an image policy rule can be used. Simply add the signers name to the list. You can also add multiple signer names to the list, but be aware that Connaisseur currently only supports an AND conjunction, meaning every signer listed must have signed the matching image.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">delegations</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;your-name&gt;</span>
+</code></pre></div>
+<h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="using-harbor-container-registry">Using Harbor container registry<a class="headerlink" href="#using-harbor-container-registry" title="Permanent link">⚓︎</a></h3>
 <h3 id="using-azure-container-registry">Using Azure Container Registry<a class="headerlink" href="#using-azure-container-registry" title="Permanent link">⚓︎</a></h3>
-<p>Azure Container Registry (ACR)</p>
+<p>Using Azure Container Registry (ACR) must be specified in the <a href="./#configuration-options">validator configuration</a> by setting <code>is_acr</code> to <code>true</code>.</p>
+<p>Moreover, you need to provide credentials of an Azure Identity having at least <code>read</code> access to the ACR (and, thus, to the associated notary instance). Assuming you have the <code>az cli</code> installed you can create a Service Principal for this by running:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Retrieve the ID of your registry</span>
+<span class="nv">REGISTRY_ID</span><span class="o">=</span><span class="k">$(</span>az acr show --name &lt;ACR-NAME&gt;  --query <span class="s1">&#39;id&#39;</span> -otsv<span class="k">)</span>
+
+<span class="c1"># Create a service principal with the Reader role on your registry</span>
+az ad sp create-for-rbac --name <span class="s2">&quot;&lt;SERVICE-PRINCIPLE-NAME&gt;&quot;</span> --role Reader --scopes <span class="si">${</span><span class="nv">REGISTRY_ID</span><span class="si">}</span>
+</code></pre></div>
+<p>Use the resulting <code>applicationID</code> as <code>auth.username</code>, the resulting <code>password</code> as <code>auth.password</code> and set <code>&lt;ACR&gt;.azurecr.io</code> as <code>host</code> in the <code>helm/values.yaml</code> and you're ready to go!</p>
 <hr />
-<h2 id="advanced-use-cases">Advanced Use-Cases<a class="headerlink" href="#advanced-use-cases" title="Permanent link">⚓︎</a></h2>
-<p>This document details some more advanced use-cases of Connaisseur.</p>
 <h2 id="delegation-feature">Delegation feature<a class="headerlink" href="#delegation-feature" title="Permanent link">⚓︎</a></h2>
 <p>Signatures in Docker Content Trust or Notary v1 are based on <a href="https://github.com/theupdateframework/specification">The Update Framework (TUF)</a>. TUF allows delegating signature permissions to other people. Connaisseur supports requiring delegations for Notary v1 via the <code>policy</code> definition:</p>
 <h3 id="image-policy-example">Image Policy Example<a class="headerlink" href="#image-policy-example" title="Permanent link">⚓︎</a></h3>
@@ -1009,30 +1195,6 @@ In the meantime, for all other images any delegated individual key, repository k
 <p>The list you add in the <code>delegations</code> field can contain any number of delegations. Just remember that it is a logical <code>AND</code>, so <em>all</em> delegations will have to verify correctly. </p>
 <p>Another potential use-case is to use delegations to sign an image in various stages of your CI, i.e. requiring the signature of your linter, your security scanner and your software lisence compliance check.</p>
 <h3 id="limits">Limits<a class="headerlink" href="#limits" title="Permanent link">⚓︎</a></h3>
-<p>Q: Is a logical <code>OR</code> possible? Are there n-of-m thresholds? Is there <code>insert-arbitrary-logical-function</code>?</p>
-<p>A: No, currently not. If you have the use-case, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/discussions">hit us up</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">open an issue</a> or open a pull request.</p>
-<p>Q: Will delegations work with Cosign or Notary v2?</p>
-<p>A: Currently, Cosign does not natively support delegations, so Connaisseur doesn't either. For Notary v2, it looks like they will support delegations and so Connaisseur will most likely support them as in Notary v1.</p>
-<h2 id="delegation-feature_1">Delegation feature<a class="headerlink" href="#delegation-feature_1" title="Permanent link">⚓︎</a></h2>
-<p>Signatures in Docker Content Trust or Notary v1 are based on <a href="https://github.com/theupdateframework/specification">The Update Framework (TUF)</a>. TUF allows delegating signature permissions to other people. Connaisseur supports requiring delegations for Notary v1 via the <code>policy</code> definition:</p>
-<h3 id="image-policy-example_1">Image Policy Example<a class="headerlink" href="#image-policy-example_1" title="Permanent link">⚓︎</a></h3>
-<p>Let's say you have an organizational root key pinned in the <a href="helm/values.yaml">helm/values.yaml</a>, which you use to delegate to individual developers, i.e. via <code>docker trust key load delegation.key --name charlie</code> (see <a href="https://docs.docker.com/engine/security/trust/trust_delegation/">the Docker documentation</a> for the docker CLI commands).</p>
-<p>Now, given an image policy</p>
-<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-</code></pre></div>
-<p>the signature of every single developer to whom you delegated signature rights will be considered valid. That might be fine for most use-cases, but for <code>trusted-thing</code>, which runs as a privileged container on all k8s nodes, you really want to limit yourself to Alice from the security team, whom you trust to have properly reviewed it. And also to Bob, your most senior developer, because they got that eye for detail and they really don't do the "It's friday, force push master, I'm outta here" stuff, that Charlie did last month... Anyways, Connaisseur can handle this:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-  <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;your.org/trusted-thing:*&quot;</span>
-    <span class="nt">delegations</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span> <span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span>
-</code></pre></div>
-<p>Connaisseur will make sure, that both Alice and Bob have a current signature on the same digest for any tagged <code>trusted-thing</code> image you deploy.
-If one of their signatures is missing or if they point to different digests for the same tag, Connaisseur will block the deployment.
-In the meantime, for all other images any delegated individual key, repository key or the root key will be accepted.</p>
-<p>The list you add in the <code>delegations</code> field can contain any number of delegations. Just remember that it is a logical <code>AND</code>, so <em>all</em> delegations will have to verify correctly. </p>
-<p>Another potential use-case is to use delegations to sign an image in various stages of your CI, i.e. requiring the signature of your linter, your security scanner and your software lisence compliance check.</p>
-<h3 id="limits_1">Limits<a class="headerlink" href="#limits_1" title="Permanent link">⚓︎</a></h3>
 <p>Q: Is a logical <code>OR</code> possible? Are there n-of-m thresholds? Is there <code>insert-arbitrary-logical-function</code>?</p>
 <p>A: No, currently not. If you have the use-case, feel free to <a href="https://github.com/sse-secure-systems/connaisseur/discussions">hit us up</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">open an issue</a> or open a pull request.</p>
 <p>Q: Will delegations work with Cosign or Notary v2?</p>
@@ -1077,13 +1239,13 @@ In the meantime, for all other images any delegated individual key, repository k
       
       
         
-        <a href="../notaryv2/" class="md-footer__link md-footer__link--next" aria-label="Next: Notary V2" rel="next">
+        <a href="../sigstore_cosign/" class="md-footer__link md-footer__link--next" aria-label="Next: SigStore / Cosign" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Notary V2
+              SigStore / Cosign
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -1168,10 +1330,10 @@ In the meantime, for all other images any delegated individual key, repository k
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.53c85856.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ddd52ceb.min.js"></script>
+      <script src="../../assets/javascripts/bundle.716f8af4.min.js"></script>
       
     
   </body>

@@ -14,18 +14,18 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/basics/">
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.10">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.0">
     
     
       
-        <title>Basics - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
+        <title>Basics - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.1fe995fd.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.fe914879.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.f1a3b89f.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ba0d045b.min.css">
         
           
           
@@ -80,7 +80,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../assets/logo.svg" alt="logo">
 
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CONNAISSEUR - Verify Container Signatures in Kubernetes
+            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -115,14 +115,18 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
       </label>
-      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-      </button>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -172,12 +176,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../assets/logo.svg" alt="logo">
 
     </a>
-    CONNAISSEUR - Verify Container Signatures in Kubernetes
+    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
   </label>
   
     <div class="md-nav__source">
@@ -289,18 +293,87 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#validators-and-image-policy" class="md-nav__link">
-    Validators and Image policy
+  <a href="#admission-control-validators-and-image-policy" class="md-nav__link">
+    Admission control, validators and image policy
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
-    Configuration
+  <a href="#using-connaisseur" class="md-nav__link">
+    Using Connaisseur
   </a>
   
-    <nav class="md-nav" aria-label="Configuration">
+    <nav class="md-nav" aria-label="Using Connaisseur">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    Requirements
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-the-code" class="md-nav__link">
+    Get the code
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure" class="md-nav__link">
+    Configure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    Deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check" class="md-nav__link">
+    Check
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use" class="md-nav__link">
+    Use
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    Delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#makefile" class="md-nav__link">
+    Makefile
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detailed-configuration" class="md-nav__link">
+    Detailed configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Detailed configuration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -312,12 +385,11 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#static-validators" class="md-nav__link">
-    Static Validators
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
   </a>
   
-    <nav class="md-nav" aria-label="Static Validators">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
@@ -326,28 +398,30 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
           <li class="md-nav__item">
-  <a href="#specific-validators" class="md-nav__link">
-    Specific Validators
+  <a href="#static-validators" class="md-nav__link">
+    Static validators
   </a>
   
-    <nav class="md-nav" aria-label="Specific Validators">
+    <nav class="md-nav" aria-label="Static validators">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-options_1" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#example_1" class="md-nav__link">
     Example
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -365,6 +439,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#configuration-options_2" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#example_2" class="md-nav__link">
     Example
   </a>
@@ -376,139 +457,8 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#features" class="md-nav__link">
-    Features
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-    <nav class="md-nav" aria-label="Installation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    Requirements
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#getting-the-code" class="md-nav__link">
-    Getting The Code
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configure-deployment" class="md-nav__link">
-    Configure Deployment
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#deploy" class="md-nav__link">
-    Deploy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-installation" class="md-nav__link">
-    Check Installation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#use" class="md-nav__link">
-    Use
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#manage" class="md-nav__link">
-    Manage
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#delete" class="md-nav__link">
-    Delete
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#makefile" class="md-nav__link">
-    Makefile
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#basic-setup" class="md-nav__link">
-    Basic setup
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#makefile-and-helm" class="md-nav__link">
-    Makefile and Helm
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#image-policy_1" class="md-nav__link">
-    Image Policy
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#validators_1" class="md-nav__link">
-    validators
-  </a>
-  
-    <nav class="md-nav" aria-label="validators">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#validation" class="md-nav__link">
-    Validation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#validation-of-trust-data" class="md-nav__link">
-    Validation of trust data
-  </a>
   
 </li>
       
@@ -559,19 +509,7 @@
   
     <li class="md-nav__item">
       <a href="../validators/notaryv1/" class="md-nav__link">
-        DCT / Notary V1
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../validators/notaryv2/" class="md-nav__link">
-        Notary V2
+        Notary (V1) / DCT
       </a>
     </li>
   
@@ -584,6 +522,18 @@
     <li class="md-nav__item">
       <a href="../validators/sigstore_cosign/" class="md-nav__link">
         SigStore / Cosign
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validators/notaryv2/" class="md-nav__link">
+        Notary V2
       </a>
     </li>
   
@@ -816,7 +766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../adr/ADR-1_connaisseur-bootstrap-sentinel/" class="md-nav__link">
+      <a href="../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
         ADR 1: Bootstrap Sentinel
       </a>
     </li>
@@ -927,18 +877,87 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#validators-and-image-policy" class="md-nav__link">
-    Validators and Image policy
+  <a href="#admission-control-validators-and-image-policy" class="md-nav__link">
+    Admission control, validators and image policy
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
-    Configuration
+  <a href="#using-connaisseur" class="md-nav__link">
+    Using Connaisseur
   </a>
   
-    <nav class="md-nav" aria-label="Configuration">
+    <nav class="md-nav" aria-label="Using Connaisseur">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    Requirements
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-the-code" class="md-nav__link">
+    Get the code
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure" class="md-nav__link">
+    Configure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    Deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check" class="md-nav__link">
+    Check
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use" class="md-nav__link">
+    Use
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    Delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#makefile" class="md-nav__link">
+    Makefile
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detailed-configuration" class="md-nav__link">
+    Detailed configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Detailed configuration">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -950,12 +969,11 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#static-validators" class="md-nav__link">
-    Static Validators
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
   </a>
   
-    <nav class="md-nav" aria-label="Static Validators">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#example" class="md-nav__link">
@@ -964,28 +982,30 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
           <li class="md-nav__item">
-  <a href="#specific-validators" class="md-nav__link">
-    Specific Validators
+  <a href="#static-validators" class="md-nav__link">
+    Static validators
   </a>
   
-    <nav class="md-nav" aria-label="Specific Validators">
+    <nav class="md-nav" aria-label="Static validators">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-options_1" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#example_1" class="md-nav__link">
     Example
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1003,6 +1023,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#configuration-options_2" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#example_2" class="md-nav__link">
     Example
   </a>
@@ -1014,139 +1041,8 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#features" class="md-nav__link">
-    Features
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-    <nav class="md-nav" aria-label="Installation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    Requirements
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#getting-the-code" class="md-nav__link">
-    Getting The Code
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configure-deployment" class="md-nav__link">
-    Configure Deployment
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#deploy" class="md-nav__link">
-    Deploy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-installation" class="md-nav__link">
-    Check Installation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#use" class="md-nav__link">
-    Use
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#manage" class="md-nav__link">
-    Manage
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#delete" class="md-nav__link">
-    Delete
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#makefile" class="md-nav__link">
-    Makefile
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#basic-setup" class="md-nav__link">
-    Basic setup
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#makefile-and-helm" class="md-nav__link">
-    Makefile and Helm
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#image-policy_1" class="md-nav__link">
-    Image Policy
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#validators_1" class="md-nav__link">
-    validators
-  </a>
-  
-    <nav class="md-nav" aria-label="validators">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#validation" class="md-nav__link">
-    Validation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#validation-of-trust-data" class="md-nav__link">
-    Validation of trust data
-  </a>
   
 </li>
       
@@ -1164,18 +1060,183 @@
                 
                 
                 <h1 id="basics">Basics<a class="headerlink" href="#basics" title="Permanent link">⚓︎</a></h1>
-<p>This chapter will give an overview of the core concepts of Connaisseur, namely the validators and the image policy and how to configure them. Based on this knowledge, there is also a more detailed description on how to setup and manage Connaisseur, allowing for a smooth deployment.</p>
-<h2 id="validators-and-image-policy">Validators and Image policy<a class="headerlink" href="#validators-and-image-policy" title="Permanent link">⚓︎</a></h2>
-<p>Two major aspects of Connaisseur are the validators and the image policy, both of which can be configured in the <code>helm/values.yaml</code>.</p>
-<p>The validators define a set of methods on how to validate an image and what kind of signature is to be expected. Each validator has its own type, so for example there can be a validator of type <code>notaryv1</code>, which means Connaisseur expects the signature to reside in a Notary V1 server and has a <a href="https://theupdateframework.github.io/specification/latest/#document-formats">TUF specified</a> structure. A validator of type <code>static</code> on the other hand wouldn't care about signatures and either allow or deny all images, based on further configuration. A list on available validators can be found <a href="../validators/">here</a>.</p>
-<p>The image policy now defines a set of rules which maps different images to the specific validators. This is done via glob matching over the image name, so you can for example have some images being validated using a static validator and others using a Notary V1 validator, allowing your system to use whatever combination of validation methods.</p>
-<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">⚓︎</a></h2>
-<p>All configuration is done in the <code>helm/values.yaml</code>.</p>
+<p>This page explains how to configure, setup and manage Connaisseur.
+In addition, the core concepts are introduced.</p>
+<h2 id="admission-control-validators-and-image-policy">Admission control, validators and image policy<a class="headerlink" href="#admission-control-validators-and-image-policy" title="Permanent link">⚓︎</a></h2>
+<p>Connaisseur works as a <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">mutating admission controller</a>.
+It intercepts all <em>CREATE</em> and <em>UPDATE</em> resource requests for <em>Pods</em>, <em>Deployments</em>, <em>ReplicationControllers</em>, <em>ReplicaSets</em>, <em>DaemonSets</em>, <em>StatefulSets</em>, <em>Jobs</em>, and <em>CronJobs</em> and extracts all image references for validation.
+Validation relies on two core concepts: image policy and validators.
+A validator is a set of configuration options required for validation like the type of signature, public key to use for verification, path to signature data, or authentication.
+The image policy defines a set of rules which maps different images to those validators.
+This is done via glob matching of the image name which for example allows to use different validators for different registries, repositories, images or even tags.
+This is specifically useful when using public or external images from other entities like Docker's official images or different keys in a more complex development team.</p>
+<h2 id="using-connaisseur">Using Connaisseur<a class="headerlink" href="#using-connaisseur" title="Permanent link">⚓︎</a></h2>
+<p>Some general administration tasks like deployment or uninstallation when using Connaisseur are described in this section.</p>
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h3>
+<p>Using Connaisseur requires <a href="https://git-scm.com/">Git</a>, a <a href="https://kubernetes.io/">Kubernetes</a> cluster, <a href="https://helm.sh/">Helm</a> and <a href="https://www.docker.com/">Docker</a> (only for local setups) to be installed and set up.</p>
+<h3 id="get-the-code">Get the code<a class="headerlink" href="#get-the-code" title="Permanent link">⚓︎</a></h3>
+<p>The Connaisseur source code can be cloned directly from GitHub and includes the application and Helm charts in a single repository.</p>
+<div class="highlight"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
+</code></pre></div>
+<h3 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">⚓︎</a></h3>
+<p>The configuration of Connaisseur is completely done in the <code>helm/values.yaml</code>.
+The upper <code>deployment</code> section offers some general Kubernetes typical configurations like image version or resources.
+The configuration of <code>validators</code> and image <code>policy</code> is described in detail <a href="#detailed-configuration">below</a> and stepwise in the <a href="../getting_started/">getting started guide</a>.
+Features are described on the <a href="../features/">respective pages</a>.</p>
+<p>Connaisseur ships with a pre-configuration that does not need any adjustments for testing.
+However, validating your own images requires additional configuration.</p>
+<h3 id="deploy">Deploy<a class="headerlink" href="#deploy" title="Permanent link">⚓︎</a></h3>
+<p>Install Connaisseur by using Helm (alternatively use <a href="#makefile">Makefile</a>).</p>
+<div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+</code></pre></div>
+<p>This will install Connaisseur in its own namespace called <code>connaisseur</code>.
+The installation itself may take some minutes, as the installation order of the Connaisseur components is critical.
+Only when the Connaisseur Pods are ready and running, the Admission Webhook can be applied for intercepting requests.</p>
+<h3 id="check">Check<a class="headerlink" href="#check" title="Permanent link">⚓︎</a></h3>
+<p>When everything is installed, you can check whether all the pods are up by running <code>kubectl get all -n connaisseur</code>.</p>
+<div class="highlight"><pre><span></span><code>$ kubectl get all -n connaisseur
+NAME                                          READY   STATUS    RESTARTS   AGE
+pod/connaisseur-deployment-78d8975596-42tkw   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
+pod/connaisseur-deployment-78d8975596-5c4c6   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
+pod/connaisseur-deployment-78d8975596-kvrj6   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
+
+NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>   AGE
+service/connaisseur-svc   ClusterIP   <span class="m">10</span>.108.220.34   &lt;none&gt;        <span class="m">443</span>/TCP   22s
+
+NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/connaisseur-deployment   <span class="m">3</span>/3     <span class="m">3</span>            <span class="m">3</span>           22s
+
+NAME                                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/connaisseur-deployment-78d8975596   <span class="m">3</span>         <span class="m">3</span>         <span class="m">3</span>       22s
+</code></pre></div>
+<h3 id="use">Use<a class="headerlink" href="#use" title="Permanent link">⚓︎</a></h3>
+<p>To use Connaisseur, simply try running some images or apply a deployment.
+In case you use the pre-configuration, you could for example run the following commands:</p>
+<div class="highlight"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
+&gt; Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request <span class="o">(</span>...<span class="o">)</span>.
+
+kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
+&gt; pod/hello-world created
+</code></pre></div>
+<h3 id="delete">Delete<a class="headerlink" href="#delete" title="Permanent link">⚓︎</a></h3>
+<p>Just like for installation, Helm can also be used to delete Connaisseur from your cluster.</p>
+<div class="highlight"><pre><span></span><code>helm uninstall connaisseur -n connaisseur
+</code></pre></div>
+<p>In case uninstallation fails or problems occur during subsequent installation, you can manually remove all resources:</p>
+<div class="highlight"><pre><span></span><code>kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies,secrets,serviceaccounts,customresourcedefinitions -lapp.kubernetes.io/instance<span class="o">=</span>connaisseur
+kubectl delete namespaces connaisseur
+</code></pre></div>
+<p>Connaisseur for example also installs a <em>CutstomResourceDefinition</em> <code>imagepolicies.connaisseur.policy</code> that validates its configuration.
+In case of major releases, the configuration structure might change which causes installation to fail and you might have to delete it manually.</p>
+<h3 id="makefile">Makefile<a class="headerlink" href="#makefile" title="Permanent link">⚓︎</a></h3>
+<p>Alternatively to using Helm, you can also run the Makefile for installing, deleting and more. Here the available commands:</p>
+<ul>
+<li><code>make install</code> -- Runs the <code>helm install</code> command.</li>
+<li><code>make uninstall</code> -- Switches the namespace to <code>connaisseur</code>, uses the <code>helm uninstall</code> command and deletes the <code>connaisseur</code> namespace.</li>
+<li><code>make annihilate</code> -- Deletes all resources labeled with <code>app.kubernetes.io/instance=connaisseur</code>. This command is usually helpful, should the normal <code>make uninstall</code> not work.</li>
+<li><code>make docker</code> -- Builds the connaisseur and connaisseur:helm-hook (relevant for installing Connaisseur) docker images.</li>
+</ul>
+<h2 id="detailed-configuration">Detailed configuration<a class="headerlink" href="#detailed-configuration" title="Permanent link">⚓︎</a></h2>
+<p>All configuration is done in the <code>helm/values.yaml</code>.
+The configuration of features is only described in the <a href="../features/">corresponding section</a>.</p>
 <h3 id="validators">Validators<a class="headerlink" href="#validators" title="Permanent link">⚓︎</a></h3>
 <p>The validators are configured in the <code>validators</code> field, which defines a list of validator objects.</p>
-<p>Broadly speaking, there are two general types of validators -- the static ones and the specific ones. First take a look at the static validators.</p>
-<h4 id="static-validators">Static Validators<a class="headerlink" href="#static-validators" title="Permanent link">⚓︎</a></h4>
-<p>Static validators do not validate any signatures, but only allow or deny any images that are matched against them, based on the <code>approve</code> field. The full list of supported fields for a static validator are as follows:</p>
+<p>A validator defines what kind of signatures are to be expected, how signatures are to be validated, against which trust root and how to access the signature data.
+For example, images might be signed with Docker Content Trust and reside in a private registry.
+Thus the validator would need to specify <code>notaryv1</code> as type, the notary host and the required credentials.</p>
+<p>The specific validator type should be chosen based on the use case.
+A list of supported validator types can be found <a href="../validators/">here</a>.
+All validators share a similar structure for configuration.
+For specifics and additional options, please review the dedicated page of the validator type.</p>
+<p>Connaisseur comes with a few validators preconfigured including one for Docker's official images.
+The preconfigured validators can be removed.
+However, when removing the <code>securesystemsengineering_official</code> make sure to also exclude Connaisseur from validation either via the static <code>allow</code> validator or <a href="../features/namespaced_validation/">namespaced validation</a>.
+The special case of static validators used to simply allow or deny images without verification is described below.</p>
+<h4 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h4>
+<p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>default</th>
+<th>required</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>The name of the validator, which is referenced in the image policy. It can only contain letters, numbers and '-'. If the name is <code>default</code>, it will be used if no validator is specified.</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>The type of the validator which is dependent on the <a href="../validators/">validator</a>.</td>
+</tr>
+<tr>
+<td><code>trust_roots</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>A list of trust anchors to validate the signatures with. In practice, this is typically a list of public keys.</td>
+</tr>
+<tr>
+<td><code>trust_roots.[*].name</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>The name of the trust anchor, which is referenced in the image policy. If the name is <code>default</code>, it will be used if no key is specified.</td>
+</tr>
+<tr>
+<td><code>trust_roots.[*].key</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>The value of the trust anchor, most commonly a PEM encoded public key.</td>
+</tr>
+<tr>
+<td><code>auth</code></td>
+<td>-</td>
+<td>-</td>
+<td>Credentials that should be used in case authentication is required for validation. Details are provided on validator-specific pages.</td>
+</tr>
+</tbody>
+</table>
+<p>Further configuration fields specific to the validator type are described in the respective section.</p>
+<p>There is a special behavior, when a validator or one of the trust roots is named <code>default</code>.
+In this case, should an image policy rule not specify a validator or trust root to use, the one named <code>default</code> will be used instead.
+This also means there can only be one validator named <code>default</code> and for the trust roots, there can only be one called <code>default</code> within a single validator.</p>
+<h4 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">key</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
+      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+  <span class="nt">auth</span><span class="p">:</span>
+    <span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">superuser</span>
+    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">lookatmeimjumping</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosigner</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosign</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIFXO1w6oj0oI2Fk9SiaNJRKTiO9d</span>
+      <span class="no">ksm6hFczQAq+FDdw0istEdCwcHO61O/0bV+LC8jqFoomA28cT+py6FcSYw==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+</code></pre></div>
+<h4 id="static-validators">Static validators<a class="headerlink" href="#static-validators" title="Permanent link">⚓︎</a></h4>
+<p>Static validators are a special type of validator that does not validate any signatures.
+Depending on the <code>approve</code> value being <code>true</code> or <code>false</code>, they either allow or deny all images for which they are specified as validator.
+This for example allows to implement <em>allowlist</em> or <em>denylist</em>.</p>
+<h5 id="configuration-options_1">Configuration options<a class="headerlink" href="#configuration-options_1" title="Permanent link">⚓︎</a></h5>
 <table>
 <thead>
 <tr>
@@ -1202,11 +1263,11 @@
 <td><code>approve</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>Set to <code>true</code> to allow any image, or to <code>false</code> to deny.</td>
+<td>Set to <code>true</code> to allow all images, or to <code>false</code> to deny.</td>
 </tr>
 </tbody>
 </table>
-<h5 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h5>
+<h5 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">⚓︎</a></h5>
 <div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
   <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -1215,109 +1276,29 @@
   <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
   <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
-<h3 id="specific-validators">Specific Validators<a class="headerlink" href="#specific-validators" title="Permanent link">⚓︎</a></h3>
-<p>Specific validators now define the method on how signatures are to be validated and what kind of signatures are to be expected in the first place. Images signed with Docker Content Trust need to be validated with a Notary V1 validator, whereas images signed with Cosign need a Cosign validator.</p>
-<p>A list of available validators can be found <a href="../validators/">here</a>, but independently of which ever one you choose, they all have a similar structure with the following supported fields:</p>
-<table>
-<thead>
-<tr>
-<th>key</th>
-<th>default</th>
-<th>required</th>
-<th>description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>name</code></td>
-<td>-</td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The name of the validator, which will be used to reference it in the image policy.</td>
-</tr>
-<tr>
-<td><code>type</code></td>
-<td>-</td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The type of the validator which is dependent on the <a href="../validators/">validator</a>.</td>
-</tr>
-<tr>
-<td><code>trust_roots</code></td>
-<td>-</td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>A list of trust anchors (or roots if you will) to validate the signatures with. In practice this will usually be a list public keys which you trust.</td>
-</tr>
-<tr>
-<td><code>trust_roots.[*].name</code></td>
-<td>-</td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The name of the trust anchor, which will be used to reference it in the image policy.</td>
-</tr>
-<tr>
-<td><code>trust_roots.[*].type</code></td>
-<td><code>key</code></td>
-<td>-</td>
-<td>The type of the trust anchor. Currently supported types are: <code>key</code>.</td>
-</tr>
-<tr>
-<td><code>trust_roots.[*].key</code></td>
-<td>-</td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The value of the trust anchor. In case of a <code>key</code> trust anchor, this will be a PEM encoded public key.</td>
-</tr>
-<tr>
-<td><code>auth</code></td>
-<td>-</td>
-<td>-</td>
-<td>Should the validator need to authenticate against some service, the credentials can be entered here.</td>
-</tr>
-<tr>
-<td><code>auth.username</code></td>
-<td>-</td>
-<td>-</td>
-<td>The username to authenticate with.</td>
-</tr>
-<tr>
-<td><code>auth.password</code></td>
-<td>-</td>
-<td>-</td>
-<td>The password to authenticate with.</td>
-</tr>
-<tr>
-<td><code>auth.secret_name</code></td>
-<td>-</td>
-<td>-</td>
-<td>Should be used INSTEAD of <code>username</code> + <code>password</code> combination. References a Kubernetes secret with needs to contain two key-value pairs name <code>username</code> and <code>password</code>.</td>
-</tr>
-</tbody>
-</table>
-<p>Any further configuration fields are specific to their validator type and are described in the relevant chapters.</p>
-<p>Additionally there is a special behavior, when a validator or one of the trust roots is named <code>"default"</code> . In this case, should an image policy rule not specify a validator or trust roots to use, the one named <code>"default"</code> will be used instead. This also means there can only be one validator named <code>"default"</code> and for the trust roots, there can only be one called <code>"default"</code> within a single validator.</p>
-<h4 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">⚓︎</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">key</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">&lt;add your public key here&gt;</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-  <span class="nt">auth</span><span class="p">:</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">superuser</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">lookatmeimjumping</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosigner</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosign</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sse</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">&lt;add your public key here&gt;</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-</code></pre></div>
 <h3 id="image-policy">Image policy<a class="headerlink" href="#image-policy" title="Permanent link">⚓︎</a></h3>
-<p>The image policy is defined in the <code>policy</code> field and acts as a list of rule objects. Each rule supports the following fields:</p>
+<p>The image policy is defined in the <code>policy</code> field and acts as a list of rule objects to determine which image should be validated by which validator (and potentially some further configurations).
+Each rule provides a pattern that is used to identify the images it applies to and a reference to a validator.
+In case no validator is specified, the validator with name <code>default</code> is used if it exists.
+If no key is specified for a validator, the trust root with name <code>default</code> is used if it exists.</p>
+<p>For each image in the admission request, only a single rule in the image policy will apply, the one with the most specific matching <code>pattern</code> field.
+This is determined by the following algorithm:</p>
+<ol>
+<li>A given image is matched against all rule patterns.</li>
+<li>All matching patterns are compared to one another to determine the most specific one (see below). Only two patterns are compared at a time; the more specific one then is compared to the next one and so forth. Specificity is determined as follows:<ol>
+<li>Patterns are split into components (delimited by "/"). The pattern that has a higher number of components wins (is considered more specific).</li>
+<li>Should the two patterns that are being compared have equal number of components, the longest common prefix between each pattern component and corresponding image component are calculated (for this purpose, image identifiers are also split into components). The pattern with the longest common prefix in one component, starting from the leftmost, wins.</li>
+<li>Should all longest common prefixes of all components between the two compared patterns be equal, the pattern with a longer component, starting from the leftmost, wins.</li>
+<li>The rule whose pattern has won all comparisons is considered the most specific rule.</li>
+</ol>
+</li>
+<li>Return the most specific rule.</li>
+</ol>
+<blockquote>
+<p><strong>Note:</strong> Should an image have no rules to match against, an error will be raised, which is why it is recommended to always have an "catch-all" rule like <code>*:*</code>.</p>
+</blockquote>
+<h4 id="configuration-options_2">Configuration options<a class="headerlink" href="#configuration-options_2" title="Permanent link">⚓︎</a></h4>
+<p><code>.policy[*]</code> in <code>helm/values.yaml</code> supports the following keys:</p>
 <table>
 <thead>
 <tr>
@@ -1338,168 +1319,34 @@
 <td><code>validator</code></td>
 <td><code>default</code></td>
 <td></td>
-<td>The name of a validator, in the <code>validators</code> list.</td>
+<td>The name of a validator in the <code>validators</code> list. If not provided, the validator with name <code>default</code> is used if it exists.</td>
 </tr>
 <tr>
 <td><code>with</code></td>
 <td>-</td>
 <td></td>
-<td>Additional parameters to use for a validator. See more specifics in <a href="../validators/">validator list</a>.</td>
+<td>Additional parameters to use for a validator. See more specifics in <a href="../validators/">validator section</a>.</td>
 </tr>
 <tr>
 <td><code>with.key</code></td>
 <td><code>default</code></td>
 <td>-</td>
-<td>The name of a trust root, which is specified within the referenced validator.</td>
+<td>The name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name <code>default</code> is used if it exists.</td>
 </tr>
 </tbody>
 </table>
-<p>Hereby any given image will only apply to a single rule in the image policy, the one with the most specific matching <code>pattern</code> field. This is determined by the following algorithm:</p>
-<ol>
-<li>A given image is matched against all rule patterns.</li>
-<li>All matching patterns are compared to one another to determine the most specific one (see below). Only two patterns are compared at a time; the more specific one then is compared to the next one and so forth. Specificity is determined as follows:<ol>
-<li>Patterns are split into components (delimited by "/"). The pattern that has a higher number of components wins (is considered more specific).</li>
-<li>Should the two patterns that are being compared have equal number of components, the longest common prefix between each pattern component and corresponding image component are calculated (for this purpose, image identifiers are also split into components). The pattern with the longest common prefix in one component, starting from the leftmost, wins.</li>
-<li>Should all longest common prefixes of all components between the two compared patterns be equal, the pattern with a longer component, starting from the leftmost, wins.</li>
-<li>The rule whose pattern has won all comparisons is considered the most specific rule.</li>
-</ol>
-</li>
-<li>Return the most specific rule.</li>
-</ol>
 <h4 id="example_2">Example<a class="headerlink" href="#example_2" title="Permanent link">⚓︎</a></h4>
 <div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/library/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosigner</span>
   <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sse</span>
-    <span class="nt">delegations</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">beliztphilipp</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">starkteetje</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/deniedimage:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/allowedimage:v*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
 </code></pre></div>
-<h3 id="features">Features<a class="headerlink" href="#features" title="Permanent link">⚓︎</a></h3>
-<p>Further configuration for some of Connaisseur's features can be found <a href="../features/">here</a>.</p>
-<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">⚓︎</a></h2>
-<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h3>
-<p>There are some requirements before you can install Connaisseur. These include: <a href="https://git-scm.com/">Git</a>, a <a href="https://kubernetes.io/">Kubernetes</a> cluster, <a href="https://helm.sh/">Helm</a> and <a href="https://www.docker.com/">Docker</a> (only for local setups). Install these and you should be good to go. </p>
-<h3 id="getting-the-code">Getting The Code<a class="headerlink" href="#getting-the-code" title="Permanent link">⚓︎</a></h3>
-<p>The Connaisseur source code can be cloned directly from github and includes the application and helm charts in a single repository.</p>
-<div class="highlight"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
-</code></pre></div>
-<h3 id="configure-deployment">Configure Deployment<a class="headerlink" href="#configure-deployment" title="Permanent link">⚓︎</a></h3>
-<p>The configuration of Connaisseur is done in the <code>helm/values.yaml</code>. How to configure the validators and image policy is described <a href="#configuration">above</a>.</p>
-<h3 id="deploy">Deploy<a class="headerlink" href="#deploy" title="Permanent link">⚓︎</a></h3>
-<p>Install Connaisseur by using Helm (alternatively use <a href="#makefile">Makefile</a>).</p>
-<div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
-</code></pre></div>
-<p>This will install Connaisseur in its own namespace called <code>connaisseur</code>. The installation itself may take some minutes, as the installation order of the Connaisseur components is critical. Only when the Connaisseur pods are ready and running, the Admission Webhook can be applied for intercepting requests.</p>
-<h3 id="check-installation">Check Installation<a class="headerlink" href="#check-installation" title="Permanent link">⚓︎</a></h3>
-<h2 id="use">Use<a class="headerlink" href="#use" title="Permanent link">⚓︎</a></h2>
-<h2 id="manage">Manage<a class="headerlink" href="#manage" title="Permanent link">⚓︎</a></h2>
-<h2 id="delete">Delete<a class="headerlink" href="#delete" title="Permanent link">⚓︎</a></h2>
-<h2 id="makefile">Makefile<a class="headerlink" href="#makefile" title="Permanent link">⚓︎</a></h2>
-<p>describe getting the code, installation helm/makefile, updating, removing connaisseur</p>
-<hr />
-<h2 id="basic-setup">Basic setup<a class="headerlink" href="#basic-setup" title="Permanent link">⚓︎</a></h2>
-<p>Connaisseur can be integrated into a multitude of different systems, with a few requirements and a bit of configurational effort. It was tested on a Linux Mint 19.2, but other distributions should work just fine. We provide a <a href="setup/README.md">full setup guide</a> with detailed instructions for various environments. In short:</p>
-<ol>
-<li><strong>Requirements</strong>: First of all you'll need an image with an exiting signature. If you don't have one, head to the <a href="setup/README.md">full setup guide</a> where creating Docker Content Trust keys and signing images is explained. Also a few tools are needed in advance. You'll need <code>git</code> for getting the source code and <code>make</code> for a convenient setup. Since Connaisseur will be deployed as a container to a Kubernetes cluster, <a href="https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/">docker</a>, <a href="https://helm.sh/docs/intro/install/">helm</a> and <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> are required for building the image, generating a Deployment file and deploying it to the cluster. During the deployment, some certificates need to be created, which requires <code>openssl</code>. To install everything except docker, helm and kubectl, use</li>
-</ol>
-<div class="highlight"><pre><span></span><code>sudo apt install git make openssl -y
-sudo snap install yq
-</code></pre></div>
-<ol>
-<li><strong>Getting the code</strong>: Clone this repository to your favorite location.</li>
-</ol>
-<div class="highlight"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
-</code></pre></div>
-<ol>
-<li>
-<p><strong>Configure deployment</strong>: Before deploying Connaisseur to your cluster, you may want to do some configuration to ensure smooth integration with the other system components. Open <code>helm/values.yaml</code>, which is Connaisseur's configuration file.</p>
-<ol>
-<li>
-<p><strong>Configure notary instances</strong>: The <code>.notaries</code> field specifies different notary configurations, with the official DockerHub notary instance predefined. When wanting to add a new (e.g. private) notary instance, create a new entry and define a <code>name</code> and add the host address in the <code>host</code> field. Should the new instance use a self-signed certificate, add it with the <code>selfsigned_cert</code> field in a PEM format. Also should the instance need authentication, an <code>auth</code> field can be added, containing either an <code>auth.user</code> and <code>auth.password</code> with the credentials, or an <code>auth.secretName</code> referencing a predefined secret. Regardless of whether you want to add a new instance or use the DockerHub one, you'll probably want to add at least one public root key, used for verifying the signatures. Root keys reside in the <code>root_keys</code> field as a list. The public key for all official images on DockerHub is already defined with the name <code>default</code>. Simply add a new entry, give it a <code>name</code> and add the key in PEM format in the <code>key</code> field. For retrieving a public root key you can use the <em>get_root_key</em> utility described <a href="#getting-the-root-key">here</a>.</p>
-</li>
-<li>
-<p><strong>Configure the policy</strong>: To actually use the newly defined notary instances or public keys, they have to be referenced in the image policy. How the image policy is setup, is described in the <a href="#image-policy">image policy</a> section. Make sure to reference the instance and key via the <code>notary</code> and <code>key</code> fields, or leave them out should you want to use the default ones, which are identified by their <code>name</code> fields set to <code>default</code>.</p>
-</li>
-</ol>
-</li>
-<li>
-<p><strong>Deploy</strong>: Switch to the cluster where you would like to install Connaisseur, and run <code>make install</code>. This may take some seconds, as the installation order of the Connaisseur components is critical. Only when the Connaisseur pods are ready and running, the Admission Webhook can be applied for intercepting requests.</p>
-</li>
-</ol>
-<blockquote>
-<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> <strong>WARNING!</strong> Be careful when installing Connaisseur, as it will block unsigned images and may for example even block some resources during a restart of <code>minikube</code>! In such a situation you should still be able to fix it by deleting Connaisseur manually. You can use <a href="#detection-mode">Detection Mode</a> to avoid interruptions during testing.</p>
-</blockquote>
-<h2 id="makefile-and-helm">Makefile and Helm<a class="headerlink" href="#makefile-and-helm" title="Permanent link">⚓︎</a></h2>
-<p>The recommended approach on installing Connaisseur is using the Makefile, as it conveniently creates the <code>connaisseur</code> namespace, switches to it and then uses Helm to install Connaisseur. Some useful commands are:</p>
-<ul>
-<li><code>install</code> - for installation Connaisseur, including its namespace</li>
-<li><code>upgrade</code> - for upgrading your currently installed Connaisseur release</li>
-<li><code>uninstall</code> - for uninstalling Connaisseur and deleting the <code>connaisseur</code> namespace</li>
-<li><code>annihilate</code> - for deleting all Connaisseur related resources, whether they are namespaced or not (usually only used when something went wrong during installation)</li>
-</ul>
-<p>Another way is to just use Helm for this, without relying on the Makefile. When doing so, make sure to add the <code>--wait</code> flag for <code>install</code> and <code>upgrade</code> commands, as the installation order and readiness states of all components are critical. Otherwise your installation/upgrade will probably fail.</p>
-<h2 id="image-policy_1">Image Policy<a class="headerlink" href="#image-policy_1" title="Permanent link">⚓︎</a></h2>
-<p>Connaisseur allows defining an image policy, for fine-grained control over Connaisseur's judgments on different images. When installing the tool, a default policy (<code>helm/values.yaml#policy</code>), is applied to the cluster:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-  <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
-  <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/connaisseur:*&quot;</span>
-  <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;sample.registry.io/image:*&quot;</span>
-  <span class="nt">verify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-  <span class="nt">delegations</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">lou</span> 
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">max</span>
-  <span class="nt">notary</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sample-notary</span>
-  <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">sample-key</span>
-</code></pre></div>
-<p>The policy consists of a set of rules. Each rule starts with a pattern that needs to be matched to an image name (such as <code>"*:*"</code> and <code>"docker.io/*:*"</code>). Only the most specific rule, with the most specific matching pattern, is chosen for any given image. This is determined by the following algorithm:</p>
-<ol>
-<li>A given image is matched against all rule patterns.</li>
-<li>All matching patterns are compared to one another to determine the most specific one (see below). Only two patterns are compared at a time; the more specific one then is compared to the next one and so forth. Specificity is determined as follows:<ol>
-<li>Patterns are split into components (delimited by "/"). The pattern that has a higher number of components wins (is considered more specific).</li>
-<li>Should the two patterns that are being compared have equal number of components, the longest common prefix between each pattern component and corresponding image component are calculated (for this purpose, image identifiers are also split into components). The pattern with the longest common prefix in one component, starting from the leftmost, wins.</li>
-<li>Should all longest common prefixes of all components between the two compared patterns be equal, the pattern with a longer component, starting from the leftmost, wins.</li>
-<li>The rule whose pattern has won all comparisons is considered the most specific rule.</li>
-</ol>
-</li>
-<li>Return the most specific rule.</li>
-</ol>
-<p>In addition to the pattern, rules can also contain a <code>verify</code> flag which specifies whether the image requires a signature or can skip verification. If <code>verify</code> is set to <code>true</code>, a valid signature is required; otherwise, the image is admitted without verification. The default value for <code>verify</code> is <code>true</code>. Additionally, a rule can have <code>delegations</code> which correspond to Notary delegation roles. These are to be understood as specific signers that need to be present in the Notary trust data in order for signature verification to be successful (for a more detailed documentation see the <a href="ADVANCED.md#delegation-feature">ADVANCED.md</a>). Lastly a <code>notary</code> and <code>key</code> field can be added, which reference which of the notaries should be consulted when accessing signatures for a given image, and which of the keys should be used to verify these signatures. Make sure that the <code>notary</code> field references one of the notaries <code>name</code> fields and the <code>key</code> field references of the public root keys <code>name</code> field, within the given notary configuration. If no <code>notary</code> or <code>key</code> fields are given, Connaisseur will either do one of two things:</p>
-<ol>
-<li>Should there only be one notary configuration or only one key defined within a given configuration, this configuration or key will be taken by default for verification purposes.</li>
-<li>Should there be more then one notary configuration or key and if one of the <code>name</code> fields is set to <code>default</code>, Connaisseur will take this one. If no default is specified and no specific entry defined, Connaisseur will abort the validation with an error.</li>
-</ol>
-<h2 id="validators_1">validators<a class="headerlink" href="#validators_1" title="Permanent link">⚓︎</a></h2>
-<h3 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">⚓︎</a></h3>
-<p>This document describes the image validation process as employed by Connaisseur.</p>
-<p>Since Connaisseur is a Kubernetes AdmissionController it operates on requests and has these requests, the Kubernetes API, the registry and the notary to work with. First off, Connaisseur does some light checks on the semantics of the request it receives, e.g. whether it is capable of using the API version of the admission request.</p>
-<p>Then it parses images to deploy from the request. Connaisseur does this for Pods, Jobs, CronJobs, Deployments, DaemonSets, StatefulSets, ReplicaSets and ReplicationControllers. These images are then validated as follows:</p>
-<ol>
-<li>If the image is deployed as part of an already deployed object (i.e. a Pod gets deployed as a child of a Deployment and the Deployment was already validated), it will be admitted. This is done as the parent (and thus the child) might have been mutated, which could lead to duplicate validation or rule mismatch. For example, given a Deployment which contains Pods with <code>image:tag</code> that gets mutated to contain Pods with <code>image@sha256:digest</code>. Then a) the Pod would not need another validation as the image was validated during the admittance of the Deployment and b) if there exists a specific rule for <code>image:tag</code> and another for <code>image:*</code>, then after mutating the Deployment, the Pod would be falsely validated against <code>image:*</code> instead of <code>image:tag</code>. To ensure the child resource is legit in this case, the parent resource is requested via the Kubernetes API and only those images it lists are accepted.</li>
-<li>The best matching rule from the image policy is looked up and if <code>verify: false</code>, the image is admitted.</li>
-<li>Trust data of the image is consulted as described in the next section.</li>
-</ol>
-<h2 id="validation-of-trust-data">Validation of trust data<a class="headerlink" href="#validation-of-trust-data" title="Permanent link">⚓︎</a></h2>
-<p>Validation of trust data on a high level boils down to two steps:</p>
-<ol>
-<li>Get all trusted (i.e. signed) image digests related to the tag or digest of the image.</li>
-<li>If there is exactly one, admit the image.</li>
-</ol>
-<p>Regarding the latter step, rejection upon no matching trusted digests is obvious. However, Connaisseur also needs to reject the image if there is more than one trusted digest, since at this point in time Connaisseur doesn't have the ability to distinguish between the right and wrong trusted digest. This only occurs in some edge cases, but nonetheless has to be addressed.</p>
-<p>Let's now focus on the integral part of Connaisseur that is how to get all trusted digests for an <code>image:tag</code> or <code>image:digest</code> combination:</p>
-<p>Connaisseur looks up trust data of the image in the <code>root</code>, <code>snapshot</code>, <code>timestamp</code> and <code>targets</code> files by querying the API of the notary server. Trust data syntax is validated against <a href="https://github.com/sse-secure-systems/connaisseur/tree/master/connaisseur/res">their known schemas</a> (for an introduction to the trust data formats see the <a href="https://berlin-crypto.github.io/assets/Berlin%20Crypto%20Connaisseur.pdf">presentation of our colleague Philipp Belitz</a>). Then, the files' signatures are validated against the pinned root key for the <code>root</code> file and against the respective keys validated in previous steps for later files. Connaisseur further gathers trust data of potential delegations linked in the <code>targets</code> file.</p>
-<p>At this point, Connaisseur is left with a set of potentially disjoint or overlapping sets of trust data. Connaisseur filters the trust data for digests that actually relate to the image under validation.</p>
-<p>If the image policy rule that governs the image to be validated does contain a <code>delegations</code> field, Connaisseur makes sure that all delegations' sets of trust data do contain an entry for the image. If that is not the case, the request is rejected. Subsequently, Connaisseur builds a set over the union of the digests and proceeds with step 2., i.e. accepeting if the size of the resulting set equals 1.</p>
                 
               
               
@@ -1631,10 +1478,10 @@ sudo snap install yq
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.477d984a.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.53c85856.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.ddd52ceb.min.js"></script>
+      <script src="../assets/javascripts/bundle.716f8af4.min.js"></script>
       
     
   </body>
