@@ -388,6 +388,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#validation-in-action" class="md-nav__link">
+    Validation in Action
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -885,6 +892,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#validation-in-action" class="md-nav__link">
+    Validation in Action
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1092,7 +1106,7 @@ d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</sp
 </tbody>
 </table>
 <h4 id="validator-mapping-configuration-options">Validator mapping configuration options<a class="headerlink" href="#validator-mapping-configuration-options" title="Permanent link">⚓︎</a></h4>
-<p>How to map validators on images is documented <a href="../../basics/#image-policy">here</a>. However, the image policy also has some additional fields regarding the delegation feature of Notary (V1), which is further explained <a href="">down below</a>.</p>
+<p>How to map validators on images is documented <a href="../../basics/#image-policy">here</a>. However, the image policy also has some additional fields regarding the delegation feature of Notary (V1), which is further explained <a href="#delegations">down below</a>.</p>
 <table>
 <thead>
 <tr>
@@ -1132,6 +1146,14 @@ d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</sp
     <span class="nt">delegations</span><span class="p">:</span>
     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">belitzphilipp</span>
     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">starkteetje</span>
+</code></pre></div>
+<h3 id="validation-in-action">Validation in Action<a class="headerlink" href="#validation-in-action" title="Permanent link">⚓︎</a></h3>
+<p>To test the validator, simply try deploying a pod.</p>
+<div class="highlight"><pre><span></span><code>&gt; k run redis --image redis:alpine
+pod/redis created
+
+&gt; k run nginx --image phbelitz/image:signed
+Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: Failed to verify signature of trust data root.
 </code></pre></div>
 <h2 id="additional-features">Additional Features<a class="headerlink" href="#additional-features" title="Permanent link">⚓︎</a></h2>
 <h3 id="delegations">Delegations<a class="headerlink" href="#delegations" title="Permanent link">⚓︎</a></h3>
