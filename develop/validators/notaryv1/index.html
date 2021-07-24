@@ -1154,7 +1154,7 @@ Enter passphrase <span class="k">for</span> new &lt;your-name&gt; key with ID 9d
 Repeat passphrase <span class="k">for</span> new &lt;your-name&gt; key with ID 9deed25: 
 Successfully generated and loaded private key. Corresponding public key available: &lt;current-directory&gt;/&lt;your-name&gt;.pub
 </code></pre></div>
-<p>This delegation key now needs to be added as a signer to a respective image repository, like the <code>busybox</code> one from above. In doing so, you'll be ask for the targets key.</p>
+<p>This delegation key now needs to be added as a signer to a respective image repository, like the <code>busybox</code> one from above. In doing so, you'll be asked for the targets key.</p>
 <div class="highlight"><pre><span></span><code>&gt; docker trust signer add --key &lt;your-name&gt;.pub &lt;your-name&gt; &lt;your-private-repo&gt;/busybox
 
 Adding signer <span class="s2">&quot;&lt;your-name&gt;&quot;</span> to &lt;your-private-repo&gt;/busybox...
