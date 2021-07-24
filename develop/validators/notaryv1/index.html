@@ -1161,10 +1161,10 @@ Adding signer <span class="s2">&quot;&lt;your-name&gt;&quot;</span> to &lt;your-
 Enter passphrase <span class="k">for</span> repository key with ID b0014f8: 
 Successfully added signer: &lt;your-name&gt; to &lt;your-private-repo&gt;/busybox
 </code></pre></div>
-<p>If you create a new signature for the image now, you'll be ask for your delegation key instead of the targets key, therefore creating a signature using the delegation.</p>
+<p>If you create a new signature for the image, you'll be asked for your delegation key instead of the targets key, therefore creating a signature using the delegation.</p>
 <div class="highlight"><pre><span></span><code>&gt; <span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span> docker push &lt;your-private-repo&gt;/busybox:stable
 </code></pre></div>
-<p>To tell Connaisseur that this signer/delegation is required to be present on an images' signature, the <code>with.delegations</code> list inside an image policy rule can be used. Simply add the signers name to the list. You can also add multiple signer names to the list, but be aware that Connaisseur currently only supports an AND conjunction, meaning every signer listed must have signed the matching image.</p>
+<p>To tell Connaisseur that this signer/delegation is required to be present on an image's signature, the <code>with.delegations</code> list inside an image policy rule can be used. Simply add the signer's name to the list. You can also add multiple signer names to the list, but be aware that Connaisseur currently only supports an AND conjunction, meaning every signer listed must have signed the matching image.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
   <span class="nt">with</span><span class="p">:</span>
