@@ -1,0 +1,51 @@
+deployment:
+  imagePullPolicy: Never
+validators:
+- name: allow
+  type: static
+  approve: true
+- name: deny
+  type: static
+  approve: false
+- name: sse-cosign
+  type: cosign
+  trust_roots:
+  - name: default
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+      -----END PUBLIC KEY-----
+- name: dockerhub_basics
+  type: notaryv1
+  host: notary.docker.io
+  trust_roots:
+  - name: docker_official
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+      QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+      -----END PUBLIC KEY-----
+  - name: securesystemsengineering_official
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+      d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+      -----END PUBLIC KEY-----
+policy:
+- pattern: "*:*"
+  validator: deny
+- pattern: "docker.io/library/*:*"
+  validator: dockerhub_basics
+  with:
+    trust_root: docker_official
+- pattern: "k8s.gcr.io/*:*"
+  validator: allow
+- pattern: "docker.io/securesystemsengineering/*:*"
+  validator: dockerhub_basics
+  with:
+    trust_root: securesystemsengineering_official
+- pattern: "docker.io/securesystemsengineering/testimage:co*"
+  validator: sse-cosign
+- pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
+  validator: allow
