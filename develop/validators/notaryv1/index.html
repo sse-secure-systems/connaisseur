@@ -1001,7 +1001,7 @@ Finished initializing <span class="s2">&quot;&lt;your-private-repo&gt;/busybox&q
 </code></pre></div>
 <p>After doing so, the signature for your image will reside in the public DockerHub Notary (notary.docker.io). Your newly created private keys will be needed whenever you push a new version of your image. They reside in your <code>~/.docker/trust/private</code> directory.</p>
 <h3 id="getting-the-root-key">Getting the Root Key<a class="headerlink" href="#getting-the-root-key" title="Permanent link">⚓︎</a></h3>
-<p>For verifying the signatures of images, a public <a href="https://theupdateframework.github.io/specification/latest/#root">root key</a> is needed to verify the signature data with it. But from where do you get this, especially for public images whose signatures you didn't create? For this we created the <em>get_root_key</em> utility. You can use it by building the docker image with <code>docker build -t get-root-key -f docker/Dockerfile.getRoot .</code> and the running the image:</p>
+<p>For verifying the signatures of images, a public <a href="https://theupdateframework.github.io/specification/latest/#root">root key</a> is needed to verify the signature data with it. But from where do you get this, especially for public images whose signatures you didn't create? For this we created the <em>get_root_key</em> utility. You can use it by building the docker image with <code>docker build -t get-root-key -f docker/Dockerfile.getRoot .</code> and then running the image:</p>
 <div class="highlight"><pre><span></span><code>$ docker run --rm get-root-key -i securesystemsengineering/testimage
 KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
 Key: -----BEGIN PUBLIC KEY-----
