@@ -847,7 +847,7 @@ The entry in <code>.validators</code> should look something like this (make sure
   <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosign</span>
   <span class="nt">trust_roots</span><span class="p">:</span>
   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># YOUR KEY BELOW</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># YOUR PUBLIC KEY BELOW</span>
       <span class="no">-----BEGIN PUBLIC KEY-----</span>
       <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
       <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
@@ -871,7 +871,7 @@ In case you just use the default values for the validator and image policy given
 <div class="highlight"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed-alt
 </code></pre></div>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys for Cosign (refer to <a href="../../basics/">basics</a> for more information on default keys):</p>
+<p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys for Cosign (refer to <a href="../../basics/#validators">basics</a> for more information on default keys):</p>
 <table>
 <thead>
 <tr>
@@ -886,13 +886,25 @@ In case you just use the default values for the validator and image policy given
 <td><code>name</code></td>
 <td></td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/">basics</a></td>
+<td>see <a href="../../basics/#validators">basics</a></td>
 </tr>
 <tr>
 <td><code>type</code></td>
 <td></td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td><code>cosign</code>; the validator type must be set to <code>cosign</code></td>
+<td><code>cosign</code>; the validator type must be set to <code>cosign</code>.</td>
+</tr>
+<tr>
+<td><code>trust_roots[*].name</code></td>
+<td></td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>see <a href="../../basics/#validators">basics</a></td>
+</tr>
+<tr>
+<td><code>trust_roots[*].key</code></td>
+<td></td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>see <a href="../../basics/#validators">basics</a>. ECDSA public key from <code>cosign.pub</code> file.</td>
 </tr>
 <tr>
 <td><code>host</code></td>
@@ -911,18 +923,6 @@ In case you just use the default values for the validator and image policy given
 <td></td>
 <td></td>
 <td>Specify a Kubernetes secret that contains <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> for registry authentication. See additional notes <a href="#authentication">below</a>.</td>
-</tr>
-<tr>
-<td><code>trust_roots[*].name</code></td>
-<td></td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/">basics</a></td>
-</tr>
-<tr>
-<td><code>trust_roots[*].key</code></td>
-<td></td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>ECDSA public key from <code>cosign.pub</code> file</td>
 </tr>
 </tbody>
 </table>
