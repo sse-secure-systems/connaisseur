@@ -382,7 +382,7 @@
         
           <li class="md-nav__item">
   <a href="#verification-against-transparency-log" class="md-nav__link">
-    Verification against Transparency Log
+    Verification against transparency log
   </a>
   
 </li>
@@ -787,7 +787,7 @@
         
           <li class="md-nav__item">
   <a href="#verification-against-transparency-log" class="md-nav__link">
-    Verification against Transparency Log
+    Verification against transparency log
   </a>
   
 </li>
@@ -871,7 +871,7 @@ In case you just use the default values for the validator and image policy given
 <div class="highlight"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed-alt
 </code></pre></div>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys for cosign (refer to <a href="../../basics/">basics</a> for more information on default keys):</p>
+<p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys for Cosign (refer to <a href="../../basics/">basics</a> for more information on default keys):</p>
 <table>
 <thead>
 <tr>
@@ -901,7 +901,7 @@ In case you just use the default values for the validator and image policy given
 <td>NOT YET IMPLEMENTED</td>
 </tr>
 <tr>
-<td><code>auth</code></td>
+<td><code>auth.</code></td>
 <td></td>
 <td></td>
 <td>Provide authentication credentials for private registries.</td>
@@ -937,7 +937,7 @@ The secret can for example be created directly from your local <code>config.json
 </code></pre></div>
 <p>In the above case, in the secret name in Connaisseur configuration would be <code>secret_name: my-secret</code>.
 It is possible to provide one Kubernetes secret with a <code>config.json</code> for authentication to multiple private registries and referencing this in multiple validators.</p>
-<h3 id="verification-against-transparency-log">Verification against Transparency Log<a class="headerlink" href="#verification-against-transparency-log" title="Permanent link">⚓︎</a></h3>
+<h3 id="verification-against-transparency-log">Verification against transparency log<a class="headerlink" href="#verification-against-transparency-log" title="Permanent link">⚓︎</a></h3>
 <p>Connaisseur already verifies signatures against the transparency log.
 However, optional enforcement of transparency log is only planned in upcoming releases.</p>
 <h3 id="keyless-signatures">Keyless signatures<a class="headerlink" href="#keyless-signatures" title="Permanent link">⚓︎</a></h3>
