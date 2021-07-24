@@ -972,7 +972,7 @@ Private keys reside in <code>~/.docker/trust/private</code> and public trust dat
 The created signature for your image is pushed to the public DockerHub Notary (notary.docker.io).
 The private keys and password are required whenever a new version of the image is pushed with DCT activated.</p>
 <h3 id="getting-the-root-public-key">Getting the root public key<a class="headerlink" href="#getting-the-root-public-key" title="Permanent link">⚓︎</a></h3>
-<p>Signature validation via Connaisseur requires the <a href="https://theupdateframework.github.io/specification/latest/#root">root public key</a> verify against as a trust anchor.
+<p>Signature validation via Connaisseur requires the <a href="https://theupdateframework.github.io/specification/latest/#root">root public key</a> to verify against as a trust anchor.
 But from where do you get this, especially for public images whose signatures you didn't create?
 We have created the <em>get_root_key</em> utility to extract the root public key of images.
 To use it, build the docker image with <code>docker build -t get-root-key -f docker/Dockerfile.getRoot .</code> and run it on the image to be verified:</p>
