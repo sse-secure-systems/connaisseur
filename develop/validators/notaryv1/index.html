@@ -1152,7 +1152,7 @@ Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.conn
 Generating key <span class="k">for</span> &lt;your-name&gt;...
 Enter passphrase <span class="k">for</span> new &lt;your-name&gt; key with ID 9deed25: 
 Repeat passphrase <span class="k">for</span> new &lt;your-name&gt; key with ID 9deed25: 
-Successfully generated and loaded private key. Corresponding public key available: /home/ubuntu/Documents/mytrustdir/&lt;your-name&gt;.pub
+Successfully generated and loaded private key. Corresponding public key available: &lt;current-directory&gt;/&lt;your-name&gt;.pub
 </code></pre></div>
 <p>This delegation key now needs to be added as a signer to a respective image repository, like the <code>busybox</code> one from above. In doing so, you'll be ask for the targets key.</p>
 <div class="highlight"><pre><span></span><code>&gt; docker trust signer add --key &lt;your-name&gt;.pub &lt;your-name&gt; &lt;your-private-repo&gt;/busybox
