@@ -835,7 +835,7 @@ In short: After installation, a keypair is generated via:</p>
 </code></pre></div>
 <p>You will be prompted to set a password, after which a private (<code>cosign.key</code>) and public (<code>cosign.pub</code>) key are created.
 You can then use Cosign to sign a container image using:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Here, $IMAGE is REPOSITORY/IMAGE_NAME:TAG</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Here, ${IMAGE} is REPOSITORY/IMAGE_NAME:TAG</span>
 cosign sign -key cosign.key <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>The created signature can be verfied via:</p>
