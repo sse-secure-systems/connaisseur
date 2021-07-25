@@ -751,7 +751,11 @@
                 
                 <h1 id="detection-mode">Detection Mode<a class="headerlink" href="#detection-mode" title="Permanent link">⚓︎</a></h1>
 <p>A detection mode is available in order to avoid interruptions of a running cluster, to support initial rollout or for testing purposes.
-In detection mode, Connaisseur admits all images to the cluster, but issues a warning and logs an error message for images that do not comply with the policy or in case of other unexpected failures.</p>
+In detection mode, Connaisseur admits all images to the cluster, but issues a warning and logs an error message for images that do not comply with the policy or in case of other unexpected failures:</p>
+<div class="highlight"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
+&gt; Warning: Unable to find signed digest <span class="k">for</span> image docker.io/securesystemsengineering/testimage:unsigned. <span class="o">(</span>not denied due to DETECTION_MODE<span class="o">)</span>
+&gt; pod/unsigned created
+</code></pre></div>
 <p>To activate the detection mode, set the <code>detectionMode</code> flag to <code>true</code> in <code>helm/values.yaml</code>.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
 <p><code>detectionMode</code> in <code>helm/values.yaml</code> supports the following keys:</p>

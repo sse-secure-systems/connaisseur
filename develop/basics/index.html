@@ -457,6 +457,54 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#common-examples" class="md-nav__link">
+    Common examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Common examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#case-only-validate-own-images-and-deny-all-others" class="md-nav__link">
+    Case: Only validate own images and deny all others
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-only-validate-own-images-and-deny-all-others-faster" class="md-nav__link">
+    Case: Only validate own images and deny all others (faster)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-only-validate-dockerhub-official-images-and-deny-all-others" class="md-nav__link">
+    Case: Only validate DockerHub official images and deny all others
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-only-validate-dockerhub-official-images-and-allow-all-others" class="md-nav__link">
+    Case: Only validate DockerHub official images and allow all others
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-directly-admit-own-images-and-deny-all-others" class="md-nav__link">
+    Case: Directly admit own images and deny all others
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1041,6 +1089,54 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#common-examples" class="md-nav__link">
+    Common examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Common examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#case-only-validate-own-images-and-deny-all-others" class="md-nav__link">
+    Case: Only validate own images and deny all others
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-only-validate-own-images-and-deny-all-others-faster" class="md-nav__link">
+    Case: Only validate own images and deny all others (faster)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-only-validate-dockerhub-official-images-and-deny-all-others" class="md-nav__link">
+    Case: Only validate DockerHub official images and deny all others
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-only-validate-dockerhub-official-images-and-allow-all-others" class="md-nav__link">
+    Case: Only validate DockerHub official images and allow all others
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#case-directly-admit-own-images-and-deny-all-others" class="md-nav__link">
+    Case: Directly admit own images and deny all others
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1060,8 +1156,7 @@
                 
                 
                 <h1 id="basics">Basics<a class="headerlink" href="#basics" title="Permanent link">⚓︎</a></h1>
-<p>This page explains how to configure, setup and manage Connaisseur.
-In addition, the core concepts are introduced.</p>
+<p>In the following, we aim to lay the foundation on Connaisseur's core concepts, how to configure and administer it.</p>
 <h2 id="admission-control-validators-and-image-policy">Admission control, validators and image policy<a class="headerlink" href="#admission-control-validators-and-image-policy" title="Permanent link">⚓︎</a></h2>
 <p>Connaisseur works as a <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">mutating admission controller</a>.
 It intercepts all <em>CREATE</em> and <em>UPDATE</em> resource requests for <em>Pods</em>, <em>Deployments</em>, <em>ReplicationControllers</em>, <em>ReplicaSets</em>, <em>DaemonSets</em>, <em>StatefulSets</em>, <em>Jobs</em>, and <em>CronJobs</em> and extracts all image references for validation.
@@ -1075,39 +1170,40 @@ This is specifically useful when using public or external images from other enti
 <h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h3>
 <p>Using Connaisseur requires <a href="https://git-scm.com/">Git</a>, a <a href="https://kubernetes.io/">Kubernetes</a> cluster, <a href="https://helm.sh/">Helm</a> and <a href="https://www.docker.com/">Docker</a> (only for local setups) to be installed and set up.</p>
 <h3 id="get-the-code">Get the code<a class="headerlink" href="#get-the-code" title="Permanent link">⚓︎</a></h3>
-<p>The Connaisseur source code can be cloned directly from GitHub and includes the application and Helm charts in a single repository.</p>
+<p>The Connaisseur source code can be cloned directly from GitHub and includes the application and Helm charts in a single repository:</p>
 <div class="highlight"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
 </code></pre></div>
 <h3 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">⚓︎</a></h3>
 <p>The configuration of Connaisseur is completely done in the <code>helm/values.yaml</code>.
 The upper <code>deployment</code> section offers some general Kubernetes typical configurations like image version or resources.
-The configuration of <code>validators</code> and image <code>policy</code> is described in detail <a href="#detailed-configuration">below</a> and stepwise in the <a href="../getting_started/">getting started guide</a>.
-Features are described on the <a href="../features/">respective pages</a>.</p>
+The actual configuration consists of the <code>validators</code> and image <code>policy</code> sections.
+These are described in detail <a href="#detailed-configuration">below</a> and for initials steps it is instructive to follow the <a href="../getting_started/">getting started guide</a>.
+Other features are described on the <a href="../features/">respective pages</a>.</p>
 <p>Connaisseur ships with a pre-configuration that does not need any adjustments for testing.
 However, validating your own images requires additional configuration.</p>
 <h3 id="deploy">Deploy<a class="headerlink" href="#deploy" title="Permanent link">⚓︎</a></h3>
-<p>Install Connaisseur by using Helm (alternatively use <a href="#makefile">Makefile</a>).</p>
+<p>Install Connaisseur by using Helm:</p>
 <div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
 </code></pre></div>
 <p>This will install Connaisseur in its own namespace called <code>connaisseur</code>.
-The installation itself may take some minutes, as the installation order of the Connaisseur components is critical.
-Only when the Connaisseur Pods are ready and running, the Admission Webhook can be applied for intercepting requests.</p>
+The installation itself may take a moment, as the installation order of the Connaisseur components is critical.
+Only when the Connaisseur pods are up and running, the admission webhook can be applied for intercepting requests.</p>
 <h3 id="check">Check<a class="headerlink" href="#check" title="Permanent link">⚓︎</a></h3>
-<p>When everything is installed, you can check whether all the pods are up by running <code>kubectl get all -n connaisseur</code>.</p>
-<div class="highlight"><pre><span></span><code>$ kubectl get all -n connaisseur
-NAME                                          READY   STATUS    RESTARTS   AGE
-pod/connaisseur-deployment-78d8975596-42tkw   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
-pod/connaisseur-deployment-78d8975596-5c4c6   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
-pod/connaisseur-deployment-78d8975596-kvrj6   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
-
-NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>   AGE
-service/connaisseur-svc   ClusterIP   <span class="m">10</span>.108.220.34   &lt;none&gt;        <span class="m">443</span>/TCP   22s
-
-NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/connaisseur-deployment   <span class="m">3</span>/3     <span class="m">3</span>            <span class="m">3</span>           22s
-
-NAME                                                DESIRED   CURRENT   READY   AGE
-replicaset.apps/connaisseur-deployment-78d8975596   <span class="m">3</span>         <span class="m">3</span>         <span class="m">3</span>       22s
+<p>Once everything is installed, you can check whether all the pods are up by running <code>kubectl get all -n connaisseur</code>:</p>
+<div class="highlight"><pre><span></span><code>kubectl get all -n connaisseur
+&gt; NAME                                          READY   STATUS    RESTARTS   AGE
+&gt; pod/connaisseur-deployment-78d8975596-42tkw   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
+&gt; pod/connaisseur-deployment-78d8975596-5c4c6   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
+&gt; pod/connaisseur-deployment-78d8975596-kvrj6   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
+&gt; 
+&gt; NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>   AGE
+&gt; service/connaisseur-svc   ClusterIP   <span class="m">10</span>.108.220.34   &lt;none&gt;        <span class="m">443</span>/TCP   22s
+&gt; 
+&gt; NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+&gt; deployment.apps/connaisseur-deployment   <span class="m">3</span>/3     <span class="m">3</span>            <span class="m">3</span>           22s
+&gt; 
+&gt; NAME                                                DESIRED   CURRENT   READY   AGE
+&gt; replicaset.apps/connaisseur-deployment-78d8975596   <span class="m">3</span>         <span class="m">3</span>         <span class="m">3</span>       22s
 </code></pre></div>
 <h3 id="use">Use<a class="headerlink" href="#use" title="Permanent link">⚓︎</a></h3>
 <p>To use Connaisseur, simply try running some images or apply a deployment.
@@ -1119,7 +1215,7 @@ kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
 &gt; pod/hello-world created
 </code></pre></div>
 <h3 id="delete">Delete<a class="headerlink" href="#delete" title="Permanent link">⚓︎</a></h3>
-<p>Just like for installation, Helm can also be used to delete Connaisseur from your cluster.</p>
+<p>Just like for installation, Helm can also be used to delete Connaisseur from your cluster:</p>
 <div class="highlight"><pre><span></span><code>helm uninstall connaisseur -n connaisseur
 </code></pre></div>
 <p>In case uninstallation fails or problems occur during subsequent installation, you can manually remove all resources:</p>
@@ -1133,7 +1229,7 @@ In case of major releases, the configuration structure might change which can ca
 <ul>
 <li><code>make install</code> -- Runs the <code>helm install</code> command.</li>
 <li><code>make uninstall</code> -- Switches the namespace to <code>connaisseur</code>, uses the <code>helm uninstall</code> command and deletes the <code>connaisseur</code> namespace.</li>
-<li><code>make annihilate</code> -- Deletes all resources labeled with <code>app.kubernetes.io/instance=connaisseur</code>. This command is usually helpful, should the normal <code>make uninstall</code> not work.</li>
+<li><code>make annihilate</code> -- Deletes all resources labeled with <code>app.kubernetes.io/instance=connaisseur</code> as well as the <code>connaisseur</code> namespace. This command is usually helpful, should the normal <code>make uninstall</code> not work.</li>
 <li><code>make docker</code> -- Builds the connaisseur and connaisseur:helm-hook (relevant for installing Connaisseur) docker images.</li>
 </ul>
 <h2 id="detailed-configuration">Detailed configuration<a class="headerlink" href="#detailed-configuration" title="Permanent link">⚓︎</a></h2>
@@ -1148,9 +1244,12 @@ Thus the validator would need to specify <code>notaryv1</code> as type, the nota
 A list of supported validator types can be found <a href="../validators/">here</a>.
 All validators share a similar structure for configuration.
 For specifics and additional options, please review the dedicated page of the validator type.</p>
+<p>There is a special behavior, when a validator or one of the trust roots is named <code>default</code>.
+In this case, should an image policy rule not specify a validator or trust root to use, the one named <code>default</code> will be used instead.
+This also means there can only be one validator named <code>default</code> and for the trust roots, there can only be one called <code>default</code> within a single validator.</p>
 <p>Connaisseur comes with a few validators pre-configured including one for Docker's official images.
 The pre-configured validators can be removed.
-However, when removing the <code>securesystemsengineering_official</code> make sure to also exclude Connaisseur from validation either via the static <code>allow</code> validator or <a href="../features/namespaced_validation/">namespaced validation</a>.
+However to avoid Connaisseur failing its own validation when removing the <code>securesystemsengineering_official</code> key, make sure to also exclude Connaisseur from validation either via the static <code>allow</code> validator or <a href="../features/namespaced_validation/">namespaced validation</a>.
 The special case of static validators used to simply allow or deny images without verification is described below.</p>
 <h4 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h4>
 <p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys:</p>
@@ -1168,28 +1267,28 @@ The special case of static validators used to simply allow or deny images withou
 <td><code>name</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The name of the validator, which is referenced in the image policy. It can only contain letters, numbers and '-'. If the name is <code>default</code>, it will be used if no validator is specified.</td>
+<td>The name of the validator, which is referenced in the image policy. It must consist of lower case alphanumeric characters or '-'. If the name is <code>default</code>, it will be used if no validator is specified.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The type of the validator which is dependent on the <a href="../validators/">validator</a>.</td>
+<td>The type of the validator, e.g. <code>notaryv1</code> or <code>cosign</code>, which is dependent on the <a href="../validators/">signing solution in use</a>.</td>
 </tr>
 <tr>
 <td><code>trust_roots</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>A list of trust anchors to validate the signatures with. In practice, this is typically a list of public keys.</td>
+<td>A list of trust anchors to validate the signatures against. In practice, this is typically a list of public keys.</td>
 </tr>
 <tr>
-<td><code>trust_roots.[*].name</code></td>
+<td><code>trust_roots[*].name</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>The name of the trust anchor, which is referenced in the image policy. If the name is <code>default</code>, it will be used if no key is specified.</td>
 </tr>
 <tr>
-<td><code>trust_roots.[*].key</code></td>
+<td><code>trust_roots[*].key</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>The value of the trust anchor, most commonly a PEM encoded public key.</td>
@@ -1203,9 +1302,6 @@ The special case of static validators used to simply allow or deny images withou
 </tbody>
 </table>
 <p>Further configuration fields specific to the validator type are described in the respective section.</p>
-<p>There is a special behavior, when a validator or one of the trust roots is named <code>default</code>.
-In this case, should an image policy rule not specify a validator or trust root to use, the one named <code>default</code> will be used instead.
-This also means there can only be one validator named <code>default</code> and for the trust roots, there can only be one called <code>default</code> within a single validator.</p>
 <h4 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h4>
 <div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
@@ -1213,7 +1309,6 @@ This also means there can only be one validator named <code>default</code> and f
   <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
   <span class="nt">trust_roots</span><span class="p">:</span>
   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">key</span>
     <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
       <span class="no">-----BEGIN PUBLIC KEY-----</span>
       <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
@@ -1235,7 +1330,7 @@ This also means there can only be one validator named <code>default</code> and f
 <h4 id="static-validators">Static validators<a class="headerlink" href="#static-validators" title="Permanent link">⚓︎</a></h4>
 <p>Static validators are a special type of validator that does not validate any signatures.
 Depending on the <code>approve</code> value being <code>true</code> or <code>false</code>, they either allow or deny all images for which they are specified as validator.
-This for example allows to implement <em>allowlist</em> or <em>denylist</em>.</p>
+This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.</p>
 <h5 id="configuration-options_1">Configuration options<a class="headerlink" href="#configuration-options_1" title="Permanent link">⚓︎</a></h5>
 <table>
 <thead>
@@ -1277,11 +1372,8 @@ This for example allows to implement <em>allowlist</em> or <em>denylist</em>.</p
   <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 <h3 id="image-policy">Image policy<a class="headerlink" href="#image-policy" title="Permanent link">⚓︎</a></h3>
-<p>The image policy is defined in the <code>policy</code> field and acts as a list of rule objects to determine which image should be validated by which validator (and potentially some further configurations).
-Each rule provides a pattern that is used to identify the images it applies to and a reference to a validator.
-In case no validator is specified, the validator with name <code>default</code> is used if it exists.
-If no key is specified for a validator, the trust root with name <code>default</code> is used if it exists.</p>
-<p>For each image in the admission request, only a single rule in the image policy will apply, the one with the most specific matching <code>pattern</code> field.
+<p>The image policy is defined in the <code>policy</code> field and acts as a list of rule objects to determine which image should be validated by which validator (and potentially some further configurations).</p>
+<p>For each image in the admission request, only a single rule in the image policy will apply: the one with the most specific matching <code>pattern</code> field.
 This is determined by the following algorithm:</p>
 <ol>
 <li>A given image is matched against all rule patterns.</li>
@@ -1294,9 +1386,52 @@ This is determined by the following algorithm:</p>
 </li>
 <li>Return the most specific rule.</li>
 </ol>
-<blockquote>
-<p><strong>Note:</strong> Should an image have no rules to match against, an error will be raised, which is why it is recommended to always have an "catch-all" rule like <code>*:*</code>.</p>
-</blockquote>
+<p>Should an image match none of the rules, Connaisseur will deny the request and raise an error.
+This <em>deny per default</em> behavior can be changed via a <em>catch-all</em> rule <code>*:*</code> and for example using the static <code>allow</code> validator in order to admit otherwise unmatched images.</p>
+<p>In order to perform the actual validation, Connaisseur will call the validator specified in the selected rule and pass the image name and potential further configuration to it.
+The reference to validator and exact trust root is resolved in the following way:</p>
+<ol>
+<li>The validator with name (<code>validators[*].name</code>) equal to the <code>validator</code> value in the selected rule is chosen. If no validator is specified, the validator with name <code>default</code> is used if it exists.</li>
+<li>Of that validator, the trust root (e.g. public key) is chosen which name (<code>.validators.trust_roots[*].name</code>) matches the policies trust root string (<code>with.trust_root</code>). If no trust root is specified, the trust root with name <code>default</code> is used if it exists.</li>
+</ol>
+<p>Let's review the image and validator matching at a minimal example.
+We consider the following validator and policy configuration (most fields have been omitted for clarity):</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>     <span class="c1"># validator 1</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>   <span class="c1"># key 1</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">...</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span> <span class="c1"># validator 2</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>   <span class="c1"># key 2</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">...</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>     <span class="c1"># key 3</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">...</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>                      <span class="c1"># rule 1</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>     <span class="c1"># rule 2</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/myimg:*&quot;</span> <span class="c1"># rule 3</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+</code></pre></div>
+<p>Now deploying the following images we would get the matchings:</p>
+<ul>
+<li><code>docker.io/superrepo/myimg:v1</code> &rarr; <em>rule 1</em> &rarr; <em>validator 1</em>(<em>key 1</em>): The image matches none of the more specific rules 2 and 3, so rule 1 is applied. As that rule neither specifies a validator nor a trust root, the <code>default</code> validator (validator 1) with trust root <code>default</code> (key 1) is used.</li>
+<li><code>docker.io/myrepo/superimg:v1</code> &rarr; <em>rule 2</em> &rarr; <em>validator 2</em>(<em>key 2</em>): The image only matches rules 1 and 2 and thus 2 is chosen as it is more specific. That rule specifies <code>myvalidator</code> as validator but no trust root and thus validator 2 with trust root <code>default</code> (key 2) is used.</li>
+<li><code>docker.io/myrepo/myimg:v1</code> &rarr; <em>rule 3</em> &rarr; <em>validator 2</em>(<em>key 3</em>): The image matches all rules and thus 3 is chosen as it is most specific. The rule specifies <code>myvalidator</code> as validator with <code>mykey</code> as trust root and thus validator 2 with key 2 is used.</li>
+</ul>
+<p>Connaisseur ships with a few rules pre-configured.
+There is two rules that should remain intact in some form in order to not brick the Kubernetes cluster:</p>
+<ul>
+<li><code>k8s.gcr.io</code>: This is an <code>allow</code> rule for Kubernetes images (<code>k8s.gcr.io</code>) in order to not block cluster relevant images. These cannot be validated currently.</li>
+<li><code>docker.io/securesystemsengineering/*:*</code>: This rule is used to validate the Connaisseur images with the respective validator and removal can break the Connaisseur deployment. It is, however, possible to use the static <code>allow</code> validator.</li>
+</ul>
 <h4 id="configuration-options_2">Configuration options<a class="headerlink" href="#configuration-options_2" title="Permanent link">⚓︎</a></h4>
 <p><code>.policy[*]</code> in <code>helm/values.yaml</code> supports the following keys:</p>
 <table>
@@ -1328,7 +1463,7 @@ This is determined by the following algorithm:</p>
 <td>Additional parameters to use for a validator. See more specifics in <a href="../validators/">validator section</a>.</td>
 </tr>
 <tr>
-<td><code>with.key</code></td>
+<td><code>with.trust_root</code></td>
 <td><code>default</code></td>
 <td>-</td>
 <td>The name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name <code>default</code> is used if it exists.</td>
@@ -1341,10 +1476,198 @@ This is determined by the following algorithm:</p>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
   <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosigner</span>
   <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/deniedimage:*&quot;</span>
   <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/allowedimage:v*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+</code></pre></div>
+<h3 id="common-examples">Common examples<a class="headerlink" href="#common-examples" title="Permanent link">⚓︎</a></h3>
+<p>Let's look at some useful examples for the <code>validators</code> and <code>policy</code> configuration.
+These can serve as a first template beyond the pre-configuration or might just be instructive to understand validators and policies.</p>
+<p>We assume your repository is <code>docker.io/myrepo</code> and a public key has been created.
+In case this repository is private, authentication would have to be added to the respective validator for example via:</p>
+<div class="highlight"><pre><span></span><code>  <span class="nt">auth</span><span class="p">:</span>
+    <span class="nt">secret_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">k8ssecret</span>
+</code></pre></div>
+<p>The Kubernetes secret would have to be created separately according to the validator documentation.</p>
+<h4 id="case-only-validate-own-images-and-deny-all-others">Case: Only validate own images and deny all others<a class="headerlink" href="#case-only-validate-own-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
+<p>This is likely the most common case in simple settings by which only self-built images are used and validated against your own public key:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>  <span class="c1"># or e.g. &#39;cosign&#39;</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>  <span class="c1"># only required in case of notaryv1</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># your public key below</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+      <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
+      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+</code></pre></div>
+<h4 id="case-only-validate-own-images-and-deny-all-others-faster">Case: Only validate own images and deny all others (faster)<a class="headerlink" href="#case-only-validate-own-images-and-deny-all-others-faster" title="Permanent link">⚓︎</a></h4>
+<p>This configuration achieves the same as the one above, but is faster as trust data only needs to be requested for images in your repository:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>  <span class="c1"># or e.g. &#39;cosign&#39;</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>  <span class="c1"># only required in case of notaryv1</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># your public key below</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+      <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
+      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+</code></pre></div>
+<p>The <code>*:*</code> rule could also have been omitted as Connaisseur denies unmatched images.
+However, explicit is better than implicit.</p>
+<h4 id="case-only-validate-dockerhub-official-images-and-deny-all-others">Case: Only validate DockerHub official images and deny all others<a class="headerlink" href="#case-only-validate-dockerhub-official-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
+<p>In case only validated DockerHub official images should be admitted to the cluster:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f</span>
+      <span class="no">QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
+      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/library/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+</code></pre></div>
+<h4 id="case-only-validate-dockerhub-official-images-and-allow-all-others">Case: Only validate DockerHub official images and allow all others<a class="headerlink" href="#case-only-validate-dockerhub-official-images-and-allow-all-others" title="Permanent link">⚓︎</a></h4>
+<p>In case only DockerHub official images should be validated while all others are simply admitted:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
+  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f</span>
+      <span class="no">QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
+      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/library/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+</code></pre></div>
+<h4 id="case-directly-admit-own-images-and-deny-all-others">Case: Directly admit own images and deny all others<a class="headerlink" href="#case-directly-admit-own-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
+<p>As a matter of fact, Connaisseur can also be used to restrict the allowed registries and repositories without signature validation:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
+  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
   <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
 </code></pre></div>
                 

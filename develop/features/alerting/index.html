@@ -460,9 +460,22 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#additional-notes" class="md-nav__link">
+    Additional notes
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#creating-a-custom-template" class="md-nav__link">
     Creating a custom template
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -758,9 +771,22 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#additional-notes" class="md-nav__link">
+    Additional notes
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#creating-a-custom-template" class="md-nav__link">
     Creating a custom template
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -783,10 +809,11 @@ endpoint that accepts JSON payloads.</p>
 <h2 id="supported-interfaces">Supported Interfaces<a class="headerlink" href="#supported-interfaces" title="Permanent link">⚓︎</a></h2>
 <p>Slack, Opsgenie and Keybase have preconfigured payloads that are ready to use.
 However, you can use the existing payload templates as an example how to model your
-own custom one. It is also possible to configure multiple interfaces to receive
-alerts on at the same time.</p>
+own custom one.
+It is also possible to configure multiple interfaces for receiving
+alerts at the same time.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p>Currently, Connaisseur supports alerting on either admittance of images, denial of images or both. These event categories can be configured independently of each other under the relevant category (e.g. <code>admit_request</code> or <code>reject_request</code>):</p>
+<p>Currently, Connaisseur supports alerting on either admittance of images, denial of images or both. These event categories can be configured independently of each other under the relevant category (i.e. <code>admit_request</code> or <code>reject_request</code>):</p>
 <table>
 <thead>
 <tr>
@@ -845,7 +872,7 @@ alerts on at the same time.</p>
 <td>bool</td>
 <td><code>False</code></td>
 <td></td>
-<td><code>true</code> will make Connaisseur deny images if the corresponding alert cannot be successfully sent</td>
+<td><code>True</code> will make Connaisseur deny images if the corresponding alert cannot be successfully sent</td>
 </tr>
 </tbody>
 </table>
@@ -857,11 +884,7 @@ alerts on at the same time.</p>
 one it needs to be one of <code>slack</code>, <code>keybase</code> or <code>opsgenie</code>.</li>
 <li>For Opsgenie you need to configure an additional
   <code>["Authorization: GenieKey &lt;Your-Genie-Key&gt;"]</code> header.</li>
-<li><code>fail_if_alert_sending_fails</code>makes sense only for requests that Connaisseur
-  would have admitted as other requests would have been denied in the first place.
-  The setting can come handy if you want to run Connaisseur in detection mode but
-  still make sure that you get notified about what is going on in your cluster.
-  <strong>However, this setting will block everyone from contributing if the alert sending fails permanently. (Accidental deletion of your Slack Webhook App, GenieKey expired...)</strong></li>
+<li><code>fail_if_alert_sending_fails</code> only comes into play for requests that Connaisseur would have admitted as other requests would have been denied in the first place. The setting can come handy if you want to run Connaisseur in detection mode but still make sure that you get notified about what is going on in your cluster. <strong>However, this setting will significantly impact cluster interaction for everyone (i.e. block any cluster change associated to an image) if the alert sending fails permanently, e.g. accidental deletion of your Slack Webhook App, GenieKey expired...</strong></li>
 </ul>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
 <p>For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to to following snippet:</p>
@@ -871,7 +894,8 @@ one it needs to be one of <code>slack</code>, <code>keybase</code> or <code>opsg
       - template: keybase
         receiver_url: https://bots.keybase.io/webhookbot/&lt;Your-Keybase-Hook-Token&gt;
 </code></pre></div>
-<h2 id="creating-a-custom-template">Creating a custom template<a class="headerlink" href="#creating-a-custom-template" title="Permanent link">⚓︎</a></h2>
+<h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
+<h3 id="creating-a-custom-template">Creating a custom template<a class="headerlink" href="#creating-a-custom-template" title="Permanent link">⚓︎</a></h3>
 <p>Along the lines of the templates that already exist you can easily define
 custom templates for other endpoints. The following variables can be rendered
 during runtime into the payload:</p>
@@ -889,7 +913,7 @@ during runtime into the payload:</p>
 fields in <code>yaml</code> presentation in the <code>payload_fields</code> key which will be translated
 to JSON by helm as is. If your REST endpoint requires particular headers, your can
 specify them as described above in <code>custom_headers</code>.</p>
-<p>Feel free to open a PR if you add new neat templates for other third parties!</p>
+<p>Feel free to make a PR to share with the community if you add new neat templates for other third parties <img alt="🙏" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f64f.svg" title=":pray:" /></p>
                 
               
               

@@ -920,15 +920,16 @@ However, not every public container registry provides an associated Notary serve
 <a href="https://hub.docker.com/">DockerHub</a> for example, runs an associated Notary server (notary.docker.io) and even uses it to serve trust data for the <a href="https://docs.docker.com/docker-hub/official_images/">Docker Official Images</a>.
 In fact, since Connaisseur's pre-built images are shared via the <a href="https://hub.docker.com/repository/docker/securesystemsengineering/connaisseur">Connaisseur DockerHub repository</a>, its own trust data is maintained on DockerHub's Notary server.
 Besides the public Notary instances, Notary can also be run as a private or even standalone instance.
-Harbor for example comes along with an associated Notary instance.</p>
+<a href="https://goharbor.io/">Harbor</a> for example comes along with an associated Notary instance.</p>
 <p>Validating a container image via DCT requires a repository's public root key as well as fetching the repository's trust data from the associated Notary server.
-While DCT relies <em>trust on first use</em> (TOFU) for repositories' public root keys, Connaisseur enforces manual pinning to a public root key that must be configured in advance.</p>
+While DCT relies on <em>trust on first use</em> (TOFU) for repositories' public root keys, Connaisseur enforces manual pinning to a public root key that must be configured in advance.</p>
 <blockquote>
 <p><sup>*</sup> Notary does traditionally not carry the version number. However, in differentiation to the new <a href="https://github.com/notaryproject/notaryproject">Notary V2 project</a> we decided to add a careful "(V1)" to the original project.</p>
 </blockquote>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
 <p>In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the root public key of other images and configure Connaisseur via <code>validators[*].trust_roots[*].key</code> in <code>helm/values.yaml</code> to pin trust to those keys.
-Both is described below.</p>
+Both is described below.
+However, there is also step-by-step instructions for using Notary in the <a href="getting_started.md">getting started guid</a>.</p>
 <h3 id="creating-signing-key-pairs">Creating signing key pairs<a class="headerlink" href="#creating-signing-key-pairs" title="Permanent link">⚓︎</a></h3>
 <p>You can either create the root key manually or push an image with DCT enabled upon which <code>docker</code> will guide you to set up the keys as described in the next section.
 In order to generate a public-private root key pair manually, you can use:</p>
