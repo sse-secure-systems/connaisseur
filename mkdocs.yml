@@ -1,0 +1,108 @@
+# Project information
+site_name: CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+site_url: https://sse-secure-systems.github.io/connaisseur/
+site_description: >-
+    Admission controller for Kubernetes integrating container image
+    signature verification and trust pinning into a cluster to
+    ensure that only valid images are being deployed - simple,
+    flexible, secure.
+
+# Repository
+repo_name: sse-secure-systems/connaisseur
+repo_url: https://github.com/sse-secure-systems/connaisseur
+edit_uri: ""
+
+# Company
+copyright:  <a href="https://securesystems.de">Secure Systems Engineering GmbH</a> 
+
+
+# Configuration
+theme:
+  language: en
+  name: material
+  custom_dir: docs/overrides
+  palette:
+    primary: blue
+  font:
+    text: Roboto
+    code: Roboto Mono
+  logo: 'assets/logo.svg'
+  favicon: 'assets/favicon.svg'
+  features:
+    - navigation.top
+
+# Extensions
+markdown_extensions:
+  - codehilite
+  - admonition
+  - toc:
+        permalink: ⚓︎
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tabbed
+  - pymdownx.superfences
+
+# Plugins
+
+# Customization
+extra:
+  version:
+      provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/sse-secure-systems
+      name: SSE on GitHub
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/securesystemsengineering/connaisseur
+      name: Connaisseur images on Docker Hub
+    - icon: fontawesome/brands/medium
+      link: https://medium.com/sse-blog
+      name: SSE on Medium
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/channel/UCReAmr98RzwYZeWG6CAwOhg
+      name: SSE on YouTube
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/sse_gmbh
+      name: SSE on Twitter
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/sse-secure-systems-engineering
+      name: SSE on LinkedIn
+    - icon: fontawesome/solid/link
+      link: https://www.securesystems.de/
+      name: SSE Website
+    - icon: fontawesome/solid/envelope
+      link: mailto:connaisseur@securesystems.dev
+      name: Email contact
+
+# Page tree
+nav:
+  - Overview: README.md
+  - getting_started.md
+  - Usage:
+    - basics.md
+    - Validators:
+      - validators/README.md
+      - validators/notaryv1.md
+      - validators/sigstore_cosign.md
+      - validators/notaryv2.md
+    - Features:
+      - features/README.md
+      - features/detection_mode.md
+      - features/namespaced_validation.md
+      - features/alerting.md
+  - Security:
+    - threat_model.md
+    - SECURITY.md
+  - Development:
+    - CONTRIBUTING.md
+    - RELEASING.md
+    - ADRs:
+      - adr/README.md
+      - adr/ADR-1_bootstrap-sentinel.md
+      - adr/ADR-2_release-management.md
+      - adr/ADR-3_multi_notary_config.md
+      - adr/ADR-4_modular.md
+  - Releases ⧉: https://github.com/sse-secure-systems/connaisseur/releases
+  - Support ⧉: https://github.com/sse-secure-systems/connaisseur/discussions
+

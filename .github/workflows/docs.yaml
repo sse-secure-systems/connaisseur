@@ -1,0 +1,30 @@
+name: Build and Deploy Documentation
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set release env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Configure the git user
+        run: |
+          git config user.name "versioning_user"
+          git config user.email "connaisseur@securesystems.dev"
+      - name: Setup Python
+        run: |
+          pip install -r docs/requirements_docs.txt
+      - name: deploy
+        run: |
+          mike deploy --push --update-aliases ${RELEASE_VERSION} latest

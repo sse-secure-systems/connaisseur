@@ -118,6 +118,19 @@ jobs:
           name: safety-report
           path: safety-report.txt
 
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: build
+        run: |
+          pip install -r docs/requirements_docs.txt
+          mkdocs build
+
   trivy:
     runs-on: ubuntu-latest
     container:
