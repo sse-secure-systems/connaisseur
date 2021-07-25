@@ -18,7 +18,7 @@
     
     
       
-        <title>Getting Started - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>Getting Started - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
       
     
     
@@ -80,7 +80,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../assets/logo.svg" alt="logo">
 
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+            CONNAISSEUR - Verify Container Signatures in Kubernetes
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -176,12 +176,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../assets/logo.svg" alt="logo">
 
     </a>
-    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+    CONNAISSEUR - Verify Container Signatures in Kubernetes
   </label>
   
     <div class="md-nav__source">
@@ -538,7 +538,7 @@
   
     <li class="md-nav__item">
       <a href="../SECURITY/" class="md-nav__link">
-        Security Policy
+        Security policy
       </a>
     </li>
   
@@ -811,17 +811,20 @@ You will learn how to:</p>
 <li><a href="#test-connaisseur">Test Connaisseur</a> <em>(and sign images)</em></li>
 <li><a href="#cleanup">Cleanup</a></li>
 </ol>
-<p>In the tutorial, you can choose to use either Docker Content Trust (DCT) based on Notary V1 or Cosign from the Sigstore project as a signing solution referred to as DCT and Cosign from here on.
+<p>In the tutorial, you can choose to use either Notary (V1) via Docker Content Trust (DCT) or Cosign from the Sigstore project as a signing solution referred to as DCT and Cosign from here on.
 Furthermore we will work with public images on <a href="https://hub.docker.com/">Docker Hub</a> as a container registry and a Kubernetes test cluster which might for example be <a href="https://microk8s.io/">MicroK8s</a> or <a href="https://minikube.sigs.k8s.io/docs/">Minikube</a> for local setups.
 However, feel free to bring your own solutions for registry or cluster and checkout our notes on <a href="..#compatibility">compatibility</a>.</p>
 <p>In general, Connaisseur can be fully configured via <code>helm/values.yaml</code>, so feel free to take a look and try for yourself.
 For more advanced usage in more complex cases (e.g. authentication, multiple registries, signers, validators, additional features), we strongly advise to review the following pages:</p>
 <ul>
-<li><a href="../basics/">Basics</a>: <em>understanding and configuring Connaisseur (e.g. image policy and validators)</em></li>
+<li><a href="../basics/">Basics</a>: <em>understanding, configuring and using Connaisseur (e.g. image policy and validators)</em></li>
 <li><a href="../validators/">Validators</a>: <em>applying different signature solutions and specific configurations</em></li>
 <li><a href="../features/">Features</a>: <em>using additional features (e.g. alerting)</em></li>
 </ul>
 <p>In case you need help, feel free to reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a> <img alt="👋" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f44b.svg" title=":wave:" /></p>
+<blockquote>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.695 8.695 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.75.75 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75zM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75zM5.75 12a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5z"/></svg></span> <strong>Note</strong>: As more than only public keys can be used to validate integrity and provenance of an image, we refer to these trust anchors in a generalized form as <em>trust roots</em>.</p>
+</blockquote>
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h2>
 <p>You should have a Kubernetes test cluster running.
 Furthermore, <code>docker</code>, <code>git</code>, <code>helm</code> and <code>kubectl</code> should be installed and usable, i.e. having run <code>docker login</code> and switched to the appropriate <code>kubectl</code> context.</p>
@@ -829,8 +832,8 @@ Furthermore, <code>docker</code>, <code>git</code>, <code>helm</code> and <code>
 <p>Before getting started with Connaisseur, we need to create our signing key pair.
 This obviously depends on the signing solution.
 Here, we will walk you through it for DCT and Cosign.
-In case you have already worked with Docker Content Trust or Cosign before and already possess key pairs, you can skip this step (how to retrieve a previously created DCT key is described <a href="../validators/notaryv1/#getting-the-root-key">here</a>.
-Otherwise, pick your preferred signing scheme below.</p>
+In case you have previously worked with Docker Content Trust or Cosign before and already possess key pairs, you can skip this step (how to retrieve a previously created DCT key is described <a href="../validators/notaryv1/#getting-the-root-public-key">here</a>).
+Otherwise, pick your preferred signing solution below.</p>
 <p>In case you are uncertain which solution to go with, you might be better off to start with DCT, as it comes packaged with <code>docker</code>.
 Cosign on the other hand is somewhat more straightforward to use.</p>
 <div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Docker Content Trust</label><div class="tabbed-content">
@@ -873,7 +876,6 @@ Let's first clone the repository:</p>
 <p>Connaisseur is configured via <code>helm/values.yaml</code>, so we will start there.
 We need to set Connaisseur to use our previously created public key for validation.
 To do so, go to the <code>.validators</code> and find the <code>default</code> validator.
-This one will be used if no validator is specified in the image policy (<code>.policy</code>).
 We need to uncomment the trust root with name <code>default</code> and add our previously created public key.
 The result should look similar to this:</p>
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Docker Content Trust</label><div class="tabbed-content">
@@ -928,7 +930,7 @@ The result should look similar to this:</p>
 </div>
 </div>
 <p>We have now configured the validator <code>default</code> with trust root <code>default</code>.
-This will automatically be used if no validator and trust root is specified in the image policy.
+This will automatically be used if no validator and trust root is specified in the image policy (<code>.policy</code>).
 Per default, Connaisseur's image policy under <code>.policy</code> in <code>helm/values.yaml</code> comes with a pattern <code>"*:*"</code> that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
 Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the <a href="../basics/">basics</a> to leverage the full potential of Connaisseur.</p>
 <h2 id="deploy-connaisseur">Deploy Connaisseur<a class="headerlink" href="#deploy-connaisseur" title="Permanent link">⚓︎</a></h2>
@@ -944,7 +946,7 @@ STATUS: deployed
 REVISION: <span class="m">1</span>
 TEST SUITE: None
 </code></pre></div>
-<p>Afterwards, we can check that Connaisseur is running via <code>kubectl get all -n connaisseur</code> which should show something similar to:</p>
+<p>Afterwards, we can check that Connaisseur is running via <code>kubectl get all -n connaisseur</code> which should look similar to:</p>
 <div class="highlight"><pre><span></span><code>NAME                                          READY   STATUS    RESTARTS   AGE
 pod/connaisseur-deployment-6876c87c8c-txrkj   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m9s
 pod/connaisseur-deployment-6876c87c8c-wvr7q   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m9s
@@ -975,9 +977,11 @@ docker push <span class="si">${</span><span class="nv">IMAGE</span><span class="
 <div class="highlight"><pre><span></span><code>kubectl run <span class="nb">test</span> --image<span class="o">=</span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>Connaisseur denies the request due to lack of trust data or signed digest, e.g.:</p>
-<div class="highlight"><pre><span></span><code>Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: could not find signed digest <span class="k">for</span> image <span class="s2">&quot;docker.io/xoph/demo:test&quot;</span> <span class="k">in</span> trust data.
+<div class="highlight"><pre><span></span><code>Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: Unable to get root trust data from default.
 <span class="c1"># or</span>
-Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: No trust data <span class="k">for</span> image <span class="s2">&quot;docker.io/xoph/demo:test&quot;</span>.
+Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: No trust data <span class="k">for</span> image <span class="s2">&quot;docker.io/securesystemsengineering/demo:test&quot;</span>.
+<span class="c1"># or</span>
+Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: could not find signed digest <span class="k">for</span> image <span class="s2">&quot;docker.io/securesystemsengineering/demo:test&quot;</span> <span class="k">in</span> trust data.
 </code></pre></div>
 <p>So let's sign the image and try again.</p>
 <div class="tabbed-set" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Docker Content Trust</label><div class="tabbed-content">
@@ -985,7 +989,7 @@ Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.conn
 <div class="highlight"><pre><span></span><code>docker push <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span> --disable-content-trust<span class="o">=</span><span class="nb">false</span>
 </code></pre></div>
 <p>You will be prompted to provide your password and might be asked to set a new repository key.
-The trust data will then be pushed to the DockerHub Notary server.</p>
+The trust data will then be pushed to the Docker Hub Notary server.</p>
 </div>
 <input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">Cosign</label><div class="tabbed-content">
 <p>For Cosign, we use the private key file from the first step:</p>

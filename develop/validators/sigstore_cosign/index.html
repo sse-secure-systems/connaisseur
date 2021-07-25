@@ -18,7 +18,7 @@
     
     
       
-        <title>SigStore / Cosign - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>SigStore / Cosign - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
       
     
     
@@ -80,7 +80,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../../assets/logo.svg" alt="logo">
 
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+            CONNAISSEUR - Verify Container Signatures in Kubernetes
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -176,12 +176,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../../assets/logo.svg" alt="logo">
 
     </a>
-    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+    CONNAISSEUR - Verify Container Signatures in Kubernetes
   </label>
   
     <div class="md-nav__source">
@@ -362,6 +362,19 @@
   <a href="#configuration-options" class="md-nav__link">
     Configuration options
   </a>
+  
+    <nav class="md-nav" aria-label="Configuration options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -548,7 +561,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security Policy
+        Security policy
       </a>
     </li>
   
@@ -768,6 +781,19 @@
     Configuration options
   </a>
   
+    <nav class="md-nav" aria-label="Configuration options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -820,7 +846,7 @@
                 <h1 id="sigstore-cosign">SigStore / Cosign<a class="headerlink" href="#sigstore-cosign" title="Permanent link">⚓︎</a></h1>
 <p><a href="https://sigstore.dev/">Sigstore</a> is a <a href="https://linuxfoundation.org/">Linux Foundation</a> project that aims to provide public software signing and transparency to improve open source supply chain security.
 As part of the Sigstore project, <a href="https://github.com/sigstore/cosign">Cosign</a> allows seamless container signing, verification and storage.
-You can read more about it <a href="https://blog.sigstore.dev/cosign-signed-container-images-c1016862618">here</a>.</p>
+You can read more about it <a href="https://blog.sigstore.dev/">here</a>.</p>
 <p>Connaisseur currently supports the elementary function of verifying Cosign-generated signatures against the locally created corresponding public keys.
 We plan to expose further features of Cosign and Sigstore in upcoming releases, so stay tuned!</p>
 <blockquote>
@@ -829,7 +855,8 @@ We plan to expose further features of Cosign and Sigstore in upcoming releases, 
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
 <p>Getting started with Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>.
 Please check there for detailed instructions.
-The currently supported version can be found in our <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/Makefile/#L5">Makefile</a>.
+The currently used version can be found in our <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/Makefile/#L5">Makefile</a>.
+You can download Cosign from its <a href="https://github.com/sigstore/cosign/releases">GitHub repository</a>.
 In short: After installation, a keypair is generated via:</p>
 <div class="highlight"><pre><span></span><code>cosign generate-key-pair
 </code></pre></div>
@@ -861,14 +888,14 @@ The entry in <code>.validators</code> should look something like this (make sure
 <div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
 </code></pre></div>
 <p>A quick guide for installation and testing is available in <a href="../../getting_started/#deploy-connaisseur">getting started</a>.
-In case you just use the default values for the validator and image policy given above, you are able to validate our testimage <code>docker.io/securesystemsengineering/testimage:co-signed</code>:</p>
+In case you just use the default values for the validator and image policy given above, you are able to successfully validate our signed testimage:</p>
 <div class="highlight"><pre><span></span><code>kubectl run signed --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed
 </code></pre></div>
 <p>And compare this to the unsigned image:</p>
 <div class="highlight"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-unsigned
 </code></pre></div>
 <p>Or signed with a different key:</p>
-<div class="highlight"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed-alt
+<div class="highlight"><pre><span></span><code>kubectl run altsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed-alt
 </code></pre></div>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
 <p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys for Cosign (refer to <a href="../../basics/#validators">basics</a> for more information on default keys):</p>
@@ -926,6 +953,24 @@ In case you just use the default values for the validator and image policy given
 </tr>
 </tbody>
 </table>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosign</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN PUBLIC KEY-----</span>
+      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+      <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
+      <span class="no">-----END PUBLIC KEY-----</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/testimage:co-*&quot;</span>
+  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+  <span class="nt">with</span><span class="p">:</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+</code></pre></div>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">⚓︎</a></h3>
 <p>When using a private registry for images and signature data, the credentials need to be provided to Connaisseur.

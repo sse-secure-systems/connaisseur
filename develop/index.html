@@ -18,7 +18,7 @@
     
     
       
-        <title>CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
       
     
     
@@ -80,7 +80,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="assets/logo.svg" alt="logo">
 
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+            CONNAISSEUR - Verify Container Signatures in Kubernetes
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -176,12 +176,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="assets/logo.svg" alt="logo">
 
     </a>
-    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+    CONNAISSEUR - Verify Container Signatures in Kubernetes
   </label>
   
     <div class="md-nav__source">
@@ -572,7 +572,7 @@
   
     <li class="md-nav__item">
       <a href="SECURITY/" class="md-nav__link">
-        Security Policy
+        Security policy
       </a>
     </li>
   
@@ -913,7 +913,7 @@ Successful verification can be tested via official Docker images like <code>hell
 <p>Both will return <code>pod/&lt;name&gt; created</code>. However, when trying to deploy an unsigned image:</p>
 <div class="highlight"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
 </code></pre></div>
-<p>Connaisseur returns an error <code>(...) Unable to find signed digest (...)</code>. Since the images above are signed using Docker Content Trust, you can inspect the trust data using <code>docker trust inspect --pretty &lt;image-name&gt;</code>.</p>
+<p>Connaisseur denies the request and returns an error <code>(...) Unable to find signed digest (...)</code>. Since the images above are signed using Docker Content Trust, you can inspect the trust data using <code>docker trust inspect --pretty &lt;image-name&gt;</code>.</p>
 <p>To uninstall Connaisseur use:</p>
 <div class="highlight"><pre><span></span><code>helm uninstall connaisseur --namespace connaisseur
 </code></pre></div>
@@ -928,7 +928,7 @@ On a very basic level, this requires two steps:</p>
 </ol>
 <p>Connaisseur aims to solve step two.
 This is achieved by implementing several <em>validators</em>, i.e. configurable signature verification modules for different signing solutions (e.g. Notary V1).
-While the detailed security considerations mainly depend on the applied solution, Connaisseur in general verifies the signature over the container image content against a trust anchor (e.g. public key) and thus let's you ensure that images have not been tampered with (integrity) and come from a valid source (provenance).</p>
+While the detailed security considerations mainly depend on the applied solution, Connaisseur in general verifies the signature over the container image content against a trust anchor or <em>trust root</em> (e.g. public key) and thus let's you ensure that images have not been tampered with (integrity) and come from a valid source (provenance).</p>
 <p><img alt="" src="assets/sign-verify.png" /></p>
 <h3 id="trusted-digests">Trusted digests<a class="headerlink" href="#trusted-digests" title="Permanent link">⚓︎</a></h3>
 <p>But what is actually verified?
@@ -942,12 +942,12 @@ This also means that a tag can correspond to varying digests whereas digests are
 The container runtime (e.g. containerd) compares the image content with the received digest before spinning up the container.
 As a result, Connaisseur just needs to make sure that only <em>trusted digests</em> (signed by a trusted entity) are passed to the container runtime.
 Depending on how an image for deployment is referenced, it will either attempt to translate the tag to a trusted digest or validate whether the digest is trusted.
-How the digest is signed in detail, where the signature is stored, what it is verfied against and how different image distribution and updating attacks are mitigated depends on the signature schemes.</p>
+How the digest is signed in detail, where the signature is stored, what it is verfied against and how different image distribution and updating attacks are mitigated depends on the signature solutions.</p>
 <h3 id="mutating-admission-controller">Mutating admission controller<a class="headerlink" href="#mutating-admission-controller" title="Permanent link">⚓︎</a></h3>
 <p>How to validate images <em>before</em> deployment to a cluster?
 The <a href="https://kubernetes.io/docs/concepts/overview/kubernetes-api/">Kubernetes API</a> is the fundamental fabric behind the control plane.
 It allows operators and cluster components to communicate with each other and, for example, query, create, modify or delete Kubernetes resources.
-Each request passes through several phases such as authentication and authorization before it is persisted to etcd.
+Each request passes through several phases such as authentication and authorization before it is persisted to <em>etcd</em>.
 Among those phases are two steps of <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">admission control</a>: mutating and validating admission.
 In those phases the API sends admission requests to configured webhooks (admission controllers) and receives admission responses (admit, deny, or modify).
 Connaisseur uses a mutating admission webhook, as requests are not only admitted or denied based on the validation result but might also require modification of contained images referenced by tags to trusted digests.
@@ -963,13 +963,13 @@ This allows Connaisseur to intercept requests before deployment and based on the
 <p>Now, how does Connaisseur process admission requests?
 A newly received request is first inspected for container image references that need to be validated (1).
 The resulting list of images referenced by tag or digest is passed to the image policy (2).
-The image policy matches the identified images to the configured validators and corresponding trust anchors (e.g. public keys) to be used for verification.
-Image policy and validator configuration form the central logic behind Connaisseur and are described in detail under <a href="basics/">usage/basics</a>.
+The image policy matches the identified images to the configured validators and corresponding trust roots (e.g. public keys) to be used for verification.
+Image policy and validator configuration form the central logic behind Connaisseur and are described in detail und <a href="basics/">basics</a>.
 Validation is the step where the actual signature verification takes place (3).
-For each image, the required trust data is retrieved from external sources such as Notary server, registry or Sigstore transparency log and validated against the pre-configured trust anchor (e.g. public key).
+For each image, the required trust data is retrieved from external sources such as Notary server, registry or Sigstore transparency log and validated against the pre-configured trust root (e.g. public key).
 This forms the basis for deciding on the request (4).
-In case no trusted digest is found for any of the images (i.e. either no signed digest available or no signature matching the public key), the whole request will be denied.
-Otherwise, Connaisseur will translate all image references in the original request to trusted digests and admit it (5).</p>
+In case no trusted digest is found for any of the images (i.e. either no signed digest available or no signature matching the public key), the whole request is denied.
+Otherwise, Connaisseur translates all image references in the original request to trusted digests and admits it (5).</p>
 <p><img alt="" src="assets/connaisseur-overview.png" /></p>
 <h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
 <p>Supported signature solutions and configuration options are documented under <a href="validators/">validators</a>.</p>

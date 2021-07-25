@@ -18,7 +18,7 @@
     
     
       
-        <title>Notary (V1) / DCT - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>Notary (V1) / DCT - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
       
     
     
@@ -80,7 +80,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../../assets/logo.svg" alt="logo">
 
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+            CONNAISSEUR - Verify Container Signatures in Kubernetes
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -176,12 +176,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../../assets/logo.svg" alt="logo">
 
     </a>
-    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+    CONNAISSEUR - Verify Container Signatures in Kubernetes
   </label>
   
     <div class="md-nav__source">
@@ -595,7 +595,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security Policy
+        Security policy
       </a>
     </li>
   
@@ -917,19 +917,19 @@
 It is part of the standard Docker CLI (<code>docker</code>) and for example provides the <a href="https://docs.docker.com/engine/reference/commandline/trust/"><code>docker trust</code></a> commands.</p>
 <p>Using DCT, the trust data is per default pushed to the Notary server associated to the container registry.
 However, not every public container registry provides an associated Notary server and thus support for DCT must be checked for the provider in question.
-<a href="https://hub.docker.com/">DockerHub</a> for example, runs an associated Notary server (notary.docker.io) and even uses it to serve trust data for the <a href="https://docs.docker.com/docker-hub/official_images/">Docker Official Images</a>.
-In fact, since Connaisseur's pre-built images are shared via the <a href="https://hub.docker.com/repository/docker/securesystemsengineering/connaisseur">Connaisseur DockerHub repository</a>, its own trust data is maintained on DockerHub's Notary server.
+<a href="https://hub.docker.com/">Docker Hub</a> for example, runs an associated Notary server (notary.docker.io) and even uses it to serve trust data for the <a href="https://docs.docker.com/docker-hub/official_images/">Docker Official Images</a>.
+In fact, since Connaisseur's pre-built images are shared via the <a href="https://hub.docker.com/repository/docker/securesystemsengineering/connaisseur">Connaisseur Docker Hub repository</a>, its own trust data is maintained on Docker Hub's Notary server.
 Besides the public Notary instances, Notary can also be run as a private or even standalone instance.
 <a href="https://goharbor.io/">Harbor</a> for example comes along with an associated Notary instance.</p>
-<p>Validating a container image via DCT requires a repository's public root key as well as fetching the repository's trust data from the associated Notary server.
+<p>Validating a container image via DCT requires a repository's root public key as well as fetching the repository's trust data from the associated Notary server.
 While DCT relies on <em>trust on first use</em> (TOFU) for repositories' public root keys, Connaisseur enforces manual pinning to a public root key that must be configured in advance.</p>
 <blockquote>
-<p><sup>*</sup> Notary does traditionally not carry the version number. However, in differentiation to the new <a href="https://github.com/notaryproject/notaryproject">Notary V2 project</a> we decided to add a careful "(V1)" to the original project.</p>
+<p><sup>*</sup> Notary does traditionally not carry the version number. However, in differentiation to the new <a href="https://github.com/notaryproject/notaryproject">Notary V2 project</a> we decided to add a careful "(V1)" whenever we refer to the original project.</p>
 </blockquote>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
 <p>In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the root public key of other images and configure Connaisseur via <code>validators[*].trust_roots[*].key</code> in <code>helm/values.yaml</code> to pin trust to those keys.
 Both is described below.
-However, there is also step-by-step instructions for using Notary in the <a href="getting_started.md">getting started guid</a>.</p>
+However, there is also step-by-step instructions for using Notary in the <a href="../../getting_started/">getting started guide</a>.</p>
 <h3 id="creating-signing-key-pairs">Creating signing key pairs<a class="headerlink" href="#creating-signing-key-pairs" title="Permanent link">⚓︎</a></h3>
 <p>You can either create the root key manually or push an image with DCT enabled upon which <code>docker</code> will guide you to set up the keys as described in the next section.
 In order to generate a public-private root key pair manually, you can use:</p>
@@ -947,7 +947,7 @@ YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ<span class="o">==</sp
 How to extract the root public key for any image is described <a href="#getting-the-root-public-key">below</a>.</p>
 <h3 id="creating-signatures">Creating signatures<a class="headerlink" href="#creating-signatures" title="Permanent link">⚓︎</a></h3>
 <p>Before you can start validating images using the Notary (V1) validator, you'll first need an image which has been signed using DCT.
-Easiest way to do this is by pushing an image of your choice (e.g. <code>busybox:stable</code>) to your DockerHub repository with DCT activated (either set the environment variable <code>DOCKER_CONTENT_TRUST=1</code> or use the <code>--disable-content-trust=false</code> flag).
+Easiest way to do this is by pushing an image of your choice (e.g. <code>busybox:stable</code>) to your Docker Hub repository with DCT activated (either set the environment variable <code>DOCKER_CONTENT_TRUST=1</code> or use the <code>--disable-content-trust=false</code> flag).
 If you haven't created any signatures for images in the current repository yet, you'll be asked to enter a passphrase for a root key and targets key, which get generated on your machine.
 Have a look into the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a> to read more about TUF roles and their meanings.
 If you already have these keys, just enter the required passphrase.</p>
@@ -970,7 +970,7 @@ If you already have these keys, just enter the required passphrase.</p>
 </code></pre></div>
 <p>The freshly generated keys are directly imported to the Docker client.
 Private keys reside in <code>~/.docker/trust/private</code> and public trust data is added to <code>~/.docker/trust/tuf/</code>.
-The created signature for your image is pushed to the public DockerHub Notary (notary.docker.io).
+The created signature for your image is pushed to the public Docker Hub Notary (notary.docker.io).
 The private keys and password are required whenever a new version of the image is pushed with DCT activated.</p>
 <h3 id="getting-the-root-public-key">Getting the root public key<a class="headerlink" href="#getting-the-root-public-key" title="Permanent link">⚓︎</a></h3>
 <p>Signature validation via Connaisseur requires the <a href="https://theupdateframework.github.io/specification/latest/#root">root public key</a> to verify against as a trust anchor.
@@ -988,7 +988,7 @@ d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</sp
 There is also the <code>-s</code> (<code>--server</code>) option, which defines the Notary server that should be used and which defaults to <code>notary.docker.io</code>.</p>
 <p>The public repository root key resides with the signature data in the Notary instance, so what the <em>get_root_key</em> utility does in the background is just fetching, locating and parsing the public repository root key for the given image.</p>
 <h3 id="configuring-and-running-connaisseur">Configuring and running Connaisseur<a class="headerlink" href="#configuring-and-running-connaisseur" title="Permanent link">⚓︎</a></h3>
-<p>Now that you either created your own keys and signed images or extracted the public of other images, you will need to configure Connaisseur to use those keys for validation.
+<p>Now that you either created your own keys and signed images or extracted the public key of other images, you will need to configure Connaisseur to use those keys for validation.
 This is done via <code>validators</code> in <code>helm/values.yaml</code>.
 The corresponding entry should look similar to the following (using the extracted public key as trust root):</p>
 <div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
@@ -1074,7 +1074,7 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 <td><code>trust_roots[*].key</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/#validators">basics</a></td>
+<td>see <a href="../../basics/#validators">basics</a>. ECDSA root public key.</td>
 </tr>
 <tr>
 <td><code>auth</code></td>

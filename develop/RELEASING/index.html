@@ -18,7 +18,7 @@
     
     
       
-        <title>Releasing - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>Releasing - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
       
     
     
@@ -80,7 +80,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../assets/logo.svg" alt="logo">
 
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+            CONNAISSEUR - Verify Container Signatures in Kubernetes
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -176,12 +176,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../assets/logo.svg" alt="logo">
 
     </a>
-    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+    CONNAISSEUR - Verify Container Signatures in Kubernetes
   </label>
   
     <div class="md-nav__source">
@@ -463,7 +463,7 @@
   
     <li class="md-nav__item">
       <a href="../SECURITY/" class="md-nav__link">
-        Security Policy
+        Security policy
       </a>
     </li>
   
@@ -552,14 +552,14 @@
       
         <li class="md-nav__item">
   <a href="#adding-new-tag" class="md-nav__link">
-    Adding new Tag
+    Adding new tag
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#creating-changelog" class="md-nav__link">
-    Creating Changelog
+    Creating changelog
   </a>
   
 </li>
@@ -573,7 +573,7 @@
       
         <li class="md-nav__item">
   <a href="#push-new-connaisseur-image" class="md-nav__link">
-    Push new Connaisseur Image
+    Push new Connaisseur image
   </a>
   
 </li>
@@ -587,14 +587,14 @@
       
         <li class="md-nav__item">
   <a href="#create-release-page" class="md-nav__link">
-    Create Release Page
+    Create release page
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#shoot-trouble" class="md-nav__link">
-    Shoot Trouble
+    Shoot trouble
   </a>
   
 </li>
@@ -757,14 +757,14 @@
       
         <li class="md-nav__item">
   <a href="#adding-new-tag" class="md-nav__link">
-    Adding new Tag
+    Adding new tag
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#creating-changelog" class="md-nav__link">
-    Creating Changelog
+    Creating changelog
   </a>
   
 </li>
@@ -778,7 +778,7 @@
       
         <li class="md-nav__item">
   <a href="#push-new-connaisseur-image" class="md-nav__link">
-    Push new Connaisseur Image
+    Push new Connaisseur image
   </a>
   
 </li>
@@ -792,14 +792,14 @@
       
         <li class="md-nav__item">
   <a href="#create-release-page" class="md-nav__link">
-    Create Release Page
+    Create release page
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#shoot-trouble" class="md-nav__link">
-    Shoot Trouble
+    Shoot trouble
   </a>
   
 </li>
@@ -828,9 +828,9 @@
 <li>creating release page</li>
 <li>shoot some trouble</li>
 </ul>
-<h2 id="adding-new-tag">Adding new Tag<a class="headerlink" href="#adding-new-tag" title="Permanent link">⚓︎</a></h2>
+<h2 id="adding-new-tag">Adding new tag<a class="headerlink" href="#adding-new-tag" title="Permanent link">⚓︎</a></h2>
 <p>Before adding the new tag, make sure the Connaisseur version is updated in the <code>helm/values.yaml</code> and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version. Then add the tag (on <code>develop</code> branch) with <code>git tag v&lt;new-conny-version&gt;</code> (e.g. <code>git tag v1.4.6</code>).</p>
-<h2 id="creating-changelog">Creating Changelog<a class="headerlink" href="#creating-changelog" title="Permanent link">⚓︎</a></h2>
+<h2 id="creating-changelog">Creating changelog<a class="headerlink" href="#creating-changelog" title="Permanent link">⚓︎</a></h2>
 <p>A changelog text, including all new commits from one to another version, can be automatically generated using the <code>scrips/changelogger.py</code> script. You have to update the two <code>ref1</code> and <code>ref2</code> variables in the main method with the the old and new git tags. So if you e.g. want to release a new version from <code>v1.4.5</code> to <code>v1.4.6</code>, then you have to set <code>ref1 = "v1.4.5"</code> and <code>ref2 = "v1.4.6"</code>. Then simply run <code>python scripts/changelogger.py &gt; CHANGELOG.md</code>, storing the changelog in a new file <code>CHANGELOG.md</code> (we won't keep this file, it's just for convenient storing purpose). This file will include all new commits, categorized by their type (e.g. fix, feat, docs, etc.), but may include some mistakes so take a manual look if everything looks in order.</p>
 <p>Things to look out for:</p>
 <ul>
@@ -840,14 +840,14 @@
 </ul>
 <h2 id="creating-pr">Creating PR<a class="headerlink" href="#creating-pr" title="Permanent link">⚓︎</a></h2>
 <p>Create a PR from <code>develop</code> to <code>master</code>, putting the changelog text as description and wait for someone to approve it.</p>
-<h2 id="push-new-connaisseur-image">Push new Connaisseur Image<a class="headerlink" href="#push-new-connaisseur-image" title="Permanent link">⚓︎</a></h2>
+<h2 id="push-new-connaisseur-image">Push new Connaisseur image<a class="headerlink" href="#push-new-connaisseur-image" title="Permanent link">⚓︎</a></h2>
 <p>When the PR is approved and ready to be merged, first push the new Connaisseur image to Dockerhub, as it will be used in the release pipeline. Run <code>make docker</code> to build the new version of the docker image and then <code>DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:&lt;new-version&gt;</code> to push and sign it. You'll obviously need the right private key and passphrase for doing so. You also need to be in the list of valid signers for Connaisseur. If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:philipp.belitz@securesystems.de">Philipp Belitz</a>.</p>
 <h2 id="merge-pr">Merge PR<a class="headerlink" href="#merge-pr" title="Permanent link">⚓︎</a></h2>
 <p>Run <code>git checkout master</code> to switch to the <code>master</code> branch and then run <code>git merge develop</code> to merge <code>develop</code> in. Then run <code>git push</code> and <code>git push --tags</code> to publish all changes and the new tag.</p>
-<h2 id="create-release-page">Create Release Page<a class="headerlink" href="#create-release-page" title="Permanent link">⚓︎</a></h2>
+<h2 id="create-release-page">Create release page<a class="headerlink" href="#create-release-page" title="Permanent link">⚓︎</a></h2>
 <p>Finally a release on Github should be created. Go to the <a href="https://github.com/sse-secure-systems/connaisseur/releases">Connaisseur releases page</a>, then click <em>Draft a new release</em>. There you have to enter the new tag version, a title (usually <code>Version &lt;new-version&gt;</code>) and the changelog text as description. Then click <em>Publish release</em> and you're done! (You can delete the CHANGELOG.md file now. Go and do it.)</p>
 <p><img alt="gh_release_flow" src="../assets/gh_release.png" /></p>
-<h2 id="shoot-trouble">Shoot Trouble<a class="headerlink" href="#shoot-trouble" title="Permanent link">⚓︎</a></h2>
+<h2 id="shoot-trouble">Shoot trouble<a class="headerlink" href="#shoot-trouble" title="Permanent link">⚓︎</a></h2>
 <p>Be aware that this <strong>isn't</strong> a completely fleshed out, highly available, hyper scalable and fully automated workflow, backed up by state-of-the-art blockchain technology and 24/7 incident response team coverage with global dominance! Not yet at least. For now things will probably break, so make sure that in the end everything looks to be in order and the new release can be seen on the Github page, tagged with <em>Latest release</em> and pointing to the correct version of Connaisseur. Good Luck!</p>
                 
               
