@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/">
       
       <link rel="icon" href="assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.0">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.1">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.fe914879.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.1118c9be.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.ba0d045b.min.css">
@@ -952,7 +952,7 @@ Among those phases are two steps of <a href="https://kubernetes.io/docs/referenc
 In those phases the API sends admission requests to configured webhooks (admission controllers) and receives admission responses (admit, deny, or modify).
 Connaisseur uses a mutating admission webhook, as requests are not only admitted or denied based on the validation result but might also require modification of contained images referenced by tags to trusted digests.
 The webhook is configured to only forward resource creation or update requests to the Connaisseur service running inside the cluster, since only deployments of images to the cluster are relevant for signature verification.
-This allows Connaisseur to intercept requests before deployment and based on the validation: </p>
+This allows Connaisseur to intercept requests before deployment and based on the validation:</p>
 <ul>
 <li><em>admit</em> if all images are referenced by trusted digests</li>
 <li><em>modify</em> if all images can be translated to trusted digests</li>
@@ -1005,7 +1005,7 @@ Bug reports should be filed as <a href="https://github.com/sse-secure-systems/co
 <p>We hope to get as many direct contributions and insights from the community as possible to steer further development.
 Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">create an issue</a> or <a href="https://github.com/sse-secure-systems/connaisseur/discussions">reach out to us via GitHub Discussions</a> <img alt="🙏" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f64f.svg" title=":pray:" /></p>
 <h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">⚓︎</a></h2>
-<p>Several resources are available to learn more about connaisseur and related topics:</p>
+<p>Several resources are available to learn more about Connaisseur and related topics:</p>
 <ul>
 <li>"<a href="https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce"><em>Container Image Signatures in Kubernetes</em></a>" - blog post (full introduction)</li>
 <li>"<a href="https://berlin-crypto.github.io/event/dockerimagesignatures.html"><em>Integrity of Docker images</em></a>" - talk at Berlin Crypto Meetup (<em>The Update Framework</em>, <em>Notary</em>, <em>Docker Content Trust</em> &amp; Connaisseur [live demo])</li>
