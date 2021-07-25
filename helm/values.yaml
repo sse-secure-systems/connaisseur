@@ -21,10 +21,10 @@ service:
   port: 443
 
 ### VALIDATORS ###
-# validators are a set of configurations (hosts, types, public keys) that can be
-# used for validating one or multiple images (or image signatures). they are tied
-# to their respective image(s) via the image policy below. there are a few handy
-# validators pre-configured.
+# validators are a set of configurations (types, public keys, authentication)
+# that can be used for validating one or multiple images (or image signatures).
+# they are tied to their respective image(s) via the image policy below. there
+# are a few handy validators pre-configured.
 validators:
 # static validator that allows each image
 - name: allow
@@ -37,24 +37,24 @@ validators:
 # the `default` validator is used if no validator is specified in image policy
 - name: default
   type: notaryv1  # or other supported validator (e.g. "cosign")
-  host: notary.docker.io # configure the notary server to be used
+  host: notary.docker.io # in case of notaryv1, configure the notary server to be used
   trust_roots:
-  # the `default` key is used if no key is specified in image policy
+  # # the `default` key is used if no key is specified in image policy
   #- name: default
-  #  key: |  # enter your key below
+  #  key: |  # enter your public key below
   #    -----BEGIN PUBLIC KEY-----
   #    <add your public key here>
   #    -----END PUBLIC KEY-----
-  #cert: |  # for communication, using a selfsigned certificate
+  #cert: |  # in case the trust data host is using a selfsigned certificate
   #  -----BEGIN CERTIFICATE-----
   #  ...
   #  -----END CERTIFICATE-----
-  #auth:  # basic authentication against the notary server
-  #  # either
-  #  username: notaryuser
-  #  password: notarypass
-  #  # or
-  #  secret_name: notarysecret  # define a k8s secret with `username` and `password` fields
+  #auth:  # credentials in case the trust data requires authentication
+  #  # either (preferred solution)
+  #  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
+  #  # or (only for notaryv1 validator)
+  #  username: myuser
+  #  password: mypass
 # pre-configured nv1 validator for public notary from Docker Hub
 - name: dockerhub_basics
   type: notaryv1
@@ -79,7 +79,7 @@ validators:
 
 ### IMAGE POLICY ###
 # the image policy ties validators and images together whereby always only the most specific rule (pattern)
-# is applied. specify if and how images should be validated by which validator.
+# is applied. specify if and how images should be validated by which validator via the validator name.
 policy:
 - pattern: "*:*"
 - pattern: "docker.io/library/*:*"
