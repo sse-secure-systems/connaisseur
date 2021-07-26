@@ -24,7 +24,7 @@ jobs:
 
   integration-test:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [version-match]
     strategy:
       matrix:
         integration-test-script: [ 'integration-test.sh', 'cosign-integration-test.sh' , 'namespaced-integration-test.sh' ]
