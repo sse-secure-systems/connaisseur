@@ -18,7 +18,7 @@
     
     
       
-        <title>Releasing - CONNAISSEUR - Verify Container Signatures in Kubernetes</title>
+        <title>Releasing - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
@@ -90,7 +90,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../assets/logo.svg" alt="logo">
 
@@ -102,7 +102,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CONNAISSEUR - Verify Container Signatures in Kubernetes
+            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -186,12 +186,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="CONNAISSEUR - Verify Container Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
   <img src="../assets/logo.svg" alt="logo">
 
     </a>
-    CONNAISSEUR - Verify Container Signatures in Kubernetes
+    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
   </label>
   
     <div class="md-nav__source">
@@ -561,6 +561,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#check-readiness" class="md-nav__link">
+    Check readiness
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#adding-new-tag" class="md-nav__link">
     Adding new tag
   </a>
@@ -766,6 +773,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#check-readiness" class="md-nav__link">
+    Check readiness
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#adding-new-tag" class="md-nav__link">
     Adding new tag
   </a>
@@ -830,6 +844,7 @@
                 <h1 id="releasing">Releasing<a class="headerlink" href="#releasing" title="Permanent link">⚓︎</a></h1>
 <p>Releasing a new version of Connaisseur includes the following steps:</p>
 <ul>
+<li>check readiness</li>
 <li>adding a new version tag</li>
 <li>creating a changelog from commit messages</li>
 <li>creating a PR from <code>develop</code> (new version) to <code>master</code> (current version)</li>
@@ -838,6 +853,13 @@
 <li>creating release page</li>
 <li>shoot some trouble</li>
 </ul>
+<h2 id="check-readiness">Check readiness<a class="headerlink" href="#check-readiness" title="Permanent link">⚓︎</a></h2>
+<p>Before starting the release, make sure everything is ready and in order.
+See that all tests are running smoothly.
+Check that documentation changes show up correctly <a href="https://sse-secure-systems.github.io/connaisseur/develop/">here</a>.
+Make sure the Connaisseur version is incremented correctly according to the changes.
+See if the docs announcements should be adjusted <a href="https://github.com/sse-secure-systems/connaisseur/blob/docs/documentation-2.0/docs/overrides/main.html">here</a>.
+Consider making a <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions <em>announcement</em></a>.</p>
 <h2 id="adding-new-tag">Adding new tag<a class="headerlink" href="#adding-new-tag" title="Permanent link">⚓︎</a></h2>
 <p>Before adding the new tag, make sure the Connaisseur version is updated in the <code>helm/values.yaml</code> and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version. Then add the tag (on <code>develop</code> branch) with <code>git tag v&lt;new-conny-version&gt;</code> (e.g. <code>git tag v1.4.6</code>).</p>
 <h2 id="creating-changelog">Creating changelog<a class="headerlink" href="#creating-changelog" title="Permanent link">⚓︎</a></h2>
