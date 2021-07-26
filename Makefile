@@ -31,4 +31,5 @@ upgrade:
 	helm upgrade connaisseur helm --wait
 
 annihilate:
-	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies,secrets,serviceaccounts -lapp.kubernetes.io/instance=connaisseur
+	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies,secrets,serviceaccounts,crds -lapp.kubernetes.io/instance=connaisseur
+	kubectl delete ns $(NAMESPACE)
