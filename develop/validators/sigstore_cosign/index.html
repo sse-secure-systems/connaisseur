@@ -76,6 +76,16 @@
     </div>
     <div data-md-component="announce">
       
+        <aside class="md-announce">
+          <div class="md-announce__inner md-grid md-typeset">
+            
+  <!-- Add your announcement here, including arbitrary HTML -->
+   <header style="font-size:17px"> 
+       <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/151"> many more ...<a>
+
+          </div>
+        </aside>
+      
     </div>
     
       <header class="md-header" data-md-component="header">
@@ -913,7 +923,7 @@ In case you just use the default values for the validator and image policy given
 <td><code>name</code></td>
 <td></td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/#validators">basics</a></td>
+<td>See <a href="../../basics/#validators">basics</a>.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
@@ -925,13 +935,13 @@ In case you just use the default values for the validator and image policy given
 <td><code>trust_roots[*].name</code></td>
 <td></td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/#validators">basics</a></td>
+<td>See <a href="../../basics/#validators">basics</a>.</td>
 </tr>
 <tr>
 <td><code>trust_roots[*].key</code></td>
 <td></td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/#validators">basics</a>. ECDSA public key from <code>cosign.pub</code> file.</td>
+<td>See <a href="../../basics/#validators">basics</a>. ECDSA public key from <code>cosign.pub</code> file.</td>
 </tr>
 <tr>
 <td><code>host</code></td>
@@ -980,7 +990,7 @@ The secret can for example be created directly from your local <code>config.json
   --from-file<span class="o">=</span>.dockerconfigjson<span class="o">=</span>path/to/config.json <span class="se">\</span>
   --type<span class="o">=</span>kubernetes.io/dockerconfigjson -n connaisseur
 </code></pre></div>
-<p>In the above case, in the secret name in Connaisseur configuration would be <code>secret_name: my-secret</code>.
+<p>In the above case, the secret name in Connaisseur configuration would be <code>secret_name: my-secret</code>.
 It is possible to provide one Kubernetes secret with a <code>config.json</code> for authentication to multiple private registries and referencing this in multiple validators.</p>
 <h3 id="verification-against-transparency-log">Verification against transparency log<a class="headerlink" href="#verification-against-transparency-log" title="Permanent link">⚓︎</a></h3>
 <p>Connaisseur already verifies signatures against the transparency log.

@@ -76,6 +76,16 @@
     </div>
     <div data-md-component="announce">
       
+        <aside class="md-announce">
+          <div class="md-announce__inner md-grid md-typeset">
+            
+  <!-- Add your announcement here, including arbitrary HTML -->
+   <header style="font-size:17px"> 
+       <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/151"> many more ...<a>
+
+          </div>
+        </aside>
+      
     </div>
     
       <header class="md-header" data-md-component="header">
@@ -1027,8 +1037,8 @@ What happens in the background is that Connaisseur looks up trust data of the im
 Trust data syntax is validated against their known schemas and the files' signatures are validated against their respective public keys.
 The pinned root key is used for the <code>root.json</code> file that in turn contains the other keys which can then be trusted for validation of the remaining trust data (<code>snapshot.json</code>, <code>timestamp.json</code>, <code>targets.json</code>).
 Furthermore, Connaisseur gathers trust data of potential delegations linked in the <code>targets</code> file which can then be used to <a href="#enforcing-delegations">enforce delegations</a>.</p>
-<p>At this point, Connaisseur is left with a set of potentially disjoint or overlapping sets of trust data.
-Connaisseur filters the trust data for signed digests that actually relate to the image under validation.
+<p>At this point, Connaisseur is left with a validated set of trust data.
+Connaisseur filters the trust data for consistent signed digests that actually relate to the image under validation.
 In case exactly one trusted digest remains, Connaisseur modifies the admission request and admits it.
 Otherwise, admission is rejected.</p>
 <p>While it is obvious to reject an image that does not exhibit a trusted digest, there is the special case of multiple trusted digests.
@@ -1050,7 +1060,7 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 <td><code>name</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/#validators">basics</a></td>
+<td>See <a href="../../basics/#validators">basics</a>.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
@@ -1068,48 +1078,48 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 <td><code>trust_roots[*].name</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/#validators">basics</a></td>
+<td>See <a href="../../basics/#validators">basics</a>.</td>
 </tr>
 <tr>
 <td><code>trust_roots[*].key</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>see <a href="../../basics/#validators">basics</a>. ECDSA root public key.</td>
+<td>See <a href="../../basics/#validators">basics</a>. ECDSA root public key.</td>
 </tr>
 <tr>
 <td><code>auth</code></td>
 <td>-</td>
-<td>-</td>
+<td></td>
 <td>Provide authentication credentials for the Notary server in case the trust data is not public.</td>
 </tr>
 <tr>
 <td><code>auth.secret_name</code></td>
 <td>-</td>
-<td>-</td>
+<td></td>
 <td>(Preferred over <code>username</code> + <code>password</code> combination.) References a Kubernetes secret that must exist beforehand. Create a file <code>auth.yaml</code> containing <br/>&nbsp;&nbsp; <code>username: &lt;user&gt;</code> <br/>&nbsp;&nbsp; <code>password: &lt;password&gt;</code> <br/> and run <code>kubectl create secret generic &lt;kube-secret-name&gt; --from-file auth.yaml</code>.</td>
 </tr>
 <tr>
 <td><code>auth.username</code></td>
 <td>-</td>
-<td>-</td>
+<td></td>
 <td>The username to authenticate with. It is recommended to use <code>auth.secret_name</code> instead.</td>
 </tr>
 <tr>
 <td><code>auth.password</code></td>
 <td>-</td>
-<td>-</td>
+<td></td>
 <td>The password or access token to authenticate with. It is recommended to use <code>auth.secret_name</code> instead.</td>
 </tr>
 <tr>
 <td><code>cert</code></td>
 <td>-</td>
-<td>-</td>
+<td></td>
 <td>If the Notary instance uses a self-signed certificate, that cert must be supplied here in <code>.pem</code> format.</td>
 </tr>
 <tr>
 <td><code>is_acr</code></td>
 <td><code>false</code></td>
-<td>-</td>
+<td></td>
 <td>Must be specified when using Azure Container Registry (ACR) as it does not offer a health probe according to Notary API specs.</td>
 </tr>
 </tbody>
@@ -1128,7 +1138,7 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 <tr>
 <td><code>with.delegations</code></td>
 <td>-</td>
-<td>-</td>
+<td></td>
 <td>List of delegation names to enforce specific signers to be present. Refer to section on <a href="#enforcing-delegations">enforcing delegations</a> for more information.</td>
 </tr>
 </tbody>

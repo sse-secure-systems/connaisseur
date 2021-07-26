@@ -76,6 +76,16 @@
     </div>
     <div data-md-component="announce">
       
+        <aside class="md-announce">
+          <div class="md-announce__inner md-grid md-typeset">
+            
+  <!-- Add your announcement here, including arbitrary HTML -->
+   <header style="font-size:17px"> 
+       <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/151"> many more ...<a>
+
+          </div>
+        </aside>
+      
     </div>
     
       <header class="md-header" data-md-component="header">
@@ -554,8 +564,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#setup-the-environment" class="md-nav__link">
-    Setup the environment
+  <a href="#set-up-the-environment" class="md-nav__link">
+    Set up the environment
   </a>
   
 </li>
@@ -777,8 +787,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#setup-the-environment" class="md-nav__link">
-    Setup the environment
+  <a href="#set-up-the-environment" class="md-nav__link">
+    Set up the environment
   </a>
   
 </li>
@@ -846,7 +856,7 @@ So be bold and contribute to the code as described in the <a href="#contribute-t
 This includes the following steps:</p>
 <ol>
 <li><strong>Setup your environment</strong>:
-   Setup up your local environment to best interact with the code.
+   Set up up your local environment to best interact with the code.
    Further information is given <a href="#setup-the-environment">below</a>.</li>
 <li><strong>Make atomic changes</strong>:
    Changes should be atomic.
@@ -857,12 +867,12 @@ This includes the following steps:</p>
 <li><strong>Create semantic, conventional and signed commits</strong>:
    Any commits should follow a simple semantic convention to help structure the work on Connaisseur. The convention is described <a href="#semantic-and-conventional-commits">below</a>. For security reasons and since integrity is at the core of this project, code merged into master must be signed.
    How we achieve this is described <a href="#signed-commits-and-pull-requests">below</a>.</li>
-<li><strong>Create Pull Request</strong>:
+<li><strong>Create pull requests</strong>:
    We consider code review central to quality and security of code.
    Therefore, a pull request (PR) to the <code>develop</code> branch should be created for each contribution. It will be reviewed, and potential improvements may be discussed within the PR. After approval, changes will be merged and moved to the <code>master</code> branch with the next release.</li>
 </ol>
-<h3 id="setup-the-environment">Setup the environment<a class="headerlink" href="#setup-the-environment" title="Permanent link">⚓︎</a></h3>
-<p>To start contributing, you will need to setup your local environment.
+<h3 id="set-up-the-environment">Set up the environment<a class="headerlink" href="#set-up-the-environment" title="Permanent link">⚓︎</a></h3>
+<p>To start contributing, you will need to set up your local environment.
 First step is to get the source code by cloning this repository:</p>
 <p><div class="highlight"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
 </code></pre></div>
@@ -908,7 +918,7 @@ pytest --cov=connaisseur --cov-report=xml tests/
 <li>a signed image is deployed to the cluster and passed</li>
 <li>Connaisseur is successfully uninstalled</li>
 </ul>
-<p>You can also run this integration test on a local cluster. There is a more <a href="https://github.com/sse-secure-systems/connaisseur/blob/docs/documentation-2.0/tests/integration/README.md">detailed guided</a> on how to do that.</p>
+<p>You can also run this integration test on a local cluster. There is a more <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/tests/integration/README.md">detailed guided</a> on how to do that.</p>
 <p>If you are changing documentation, you can simply inspect your changes locally via:</p>
 <div class="highlight"><pre><span></span><code>docker run --rm -it -p <span class="m">8000</span>:8000 -v <span class="si">${</span><span class="nv">PWD</span><span class="si">}</span>:/docs squidfunk/mkdocs-material
 </code></pre></div>
