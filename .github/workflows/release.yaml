@@ -27,7 +27,7 @@ jobs:
     needs: [version-match]
     strategy:
       matrix:
-        integration-test-script: [ 'integration-test.sh', 'cosign-integration-test.sh' , 'namespaced-integration-test.sh' ]
+        integration-test-script: [ 'integration-test.sh', 'preconfig-integration-test.sh', 'cosign-integration-test.sh' , 'namespaced-integration-test.sh' ]
     services:
       alerting-endpoint:
         image: securesystemsengineering/alerting-endpoint
@@ -35,9 +35,16 @@ jobs:
           - 56243:56243
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: images
+      - name: Install yq and bash
+        run: |
+          sudo snap install yq
+          sudo apt update
+          sudo apt install bash -y
+      - name: Load Docker images
+        run: |
+          DOCKER_CONTENT_TRUST=1 docker pull $(yq e '.deployment.image' helm/values.yaml)
+          DOCKER_CONTENT_TRUST=1 docker pull $(yq e '.deployment.helmHookImage' helm/values.yaml)
+        shell: bash
       - uses: ./.github/actions/integration-test
         with:
           integration-test-script: ${{ matrix.integration-test-script }}
