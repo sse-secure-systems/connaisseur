@@ -170,6 +170,11 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: images
+      - name: Load Docker images
+        run: |
+          docker load -i ${GITHUB_SHA}_image.tar
+          docker load -i ${GITHUB_SHA}_hook.tar
+        shell: bash
       - uses: ./.github/actions/integration-test
         with:
           integration-test-script: ${{ matrix.integration-test-script }}

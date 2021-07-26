@@ -7,11 +7,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Load Docker images
-      run: |
-        docker load -i ${GITHUB_SHA}_image.tar
-        docker load -i ${GITHUB_SHA}_hook.tar
-      shell: bash
     - name: Install yq and bash
       run: |
         sudo snap install yq
