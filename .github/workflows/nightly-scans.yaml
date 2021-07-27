@@ -27,7 +27,7 @@ jobs:
   safety:
     runs-on: ubuntu-latest
     container:
-      image: python:alpine
+      image: python:slim
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/safety
