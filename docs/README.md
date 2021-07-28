@@ -12,7 +12,7 @@ Connaisseur is developed under three core values: *Security*, *Usability*, *Comp
 It is built to be extendable and currently aims to support the following signing solutions:
 
 - [Notary (V1)](https://github.com/theupdateframework/notary) / [Docker Content Trust](https://docs.docker.com/engine/security/trust/)
-- [Sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign) (EXPERIMENTAL)
+- [Sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign)
 - [Notary V2](https://github.com/notaryproject/nv2) (PLANNED)
 
 It provides several additional features:

@@ -65,8 +65,7 @@ Cosign on the other hand is somewhat more straightforward to use.
 === "Cosign"
 
     Usage of Cosign is very well described in the [docs](https://github.com/sigstore/cosign).
-    As Cosign is in pre-release state, you might want to check the currently used version in our [Makefile](https://github.com/sse-secure-systems/connaisseur/blob/master/Makefile/#L5).
-    While no major incompatibilities are expected and everything might work with later releases, it is advised to use the corresponding version which is available for download on the [Cosign GitHub](https://github.com/sigstore/cosign/releases).
+    You can download Cosign from its [GitHub repository](https://github.com/sigstore/cosign/releases).
     A keypair is generated via:
 
     ```bash

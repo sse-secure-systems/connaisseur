@@ -121,7 +121,7 @@ class CosignValidator(ValidatorInterface):
         returns the returncode, stdout and stderr. Will raise an exception if cosign times out.
         """
 
-        key = load_key(pubkey)  # raises if invalid; return value not used
+        key = load_key(pubkey)  # raises if invalid
         home = f"/app/connaisseur-config/{self.name}"
         cmd = ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image]
 
