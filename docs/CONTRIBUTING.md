@@ -20,9 +20,9 @@ In case you require a more private communication, you can reach us via [connaiss
 The following steps will help you make code contributions to Connaisseur and ensure good code quality and workflow.
 This includes the following steps:
 
-1. **Setup your environment**:
+1. **Set up your environment**:
    Set up up your local environment to best interact with the code.
-   Further information is given [below](#setup-the-environment).
+   Further information is given [below](#set-up-the-environment).
 2. **Make atomic changes**:
    Changes should be atomic.
    As such, pull requests should contain only few commits, and each commit should only fix one issue or implement one feature, with a concise commit message.
@@ -76,7 +76,7 @@ We recommend the following approach for running pytest in a container:
 ```
 docker run -it --rm -v <path-to-repository>:/data --entrypoint=ash python:alpine
 cd data
-pip3 install -r requirements_dev.txt
+YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
 pytest --cov=connaisseur --cov-report=xml tests/
 ```
 
@@ -104,11 +104,11 @@ docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
 ### Signed commits and pull requests
 All changes to the `develop` and `master` branch must be signed which is enforced via [branch protection](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing).
 This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor.
-Consequently, while we appreciate signed commits in PRs, we do not require it.
+Consequently, we appreciate but do not require that commits in PRs are signed.
 
 A general introduction into signing commits can for example be found in the [With Blue Ink blog](https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html). For details on setting everything up for GitHub, please follow the steps in the [Documentation](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification).
 
-Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are setup to create signed commits.
+Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are set up to create signed commits.
 We recommend to configure Git to sign commits by default via:
 ```bash
 git config commit.gpgsign true
@@ -149,6 +149,7 @@ We want to use the following common types in the header:
 - _fix_: fixing an issue or bug
 - _refactor_: adjustment of code base to improve code quality or performance but not adding a feature or fixing a bug
 - _test_: testing related changes
+- _update_: updating a dependency
 
 A complete commit message could therefore look as follows:
 ```

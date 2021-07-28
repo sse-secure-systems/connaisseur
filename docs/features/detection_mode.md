@@ -15,9 +15,9 @@ To activate the detection mode, set the `detectionMode` flag to `true` in `helm/
 
 `detectionMode` in `helm/values.yaml` supports the following keys:
 
-| key | default | required | description |
+| Key | Default | Required | Description |
 | - | - | - | - |
-| `detectionMode` | false | | `true`/`false`; when detection mode is enabled, Connaisseur will warn but not deny requests with untrusted images |
+| `detectionMode` | false | | `true` or `false`; when detection mode is enabled, Connaisseur will warn but not deny requests with untrusted images. |
 
 ## Example
 

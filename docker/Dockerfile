@@ -1,6 +1,6 @@
 FROM python:3-alpine as base
 
-# build dependencies
+# Build dependencies
 FROM base as builder
 
 RUN mkdir /install
@@ -9,7 +9,7 @@ COPY requirements.txt /requirements.txt
 # Since we run inside an alpine based container, we cannot compile yarl and multidic
 RUN YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install --no-cache-dir --prefix=/install -r /requirements.txt
 
-# build cosign
+# Build Cosign
 FROM golang:buster as go_builder
 
 ARG COSIGN_VERSION
@@ -17,7 +17,7 @@ RUN git clone -b "v${COSIGN_VERSION}" --single-branch --depth 1 https://github.c
 WORKDIR /go/cosign
 RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ./cmd/cosign/main.go
 
-# build connaisseur image
+# Build Connaisseur image
 FROM base
 
 WORKDIR /app

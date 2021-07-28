@@ -44,9 +44,9 @@ class CosignValidator(ValidatorInterface):
 
     def __get_cosign_validated_digests(self, image: str, pubkey: str):
         """
-        Gets and processes cosign validation output for a given `image` and `pubkey`
+        Gets and processes Cosign validation output for a given `image` and `pubkey`
         and either returns a list of valid digests or raises a suitable exception
-        in case no valid signature is found or cosign fails.
+        in case no valid signature is found or Cosign fails.
         """
         returncode, stdout, stderr = self.__invoke_cosign(image, pubkey)
         logging.info(
@@ -71,7 +71,7 @@ class CosignValidator(ValidatorInterface):
                     except Exception as err:
                         msg = (
                             "Could not retrieve valid and unambiguous digest from data "
-                            "received by cosign: {err_type}: {err}"
+                            "received by Cosign: {err_type}: {err}"
                         )
                         raise UnexpectedCosignData(
                             message=msg, err_type=type(err).__name__, err=str(err)
@@ -79,7 +79,7 @@ class CosignValidator(ValidatorInterface):
                     # remove prefix 'sha256'
                     digests.append(digest.removeprefix("sha256:"))
                 except json.JSONDecodeError:
-                    logging.info("non-json signature data from cosign: %s", sig)
+                    logging.info("non-json signature data from Cosign: %s", sig)
                     pass
         elif "error: no matching signatures:\nfailed to verify signature\n" in stderr:
             msg = "Failed to verify signature of trust data."
@@ -100,7 +100,7 @@ class CosignValidator(ValidatorInterface):
                 image=str(image),
             )
         else:
-            msg = 'Unexpected cosign exception for image "{image}": {stderr}.'
+            msg = 'Unexpected Cosign exception for image "{image}": {stderr}.'
             raise CosignError(
                 message=msg,
                 trust_data_type="dev.cosignproject.cosign/signature",
@@ -109,7 +109,7 @@ class CosignValidator(ValidatorInterface):
             )
         if not digests:
             msg = (
-                "Could not extract any digest from data received by cosign "
+                "Could not extract any digest from data received by Cosign "
                 "despite successful image verification."
             )
             raise UnexpectedCosignData(message=msg)
@@ -117,8 +117,8 @@ class CosignValidator(ValidatorInterface):
 
     def __invoke_cosign(self, image, pubkey):
         """
-        Invokes a cosign binary in a subprocess for a specific `image` given a `pubkey` and
-        returns the returncode, stdout and stderr. Will raise an exception if cosign times out.
+        Invokes the Cosign binary in a subprocess for a specific `image` given a `pubkey` and
+        returns the returncode, stdout and stderr. Will raise an exception if Cosign times out.
         """
 
         key = load_key(pubkey)  # raises if invalid

@@ -26,10 +26,10 @@ Configure namespaced validation via the `namespacedValidation` in `helm/values.y
 
 `namespacedValidation` in `helm/values.yaml` supports the following keys:
 
-| key | default | required | description |
+| Key | Default | Required | Description |
 | - | - | - | - |
-| `enabled` | false | | `true`/`false`; enable namespaced validation otherwise images in all namespaces will be validated |
-| `mode` | ignore | | `ignore`/`validate`; configure mode of exclusion to either ignore all namespaces with label `securesystemsengineering.connaisseur/webhook` set to `ignore` or only validate namespaces with the label set to `validate` |
+| `enabled` | false | | `true` or `false`; enable namespaced validation otherwise images in all namespaces will be validated. |
+| `mode` | ignore | | `ignore` or `validate`; configure mode of exclusion to either ignore all namespaces with label `securesystemsengineering.connaisseur/webhook` set to `ignore` or only validate namespaces with the label set to `validate`. |
 
 ## Example
 

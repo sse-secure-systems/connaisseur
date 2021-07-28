@@ -12,7 +12,7 @@ Connaisseur is developed under three core values: *Security*, *Usability*, *Comp
 It is built to be extendable and currently aims to support the following signing solutions:
 
 - [Notary (V1)](https://github.com/theupdateframework/notary) / [Docker Content Trust](https://docs.docker.com/engine/security/trust/)
-- [Sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign)
+- [sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign)
 - [Notary V2](https://github.com/notaryproject/nv2) (PLANNED)
 
 It provides several additional features:
@@ -131,7 +131,7 @@ The resulting list of images referenced by tag or digest is passed to the image 
 The image policy matches the identified images to the configured validators and corresponding trust roots (e.g. public keys) to be used for verification.
 Image policy and validator configuration form the central logic behind Connaisseur and are described in detail und [basics](./basics.md).
 Validation is the step where the actual signature verification takes place (3).
-For each image, the required trust data is retrieved from external sources such as Notary server, registry or Sigstore transparency log and validated against the pre-configured trust root (e.g. public key).
+For each image, the required trust data is retrieved from external sources such as Notary server, registry or sigstore transparency log and validated against the pre-configured trust root (e.g. public key).
 This forms the basis for deciding on the request (4).
 In case no trusted digest is found for any of the images (i.e. either no signed digest available or no signature matching the public key), the whole request is denied.
 Otherwise, Connaisseur translates all image references in the original request to trusted digests and admits it (5).
@@ -186,4 +186,5 @@ Several resources are available to learn more about Connaisseur and related topi
 
 - "[*Container Image Signatures in Kubernetes*](https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce)" - blog post (full introduction)
 - "[*Integrity of Docker images*](https://berlin-crypto.github.io/event/dockerimagesignatures.html)" - talk at Berlin Crypto Meetup (*The Update Framework*, *Notary*, *Docker Content Trust* & Connaisseur [live demo])
-- "[*Verifying Container Image Signatures from an OCI Registry in Kubernetes*](https://blog.sigstore.dev/verify-oci-container-image-signatures-in-kubernetes-33663a9ec7d8)" - blog post (experimental support of *Sigstore*/*Cosign*)
+- "[*Verifying Container Image Signatures from an OCI Registry in Kubernetes*](https://blog.sigstore.dev/verify-oci-container-image-signatures-in-kubernetes-33663a9ec7d8)" - blog post (experimental support of *sigstore*/*Cosign*)
+- "[*Verify Container Image Signatures in Kubernetes using Notary or Cosign or both*](https://medium.com/sse-blog/verify-container-image-signatures-in-kubernetes-using-notary-or-cosign-or-both-c25d9e79ec45)" - blog post (Connaisseur v2.0 release)

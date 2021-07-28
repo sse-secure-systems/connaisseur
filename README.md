@@ -34,9 +34,9 @@ It provides several additional features:
 - [Alerting](docs/features/alerting.md): *send alerts based on verification result*
 
 
-## Quick Start
+## Quick start
 
-Getting started to verify image signatures is only a matter of minutes: 
+Getting started to verify image signatures is only a matter of minutes:
 
 ![](docs/assets/connaisseur_demo.gif)
 
@@ -88,13 +88,13 @@ To uninstall all components add the `--purge` flag.
 Congrats :tada: you just validated the first images in your cluster!
 To get started configuring and verifying your own images and signatures, please follow our [setup guide](https://sse-secure-systems.github.io/connaisseur/latest/getting_started/).
 
-## Discussions, Support & Feedback
+## Discussions, support & feedback
 We hope to steer development of Connaisseur from demand of the community, are excited about your feedback and happy to help if you need support! So feel free to connect with us via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions).
 
 ## Contributing
 We are always excited about direct contributions to improve the tool! Please refer to our [contributing guide](docs/CONTRIBUTING.md) to learn how to contribute to Connaisseur.
 
-## Security Policy
+## Security policy
 
 We are grateful for any community support reporting vulnerabilities! How to submit a report is described in our [Security Policy](docs/SECURITY.md).
 
