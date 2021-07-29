@@ -1,7 +1,5 @@
-FROM python:3-alpine as base
-
 # build dependencies
-FROM base as builder
+FROM python:3-alpine as builder
 
 RUN mkdir /install
 WORKDIR /install
@@ -18,7 +16,7 @@ WORKDIR /go/cosign
 RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ./cmd/cosign/main.go
 
 # build connaisseur image
-FROM base
+FROM python:3-alpine
 
 WORKDIR /app
 
