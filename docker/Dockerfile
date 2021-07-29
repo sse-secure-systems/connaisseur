@@ -23,8 +23,8 @@ FROM base
 WORKDIR /app
 
 # Harden image
-COPY docker/harden.sh /
-RUN sh /harden.sh && rm /harden.sh
+#COPY docker/harden.sh /
+#RUN sh /harden.sh && rm /harden.sh
 
 # Copy source code and install packages
 COPY --from=builder /install /usr/local
