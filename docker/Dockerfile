@@ -9,13 +9,19 @@ COPY requirements.txt /requirements.txt
 # Since we run inside an alpine based container, we cannot compile yarl and multidic
 RUN YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install --no-cache-dir --prefix=/install -r /requirements.txt
 
-# Build Cosign
-FROM golang:buster as go_builder
+# Load and verify Cosign
+FROM debian:buster-slim as cosign_loader
 
+SHELL ["/bin/bash", "-c"]
 ARG COSIGN_VERSION
-RUN git clone -b "v${COSIGN_VERSION}" --single-branch --depth 1 https://github.com/sigstore/cosign.git
 WORKDIR /go/cosign
-RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ./cmd/cosign/main.go
+COPY docker/release-cosign.pub /go/cosign/release-cosign.pub
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends openssl=1.1.1d-0+deb10u6 libssl1.1=1.1.1d-0+deb10u6 ca-certificates=20200601~deb10u2 wget=1.20.1-1.1 \
+ && wget -nv https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-amd64 \
+ && wget -nv https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-amd64.sig \
+ && openssl dgst -sha256 -verify release-cosign.pub -signature <(base64 -d cosign-linux-amd64.sig) cosign-linux-amd64
 
 # Build Connaisseur image
 FROM base
@@ -28,7 +34,8 @@ RUN sh /harden.sh && rm /harden.sh
 
 # Copy source code and install packages
 COPY --from=builder /install /usr/local
-COPY --from=go_builder /go/cosign/main /app/cosign/cosign
+COPY --from=cosign_loader /go/cosign/cosign-linux-amd64 /app/cosign/cosign
+RUN chmod 111 /app/cosign/cosign
 COPY connaisseur /app/connaisseur
 
 USER 1000:2000
