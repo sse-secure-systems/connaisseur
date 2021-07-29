@@ -1,7 +1,5 @@
-FROM python:3-alpine as base
-
 # Build dependencies
-FROM base as builder
+FROM python:3-alpine as builder
 
 RUN mkdir /install
 WORKDIR /install
@@ -24,7 +22,7 @@ RUN apt-get update \
  && openssl dgst -sha256 -verify release-cosign.pub -signature <(base64 -d cosign-linux-amd64.sig) cosign-linux-amd64
 
 # Build Connaisseur image
-FROM base
+FROM python:3-alpine
 
 WORKDIR /app
 
