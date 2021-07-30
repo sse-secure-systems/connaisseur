@@ -104,7 +104,7 @@ docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
 ### Signed commits and pull requests
 All changes to the `develop` and `master` branch must be signed which is enforced via [branch protection](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing).
 This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor.
-Consequently, while we appreciate signed commits in PRs, we do not require it.
+Consequently, we appreciate but do not require that commits in PRs are signed.
 
 A general introduction into signing commits can for example be found in the [With Blue Ink blog](https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html). For details on setting everything up for GitHub, please follow the steps in the [Documentation](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification).
 

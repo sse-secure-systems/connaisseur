@@ -215,7 +215,7 @@ validators:
 
 The image policy is defined in the `policy` field and acts as a list of rule objects to determine which image should be validated by which validator (and potentially some further configurations).
 
-For each image in the admission request, only a single rule in the image policy will apply: the one with the most specific matching `pattern` field.
+For each image in the admission request, only a single rule in the image policy will apply: the one with the *most specific* matching `pattern` field.
 This is determined by the following algorithm:
 
 1. A given image is matched against all rule patterns.

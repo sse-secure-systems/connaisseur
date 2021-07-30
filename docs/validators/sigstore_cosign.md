@@ -1,4 +1,4 @@
-# SigStore / Cosign
+# Sigstore / Cosign
 
 [Sigstore](https://sigstore.dev/) is a [Linux Foundation](https://linuxfoundation.org/) project that aims to provide public software signing and transparency to improve open source supply chain security.
 As part of the Sigstore project, [Cosign](https://github.com/sigstore/cosign) allows seamless container signing, verification and storage.

@@ -6,7 +6,7 @@ endpoint that accepts JSON payloads.
 
 ## Supported Interfaces
 
-Slack, Opsgenie and Keybase have preconfigured payloads that are ready to use.
+Slack, Opsgenie and Keybase have pre-configured payloads that are ready to use.
 However, you can use the existing payload templates as an example how to model your
 own custom one.
 It is also possible to configure multiple interfaces for receiving
@@ -40,7 +40,7 @@ one it needs to be one of `slack`, `keybase` or `opsgenie`.
 
 
 ## Example
-For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to to following snippet:
+For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:
 
 
 ```
@@ -69,8 +69,8 @@ during runtime into the payload:
 
 Referring to any of these variables in the templates works by Jinja2 notation
 (e.g. `{{ timestamp }}`). You can update your payload dynamically by adding payload
-fields in `yaml` presentation in the `payload_fields` key which will be translated
-to JSON by helm as is. If your REST endpoint requires particular headers, your can
+fields in `yaml` representation in the `payload_fields` key which will be translated
+to JSON by Helm as is. If your REST endpoint requires particular headers, you can
 specify them as described above in `custom_headers`.
 
 Feel free to make a PR to share with the community if you add new neat templates for other third parties :pray:

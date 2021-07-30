@@ -17,7 +17,7 @@ Before starting the release, make sure everything is ready and in order.
 See that all tests are running smoothly.
 Check that documentation changes show up correctly [here](https://sse-secure-systems.github.io/connaisseur/develop/).
 Make sure the Connaisseur version is incremented correctly according to the changes.
-See if the docs announcements should be adjusted [here](https://github.com/sse-secure-systems/connaisseur/blob/docs/documentation-2.0/docs/overrides/main.html).
+See if the docs announcements should be adjusted [here](https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html).
 Consider making a [GitHub Discussions *announcement*](https://github.com/sse-secure-systems/connaisseur/discussions).
 
 ## Adding new tag
