@@ -64,13 +64,13 @@ kubectl get all -n connaisseur
 > pod/connaisseur-deployment-78d8975596-42tkw   1/1     Running   0          22s
 > pod/connaisseur-deployment-78d8975596-5c4c6   1/1     Running   0          22s
 > pod/connaisseur-deployment-78d8975596-kvrj6   1/1     Running   0          22s
-> 
+>
 > NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
 > service/connaisseur-svc   ClusterIP   10.108.220.34   <none>        443/TCP   22s
-> 
+>
 > NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
 > deployment.apps/connaisseur-deployment   3/3     3            3           22s
-> 
+>
 > NAME                                                DESIRED   CURRENT   READY   AGE
 > replicaset.apps/connaisseur-deployment-78d8975596   3         3         3       22s
 ```
@@ -146,13 +146,13 @@ The special case of static validators used to simply allow or deny images withou
 
 `.validators[*]` in `helm/values.yaml` supports the following keys:
 
-| key | default | required | description |
+| Key | Default | Required | Description |
 | - | - | - | - |
-| `name` | - | :heavy_check_mark: | The name of the validator, which is referenced in the image policy. It must consist of lower case alphanumeric characters or '-'. If the name is `default`, it will be used if no validator is specified. |
-| `type` | - | :heavy_check_mark: | The type of the validator, e.g. `notaryv1` or `cosign`, which is dependent on the [signing solution in use](validators/README.md). |
-| `trust_roots` | - | :heavy_check_mark: | A list of trust anchors to validate the signatures against. In practice, this is typically a list of public keys. |
-| `trust_roots[*].name` | - | :heavy_check_mark: | The name of the trust anchor, which is referenced in the image policy. If the name is `default`, it will be used if no key is specified. |
-| `trust_roots[*].key` | - | :heavy_check_mark: | The value of the trust anchor, most commonly a PEM encoded public key. |
+| `name` | - | :heavy_check_mark: | Name of the validator, which is referenced in the image policy. It must consist of lower case alphanumeric characters or '-'. If the name is `default`, it will be used if no validator is specified. |
+| `type` | - | :heavy_check_mark: | Type of the validator, e.g. `notaryv1` or `cosign`, which is dependent on the [signing solution in use](validators/README.md). |
+| `trust_roots` | - | :heavy_check_mark: | List of trust anchors to validate the signatures against. In practice, this is typically a list of public keys. |
+| `trust_roots[*].name` | - | :heavy_check_mark: | Name of the trust anchor, which is referenced in the image policy. If the name is `default`, it will be used if no key is specified. |
+| `trust_roots[*].key` | - | :heavy_check_mark: | Value of the trust anchor, most commonly a PEM encoded public key. |
 | `auth`| - | | Credentials that should be used in case authentication is required for validation. Details are provided on validator-specific pages. |
 
 *Further configuration fields specific to the validator type are described in the [respective section](validators/README.md).*
@@ -193,11 +193,11 @@ This for example allows to implement an *allowlist* or *denylist*.
 
 ##### Configuration options
 
-| key | default | required | description |
+| Key | Default | Required | Description |
 | - | - | - | - |
-| `name` | - | :heavy_check_mark: | The name of the validator, which will be used to reference it in the image policy. |
-| `type` | - | :heavy_check_mark: | Needs to be set to `static`. |
-| `approve` | - | :heavy_check_mark: | Set to `true`/`false` to admit/deny all images.|
+| `name` | - | :heavy_check_mark: | Name of the validator, which will be used to reference it in the image policy. |
+| `type` | - | :heavy_check_mark: | `static`; value has to be `static` for a static validator. |
+| `approve` | - | :heavy_check_mark: | `true` or `false` to admit or deny all images.|
 
 ##### Example
 
@@ -215,7 +215,7 @@ validators:
 
 The image policy is defined in the `policy` field and acts as a list of rule objects to determine which image should be validated by which validator (and potentially some further configurations).
 
-For each image in the admission request, only a single rule in the image policy will apply: the one with the most specific matching `pattern` field.
+For each image in the admission request, only a single rule in the image policy will apply: the one with the *most specific* matching `pattern` field.
 This is determined by the following algorithm:
 
 1. A given image is matched against all rule patterns.
@@ -280,12 +280,12 @@ There is two rules that should remain intact in some form in order to not brick 
 
 `.policy[*]` in `helm/values.yaml` supports the following keys:
 
-| key  | default | required | description |
+| Key  | Default | Required | Description |
 | - | - | - | - |
 | `pattern` | - | :heavy_check_mark: | Globbing pattern to match an image name against. |
-| `validator` | `default` | | The name of a validator in the `validators` list. If not provided, the validator with name `default` is used if it exists. |
+| `validator` | `default` | | Name of a validator in the `validators` list. If not provided, the validator with name `default` is used if it exists. |
 | `with` | - | | Additional parameters to use for a validator. See more specifics in [validator section](validators/README.md). |
-|`with.trust_root`| `default` | | The name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. |
+|`with.trust_root`| `default` | | Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. |
 
 #### Example
 

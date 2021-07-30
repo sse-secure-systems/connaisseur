@@ -1,6 +1,6 @@
-# Local integration test setup
+# Local Integration Test Setup
 
-## Minikube
+## minikube
 
 To load the required docker images into the minikube docker daemon run
 
@@ -37,7 +37,7 @@ export ALERTING_ENDPOINT_IP=$(docker container inspect alerting-endpoint | jq -r
 
 From the git repository folder run the `connaisseur/tests/integration/integration-test.sh` script.
 
-To cleanup the mocked alerting interface container don't forget running 
+To cleanup the mocked alerting interface container don't forget running
 
 ```shell
 docker stop alerting-endpoint

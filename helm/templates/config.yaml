@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "helm.labels" . | nindent 4 }}
 data:
-  config.yaml: | 
+  config.yaml: |
     {{- range .Values.validators -}}
       {{- $validator := deepCopy . -}}
       {{- if eq $validator.type "notaryv1" -}}

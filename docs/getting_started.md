@@ -9,9 +9,9 @@ You will learn how to:
 4. [Test Connaisseur](#test-connaisseur) *(and sign images)*
 5. [Cleanup](#cleanup)
 
-In the tutorial, you can choose to use either Notary (V1) via Docker Content Trust (DCT) or Cosign from the Sigstore project as a signing solution referred to as DCT and Cosign from here on.
-Furthermore we will work with public images on [Docker Hub](https://hub.docker.com/) as a container registry and a Kubernetes test cluster which might for example be [MicroK8s](https://microk8s.io/) or [Minikube](https://minikube.sigs.k8s.io/docs/) for local setups.
-However, feel free to bring your own solutions for registry or cluster and checkout our notes on [compatibility](./README.md#compatibility).
+In the tutorial, you can choose to use either Notary (V1) via Docker Content Trust (DCT) or Cosign from the sigstore project as a signing solution referred to as DCT and Cosign from here on.
+Furthermore we will work with public images on [Docker Hub](https://hub.docker.com/) as a container registry and a Kubernetes test cluster which might for example be [MicroK8s](https://microk8s.io/) or [minikube](https://minikube.sigs.k8s.io/docs/) for local setups.
+However, feel free to bring your own solutions for registry or cluster and check out our notes on [compatibility](./README.md#compatibility).
 
 In general, Connaisseur can be fully configured via `helm/values.yaml`, so feel free to take a look and try for yourself.
 For more advanced usage in more complex cases (e.g. authentication, multiple registries, signers, validators, additional features), we strongly advise to review the following pages:
@@ -113,7 +113,7 @@ The result should look similar to this:
           MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5
           YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==
           -----END PUBLIC KEY-----
-      #cert: |  # in case the trust data host is using a selfsigned certificate
+      #cert: |  # in case the trust data host is using a self-signed certificate
       #  -----BEGIN CERTIFICATE-----
       #  ...
       #  -----END CERTIFICATE-----
@@ -126,7 +126,7 @@ The result should look similar to this:
     ```
 
 === "Cosign"
-    
+
     _In addition for Cosign, the `type` needs to be set to `cosign` and the `host` is not required._
 
     ```yaml
@@ -141,7 +141,7 @@ The result should look similar to this:
           MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
           qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
           -----END PUBLIC KEY-----
-      #cert: |  # in case the trust data host is using a selfsigned certificate
+      #cert: |  # in case the trust data host is using a self-signed certificate
       #  -----BEGIN CERTIFICATE-----
       #  ...
       #  -----END CERTIFICATE-----
@@ -230,7 +230,7 @@ Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied th
 So let's sign the image and try again.
 
 === "Docker Content Trust"
-    
+
     In DCT signing works via `docker push` using the `--disable-content-trust` flag:
 
     ```bash

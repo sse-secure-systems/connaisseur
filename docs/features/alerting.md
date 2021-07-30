@@ -4,9 +4,9 @@
 Connaisseur can send notifications on admission decisions to basically every REST
 endpoint that accepts JSON payloads.
 
-## Supported Interfaces
+## Supported interfaces
 
-Slack, Opsgenie and Keybase have preconfigured payloads that are ready to use.
+Slack, Opsgenie and Keybase have pre-configured payloads that are ready to use.
 However, you can use the existing payload templates as an example how to model your
 own custom one.
 It is also possible to configure multiple interfaces for receiving
@@ -16,15 +16,15 @@ alerts at the same time.
 
 Currently, Connaisseur supports alerting on either admittance of images, denial of images or both. These event categories can be configured independently of each other under the relevant category (i.e. `admit_request` or `reject_request`):
 
-| key                                                |  accepted values                                      | default           | required           | description                                                                                        |
+| Key                                                |  Accepted values                                      | Default           | Required           | Description                                                                                        |
 | -------------------------------------------------- | ----------------------------------------------------  | ----------------- | ------------------ | -------------------------------------------------------------------------------------------------- |
-| `alerting.cluster_identifier`                      | string                                                | `"not specified"` |                    | cluster identifier used in alert payload to distinguish between alerts from different clusters     |
-| `alerting.<category>.template`                     | `opsgenie`, `slack`, `keybase` or custom<sup>*</sup>  | -                 | :heavy_check_mark: | specifies which file in `helm/alert_payload_templates/` to use as alert payload template           |
-| `alerting.<category>.receiver_url`                 | string                                                | -                 | :heavy_check_mark: | url of alert-receiving endpoint                                                                    |
-| `alerting.<category>.priority`                     | int                                                   | `3`               |                    | priority of alert (to enable fitting Connaisseur alerts into alerts from other sources)            |
-| `alerting.<category>.custom_headers`               | list[string]                                          | -                 |                    | additional headers required by alert-receiving endpoint                                            |
-| `alerting.<category>.payload_fields`               | subyaml                                               | -                 |                    | enables specifying additional (`yaml`) key-value pairs to be appended to alert payload (as `json`) |
-| `alerting.<category>.fail_if_alert_sending_fails`  | bool                                                  | `False`           |                    | `True` will make Connaisseur deny images if the corresponding alert cannot be successfully sent    |
+| `alerting.cluster_identifier`                      | string                                                | `"not specified"` |                    | Cluster identifier used in alert payload to distinguish between alerts from different clusters.     |
+| `alerting.<category>.template`                     | `opsgenie`, `slack`, `keybase` or custom<sup>*</sup>  | -                 | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.           |
+| `alerting.<category>.receiver_url`                 | string                                                | -                 | :heavy_check_mark: | URL of alert-receiving endpoint.                                                                    |
+| `alerting.<category>.priority`                     | int                                                   | `3`               |                    | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).            |
+| `alerting.<category>.custom_headers`               | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
+| `alerting.<category>.payload_fields`               | subyaml                                               | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`). |
+| `alerting.<category>.fail_if_alert_sending_fails`  | bool                                                  | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.    |
 
 <sup>*basename of the custom template file in `helm/alerting_payload_templates` without file extension </sup>
 
@@ -40,7 +40,7 @@ one it needs to be one of `slack`, `keybase` or `opsgenie`.
 
 
 ## Example
-For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to to following snippet:
+For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:
 
 
 ```
@@ -69,8 +69,8 @@ during runtime into the payload:
 
 Referring to any of these variables in the templates works by Jinja2 notation
 (e.g. `{{ timestamp }}`). You can update your payload dynamically by adding payload
-fields in `yaml` presentation in the `payload_fields` key which will be translated
-to JSON by helm as is. If your REST endpoint requires particular headers, your can
+fields in `yaml` representation in the `payload_fields` key which will be translated
+to JSON by Helm as is. If your REST endpoint requires particular headers, you can
 specify them as described above in `custom_headers`.
 
 Feel free to make a PR to share with the community if you add new neat templates for other third parties :pray:
