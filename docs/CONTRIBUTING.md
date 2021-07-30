@@ -20,9 +20,9 @@ In case you require a more private communication, you can reach us via [connaiss
 The following steps will help you make code contributions to Connaisseur and ensure good code quality and workflow.
 This includes the following steps:
 
-1. **Setup your environment**:
+1. **Set up your environment**:
    Set up up your local environment to best interact with the code.
-   Further information is given [below](#setup-the-environment).
+   Further information is given [below](#set-up-the-environment).
 2. **Make atomic changes**:
    Changes should be atomic.
    As such, pull requests should contain only few commits, and each commit should only fix one issue or implement one feature, with a concise commit message.
@@ -108,7 +108,7 @@ Consequently, we appreciate but do not require that commits in PRs are signed.
 
 A general introduction into signing commits can for example be found in the [With Blue Ink blog](https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html). For details on setting everything up for GitHub, please follow the steps in the [Documentation](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification).
 
-Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are setup to create signed commits.
+Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are set up to create signed commits.
 We recommend to configure Git to sign commits by default via:
 ```bash
 git config commit.gpgsign true
