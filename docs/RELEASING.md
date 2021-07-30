@@ -6,7 +6,7 @@ Releasing a new version of Connaisseur includes the following steps:
 - adding a new version tag
 - creating a changelog from commit messages
 - creating a PR from `develop` (new version) to `master` (current version)
-- pushing a new version of the Connaisseur image to Dockerhub
+- pushing a new version of the Connaisseur image to Docker Hub
 - merging in the PR & push tag
 - creating release page
 - shoot some trouble
@@ -40,7 +40,7 @@ Create a PR from `develop` to `master`, putting the changelog text as descriptio
 
 ## Push new Connaisseur image
 
-When the PR is approved and ready to be merged, first push the new Connaisseur image to Dockerhub, as it will be used in the release pipeline. Run `make docker` to build the new version of the docker image and then `DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:<new-version>` to push and sign it. You'll obviously need the right private key and passphrase for doing so. You also need to be in the list of valid signers for Connaisseur. If not already (you can check with `docker trust inspect securesystemsengineering/connaisseur --pretty`) you'll need to contact [Philipp Belitz](mailto:philipp.belitz@securesystems.de).
+When the PR is approved and ready to be merged, first push the new Connaisseur image to Docker Hub, as it will be used in the release pipeline. Run `make docker` to build the new version of the docker image and then `DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:<new-version>` to push and sign it. You'll obviously need the right private key and passphrase for doing so. You also need to be in the list of valid signers for Connaisseur. If not already (you can check with `docker trust inspect securesystemsengineering/connaisseur --pretty`) you'll need to contact [Philipp Belitz](mailto:philipp.belitz@securesystems.de).
 
 ## Merge PR
 

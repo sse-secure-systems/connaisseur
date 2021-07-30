@@ -6,9 +6,9 @@ Accepted
 
 ## Context
 
-Previously Connaisseur only supported the configuration of a single notary, where all signature data had to reside in. Unfortunately this is rather impractical, as one doesn't create all signatures for all images one uses in a cluster. There is a need to access signature data from multiple places, like in a setup where most images come from a private registry + notary and some from DockerHub and their notary.
+Previously Connaisseur only supported the configuration of a single notary, where all signature data had to reside in. Unfortunately this is rather impractical, as one doesn't create all signatures for all images one uses in a cluster. There is a need to access signature data from multiple places, like in a setup where most images come from a private registry + notary and some from Docker Hub and their notary.
 
-There is also the problem that a single notary instance could use multiple root keys, used for creating the signatures, like in the case of DockerHub. Connaisseur also only supports a single root key to be trust pinned, thus making it impractical.
+There is also the problem that a single notary instance could use multiple root keys, used for creating the signatures, like in the case of Docker Hub. Connaisseur also only supports a single root key to be trust pinned, thus making it impractical.
 
 That's why the decision was made to support more than one notary and multiple keys per notary, which leads to the question how the new configuration should look like. This also has implications on the notary health check, which is important for Connaisseur's own readiness check.
 
@@ -46,7 +46,7 @@ The image policy will have two additional fields per rule entry (in "quotes" are
 
 #### Option 2 (Per Notary + Key)
 
-The `notary` field becomes a list and changes to `notaries`. Per notary + public root key combination, there is one entry. Meaning, for example, there will be one entry for DockerHub and the public key for all official images and there will be another entry for DockerHub and the public key for some private images.
+The `notary` field becomes a list and changes to `notaries`. Per notary + public root key combination, there is one entry. Meaning, for example, there will be one entry for Docker Hub and the public key for all official images and there will be another entry for Docker Hub and the public key for some private images.
 
 The entries will look identical to the one's from option 1, with two exceptions.
 

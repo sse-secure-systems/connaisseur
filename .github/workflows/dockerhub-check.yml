@@ -1,4 +1,4 @@
-name: "Check DockerHub images"
+name: "Check Docker Hub images"
 
 on:
   schedule:
