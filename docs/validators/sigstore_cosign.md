@@ -7,13 +7,9 @@ You can read more about it [here](https://blog.sigstore.dev/).
 Connaisseur currently supports the elementary function of verifying Cosign-generated signatures against the locally created corresponding public keys.
 We plan to expose further features of Cosign and Sigstore in upcoming releases, so stay tuned!
 
-> :warning: Sigstore and Cosign are currently in *pre-release* state and under heavy development and so is our support for them. We therefore consider this an *experimental feature* that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
-
 ## Basic usage
 
 Getting started with Cosign is very well described in the [docs](https://github.com/sigstore/cosign).
-Please check there for detailed instructions.
-The currently used version can be found in our [Makefile](https://github.com/sse-secure-systems/connaisseur/blob/master/Makefile/#L5).
 You can download Cosign from its [GitHub repository](https://github.com/sigstore/cosign/releases).
 In short: After installation, a keypair is generated via:
 
