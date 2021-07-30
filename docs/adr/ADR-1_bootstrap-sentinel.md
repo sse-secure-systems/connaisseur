@@ -28,10 +28,10 @@ Deploy MutatingWebhookConfiguration through Helm when Connaisseur Pods are healt
 
 We chose option 1 over option 2, because it was important to us that a brief glance at Connaisseur's Namespace allows one to judge whether it is running properly. Option 3 was not chosen as the readiness status of Pods can be easily seen from the Service, whereas the health status would require querying every single Pod individually. We deemed that to be a very ugly, non-kubernetes-y solution and hence decided against it.
 
-### Positive Consequences
+### Positive consequences
 
 If the Connaisseur Pods report `Ready` during the `connaisseur-bootstrap-sentinel`'s runtime, the MutatingWebhookConfiguration will be deployed by Helm. Otherwise, the Helm deployment will fail after its timeout period (default: 5min), since there won't be a running `connaisseur-bootstrap-sentinel` Pod anymore that resolves the installation deadlock. The Connaisseur Pods will never reach the `Ready` state and the MutatingWebhookConfiguration never gets deployed. This means, we get consistent deployment failures after the inital waiting period if something did not work out. Additionally, if the MutatingWebhookConfiguration gets removed for whatever reason during operation, Connaisseur Pods will be failing, indicating their failed dependency. Hence, monitoring the Connaisseur Pods is sufficient to ensure their working.
 
-### Negative Consequences
+### Negative consequences
 
 On the other hand, if an adversary can deploy a Pod named `connaisseur-bootstrap-sentinel` to Connaisseur's Namespace, the Connaisseur Pods will always show `Ready` regardless of the MutatingWebhookConfiguration. However, if an adversary can deploy to Connaisseur's Namespace, chances are Connaisseur can be compromised anyways. More importantly, if not a single Connaisseur Pod is successfully deployed or if the notary healthcheck fails during the sentinel's lifetime, then the deployment will fail regardless of possible recovery at a later time. Another issue would be the `connaisseur-bootstrap-sentinel` Pod being left behind, however since it has a very limited use case we can also clean it up during the deployment, so apart from the minimal additional complexity of the deployment this is a non-issue.

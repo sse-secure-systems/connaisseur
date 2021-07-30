@@ -8,13 +8,13 @@ Accepted
 
 With the upcoming of [notaryv2](https://github.com/notaryproject/nv2) and similar projects like [Cosign](https://github.com/sigstore/cosign) the opportunity for Connaisseur arises to support multiple signing mechanisms, and combine all into a single validation tool. For that to work, the internal validation mechanism of connaisseur needs to be more modular, so we can easily swap in and out different methods.
 
-## Considered Options
+## Considered options
 
-### Configuration Changes (Choice 1)
+### Configuration changes (Choice 1)
 
 Obviously some changes have to be made to the configuration of Connaisseur, but this splits into changes for the previous notary configurations and the image policy.
 
-#### "Notary" Configuration (1.1)
+#### "Notary" configuration (1.1)
 
 With notaryv1 all trust data always resided in a notary server for which Connaisseur needed the URL, authentication credentials, etc. This isn't true anymore for notaryv2 or Cosign. Here Connaisseur may need other data, meaning the configuration is dependent on the type of validation method used here. Also other mechanisms such as digest whitelisting which doesn't even include cryptographic material might be considered in the future.
 

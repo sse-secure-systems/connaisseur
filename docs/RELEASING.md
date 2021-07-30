@@ -20,11 +20,11 @@ Make sure the Connaisseur version is incremented correctly according to the chan
 See if the docs announcements should be adjusted [here](https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html).
 Consider making a [GitHub Discussions *announcement*](https://github.com/sse-secure-systems/connaisseur/discussions).
 
-## Adding new tag
+## Add new tag
 
 Before adding the new tag, make sure the Connaisseur version is updated in the `helm/values.yaml` and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version. Then add the tag (on `develop` branch) with `git tag v<new-conny-version>` (e.g. `git tag v1.4.6`).
 
-## Creating changelog
+## Create changelog
 
 A changelog text, including all new commits from one to another version, can be automatically generated using the `scrips/changelogger.py` script. You have to update the two `ref1` and `ref2` variables in the main method with the the old and new Git tags. So if you e.g. want to release a new version from `v1.4.5` to `v1.4.6`, then you have to set `ref1 = "v1.4.5"` and `ref2 = "v1.4.6"`. Then simply run `python scripts/changelogger.py > CHANGELOG.md`, storing the changelog in a new file `CHANGELOG.md` (we won't keep this file, it's just for convenient storing purpose). This file will include all new commits, categorized by their type (e.g. fix, feat, docs, etc.), but may include some mistakes so take a manual look if everything looks in order.
 
@@ -34,7 +34,7 @@ Things to look out for:
 - broken pull request links
 - `None` appended on end of line
 
-## Creating PR
+## Create PR
 
 Create a PR from `develop` to `master`, putting the changelog text as description and wait for someone to approve it.
 

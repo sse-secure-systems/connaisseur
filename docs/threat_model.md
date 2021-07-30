@@ -14,7 +14,7 @@ The STRIDE threat model has been used as a reference for threat modeling. Each o
 | Spoofing | A developer could be tricked into signing a malicious image, which subsequently will be accepted by Connaisseur. | **Security Awareness:** Developers need to be aware of these attacks, so they can spot any attempts. |
 | Elevation of privilege | An attacker could acquire the credentials of a developer or trick her into performing malicious actions, hence elevating their privileges to those of the victim. Depending on the victim's privileges, other attacks may be mounted. | **RBAC & Security Awareness:** With proper Role-Based Access Control (RBAC), the effects of compromising an individual's account would help limit its impact and may mitigate the privilege escalation, of course depending on the victim's access level. Other than that, a security awareness training for developers can help minimize the chances of losing critical credentials. |
 
-## (2) Connaisseur Service
+## (2) Connaisseur service
 
 | Threat | Description | Counter Measure |
 |------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -24,7 +24,7 @@ The STRIDE threat model has been used as a reference for threat modeling. Each o
 | Denial of service | When sending an extraordinary amount of requests to Connaisseur or triggering unexpected behavior, Connaisseur might become unresponsive or crash. As a result, image signatures can't be verified. | **Failure Policy:** The webhook that is connected to Connaisseur denies all request automatically, should the Connaisseur service be unavailable. Thus, malicious images cannot enter the cluster. Additionally, multiple instances of Connaisseur can be run for better load balancing. |
 | Elevation of privilege | Since Connaisseur interacts with the Kubernetes API, an attacker located inside the Connaisseur container can act on its behalf and use its permissions. | **RBAC:** Per default, the Connaisseur service account only has read permissions to a few non-critical objects. |
 
-## (3) Notary Server
+## (3) Notary server
 
 | Threat | Description | Counter Measure |
 |------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

@@ -4,7 +4,7 @@
 Connaisseur can send notifications on admission decisions to basically every REST
 endpoint that accepts JSON payloads.
 
-## Supported Interfaces
+## Supported interfaces
 
 Slack, Opsgenie and Keybase have pre-configured payloads that are ready to use.
 However, you can use the existing payload templates as an example how to model your
