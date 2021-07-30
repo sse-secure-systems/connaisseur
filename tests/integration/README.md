@@ -1,6 +1,6 @@
 # Local Integration Test Setup
 
-## Minikube
+## minikube
 
 To load the required docker images into the minikube docker daemon run
 

@@ -10,7 +10,7 @@ You will learn how to:
 5. [Cleanup](#cleanup)
 
 In the tutorial, you can choose to use either Notary (V1) via Docker Content Trust (DCT) or Cosign from the sigstore project as a signing solution referred to as DCT and Cosign from here on.
-Furthermore we will work with public images on [Docker Hub](https://hub.docker.com/) as a container registry and a Kubernetes test cluster which might for example be [MicroK8s](https://microk8s.io/) or [Minikube](https://minikube.sigs.k8s.io/docs/) for local setups.
+Furthermore we will work with public images on [Docker Hub](https://hub.docker.com/) as a container registry and a Kubernetes test cluster which might for example be [MicroK8s](https://microk8s.io/) or [minikube](https://minikube.sigs.k8s.io/docs/) for local setups.
 However, feel free to bring your own solutions for registry or cluster and check out our notes on [compatibility](./README.md#compatibility).
 
 In general, Connaisseur can be fully configured via `helm/values.yaml`, so feel free to take a look and try for yourself.
