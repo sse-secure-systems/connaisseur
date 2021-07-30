@@ -1,13 +1,13 @@
-# Sigstore / Cosign
+# sigstore / Cosign
 
-[Sigstore](https://sigstore.dev/) is a [Linux Foundation](https://linuxfoundation.org/) project that aims to provide public software signing and transparency to improve open source supply chain security.
-As part of the Sigstore project, [Cosign](https://github.com/sigstore/cosign) allows seamless container signing, verification and storage.
+[sigstore](https://sigstore.dev/) is a [Linux Foundation](https://linuxfoundation.org/) project that aims to provide public software signing and transparency to improve open source supply chain security.
+As part of the sigstore project, [Cosign](https://github.com/sigstore/cosign) allows seamless container signing, verification and storage.
 You can read more about it [here](https://blog.sigstore.dev/).
 
 Connaisseur currently supports the elementary function of verifying Cosign-generated signatures against the locally created corresponding public keys.
-We plan to expose further features of Cosign and Sigstore in upcoming releases, so stay tuned!
+We plan to expose further features of Cosign and sigstore in upcoming releases, so stay tuned!
 
-> :warning: Sigstore and Cosign are currently in *pre-release* state and under heavy development and so is our support for them. We therefore consider this an *experimental feature* that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
+> :warning: sigstore and Cosign are currently in *pre-release* state and under heavy development and so is our support for them. We therefore consider this an *experimental feature* that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
 
 ## Basic usage
 
