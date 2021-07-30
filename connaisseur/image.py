@@ -26,46 +26,41 @@ class Image:
     digest: str
 
     def __init__(self, image: str):
-        # e.g. example.com, super.example.com:3498
-        domain_with_dot_re = (
-            r"(?:[a-z0-9-]{1,63}\.){1,62}[a-z0-9-]{1,63}(?::[0-9]{1,5})?"
-        )
-        # e.g. private-registry:30000, localhost:5000
-        domain_without_dot_re = r"[a-z0-9-]{1,64}(?::[0-9]{1,5})"
-        # e.g. library/, library/alpine/,
-        repo_re = r"(?:[\w-]+\/)+"
-        # e.g. alpine, nginx, hello-world
-        image_re = r"[\w.-]+"
+        seperator = r"[-._:@+]|--"
+        alphanum = r"[A-Za-z0-9]+"
+        component = f"{alphanum}(?:(?:{seperator}){alphanum})*"
+        ref = f"^{component}(?:/{component})*$"
+
         # e.g. :v1, :3.7-alpine, @sha256:3e7a89...
         tag_re = r"(?:(?:@sha256:([a-f0-9]{64}))|(?:\:([\w.-]+)))"
 
-        # e.g. docker.io/library/python:3.7-alpine
-        regex = (
-            f"^((?:{domain_with_dot_re}|{domain_without_dot_re})/)?"
-            f"({repo_re})?({image_re})({tag_re})?$"
-        )
-
-        match = re.search(regex, image)
+        match = re.search(ref, image)
         if not match:
             msg = "{image} is not a valid image reference."
             raise InvalidImageFormatError(message=msg, image=image)
 
-        self.registry, self.repository, self.name, self.digest, self.tag = (
-            match.group(1),
-            match.group(2),
-            match.group(3),
-            match.group(5),
-            match.group(6),
+        name_tag = image.split("/")[-1]
+        search = re.search(tag_re, name_tag)
+        self.digest, self.tag = search.groups() if search else (None, "latest")
+        self.name = name_tag.removesuffix(":" + str(self.tag)).removesuffix(
+            "@sha256:" + str(self.digest)
         )
-        # strip trailing "/" or set to default "docker.io" registry
-        self.registry = (self.registry or "docker.io").rstrip("/")
-        # strip trailing "/"
-        self.repository = (
-            self.repository or ("library/" if self.registry == "docker.io" else "/")
-        ).rstrip("/")
 
-        if not (self.tag or self.digest):
-            self.tag = "latest"
+        first_comp = image.removesuffix(name_tag).split("/")[0]
+        self.registry = (
+            first_comp
+            if re.search(r"[\.:]", first_comp)
+            or first_comp == "localhost"
+            or any(ele.isupper() for ele in first_comp)
+            else "docker.io"
+        )
+        self.repository = (
+            image.removesuffix(name_tag).removeprefix(self.registry)
+        ).strip("/") or ("library" if self.registry == "docker.io" else "")
+
+        if (self.repository + name_tag).lower() != self.repository + name_tag:
+            msg = "{image} is not a valid image reference."
+            raise InvalidImageFormatError(message=msg, image=image)
 
     def set_digest(self, digest):
         """
