@@ -14,7 +14,7 @@ In [#3](https://github.com/sse-secure-systems/connaisseur/issues/3) it was noted
 
 ### Option 1
 
-At the start of the Helm deployment, one can create a Pod named `connaisseur-bootstrap-sentinel` that will run for 5 minutes (which is also the installation timeout by helm). Connaisseur Pods will report `Ready` if they can 1) access notary AND 2) the MutatingWebhookConfiguration exists OR 3) the `connaisseur-bootstrap-sentinel` Pod is still running. If 1)  AND 2) both hold true, the sentinel is killed even if the 5 minutes have not passed yet.
+At the start of the Helm deployment, one can create a Pod named `connaisseur-bootstrap-sentinel` that will run for 5 minutes (which is also the installation timeout by Helm). Connaisseur Pods will report `Ready` if they can 1) access notary AND 2) the MutatingWebhookConfiguration exists OR 3) the `connaisseur-bootstrap-sentinel` Pod is still running. If 1)  AND 2) both hold true, the sentinel is killed even if the 5 minutes have not passed yet.
 
 ### Option 2
 
@@ -30,7 +30,7 @@ We chose option 1 over option 2, because it was important to us that a brief gla
 
 ### Positive Consequences
 
-If the Connaisseur Pods report `Ready` during the `connaisseur-bootstrap-sentinel`'s runtime, the MutatingWebhookConfiguration will be deployed by Helm. Otherwise, the helm deployment will fail after its timeout period (default: 5min), since there won't be a running `connaisseur-bootstrap-sentinel` Pod anymore that resolves the installation deadlock. The Connaisseur Pods will never reach the `Ready` state and the MutatingWebhookConfiguration never gets deployed. This means, we get consistent deployment failures after the inital waiting period if something did not work out. Additionally, if the MutatingWebhookConfiguration gets removed for whatever reason during operation, Connaisseur Pods will be failing, indicating their failed dependency. Hence, monitoring the Connaisseur Pods is sufficient to ensure their working.
+If the Connaisseur Pods report `Ready` during the `connaisseur-bootstrap-sentinel`'s runtime, the MutatingWebhookConfiguration will be deployed by Helm. Otherwise, the Helm deployment will fail after its timeout period (default: 5min), since there won't be a running `connaisseur-bootstrap-sentinel` Pod anymore that resolves the installation deadlock. The Connaisseur Pods will never reach the `Ready` state and the MutatingWebhookConfiguration never gets deployed. This means, we get consistent deployment failures after the inital waiting period if something did not work out. Additionally, if the MutatingWebhookConfiguration gets removed for whatever reason during operation, Connaisseur Pods will be failing, indicating their failed dependency. Hence, monitoring the Connaisseur Pods is sufficient to ensure their working.
 
 ### Negative Consequences
 
