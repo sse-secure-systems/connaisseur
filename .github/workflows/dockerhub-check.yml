@@ -19,11 +19,11 @@ jobs:
         run: DOCKER_CONTENT_TRUST=1 docker pull docker.io/securesystemsengineering/testimage:special_sig
       - name: Check unsigned test image
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:unsigned
-      - name: Check cosign signed test image
+      - name: Check Cosign signed test image
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:co-signed
-      - name: Check cosign unsigned test image
+      - name: Check Cosign unsigned test image
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:co-unsigned
-      - name: Check cosign test image signed with alternative key
+      - name: Check Cosign test image signed with alternative key
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:co-signed-alt
       - name: Check alerting endpoint image
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/alerting-endpoint

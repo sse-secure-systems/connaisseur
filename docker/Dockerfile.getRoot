@@ -1,5 +1,5 @@
 FROM python:3-slim
-# based on debian as alpine needs compilation of cryptography package, which bloats image and increases build time immensely
+# Based on debian as alpine needs compilation of cryptography package, which bloats image and increases build time immensely
 
 WORKDIR /app
 

@@ -62,7 +62,7 @@ example_pubkey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTII
 
 cosign_stderr_at_success = """
 The following checks were performed on each of these signatures:
-  - The cosign claims were validated
+  - The Cosign claims were validated
   - The signatures were verified against the specified public key
   - Any certificates were verified against the Fulcio roots.
 """
