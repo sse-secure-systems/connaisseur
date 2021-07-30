@@ -26,7 +26,7 @@ Before adding the new tag, make sure the Connaisseur version is updated in the `
 
 ## Creating changelog
 
-A changelog text, including all new commits from one to another version, can be automatically generated using the `scrips/changelogger.py` script. You have to update the two `ref1` and `ref2` variables in the main method with the the old and new git tags. So if you e.g. want to release a new version from `v1.4.5` to `v1.4.6`, then you have to set `ref1 = "v1.4.5"` and `ref2 = "v1.4.6"`. Then simply run `python scripts/changelogger.py > CHANGELOG.md`, storing the changelog in a new file `CHANGELOG.md` (we won't keep this file, it's just for convenient storing purpose). This file will include all new commits, categorized by their type (e.g. fix, feat, docs, etc.), but may include some mistakes so take a manual look if everything looks in order.
+A changelog text, including all new commits from one to another version, can be automatically generated using the `scrips/changelogger.py` script. You have to update the two `ref1` and `ref2` variables in the main method with the the old and new Git tags. So if you e.g. want to release a new version from `v1.4.5` to `v1.4.6`, then you have to set `ref1 = "v1.4.5"` and `ref2 = "v1.4.6"`. Then simply run `python scripts/changelogger.py > CHANGELOG.md`, storing the changelog in a new file `CHANGELOG.md` (we won't keep this file, it's just for convenient storing purpose). This file will include all new commits, categorized by their type (e.g. fix, feat, docs, etc.), but may include some mistakes so take a manual look if everything looks in order.
 
 Things to look out for:
 
