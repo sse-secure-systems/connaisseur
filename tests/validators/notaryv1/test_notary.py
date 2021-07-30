@@ -146,7 +146,6 @@ def test_healthy(sample_notaries, m_request, index, host, health):
             fix.no_exc(),
         ),
         (0, "bob-image", "root", fix.get_td("bob-image/root"), fix.no_exc()),
-        (2, "irrelevant", "", {}, pytest.raises(exc.UnreachableError)),
         (
             0,
             "auth.io/alice-image",

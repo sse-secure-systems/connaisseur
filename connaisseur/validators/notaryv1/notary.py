@@ -95,12 +95,6 @@ class Notary:
             return False
 
     async def get_trust_data(self, image: Image, role: TUFRole, token: str = None):
-        if not self.healthy:
-            msg = "Unable to reach notary host {notary_name}."
-            raise UnreachableError(
-                message=msg, notary_name=self.name, tuf_role=(str(role))
-            )
-
         im_repo = f"{image.repository}/" if image.repository else ""
         url = (
             f"https://{self.host}/v2/{image.registry}/{im_repo}"
