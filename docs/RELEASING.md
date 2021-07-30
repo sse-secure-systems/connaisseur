@@ -48,10 +48,10 @@ Run `git checkout master` to switch to the `master` branch and then run `git mer
 
 ## Create release page
 
-Finally a release on Github should be created. Go to the [Connaisseur releases page](https://github.com/sse-secure-systems/connaisseur/releases), then click _Draft a new release_. There you have to enter the new tag version, a title (usually `Version <new-version>`) and the changelog text as description. Then click _Publish release_ and you're done! (You can delete the CHANGELOG.md file now. Go and do it.)
+Finally a release on GitHub should be created. Go to the [Connaisseur releases page](https://github.com/sse-secure-systems/connaisseur/releases), then click _Draft a new release_. There you have to enter the new tag version, a title (usually `Version <new-version>`) and the changelog text as description. Then click _Publish release_ and you're done! (You can delete the CHANGELOG.md file now. Go and do it.)
 
 ![gh_release_flow](assets/gh_release.png)
 
 ## Shoot trouble
 
-Be aware that this **isn't** a completely fleshed out, highly available, hyper scalable and fully automated workflow, backed up by state-of-the-art blockchain technology and 24/7 incident response team coverage with global dominance! Not yet at least. For now things will probably break, so make sure that in the end everything looks to be in order and the new release can be seen on the Github page, tagged with _Latest release_ and pointing to the correct version of Connaisseur. Good Luck!
+Be aware that this **isn't** a completely fleshed out, highly available, hyper scalable and fully automated workflow, backed up by state-of-the-art blockchain technology and 24/7 incident response team coverage with global dominance! Not yet at least. For now things will probably break, so make sure that in the end everything looks to be in order and the new release can be seen on the GitHub page, tagged with _Latest release_ and pointing to the correct version of Connaisseur. Good Luck!

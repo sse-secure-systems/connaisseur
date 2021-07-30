@@ -50,13 +50,13 @@ In the process of automating most of the release process, we will run an integra
 
 After the image is pushed and the new commit tagged, the pipeline will run the integration test with the image pulled from Docker Hub to ensure that the released version is working.
 
-We decided for this option as it does not expose credentials to Github Actions, which we wanted to avoid especially in light of the [recent Github Actions injection attacks](https://bugs.chromium.org/p/project-zero/issues/detail?id=2070) and as it would also prevent us from opening up the repository to Pull Requests. To alleviate the work required for doing the steps outside the pipeline we use a shell script that will automate these steps given suitable environment, i.e. Docker context and DCT keys.
+We decided for this option as it does not expose credentials to GitHub Actions, which we wanted to avoid especially in light of the [recent GitHub Actions injection attacks](https://bugs.chromium.org/p/project-zero/issues/detail?id=2070) and as it would also prevent us from opening up the repository to Pull Requests. To alleviate the work required for doing the steps outside the pipeline we use a shell script that will automate these steps given suitable environment, i.e. Docker context and DCT keys.
 
 ### Positive Consequences
 
 - We can develop without having to ship changes immediatly.
-- Release process does not expose credentials to Github Actions.
-- Code gets git tags.
+- Release process does not expose credentials to GitHub Actions.
+- Code gets Git tags.
 
 ### Negative Consequences
 
