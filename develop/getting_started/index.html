@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -401,7 +401,7 @@
   
     <li class="md-nav__item">
       <a href="../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -548,7 +548,7 @@
   
     <li class="md-nav__item">
       <a href="../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -821,9 +821,9 @@ You will learn how to:</p>
 <li><a href="#test-connaisseur">Test Connaisseur</a> <em>(and sign images)</em></li>
 <li><a href="#cleanup">Cleanup</a></li>
 </ol>
-<p>In the tutorial, you can choose to use either Notary (V1) via Docker Content Trust (DCT) or Cosign from the Sigstore project as a signing solution referred to as DCT and Cosign from here on.
-Furthermore we will work with public images on <a href="https://hub.docker.com/">Docker Hub</a> as a container registry and a Kubernetes test cluster which might for example be <a href="https://microk8s.io/">MicroK8s</a> or <a href="https://minikube.sigs.k8s.io/docs/">Minikube</a> for local setups.
-However, feel free to bring your own solutions for registry or cluster and checkout our notes on <a href="..#compatibility">compatibility</a>.</p>
+<p>In the tutorial, you can choose to use either Notary (V1) via Docker Content Trust (DCT) or Cosign from the sigstore project as a signing solution referred to as DCT and Cosign from here on.
+Furthermore we will work with public images on <a href="https://hub.docker.com/">Docker Hub</a> as a container registry and a Kubernetes test cluster which might for example be <a href="https://microk8s.io/">MicroK8s</a> or <a href="https://minikube.sigs.k8s.io/docs/">minikube</a> for local setups.
+However, feel free to bring your own solutions for registry or cluster and check out our notes on <a href="..#compatibility">compatibility</a>.</p>
 <p>In general, Connaisseur can be fully configured via <code>helm/values.yaml</code>, so feel free to take a look and try for yourself.
 For more advanced usage in more complex cases (e.g. authentication, multiple registries, signers, validators, additional features), we strongly advise to review the following pages:</p>
 <ul>
@@ -900,7 +900,7 @@ The result should look similar to this:</p>
       <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5</span>
       <span class="no">YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==</span>
       <span class="no">-----END PUBLIC KEY-----</span>
-  <span class="c1">#cert: |  # in case the trust data host is using a selfsigned certificate</span>
+  <span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span>
   <span class="c1">#  -----BEGIN CERTIFICATE-----</span>
   <span class="c1">#  ...</span>
   <span class="c1">#  -----END CERTIFICATE-----</span>
@@ -925,7 +925,7 @@ The result should look similar to this:</p>
       <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
       <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
       <span class="no">-----END PUBLIC KEY-----</span>
-  <span class="c1">#cert: |  # in case the trust data host is using a selfsigned certificate</span>
+  <span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span>
   <span class="c1">#  -----BEGIN CERTIFICATE-----</span>
   <span class="c1">#  ...</span>
   <span class="c1">#  -----END CERTIFICATE-----</span>

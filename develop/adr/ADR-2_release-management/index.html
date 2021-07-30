@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -326,7 +326,7 @@
   
     <li class="md-nav__item">
       <a href="../../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -473,7 +473,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -710,14 +710,14 @@
         
           <li class="md-nav__item">
   <a href="#positive-consequences" class="md-nav__link">
-    Positive Consequences
+    Positive consequences
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#negative-consequences" class="md-nav__link">
-    Negative Consequences
+    Negative consequences
   </a>
   
 </li>
@@ -917,14 +917,14 @@
         
           <li class="md-nav__item">
   <a href="#positive-consequences" class="md-nav__link">
-    Positive Consequences
+    Positive consequences
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#negative-consequences" class="md-nav__link">
-    Negative Consequences
+    Negative consequences
   </a>
   
 </li>
@@ -974,14 +974,14 @@
 <p>This way we get rid of the current pain of releasing with every pull request at the cost a some overhead during release.</p>
 <p>In the process of automating most of the release process, we will run an integration test with locally built images for pull requests to <code>master</code>. Regarding choice 2, whenever a pull request is merged, whoever merged the PR has to tag this commit on the <code>master</code> branch with the most recent version. Right after the merge, whoever merged the PR builds, signs and pushes the new Connaisseur release and creates a tag on the <code>master</code> branch referencing the new release version.</p>
 <p>After the image is pushed and the new commit tagged, the pipeline will run the integration test with the image pulled from Docker Hub to ensure that the released version is working.</p>
-<p>We decided for this option as it does not expose credentials to Github Actions, which we wanted to avoid especially in light of the <a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=2070">recent Github Actions injection attacks</a> and as it would also prevent us from opening up the repository to Pull Requests. To alleviate the work required for doing the steps outside the pipeline we use a shell script that will automate these steps given suitable environment, i.e. Docker context and DCT keys.</p>
-<h3 id="positive-consequences">Positive Consequences<a class="headerlink" href="#positive-consequences" title="Permanent link">⚓︎</a></h3>
+<p>We decided for this option as it does not expose credentials to GitHub Actions, which we wanted to avoid especially in light of the <a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=2070">recent GitHub Actions injection attacks</a> and as it would also prevent us from opening up the repository to Pull Requests. To alleviate the work required for doing the steps outside the pipeline we use a shell script that will automate these steps given suitable environment, i.e. Docker context and DCT keys.</p>
+<h3 id="positive-consequences">Positive consequences<a class="headerlink" href="#positive-consequences" title="Permanent link">⚓︎</a></h3>
 <ul>
 <li>We can develop without having to ship changes immediatly.</li>
-<li>Release process does not expose credentials to Github Actions.</li>
-<li>Code gets git tags.</li>
+<li>Release process does not expose credentials to GitHub Actions.</li>
+<li>Code gets Git tags.</li>
 </ul>
-<h3 id="negative-consequences">Negative Consequences<a class="headerlink" href="#negative-consequences" title="Permanent link">⚓︎</a></h3>
+<h3 id="negative-consequences">Negative consequences<a class="headerlink" href="#negative-consequences" title="Permanent link">⚓︎</a></h3>
 <ul>
 <li>Process from code to release for a single change is more cumbersome than right now.</li>
 <li>Release still requires human intervention.</li>

@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -326,7 +326,7 @@
   
     <li class="md-nav__item">
       <a href="../../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -473,7 +473,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -1061,8 +1061,8 @@
 <h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">⚓︎</a></h2>
 <p>Accepted</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">⚓︎</a></h2>
-<p>Previously Connaisseur only supported the configuration of a single notary, where all signature data had to reside in. Unfortunately this is rather impractical, as one doesn't create all signatures for all images one uses in a cluster. There is a need to access signature data from multiple places, like in a setup where most images come from a private registry + notary and some from DockerHub and their notary.</p>
-<p>There is also the problem that a single notary instance could use multiple root keys, used for creating the signatures, like in the case of DockerHub. Connaisseur also only supports a single root key to be trust pinned, thus making it impractical.</p>
+<p>Previously Connaisseur only supported the configuration of a single notary, where all signature data had to reside in. Unfortunately this is rather impractical, as one doesn't create all signatures for all images one uses in a cluster. There is a need to access signature data from multiple places, like in a setup where most images come from a private registry + notary and some from Docker Hub and their notary.</p>
+<p>There is also the problem that a single notary instance could use multiple root keys, used for creating the signatures, like in the case of Docker Hub. Connaisseur also only supports a single root key to be trust pinned, thus making it impractical.</p>
 <p>That's why the decision was made to support more than one notary and multiple keys per notary, which leads to the question how the new configuration should look like. This also has implications on the notary health check, which is important for Connaisseur's own readiness check.</p>
 <h2 id="considered-options">Considered options<a class="headerlink" href="#considered-options" title="Permanent link">⚓︎</a></h2>
 <h3 id="choice-1">Choice 1<a class="headerlink" href="#choice-1" title="Permanent link">⚓︎</a></h3>
@@ -1096,7 +1096,7 @@
 <li><code>key</code> -- Which key to use for doing the signature verification. This has to correspond to a <code>name</code> field of one of the public keys configured for the notary corresponding to the image policy's <code>notary</code> field. What happens if none is given, is defined by the result of choice 2.</li>
 </ul>
 <h4 id="option-2-per-notary-key">Option 2 (Per Notary + Key)<a class="headerlink" href="#option-2-per-notary-key" title="Permanent link">⚓︎</a></h4>
-<p>The <code>notary</code> field becomes a list and changes to <code>notaries</code>. Per notary + public root key combination, there is one entry. Meaning, for example, there will be one entry for DockerHub and the public key for all official images and there will be another entry for DockerHub and the public key for some private images.</p>
+<p>The <code>notary</code> field becomes a list and changes to <code>notaries</code>. Per notary + public root key combination, there is one entry. Meaning, for example, there will be one entry for Docker Hub and the public key for all official images and there will be another entry for Docker Hub and the public key for some private images.</p>
 <p>The entries will look identical to the one's from option 1, with two exceptions.</p>
 <ol>
 <li>

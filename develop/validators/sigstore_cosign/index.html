@@ -18,7 +18,7 @@
     
     
       
-        <title>SigStore / Cosign - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>sigstore / Cosign - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SigStore / Cosign
+              sigstore / Cosign
             
           </span>
         </div>
@@ -339,12 +339,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          SigStore / Cosign
+          sigstore / Cosign
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
       
         
@@ -571,7 +571,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -853,12 +853,12 @@
               
                 
                 
-                <h1 id="sigstore-cosign">SigStore / Cosign<a class="headerlink" href="#sigstore-cosign" title="Permanent link">⚓︎</a></h1>
-<p><a href="https://sigstore.dev/">Sigstore</a> is a <a href="https://linuxfoundation.org/">Linux Foundation</a> project that aims to provide public software signing and transparency to improve open source supply chain security.
-As part of the Sigstore project, <a href="https://github.com/sigstore/cosign">Cosign</a> allows seamless container signing, verification and storage.
+                <h1 id="sigstore-cosign">sigstore / Cosign<a class="headerlink" href="#sigstore-cosign" title="Permanent link">⚓︎</a></h1>
+<p><a href="https://sigstore.dev/">sigstore</a> is a <a href="https://linuxfoundation.org/">Linux Foundation</a> project that aims to provide public software signing and transparency to improve open source supply chain security.
+As part of the sigstore project, <a href="https://github.com/sigstore/cosign">Cosign</a> allows seamless container signing, verification and storage.
 You can read more about it <a href="https://blog.sigstore.dev/">here</a>.</p>
 <p>Connaisseur currently supports the elementary function of verifying Cosign-generated signatures against the locally created corresponding public keys.
-We plan to expose further features of Cosign and Sigstore in upcoming releases, so stay tuned!</p>
+We plan to expose further features of Cosign and sigstore in upcoming releases, so stay tuned!</p>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
 <p>Getting started with Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>.
 You can download Cosign from its <a href="https://github.com/sigstore/cosign/releases">GitHub repository</a>.
@@ -907,10 +907,10 @@ In case you just use the default values for the validator and image policy given
 <table>
 <thead>
 <tr>
-<th>key</th>
-<th>default</th>
-<th>required</th>
-<th>description</th>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
@@ -942,19 +942,19 @@ In case you just use the default values for the validator and image policy given
 <td><code>host</code></td>
 <td></td>
 <td></td>
-<td>NOT YET IMPLEMENTED</td>
+<td>Not yet implemented.</td>
 </tr>
 <tr>
 <td><code>auth.</code></td>
 <td></td>
 <td></td>
-<td>Provide authentication credentials for private registries.</td>
+<td>Authentication credentials for private registries.</td>
 </tr>
 <tr>
 <td><code>auth.secret_name</code></td>
 <td></td>
 <td></td>
-<td>Specify a Kubernetes secret that contains <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> for registry authentication. See additional notes <a href="#authentication">below</a>.</td>
+<td>Name of a Kubernetes secret that contains <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> for registry authentication. See additional notes <a href="#authentication">below</a>.</td>
 </tr>
 </tbody>
 </table>

@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -328,7 +328,7 @@
   
     <li class="md-nav__item">
       <a href="../../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -524,7 +524,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -783,10 +783,10 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
 <table>
 <thead>
 <tr>
-<th>key</th>
-<th>default</th>
-<th>required</th>
-<th>description</th>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
@@ -794,13 +794,13 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
 <td><code>enabled</code></td>
 <td>false</td>
 <td></td>
-<td><code>true</code>/<code>false</code>; enable namespaced validation otherwise images in all namespaces will be validated</td>
+<td><code>true</code> or <code>false</code>; enable namespaced validation otherwise images in all namespaces will be validated.</td>
 </tr>
 <tr>
 <td><code>mode</code></td>
 <td>ignore</td>
 <td></td>
-<td><code>ignore</code>/<code>validate</code>; configure mode of exclusion to either ignore all namespaces with label <code>securesystemsengineering.connaisseur/webhook</code> set to <code>ignore</code> or only validate namespaces with the label set to <code>validate</code></td>
+<td><code>ignore</code> or <code>validate</code>; configure mode of exclusion to either ignore all namespaces with label <code>securesystemsengineering.connaisseur/webhook</code> set to <code>ignore</code> or only validate namespaces with the label set to <code>validate</code>.</td>
 </tr>
 </tbody>
 </table>

@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -435,7 +435,7 @@
   
     <li class="md-nav__item">
       <a href="validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -582,7 +582,7 @@
   
     <li class="md-nav__item">
       <a href="SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -889,7 +889,7 @@ Based on the result, it either accepts or denies those requests.</p>
 It is built to be extendable and currently aims to support the following signing solutions:</p>
 <ul>
 <li><a href="https://github.com/theupdateframework/notary">Notary (V1)</a> / <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a></li>
-<li><a href="https://sigstore.dev/">Sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a></li>
+<li><a href="https://sigstore.dev/">sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a></li>
 <li><a href="https://github.com/notaryproject/nv2">Notary V2</a> (PLANNED)</li>
 </ul>
 <p>It provides several additional features:</p>
@@ -976,7 +976,7 @@ The resulting list of images referenced by tag or digest is passed to the image 
 The image policy matches the identified images to the configured validators and corresponding trust roots (e.g. public keys) to be used for verification.
 Image policy and validator configuration form the central logic behind Connaisseur and are described in detail und <a href="basics/">basics</a>.
 Validation is the step where the actual signature verification takes place (3).
-For each image, the required trust data is retrieved from external sources such as Notary server, registry or Sigstore transparency log and validated against the pre-configured trust root (e.g. public key).
+For each image, the required trust data is retrieved from external sources such as Notary server, registry or sigstore transparency log and validated against the pre-configured trust root (e.g. public key).
 This forms the basis for deciding on the request (4).
 In case no trusted digest is found for any of the images (i.e. either no signed digest available or no signature matching the public key), the whole request is denied.
 Otherwise, Connaisseur translates all image references in the original request to trusted digests and admits it (5).</p>
@@ -1020,7 +1020,8 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
 <ul>
 <li>"<a href="https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce"><em>Container Image Signatures in Kubernetes</em></a>" - blog post (full introduction)</li>
 <li>"<a href="https://berlin-crypto.github.io/event/dockerimagesignatures.html"><em>Integrity of Docker images</em></a>" - talk at Berlin Crypto Meetup (<em>The Update Framework</em>, <em>Notary</em>, <em>Docker Content Trust</em> &amp; Connaisseur [live demo])</li>
-<li>"<a href="https://blog.sigstore.dev/verify-oci-container-image-signatures-in-kubernetes-33663a9ec7d8"><em>Verifying Container Image Signatures from an OCI Registry in Kubernetes</em></a>" - blog post (experimental support of <em>Sigstore</em>/<em>Cosign</em>)</li>
+<li>"<a href="https://blog.sigstore.dev/verify-oci-container-image-signatures-in-kubernetes-33663a9ec7d8"><em>Verifying Container Image Signatures from an OCI Registry in Kubernetes</em></a>" - blog post (experimental support of <em>sigstore</em>/<em>Cosign</em>)</li>
+<li>"<a href="https://medium.com/sse-blog/verify-container-image-signatures-in-kubernetes-using-notary-or-cosign-or-both-c25d9e79ec45"><em>Verify Container Image Signatures in Kubernetes using Notary or Cosign or both</em></a>" - blog post (Connaisseur v2.0 release)</li>
 </ul>
                 
               

@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -328,7 +328,7 @@
   
     <li class="md-nav__item">
       <a href="../../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -450,7 +450,7 @@
       
         <li class="md-nav__item">
   <a href="#supported-interfaces" class="md-nav__link">
-    Supported Interfaces
+    Supported interfaces
   </a>
   
 </li>
@@ -551,7 +551,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -761,7 +761,7 @@
       
         <li class="md-nav__item">
   <a href="#supported-interfaces" class="md-nav__link">
-    Supported Interfaces
+    Supported interfaces
   </a>
   
 </li>
@@ -816,8 +816,8 @@
                 <h1 id="alerting">Alerting<a class="headerlink" href="#alerting" title="Permanent link">⚓︎</a></h1>
 <p>Connaisseur can send notifications on admission decisions to basically every REST
 endpoint that accepts JSON payloads.</p>
-<h2 id="supported-interfaces">Supported Interfaces<a class="headerlink" href="#supported-interfaces" title="Permanent link">⚓︎</a></h2>
-<p>Slack, Opsgenie and Keybase have preconfigured payloads that are ready to use.
+<h2 id="supported-interfaces">Supported interfaces<a class="headerlink" href="#supported-interfaces" title="Permanent link">⚓︎</a></h2>
+<p>Slack, Opsgenie and Keybase have pre-configured payloads that are ready to use.
 However, you can use the existing payload templates as an example how to model your
 own custom one.
 It is also possible to configure multiple interfaces for receiving
@@ -827,11 +827,11 @@ alerts at the same time.</p>
 <table>
 <thead>
 <tr>
-<th>key</th>
-<th>accepted values</th>
-<th>default</th>
-<th>required</th>
-<th>description</th>
+<th>Key</th>
+<th>Accepted values</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
@@ -840,49 +840,49 @@ alerts at the same time.</p>
 <td>string</td>
 <td><code>"not specified"</code></td>
 <td></td>
-<td>cluster identifier used in alert payload to distinguish between alerts from different clusters</td>
+<td>Cluster identifier used in alert payload to distinguish between alerts from different clusters.</td>
 </tr>
 <tr>
 <td><code>alerting.&lt;category&gt;.template</code></td>
 <td><code>opsgenie</code>, <code>slack</code>, <code>keybase</code> or custom<sup>*</sup></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>specifies which file in <code>helm/alert_payload_templates/</code> to use as alert payload template</td>
+<td>File in <code>helm/alert_payload_templates/</code> to be used as alert payload template.</td>
 </tr>
 <tr>
 <td><code>alerting.&lt;category&gt;.receiver_url</code></td>
 <td>string</td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>url of alert-receiving endpoint</td>
+<td>URL of alert-receiving endpoint.</td>
 </tr>
 <tr>
 <td><code>alerting.&lt;category&gt;.priority</code></td>
 <td>int</td>
 <td><code>3</code></td>
 <td></td>
-<td>priority of alert (to enable fitting Connaisseur alerts into alerts from other sources)</td>
+<td>Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).</td>
 </tr>
 <tr>
 <td><code>alerting.&lt;category&gt;.custom_headers</code></td>
 <td>list[string]</td>
 <td>-</td>
 <td></td>
-<td>additional headers required by alert-receiving endpoint</td>
+<td>Additional headers required by alert-receiving endpoint.</td>
 </tr>
 <tr>
 <td><code>alerting.&lt;category&gt;.payload_fields</code></td>
 <td>subyaml</td>
 <td>-</td>
 <td></td>
-<td>enables specifying additional (<code>yaml</code>) key-value pairs to be appended to alert payload (as <code>json</code>)</td>
+<td>Additional (<code>yaml</code>) key-value pairs to be appended to alert payload (as <code>json</code>).</td>
 </tr>
 <tr>
 <td><code>alerting.&lt;category&gt;.fail_if_alert_sending_fails</code></td>
 <td>bool</td>
 <td><code>False</code></td>
 <td></td>
-<td><code>True</code> will make Connaisseur deny images if the corresponding alert cannot be successfully sent</td>
+<td>Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.</td>
 </tr>
 </tbody>
 </table>
@@ -897,7 +897,7 @@ one it needs to be one of <code>slack</code>, <code>keybase</code> or <code>opsg
 <li><code>fail_if_alert_sending_fails</code> only comes into play for requests that Connaisseur would have admitted as other requests would have been denied in the first place. The setting can come handy if you want to run Connaisseur in detection mode but still make sure that you get notified about what is going on in your cluster. <strong>However, this setting will significantly impact cluster interaction for everyone (i.e. block any cluster change associated to an image) if the alert sending fails permanently, e.g. accidental deletion of your Slack Webhook App, GenieKey expired...</strong></li>
 </ul>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
-<p>For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to to following snippet:</p>
+<p>For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:</p>
 <div class="highlight"><pre><span></span><code>alerting:
   admit_request:
     templates:
@@ -920,8 +920,8 @@ during runtime into the payload:</p>
 </ul>
 <p>Referring to any of these variables in the templates works by Jinja2 notation
 (e.g. <code>{{ timestamp }}</code>). You can update your payload dynamically by adding payload
-fields in <code>yaml</code> presentation in the <code>payload_fields</code> key which will be translated
-to JSON by helm as is. If your REST endpoint requires particular headers, your can
+fields in <code>yaml</code> representation in the <code>payload_fields</code> key which will be translated
+to JSON by Helm as is. If your REST endpoint requires particular headers, you can
 specify them as described above in <code>custom_headers</code>.</p>
 <p>Feel free to make a PR to share with the community if you add new neat templates for other third parties <img alt="🙏" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f64f.svg" title=":pray:" /></p>
                 

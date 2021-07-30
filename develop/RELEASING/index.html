@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -326,7 +326,7 @@
   
     <li class="md-nav__item">
       <a href="../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -473,7 +473,7 @@
   
     <li class="md-nav__item">
       <a href="../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -568,22 +568,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-new-tag" class="md-nav__link">
-    Adding new tag
+  <a href="#add-new-tag" class="md-nav__link">
+    Add new tag
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#creating-changelog" class="md-nav__link">
-    Creating changelog
+  <a href="#create-changelog" class="md-nav__link">
+    Create changelog
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#creating-pr" class="md-nav__link">
-    Creating PR
+  <a href="#create-pr" class="md-nav__link">
+    Create PR
   </a>
   
 </li>
@@ -780,22 +780,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-new-tag" class="md-nav__link">
-    Adding new tag
+  <a href="#add-new-tag" class="md-nav__link">
+    Add new tag
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#creating-changelog" class="md-nav__link">
-    Creating changelog
+  <a href="#create-changelog" class="md-nav__link">
+    Create changelog
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#creating-pr" class="md-nav__link">
-    Creating PR
+  <a href="#create-pr" class="md-nav__link">
+    Create PR
   </a>
   
 </li>
@@ -848,7 +848,7 @@
 <li>adding a new version tag</li>
 <li>creating a changelog from commit messages</li>
 <li>creating a PR from <code>develop</code> (new version) to <code>master</code> (current version)</li>
-<li>pushing a new version of the Connaisseur image to Dockerhub</li>
+<li>pushing a new version of the Connaisseur image to Docker Hub</li>
 <li>merging in the PR &amp; push tag</li>
 <li>creating release page</li>
 <li>shoot some trouble</li>
@@ -858,29 +858,29 @@
 See that all tests are running smoothly.
 Check that documentation changes show up correctly <a href="https://sse-secure-systems.github.io/connaisseur/develop/">here</a>.
 Make sure the Connaisseur version is incremented correctly according to the changes.
-See if the docs announcements should be adjusted <a href="https://github.com/sse-secure-systems/connaisseur/blob/docs/documentation-2.0/docs/overrides/main.html">here</a>.
+See if the docs announcements should be adjusted <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html">here</a>.
 Consider making a <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions <em>announcement</em></a>.</p>
-<h2 id="adding-new-tag">Adding new tag<a class="headerlink" href="#adding-new-tag" title="Permanent link">⚓︎</a></h2>
+<h2 id="add-new-tag">Add new tag<a class="headerlink" href="#add-new-tag" title="Permanent link">⚓︎</a></h2>
 <p>Before adding the new tag, make sure the Connaisseur version is updated in the <code>helm/values.yaml</code> and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version. Then add the tag (on <code>develop</code> branch) with <code>git tag v&lt;new-conny-version&gt;</code> (e.g. <code>git tag v1.4.6</code>).</p>
-<h2 id="creating-changelog">Creating changelog<a class="headerlink" href="#creating-changelog" title="Permanent link">⚓︎</a></h2>
-<p>A changelog text, including all new commits from one to another version, can be automatically generated using the <code>scrips/changelogger.py</code> script. You have to update the two <code>ref1</code> and <code>ref2</code> variables in the main method with the the old and new git tags. So if you e.g. want to release a new version from <code>v1.4.5</code> to <code>v1.4.6</code>, then you have to set <code>ref1 = "v1.4.5"</code> and <code>ref2 = "v1.4.6"</code>. Then simply run <code>python scripts/changelogger.py &gt; CHANGELOG.md</code>, storing the changelog in a new file <code>CHANGELOG.md</code> (we won't keep this file, it's just for convenient storing purpose). This file will include all new commits, categorized by their type (e.g. fix, feat, docs, etc.), but may include some mistakes so take a manual look if everything looks in order.</p>
+<h2 id="create-changelog">Create changelog<a class="headerlink" href="#create-changelog" title="Permanent link">⚓︎</a></h2>
+<p>A changelog text, including all new commits from one to another version, can be automatically generated using the <code>scrips/changelogger.py</code> script. You have to update the two <code>ref1</code> and <code>ref2</code> variables in the main method with the the old and new Git tags. So if you e.g. want to release a new version from <code>v1.4.5</code> to <code>v1.4.6</code>, then you have to set <code>ref1 = "v1.4.5"</code> and <code>ref2 = "v1.4.6"</code>. Then simply run <code>python scripts/changelogger.py &gt; CHANGELOG.md</code>, storing the changelog in a new file <code>CHANGELOG.md</code> (we won't keep this file, it's just for convenient storing purpose). This file will include all new commits, categorized by their type (e.g. fix, feat, docs, etc.), but may include some mistakes so take a manual look if everything looks in order.</p>
 <p>Things to look out for:</p>
 <ul>
 <li>multiple headings for the same category</li>
 <li>broken pull request links</li>
 <li><code>None</code> appended on end of line</li>
 </ul>
-<h2 id="creating-pr">Creating PR<a class="headerlink" href="#creating-pr" title="Permanent link">⚓︎</a></h2>
+<h2 id="create-pr">Create PR<a class="headerlink" href="#create-pr" title="Permanent link">⚓︎</a></h2>
 <p>Create a PR from <code>develop</code> to <code>master</code>, putting the changelog text as description and wait for someone to approve it.</p>
 <h2 id="push-new-connaisseur-image">Push new Connaisseur image<a class="headerlink" href="#push-new-connaisseur-image" title="Permanent link">⚓︎</a></h2>
-<p>When the PR is approved and ready to be merged, first push the new Connaisseur image to Dockerhub, as it will be used in the release pipeline. Run <code>make docker</code> to build the new version of the docker image and then <code>DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:&lt;new-version&gt;</code> to push and sign it. You'll obviously need the right private key and passphrase for doing so. You also need to be in the list of valid signers for Connaisseur. If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:philipp.belitz@securesystems.de">Philipp Belitz</a>.</p>
+<p>When the PR is approved and ready to be merged, first push the new Connaisseur image to Docker Hub, as it will be used in the release pipeline. Run <code>make docker</code> to build the new version of the docker image and then <code>DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:&lt;new-version&gt;</code> to push and sign it. You'll obviously need the right private key and passphrase for doing so. You also need to be in the list of valid signers for Connaisseur. If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:philipp.belitz@securesystems.de">Philipp Belitz</a>.</p>
 <h2 id="merge-pr">Merge PR<a class="headerlink" href="#merge-pr" title="Permanent link">⚓︎</a></h2>
 <p>Run <code>git checkout master</code> to switch to the <code>master</code> branch and then run <code>git merge develop</code> to merge <code>develop</code> in. Then run <code>git push</code> and <code>git push --tags</code> to publish all changes and the new tag.</p>
 <h2 id="create-release-page">Create release page<a class="headerlink" href="#create-release-page" title="Permanent link">⚓︎</a></h2>
-<p>Finally a release on Github should be created. Go to the <a href="https://github.com/sse-secure-systems/connaisseur/releases">Connaisseur releases page</a>, then click <em>Draft a new release</em>. There you have to enter the new tag version, a title (usually <code>Version &lt;new-version&gt;</code>) and the changelog text as description. Then click <em>Publish release</em> and you're done! (You can delete the CHANGELOG.md file now. Go and do it.)</p>
+<p>Finally a release on GitHub should be created. Go to the <a href="https://github.com/sse-secure-systems/connaisseur/releases">Connaisseur releases page</a>, then click <em>Draft a new release</em>. There you have to enter the new tag version, a title (usually <code>Version &lt;new-version&gt;</code>) and the changelog text as description. Then click <em>Publish release</em> and you're done! (You can delete the CHANGELOG.md file now. Go and do it.)</p>
 <p><img alt="gh_release_flow" src="../assets/gh_release.png" /></p>
 <h2 id="shoot-trouble">Shoot trouble<a class="headerlink" href="#shoot-trouble" title="Permanent link">⚓︎</a></h2>
-<p>Be aware that this <strong>isn't</strong> a completely fleshed out, highly available, hyper scalable and fully automated workflow, backed up by state-of-the-art blockchain technology and 24/7 incident response team coverage with global dominance! Not yet at least. For now things will probably break, so make sure that in the end everything looks to be in order and the new release can be seen on the Github page, tagged with <em>Latest release</em> and pointing to the correct version of Connaisseur. Good Luck!</p>
+<p>Be aware that this <strong>isn't</strong> a completely fleshed out, highly available, hyper scalable and fully automated workflow, backed up by state-of-the-art blockchain technology and 24/7 incident response team coverage with global dominance! Not yet at least. For now things will probably break, so make sure that in the end everything looks to be in order and the new release can be seen on the GitHub page, tagged with <em>Latest release</em> and pointing to the correct version of Connaisseur. Good Luck!</p>
                 
               
               

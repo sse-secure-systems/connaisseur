@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -326,7 +326,7 @@
   
     <li class="md-nav__item">
       <a href="../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -473,7 +473,7 @@
   
     <li class="md-nav__item">
       <a href="../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -855,9 +855,9 @@ So be bold and contribute to the code as described in the <a href="#contribute-t
 <p>The following steps will help you make code contributions to Connaisseur and ensure good code quality and workflow.
 This includes the following steps:</p>
 <ol>
-<li><strong>Setup your environment</strong>:
+<li><strong>Set up your environment</strong>:
    Set up up your local environment to best interact with the code.
-   Further information is given <a href="#setup-the-environment">below</a>.</li>
+   Further information is given <a href="#set-up-the-environment">below</a>.</li>
 <li><strong>Make atomic changes</strong>:
    Changes should be atomic.
    As such, pull requests should contain only few commits, and each commit should only fix one issue or implement one feature, with a concise commit message.</li>
@@ -903,7 +903,7 @@ To autoformat the code:
 We recommend the following approach for running pytest in a container:
 <div class="highlight"><pre><span></span><code>docker run -it --rm -v &lt;path-to-repository&gt;:/data --entrypoint=ash python:alpine
 cd data
-pip3 install -r requirements_dev.txt
+YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
 pytest --cov=connaisseur --cov-report=xml tests/
 </code></pre></div></p>
 <p>This helps identify bugs in changes before pushing.</p>
@@ -925,9 +925,9 @@ pytest --cov=connaisseur --cov-report=xml tests/
 <h3 id="signed-commits-and-pull-requests">Signed commits and pull requests<a class="headerlink" href="#signed-commits-and-pull-requests" title="Permanent link">⚓︎</a></h3>
 <p>All changes to the <code>develop</code> and <code>master</code> branch must be signed which is enforced via <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing">branch protection</a>.
 This can be achieved by only fast-forwarding signed commits or signing of merge commits by a contributor.
-Consequently, while we appreciate signed commits in PRs, we do not require it.</p>
+Consequently, we appreciate but do not require that commits in PRs are signed.</p>
 <p>A general introduction into signing commits can for example be found in the <a href="https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html">With Blue Ink blog</a>. For details on setting everything up for GitHub, please follow the steps in the <a href="https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification">Documentation</a>.</p>
-<p>Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are setup to create signed commits.
+<p>Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are set up to create signed commits.
 We recommend to configure Git to sign commits by default via:
 <div class="highlight"><pre><span></span><code>git config commit.gpgsign <span class="nb">true</span>
 </code></pre></div>
@@ -961,6 +961,7 @@ The three parts should consist of the following:</p>
 <li><em>fix</em>: fixing an issue or bug</li>
 <li><em>refactor</em>: adjustment of code base to improve code quality or performance but not adding a feature or fixing a bug</li>
 <li><em>test</em>: testing related changes</li>
+<li><em>update</em>: updating a dependency</li>
 </ul>
 <p>A complete commit message could therefore look as follows:
 <div class="highlight"><pre><span></span><code>git commit -m &quot;fix: extend registry validation regex to custom ports&quot; -m &quot;The current regex used for validation of the image name does not allow using non-default ports for the image repository name. The regex is extended to optionally provide a port number.&quot; -m &quot;Fix #3&quot;
@@ -991,7 +992,7 @@ The three parts should consist of the following:</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../SECURITY/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Security policy" rel="prev">
+        <a href="../SECURITY/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Security Policy" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -1000,7 +1001,7 @@ The three parts should consist of the following:</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Security policy
+              Security Policy
             </div>
           </div>
         </a>

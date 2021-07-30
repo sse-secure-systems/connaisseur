@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -326,7 +326,7 @@
   
     <li class="md-nav__item">
       <a href="../../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -473,7 +473,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -665,14 +665,14 @@
         
           <li class="md-nav__item">
   <a href="#positive-consequences" class="md-nav__link">
-    Positive Consequences
+    Positive consequences
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#negative-consequences" class="md-nav__link">
-    Negative Consequences
+    Negative consequences
   </a>
   
 </li>
@@ -851,14 +851,14 @@
         
           <li class="md-nav__item">
   <a href="#positive-consequences" class="md-nav__link">
-    Positive Consequences
+    Positive consequences
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#negative-consequences" class="md-nav__link">
-    Negative Consequences
+    Negative consequences
   </a>
   
 </li>
@@ -889,17 +889,17 @@
 <p>In <a href="https://github.com/sse-secure-systems/connaisseur/issues/3">#3</a> it was noted that prior to version 1.1.5 of Connaisseur when looking at the <code>Ready</code> status of Connaisseur Pods, they could report <code>Ready</code> while being non-functional due to the MutatingWebhookConfiguration missing. However, as stated above the MutatingWebhookConfiguration can only be deployed <em>after</em> the Connaisseur Pods, which was solved by checking the <code>Ready</code> state of said Pods. If one were to add a dependency to this <code>Ready</code> state, such that it only shows <code>Ready</code> when the MutatingWebhookConfiguration exists, we run into a deadlock, where the MutatingWebhookConfiguration waits for the Pods and the Pods wait for the MutatingWebhookConfiguration.</p>
 <h2 id="considered-options">Considered options<a class="headerlink" href="#considered-options" title="Permanent link">⚓︎</a></h2>
 <h3 id="option-1">Option 1<a class="headerlink" href="#option-1" title="Permanent link">⚓︎</a></h3>
-<p>At the start of the Helm deployment, one can create a Pod named <code>connaisseur-bootstrap-sentinel</code> that will run for 5 minutes (which is also the installation timeout by helm). Connaisseur Pods will report <code>Ready</code> if they can 1) access notary AND 2) the MutatingWebhookConfiguration exists OR 3) the <code>connaisseur-bootstrap-sentinel</code> Pod is still running. If 1)  AND 2) both hold true, the sentinel is killed even if the 5 minutes have not passed yet.</p>
+<p>At the start of the Helm deployment, one can create a Pod named <code>connaisseur-bootstrap-sentinel</code> that will run for 5 minutes (which is also the installation timeout by Helm). Connaisseur Pods will report <code>Ready</code> if they can 1) access notary AND 2) the MutatingWebhookConfiguration exists OR 3) the <code>connaisseur-bootstrap-sentinel</code> Pod is still running. If 1)  AND 2) both hold true, the sentinel is killed even if the 5 minutes have not passed yet.</p>
 <h3 id="option-2">Option 2<a class="headerlink" href="#option-2" title="Permanent link">⚓︎</a></h3>
 <p>Let Connaisseur's Pod readiness stay non-indicative of Connaisseur functioning and advertise that someone running Connaisseur has to monitor the MutatingWebhookConfiguration in order to ensure proper working.</p>
 <h3 id="option-3">Option 3<a class="headerlink" href="#option-3" title="Permanent link">⚓︎</a></h3>
 <p>Deploy MutatingWebhookConfiguration through Helm when Connaisseur Pods are healthy instead of when ready. Require Pod started and working notary connection for health and require additionally the existence of the MutatingWebhookConfiguration for readiness.</p>
 <h2 id="decision-outcome">Decision outcome<a class="headerlink" href="#decision-outcome" title="Permanent link">⚓︎</a></h2>
 <p>We chose option 1 over option 2, because it was important to us that a brief glance at Connaisseur's Namespace allows one to judge whether it is running properly. Option 3 was not chosen as the readiness status of Pods can be easily seen from the Service, whereas the health status would require querying every single Pod individually. We deemed that to be a very ugly, non-kubernetes-y solution and hence decided against it.</p>
-<h3 id="positive-consequences">Positive Consequences<a class="headerlink" href="#positive-consequences" title="Permanent link">⚓︎</a></h3>
-<p>If the Connaisseur Pods report <code>Ready</code> during the <code>connaisseur-bootstrap-sentinel</code>'s runtime, the MutatingWebhookConfiguration will be deployed by Helm. Otherwise, the helm deployment will fail after its timeout period (default: 5min), since there won't be a running <code>connaisseur-bootstrap-sentinel</code> Pod anymore that resolves the installation deadlock. The Connaisseur Pods will never reach the <code>Ready</code> state and the MutatingWebhookConfiguration never gets deployed. This means, we get consistent deployment failures after the inital waiting period if something did not work out. Additionally, if the MutatingWebhookConfiguration gets removed for whatever reason during operation, Connaisseur Pods will be failing, indicating their failed dependency. Hence, monitoring the Connaisseur Pods is sufficient to ensure their working.</p>
-<h3 id="negative-consequences">Negative Consequences<a class="headerlink" href="#negative-consequences" title="Permanent link">⚓︎</a></h3>
-<p>On the other hand, if an adversary can deploy a Pod named <code>connaisseur-bootstrap-sentinel</code> to Connaisseur's Namespace, the Connaisseur Pods will always show <code>Ready</code> regardless of the MutatingWebhookConfiguration. However, if an adversary can deploy to Connaisseur's Namespace, chances are Connaisseur can be compromised anyways. More importantly, if not a single Connaisseur Pod is successfully deployed or if the notary healthcheck fails during the sentinel's lifetime, then the deployment will fail regardless of possible recovery at a later time. Another issue would be the <code>connaisseur-bootstrap-sentinel</code> Pod being left behind, however since it has a very limited use-case we can also clean it up during the deployment, so apart from the minimal additional complexity of the deployment this is a non-issue.</p>
+<h3 id="positive-consequences">Positive consequences<a class="headerlink" href="#positive-consequences" title="Permanent link">⚓︎</a></h3>
+<p>If the Connaisseur Pods report <code>Ready</code> during the <code>connaisseur-bootstrap-sentinel</code>'s runtime, the MutatingWebhookConfiguration will be deployed by Helm. Otherwise, the Helm deployment will fail after its timeout period (default: 5min), since there won't be a running <code>connaisseur-bootstrap-sentinel</code> Pod anymore that resolves the installation deadlock. The Connaisseur Pods will never reach the <code>Ready</code> state and the MutatingWebhookConfiguration never gets deployed. This means, we get consistent deployment failures after the inital waiting period if something did not work out. Additionally, if the MutatingWebhookConfiguration gets removed for whatever reason during operation, Connaisseur Pods will be failing, indicating their failed dependency. Hence, monitoring the Connaisseur Pods is sufficient to ensure their working.</p>
+<h3 id="negative-consequences">Negative consequences<a class="headerlink" href="#negative-consequences" title="Permanent link">⚓︎</a></h3>
+<p>On the other hand, if an adversary can deploy a Pod named <code>connaisseur-bootstrap-sentinel</code> to Connaisseur's Namespace, the Connaisseur Pods will always show <code>Ready</code> regardless of the MutatingWebhookConfiguration. However, if an adversary can deploy to Connaisseur's Namespace, chances are Connaisseur can be compromised anyways. More importantly, if not a single Connaisseur Pod is successfully deployed or if the notary healthcheck fails during the sentinel's lifetime, then the deployment will fail regardless of possible recovery at a later time. Another issue would be the <code>connaisseur-bootstrap-sentinel</code> Pod being left behind, however since it has a very limited use case we can also clean it up during the deployment, so apart from the minimal additional complexity of the deployment this is a non-issue.</p>
                 
               
               

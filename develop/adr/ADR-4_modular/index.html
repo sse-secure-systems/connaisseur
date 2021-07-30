@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -326,7 +326,7 @@
   
     <li class="md-nav__item">
       <a href="../../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -473,7 +473,7 @@
   
     <li class="md-nav__item">
       <a href="../../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -659,26 +659,26 @@
       
         <li class="md-nav__item">
   <a href="#considered-options" class="md-nav__link">
-    Considered Options
+    Considered options
   </a>
   
-    <nav class="md-nav" aria-label="Considered Options">
+    <nav class="md-nav" aria-label="Considered options">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#configuration-changes-choice-1" class="md-nav__link">
-    Configuration Changes (Choice 1)
+    Configuration changes (Choice 1)
   </a>
   
-    <nav class="md-nav" aria-label="Configuration Changes (Choice 1)">
+    <nav class="md-nav" aria-label="Configuration changes (Choice 1)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#notary-configuration-11" class="md-nav__link">
-    "Notary" Configuration (1.1)
+    "Notary" configuration (1.1)
   </a>
   
-    <nav class="md-nav" aria-label=""Notary" Configuration (1.1)">
+    <nav class="md-nav" aria-label=""Notary" configuration (1.1)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -953,26 +953,26 @@
       
         <li class="md-nav__item">
   <a href="#considered-options" class="md-nav__link">
-    Considered Options
+    Considered options
   </a>
   
-    <nav class="md-nav" aria-label="Considered Options">
+    <nav class="md-nav" aria-label="Considered options">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#configuration-changes-choice-1" class="md-nav__link">
-    Configuration Changes (Choice 1)
+    Configuration changes (Choice 1)
   </a>
   
-    <nav class="md-nav" aria-label="Configuration Changes (Choice 1)">
+    <nav class="md-nav" aria-label="Configuration changes (Choice 1)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#notary-configuration-11" class="md-nav__link">
-    "Notary" Configuration (1.1)
+    "Notary" configuration (1.1)
   </a>
   
-    <nav class="md-nav" aria-label=""Notary" Configuration (1.1)">
+    <nav class="md-nav" aria-label=""Notary" configuration (1.1)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1173,12 +1173,12 @@
 <h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">⚓︎</a></h2>
 <p>Accepted</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">⚓︎</a></h2>
-<p>With the upcoming of <a href="https://github.com/notaryproject/nv2">notaryv2</a> and similar projects like <a href="https://github.com/sigstore/cosign">cosign</a> the opportunity for Connaisseur arises to support multiple signing mechanisms, and combine all into a single validation tool. For that to work, the internal validation mechanism of connaisseur needs to be more modular, so we can easily swap in and out different methods.</p>
-<h2 id="considered-options">Considered Options<a class="headerlink" href="#considered-options" title="Permanent link">⚓︎</a></h2>
-<h3 id="configuration-changes-choice-1">Configuration Changes (Choice 1)<a class="headerlink" href="#configuration-changes-choice-1" title="Permanent link">⚓︎</a></h3>
+<p>With the upcoming of <a href="https://github.com/notaryproject/nv2">notaryv2</a> and similar projects like <a href="https://github.com/sigstore/cosign">Cosign</a> the opportunity for Connaisseur arises to support multiple signing mechanisms, and combine all into a single validation tool. For that to work, the internal validation mechanism of connaisseur needs to be more modular, so we can easily swap in and out different methods.</p>
+<h2 id="considered-options">Considered options<a class="headerlink" href="#considered-options" title="Permanent link">⚓︎</a></h2>
+<h3 id="configuration-changes-choice-1">Configuration changes (Choice 1)<a class="headerlink" href="#configuration-changes-choice-1" title="Permanent link">⚓︎</a></h3>
 <p>Obviously some changes have to be made to the configuration of Connaisseur, but this splits into changes for the previous notary configurations and the image policy.</p>
-<h4 id="notary-configuration-11">"Notary" Configuration (1.1)<a class="headerlink" href="#notary-configuration-11" title="Permanent link">⚓︎</a></h4>
-<p>With notaryv1 all trust data always resided in a notary server for which Connaisseur needed the URL, authentication credentials, etc. This isn't true anymore for notaryv2 or cosign. Here Connaisseur may need other data, meaning the configuration is dependent on the type of validation method used here. Also other mechanisms such as digest whitelisting which doesn't even include cryptographic material might be considered in the future.</p>
+<h4 id="notary-configuration-11">"Notary" configuration (1.1)<a class="headerlink" href="#notary-configuration-11" title="Permanent link">⚓︎</a></h4>
+<p>With notaryv1 all trust data always resided in a notary server for which Connaisseur needed the URL, authentication credentials, etc. This isn't true anymore for notaryv2 or Cosign. Here Connaisseur may need other data, meaning the configuration is dependent on the type of validation method used here. Also other mechanisms such as digest whitelisting which doesn't even include cryptographic material might be considered in the future.</p>
 <h5 id="111-structure">1.1.1 Structure<a class="headerlink" href="#111-structure" title="Permanent link">⚓︎</a></h5>
 <h5 id="option-1111">Option 1.1.1.1<a class="headerlink" href="#option-1111" title="Permanent link">⚓︎</a></h5>
 <p>The previous <code>notaries</code> section in the <em>values.yaml</em> changes to <code>validators</code>, in which different validation methods (validators) can be defined. The least required fields a validator needs are a <code>name</code> for later referencing and a <code>type</code> for knowing its correct kind.</p>

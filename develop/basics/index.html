@@ -80,7 +80,7 @@
           <div class="md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
-   <header style="font-size:17px"> 
+   <header style="font-size:17px">
        <strong>Connaisseur 2.0 is now available</strong> &#127881; Features include support for multiple keys and signing solutions, better Cosign integration and <a href="https://github.com/sse-secure-systems/connaisseur/discussions/187"> many more ...<a>
 
           </div>
@@ -579,7 +579,7 @@
   
     <li class="md-nav__item">
       <a href="../validators/sigstore_cosign/" class="md-nav__link">
-        SigStore / Cosign
+        sigstore / Cosign
       </a>
     </li>
   
@@ -726,7 +726,7 @@
   
     <li class="md-nav__item">
       <a href="../SECURITY/" class="md-nav__link">
-        Security policy
+        Security Policy
       </a>
     </li>
   
@@ -1207,13 +1207,13 @@ Only when the Connaisseur pods are up and running, the admission webhook can be 
 &gt; pod/connaisseur-deployment-78d8975596-42tkw   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
 &gt; pod/connaisseur-deployment-78d8975596-5c4c6   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
 &gt; pod/connaisseur-deployment-78d8975596-kvrj6   <span class="m">1</span>/1     Running   <span class="m">0</span>          22s
-&gt; 
+&gt;
 &gt; NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>   AGE
 &gt; service/connaisseur-svc   ClusterIP   <span class="m">10</span>.108.220.34   &lt;none&gt;        <span class="m">443</span>/TCP   22s
-&gt; 
+&gt;
 &gt; NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
 &gt; deployment.apps/connaisseur-deployment   <span class="m">3</span>/3     <span class="m">3</span>            <span class="m">3</span>           22s
-&gt; 
+&gt;
 &gt; NAME                                                DESIRED   CURRENT   READY   AGE
 &gt; replicaset.apps/connaisseur-deployment-78d8975596   <span class="m">3</span>         <span class="m">3</span>         <span class="m">3</span>       22s
 </code></pre></div>
@@ -1268,10 +1268,10 @@ The special case of static validators used to simply allow or deny images withou
 <table>
 <thead>
 <tr>
-<th>key</th>
-<th>default</th>
-<th>required</th>
-<th>description</th>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
@@ -1279,31 +1279,31 @@ The special case of static validators used to simply allow or deny images withou
 <td><code>name</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The name of the validator, which is referenced in the image policy. It must consist of lower case alphanumeric characters or '-'. If the name is <code>default</code>, it will be used if no validator is specified.</td>
+<td>Name of the validator, which is referenced in the image policy. It must consist of lower case alphanumeric characters or '-'. If the name is <code>default</code>, it will be used if no validator is specified.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The type of the validator, e.g. <code>notaryv1</code> or <code>cosign</code>, which is dependent on the <a href="../validators/">signing solution in use</a>.</td>
+<td>Type of the validator, e.g. <code>notaryv1</code> or <code>cosign</code>, which is dependent on the <a href="../validators/">signing solution in use</a>.</td>
 </tr>
 <tr>
 <td><code>trust_roots</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>A list of trust anchors to validate the signatures against. In practice, this is typically a list of public keys.</td>
+<td>List of trust anchors to validate the signatures against. In practice, this is typically a list of public keys.</td>
 </tr>
 <tr>
 <td><code>trust_roots[*].name</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The name of the trust anchor, which is referenced in the image policy. If the name is <code>default</code>, it will be used if no key is specified.</td>
+<td>Name of the trust anchor, which is referenced in the image policy. If the name is <code>default</code>, it will be used if no key is specified.</td>
 </tr>
 <tr>
 <td><code>trust_roots[*].key</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The value of the trust anchor, most commonly a PEM encoded public key.</td>
+<td>Value of the trust anchor, most commonly a PEM encoded public key.</td>
 </tr>
 <tr>
 <td><code>auth</code></td>
@@ -1347,10 +1347,10 @@ This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.
 <table>
 <thead>
 <tr>
-<th>key</th>
-<th>default</th>
-<th>required</th>
-<th>description</th>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
@@ -1358,19 +1358,19 @@ This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.
 <td><code>name</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>The name of the validator, which will be used to reference it in the image policy.</td>
+<td>Name of the validator, which will be used to reference it in the image policy.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>Needs to be set to <code>static</code>.</td>
+<td><code>static</code>; value has to be <code>static</code> for a static validator.</td>
 </tr>
 <tr>
 <td><code>approve</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>Set to <code>true</code>/<code>false</code> to admit/deny all images.</td>
+<td><code>true</code> or <code>false</code> to admit or deny all images.</td>
 </tr>
 </tbody>
 </table>
@@ -1385,7 +1385,7 @@ This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.
 </code></pre></div>
 <h3 id="image-policy">Image policy<a class="headerlink" href="#image-policy" title="Permanent link">⚓︎</a></h3>
 <p>The image policy is defined in the <code>policy</code> field and acts as a list of rule objects to determine which image should be validated by which validator (and potentially some further configurations).</p>
-<p>For each image in the admission request, only a single rule in the image policy will apply: the one with the most specific matching <code>pattern</code> field.
+<p>For each image in the admission request, only a single rule in the image policy will apply: the one with the <em>most specific</em> matching <code>pattern</code> field.
 This is determined by the following algorithm:</p>
 <ol>
 <li>A given image is matched against all rule patterns.</li>
@@ -1449,10 +1449,10 @@ There is two rules that should remain intact in some form in order to not brick 
 <table>
 <thead>
 <tr>
-<th>key</th>
-<th>default</th>
-<th>required</th>
-<th>description</th>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
@@ -1466,7 +1466,7 @@ There is two rules that should remain intact in some form in order to not brick 
 <td><code>validator</code></td>
 <td><code>default</code></td>
 <td></td>
-<td>The name of a validator in the <code>validators</code> list. If not provided, the validator with name <code>default</code> is used if it exists.</td>
+<td>Name of a validator in the <code>validators</code> list. If not provided, the validator with name <code>default</code> is used if it exists.</td>
 </tr>
 <tr>
 <td><code>with</code></td>
@@ -1478,7 +1478,7 @@ There is two rules that should remain intact in some form in order to not brick 
 <td><code>with.trust_root</code></td>
 <td><code>default</code></td>
 <td></td>
-<td>The name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name <code>default</code> is used if it exists.</td>
+<td>Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name <code>default</code> is used if it exists.</td>
 </tr>
 </tbody>
 </table>
