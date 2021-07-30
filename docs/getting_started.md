@@ -114,7 +114,7 @@ The result should look similar to this:
           MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5
           YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==
           -----END PUBLIC KEY-----
-      #cert: |  # in case the trust data host is using a selfsigned certificate
+      #cert: |  # in case the trust data host is using a self-signed certificate
       #  -----BEGIN CERTIFICATE-----
       #  ...
       #  -----END CERTIFICATE-----
@@ -142,7 +142,7 @@ The result should look similar to this:
           MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
           qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
           -----END PUBLIC KEY-----
-      #cert: |  # in case the trust data host is using a selfsigned certificate
+      #cert: |  # in case the trust data host is using a self-signed certificate
       #  -----BEGIN CERTIFICATE-----
       #  ...
       #  -----END CERTIFICATE-----

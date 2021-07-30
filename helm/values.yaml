@@ -45,7 +45,7 @@ validators:
   #    -----BEGIN PUBLIC KEY-----
   #    <add your public key here>
   #    -----END PUBLIC KEY-----
-  #cert: |  # in case the trust data host is using a selfsigned certificate
+  #cert: |  # in case the trust data host is using a self-signed certificate
   #  -----BEGIN CERTIFICATE-----
   #  ...
   #  -----END CERTIFICATE-----
