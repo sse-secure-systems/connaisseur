@@ -171,23 +171,23 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 
 `.validators[*]` in `helm/values.yaml` supports the following keys for Notary (V1) (refer to [basics](../basics.md#validators) for more information on default keys):
 
-| key | default | required | description |
+| Key | Default | Required | Description |
 | - | - | - | - |
 | `name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `type` | - | :heavy_check_mark: | `notaryv1`; the validator type must be set to `notaryv1`. |
 | `host` | - | :heavy_check_mark: | URL of the Notary instance, in which the signatures reside, e.g. `notary.docker.io`. |
 | `trust_roots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `trust_roots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public root key. |
-| `auth` | - | | Provide authentication credentials for the Notary server in case the trust data is not public. |
-| `auth.secret_name` | - | | (Preferred over `username` + `password` combination.) References a Kubernetes secret that must exist beforehand. Create a file `auth.yaml` containing <br/>&nbsp;&nbsp; `username: <user>` <br/>&nbsp;&nbsp; `password: <password>` <br/> and run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml`.|
-| `auth.username` | - | | The username to authenticate with. It is recommended to use `auth.secret_name` instead. |
-| `auth.password` | - | | The password or access token to authenticate with. It is recommended to use `auth.secret_name` instead. |
-| `cert` | - | | If the Notary instance uses a self-signed certificate, that cert must be supplied here in `.pem` format. |
-| `is_acr` | `false` | | Must be specified when using Azure Container Registry (ACR) as it does not offer a health probe according to Notary API specs. |
+| `auth` | - | | Authentication credentials for the Notary server in case the trust data is not public. |
+| `auth.secret_name` | - | | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist beforehand. Create a file `auth.yaml` containing <br/>&nbsp;&nbsp; `username: <user>` <br/>&nbsp;&nbsp; `password: <password>` <br/> and run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml`.|
+| `auth.username` | - | | Username to authenticate with. It is recommended to use `auth.secret_name` instead. |
+| `auth.password` | - | | Password or access token to authenticate with. It is recommended to use `auth.secret_name` instead. |
+| `cert` | - | | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
+| `is_acr` | `false` | | `true` if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs. |
 
 `.policy[*]` in `helm/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
-| key | default | required | description |
+| Key | Default | Required | Description |
 | - | - | - | - |
 | `with.delegations` | - | | List of delegation names to enforce specific signers to be present. Refer to section on [enforcing delegations](#enforcing-delegations) for more information. |
 

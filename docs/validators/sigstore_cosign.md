@@ -86,15 +86,15 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 
 `.validators[*]` in `helm/values.yaml` supports the following keys for Cosign (refer to [basics](../basics.md#validators) for more information on default keys):
 
-| key | default | required | description |
+| Key | Default | Required | Description |
 | - | - | - | - |
 | `name` | | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `type` | | :heavy_check_mark: | `cosign`; the validator type must be set to `cosign`. |
 | `trust_roots[*].name` | | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `trust_roots[*].key` | | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public key from `cosign.pub` file. |
-| `host` | | | NOT YET IMPLEMENTED |
-| `auth.` | | | Provide authentication credentials for private registries. |
-| `auth.secret_name` | | | Specify a Kubernetes secret that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#authentication). |
+| `host` | | | Not yet implemented. |
+| `auth.` | | | Authentication credentials for private registries. |
+| `auth.secret_name` | | | Name of a Kubernetes secret that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#authentication). |
 
 ### Example
 

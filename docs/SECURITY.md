@@ -10,7 +10,7 @@ We stick to semantic versioning, so unless the major version changes, updating C
 
 | Title | Affected versions | Fixed version | Description |
 | - | - | - | - |
-| initContainers not validated | <span>&#8804;</span> 1.3.0 | 1.3.1 | prior to version 1.3.1 Connaisseur did not validate initContainers which allows unverified images to the cluster |
+| initContainers not validated | <span>&#8804;</span> 1.3.0 | 1.3.1 | Prior to version 1.3.1 Connaisseur did not validate initContainers which allowed deploying unverified images to the cluster. |
 
 ## Reporting a vulnerability
 
