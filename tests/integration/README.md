@@ -1,4 +1,4 @@
-# Local integration test setup
+# Local Integration Test Setup
 
 ## Minikube
 
