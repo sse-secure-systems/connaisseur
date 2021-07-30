@@ -275,7 +275,7 @@ policy:
 ```
 
 The delegation feature can be useful in complex organisations where certain people may be required to sign specific critical images.
-Another use-case is to sign an image with delegation keys in various stages of your CI and enforce that certain checks were passed, i.e. enforcing the signature of your linter, your security scanner and your software lisence compliance check.
+Another use case is to sign an image with delegation keys in various stages of your CI and enforce that certain checks were passed, i.e. enforcing the signature of your linter, your security scanner and your software lisence compliance check.
 
 ### Using Azure Container Registry
 
