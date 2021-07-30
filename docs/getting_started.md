@@ -127,7 +127,7 @@ The result should look similar to this:
     ```
 
 === "Cosign"
-    
+
     _In addition for Cosign, the `type` needs to be set to `cosign` and the `host` is not required._
 
     ```yaml
@@ -231,7 +231,7 @@ Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied th
 So let's sign the image and try again.
 
 === "Docker Content Trust"
-    
+
     In DCT signing works via `docker push` using the `--disable-content-trust` flag:
 
     ```bash

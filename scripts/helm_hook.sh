@@ -21,12 +21,12 @@ then
     kubectl delete pod -lapp.kubernetes.io/service=bootstrap -n ${CONNAISSEUR_NAMESPACE} --force=true
     echo "done."
 elif [ "$1" == "delete" ]
-then 
+then
     echo "deleting ..."
     WEBHOOK=$(kubectl -n ${CONNAISSEUR_NAMESPACE} get mutatingwebhookconfigurations.admissionregistration.k8s.io -lapp.kubernetes.io/instance=connaisseur -o=jsonpath='{.items[*].metadata.name}')
     kubectl delete mutatingwebhookconfigurations.admissionregistration.k8s.io ${WEBHOOK}
     echo "done."
-else 
+else
     echo "Command not supported: $1"
     exit 1
 fi

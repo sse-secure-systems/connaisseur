@@ -1,4 +1,4 @@
-# Releasing 
+# Releasing
 
 Releasing a new version of Connaisseur includes the following steps:
 

@@ -3,7 +3,7 @@ deployment:
 validators:
 - name: cosign
   type: cosign
-  trust_roots: 
+  trust_roots:
   - name: sse
     key: |
       -----BEGIN PUBLIC KEY-----

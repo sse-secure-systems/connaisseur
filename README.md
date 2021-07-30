@@ -36,7 +36,7 @@ It provides several additional features:
 
 ## Quick Start
 
-Getting started to verify image signatures is only a matter of minutes: 
+Getting started to verify image signatures is only a matter of minutes:
 
 ![](docs/assets/connaisseur_demo.gif)
 

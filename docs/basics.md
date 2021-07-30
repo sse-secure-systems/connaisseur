@@ -64,13 +64,13 @@ kubectl get all -n connaisseur
 > pod/connaisseur-deployment-78d8975596-42tkw   1/1     Running   0          22s
 > pod/connaisseur-deployment-78d8975596-5c4c6   1/1     Running   0          22s
 > pod/connaisseur-deployment-78d8975596-kvrj6   1/1     Running   0          22s
-> 
+>
 > NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
 > service/connaisseur-svc   ClusterIP   10.108.220.34   <none>        443/TCP   22s
-> 
+>
 > NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
 > deployment.apps/connaisseur-deployment   3/3     3            3           22s
-> 
+>
 > NAME                                                DESIRED   CURRENT   READY   AGE
 > replicaset.apps/connaisseur-deployment-78d8975596   3         3         3       22s
 ```

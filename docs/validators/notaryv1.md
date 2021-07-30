@@ -56,7 +56,7 @@ If you already have these keys, just enter the required passphrase.
 ```bash
 DOCKER_CONTENT_TRUST=1 docker push <your-repo>/busybox:stable
 > The push refers to repository [<your-repo>/busybox]
-> 5b8c72934dfc: Pushed 
+> 5b8c72934dfc: Pushed
 > stable: digest: sha256:dca71257cd2e72840a21f0323234bb2e33fea6d949fa0f21c5102146f583486b size: 527
 > Signing and pushing trust metadata
 > You are about to create a new root signing key passphrase. This passphrase
@@ -65,10 +65,10 @@ DOCKER_CONTENT_TRUST=1 docker push <your-repo>/busybox:stable
 > key file itself secure and backed up. It is highly recommended that you use a
 > password manager to generate the passphrase and keep it safe. There will be no
 > way to recover this key. You can find the key in your config directory.
-> Enter passphrase for new root key with ID 5fb3e1e: 
-> Repeat passphrase for new root key with ID 5fb3e1e: 
-> Enter passphrase for new repository key with ID 6c2a04c: 
-> Repeat passphrase for new repository key with ID 6c2a04c: 
+> Enter passphrase for new root key with ID 5fb3e1e:
+> Repeat passphrase for new root key with ID 5fb3e1e:
+> Enter passphrase for new repository key with ID 6c2a04c:
+> Repeat passphrase for new repository key with ID 6c2a04c:
 > Finished initializing "<your-repo>/busybox"
 ```
 
@@ -232,15 +232,15 @@ Hierarchically speaking, the targets keys are below the root key, as the root ke
 
 Delegations will now go one level deeper, meaning they can be used to sign individual image repositories and only need the targets key for rotation purposes, instead of the root key.
 Also delegation keys are not bound to individual image repositories, so they can be re-used multiple times over different image repositories.
-So in a sense they can be understood as keys for individual signers. 
+So in a sense they can be understood as keys for individual signers.
 
 To create a delegation key run:
 
 ```bash
 docker trust key generate <key-name>
 > Generating key for <key-name>...
-> Enter passphrase for new <key-name> key with ID 9deed25: 
-> Repeat passphrase for new <key-name> key with ID 9deed25: 
+> Enter passphrase for new <key-name> key with ID 9deed25:
+> Repeat passphrase for new <key-name> key with ID 9deed25:
 > Successfully generated and loaded private key. Corresponding public key available: <current-directory>/<key-name>.pub
 ```
 
@@ -250,7 +250,7 @@ In doing so, you'll be asked for the targets key.
 ```bash
 docker trust signer add --key <key-name>.pub <key-name> <your-repo>/busybox
 > Adding signer "<key-name>" to <your-repo>/busybox...
-> Enter passphrase for repository key with ID b0014f8: 
+> Enter passphrase for repository key with ID b0014f8:
 > Successfully added signer: <key-name> to <your-repo>/busybox
 ```
 
