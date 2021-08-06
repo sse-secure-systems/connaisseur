@@ -1,5 +1,5 @@
 -r requirements.txt
-pytest-cov~=2.10.0
+pytest-cov~=2.12.1
 parsedatetime~=2.6
 pylint~=2.9.6
 requests-mock~=1.9.3
