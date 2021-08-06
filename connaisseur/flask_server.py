@@ -77,8 +77,7 @@ def mutate():
 def healthz():
     """
     Handles the '/health' endpoint and checks the health status of the flask
-    server. Sends back either '200' for a healthy status or '500'
-    otherwise.
+    server. Sends back '200'.
     """
 
     return ("", 200)
@@ -88,16 +87,14 @@ def healthz():
 @APP.route("/ready", methods=["GET", "POST"])
 def readyz():
     """
-    Handles the '/ready' endpoint and checks the health status of the configured notary
-    server and whether the webhook is installed or not. If the notary is available and the
-    webhook is installed it returns a 200 status code. Otherwise should one of them not be
-    reachable, 500 is returned. For installation purposes, the readiness probe first
-    checks whether a specific bootstrap pod (called sentinel) is running in the namespace.
-    If this pod can be found and is still running, the readiness probe automatically
-    returns 200. This bootstrap pod will only run for the first 30 seconds after
-    installation or until the webhook is installed, after which the pod gets immediately
-    deleted. From there on the readiness probe checks the notary server and webhook as
-    usual.
+    Handles the '/ready' endpoint. Checks whether the webhook is installed or not.
+    If the notary is available and the webhook is installed it returns a 200 status code.
+    Otherwise should one of them not be reachable, 500 is returned. For installation purposes,
+    the readiness probe also checks whether a specific bootstrap pod (called sentinel) is running
+    in the namespace. If this pod can be found and is still running, the readiness probe automatically
+    returns 200. This bootstrap pod will only run for a short time after
+    installation or until the webhook is installed, after which the pod gets immediately deleted.
+    From there on the readiness probe checks the webhook as usual.
     """
     sentinel = os.environ.get("CONNAISSEUR_SENTINEL")
     sentinel_ns = os.environ.get("CONNAISSEUR_NAMESPACE")

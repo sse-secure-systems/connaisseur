@@ -35,7 +35,7 @@ export ALERTING_ENDPOINT_IP=$(docker container inspect alerting-endpoint | jq -r
 
 ### Actual test
 
-From the git repository folder run the `connaisseur/tests/integration/integration-test.sh` script.
+From the git repository folder run the `tests/integration/integration-test.sh` script.
 
 To cleanup the mocked alerting interface container don't forget running
 
