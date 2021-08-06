@@ -1,7 +1,7 @@
 -r requirements.txt
 pytest-cov~=2.10.0
 parsedatetime~=2.6
-pylint~=2.7.2
+pylint~=2.9.6
 requests-mock~=1.9.3
 pytest-mock~=3.3.1
 pytest-subprocess~=1.0.1
