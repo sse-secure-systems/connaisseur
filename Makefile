@@ -24,7 +24,7 @@ install:
 uninstall:
 	kubectl config set-context --current --namespace $(NAMESPACE)
 	helm uninstall connaisseur
-	kubectl delete ns connaisseur
+	kubectl delete ns $(NAMESPACE)
 
 upgrade:
 	kubectl config set-context --current --namespace $(NAMESPACE)
