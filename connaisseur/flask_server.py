@@ -96,17 +96,6 @@ def readyz():
     installation or until the webhook is installed, after which the pod gets immediately deleted.
     From there on the readiness probe checks the webhook as usual.
     """
-    sentinel = os.environ.get("CONNAISSEUR_SENTINEL")
-    sentinel_ns = os.environ.get("CONNAISSEUR_NAMESPACE")
-    sentinel_path = f"api/v1/namespaces/{sentinel_ns}/pods/{sentinel}"
-
-    try:
-        sentinel_response = k_api.request_kube_api(sentinel_path)
-    except HTTPError:
-        sentinel_response = {}
-
-    sentinel_running = sentinel_response.get("status", {}).get("phase") == "Running"
-
     # create api path for the webhook configuration
     webhook = os.environ.get("CONNAISSEUR_WEBHOOK")
     webhook_path = (
@@ -119,7 +108,21 @@ def readyz():
     except HTTPError:
         webhook_response = None
 
-    return ("", 200) if (webhook_response or sentinel_running) else ("", 500)
+    if webhook_response:
+        return ("", 200)
+
+    sentinel = os.environ.get("CONNAISSEUR_SENTINEL")
+    sentinel_ns = os.environ.get("CONNAISSEUR_NAMESPACE")
+    sentinel_path = f"api/v1/namespaces/{sentinel_ns}/pods/{sentinel}"
+
+    try:
+        sentinel_response = k_api.request_kube_api(sentinel_path)
+    except HTTPError:
+        sentinel_response = {}
+
+    sentinel_running = sentinel_response.get("status", {}).get("phase") == "Running"
+
+    return ("", 200) if sentinel_running else ("", 500)
 
 
 def __create_logging_msg(msg: str, **kwargs):
