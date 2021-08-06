@@ -1,8 +1,10 @@
 # Notary (V1) / DCT
 
-[Notary](https://github.com/theupdateframework/notary) (V1<sup>*</sup>) works as an external service holding signatures and trust data of artifacts based on [The Update Framework (TUF)](https://theupdateframework.io/).
+[Notary](https://github.com/theupdateframework/notary) (V1[^1]) works as an external service holding signatures and trust data of artifacts based on [The Update Framework (TUF)](https://theupdateframework.io/).
 [Docker Content Trust (DCT)](https://docs.docker.com/engine/security/trust/) is a client implementation by Docker to manage such trust data for container images like signing images or verifying the corresponding signatures.
 It is part of the standard Docker CLI (`docker`) and for example provides the [`docker trust`](https://docs.docker.com/engine/reference/commandline/trust/) commands.
+
+[^1]: Notary does traditionally not carry the version number. However, in differentiation to the new [Notary V2 project](https://github.com/notaryproject/notaryproject) we decided to add a careful "(V1)" whenever we refer to the original project.
 
 Using DCT, the trust data is per default pushed to the Notary server associated to the container registry.
 However, not every public container registry provides an associated Notary server and thus support for DCT must be checked for the provider in question.
@@ -13,8 +15,6 @@ Besides the public Notary instances, Notary can also be run as a private or even
 
 Validating a container image via DCT requires a repository's public root key as well as fetching the repository's trust data from the associated Notary server.
 While DCT relies on *trust on first use* (TOFU) for repositories' public root keys, Connaisseur enforces manual pinning to a public root key that must be configured in advance.
-
-> <sup>*</sup> Notary does traditionally not carry the version number. However, in differentiation to the new [Notary V2 project](https://github.com/notaryproject/notaryproject) we decided to add a careful "(V1)" whenever we refer to the original project.
 
 ## Basic usage
 

@@ -33,15 +33,16 @@ theme:
 
 # Extensions
 markdown_extensions:
-  - codehilite
   - admonition
-  - toc:
-        permalink: ⚓︎
+  - codehilite
+  - footnotes
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.tabbed
   - pymdownx.superfences
+  - toc:
+        permalink: ⚓︎
 
 # Plugins
 
