@@ -1,6 +1,6 @@
 Flask~=2.0.1
 requests~=2.26.0
-rfc3339-validator~=0.1.2
+rfc3339-validator~=0.1.4
 ecdsa~=0.17
 jsonschema~=3.2.0
 parsedatetime~=2.6
