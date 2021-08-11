@@ -3,6 +3,7 @@
 ## Status
 
 Amended in [ADR-3](ADR-3_multi_notary_config.md).
+Deprecated as of [ADR-5](ADR-5_no-more-bootstrap.md).
 
 ## Context
 

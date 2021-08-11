@@ -19,7 +19,7 @@ def test_safe_path_func(path, exception):
 
 
 admission_review_plain = {
-    "apiVersion": "admission.k8s.io/v1beta1",
+    "apiVersion": "admission.k8s.io/v1",
     "kind": "AdmissionReview",
     "response": {
         "uid": 1,
@@ -28,7 +28,7 @@ admission_review_plain = {
     },
 }
 admission_review_msg = {
-    "apiVersion": "admission.k8s.io/v1beta1",
+    "apiVersion": "admission.k8s.io/v1",
     "kind": "AdmissionReview",
     "response": {
         "uid": 1,
@@ -37,7 +37,7 @@ admission_review_msg = {
     },
 }
 admission_review_msg_dm = {
-    "apiVersion": "admission.k8s.io/v1beta1",
+    "apiVersion": "admission.k8s.io/v1",
     "kind": "AdmissionReview",
     "response": {
         "uid": 1,
@@ -47,7 +47,7 @@ admission_review_msg_dm = {
     },
 }
 admission_review_patch = {
-    "apiVersion": "admission.k8s.io/v1beta1",
+    "apiVersion": "admission.k8s.io/v1",
     "kind": "AdmissionReview",
     "response": {
         "uid": 1,
@@ -61,7 +61,7 @@ admission_review_patch = {
     },
 }
 admission_review_msg_patch = {
-    "apiVersion": "admission.k8s.io/v1beta1",
+    "apiVersion": "admission.k8s.io/v1",
     "kind": "AdmissionReview",
     "response": {
         "uid": 1,
@@ -101,7 +101,8 @@ admission_review_msg_patch = {
         (1, True, None, "Well hello there.", True, admission_review_msg),
     ],
 )
-def test_get_admission_review(uid, allowed, patch, msg, dm, review):
+def test_get_admission_review(monkeypatch, uid, allowed, patch, msg, dm, review):
+    monkeypatch.setenv("KUBE_VERSION", "v1.20.0")
     assert (
         ut.get_admission_review(
             uid,
@@ -138,3 +139,12 @@ def test_validate_schema(
 ):
     with exception:
         assert ut.validate_schema(data, schema_path, kind, exception_kind) is None
+
+
+@pytest.mark.parametrize(
+    "major, minor, patch, set_version",
+    [(1, 20, 0, "v1.20.0"), (0, 0, 0, "wrong_input"), (0, 0, 0, "")],
+)
+def test_get_kube_version(monkeypatch, major, minor, patch, set_version):
+    monkeypatch.setenv("KUBE_VERSION", set_version)
+    assert ut.get_kube_version() == [major, minor, patch]

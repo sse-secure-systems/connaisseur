@@ -5,9 +5,6 @@ set -euo pipefail
 
 echo 'Preparing Connaisseur config...'
 yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/preconfig-update.yaml
-# exclude Connaisseur helm-hook from validation, as is not generally signed at the time of testing
-yq e '.policy +={"pattern": "docker.io/securesystemsengineering/connaisseur:helm-hook-*"} | .policy[4].pattern style="double"' -i helm/values.yaml
-yq e '.policy[4].validator = "allow"' -i helm/values.yaml
 echo 'Config set'
 
 echo 'Installing Connaisseur...'

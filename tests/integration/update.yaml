@@ -36,12 +36,6 @@ policy:
     with:
       trust_root: sse
       delegations: ["belitzphilipp", "starkteetje"]
-  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-    validator: dockerhub
-    with:
-      trust_root: sse
-  - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
-    validator: allow
 alerting:
   config_dir_path: "/app/config"
   cluster_name: "minikube"

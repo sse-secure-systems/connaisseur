@@ -39,30 +39,6 @@ app.kubernetes.io/instance: {{ .Chart.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
-{{- define "helm.webhook-securitycontext" -}}
-allowPrivilegeEscalation: false
-capabilities:
-  drop:
-    - ALL
-privileged: false
-readOnlyRootFilesystem: true
-runAsGroup: 20001
-runAsNonRoot: true
-runAsUser: 10001
-{{- if gt (.Capabilities.KubeVersion.Minor | int) 18 }}
-seccompProfile:
-  type: RuntimeDefault
-{{- end }}
-{{- end -}}
-
-{{- define "helm.webhook-resources" -}}
-requests:
- memory: "32Mi"
- cpu: "50m"
-limits:
- memory: "64Mi"
- cpu: "100m"
-{{- end -}}
 
 {{- define "config-secrets" -}}
 {{- $secret_dict := dict -}}
@@ -132,5 +108,19 @@ limits:
             {{- end -}}
         {{- end -}}
     {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "getInstalledTLSCert" -}}
+{{- $data := (lookup "v1" "Secret" "connaisseur" (printf "%s-tls" .Chart.Name)).data -}}
+{{- if $data -}}
+    {{ get $data "tls.crt" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "getInstalledTLSKey" -}}
+{{- $data := (lookup "v1" "Secret" "connaisseur" (printf "%s-tls" .Chart.Name)).data -}}
+{{- if $data -}}
+    {{ get $data "tls.key" }}
 {{- end -}}
 {{- end -}}

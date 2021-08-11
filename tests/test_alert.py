@@ -332,15 +332,3 @@ def test_send_alerts(
             alert.send_alerts(AdmissionRequest(admission_request), admit_event, message)
             is None
         )
-
-
-@pytest.mark.parametrize(
-    "admission_request, out",
-    [
-        (fix.get_admreq("deployments"), False),
-        (fix.get_admreq("allowlisted"), True),
-        (fix.get_admreq("invalid_image"), False),
-    ],
-)
-def test_is_hook_image(m_ad_schema_path, m_alerting, admission_request, out):
-    assert alert.__is_hook_image(AdmissionRequest(admission_request)) is out

@@ -22,10 +22,6 @@ policy:
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-  validator: dockerhub
-  with:
-    trust_root: sse
-- pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
   validator: allow
 
 namespacedValidation:

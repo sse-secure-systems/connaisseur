@@ -46,12 +46,11 @@ docker rm alerting-endpoint
 
 ## kind
 
-For kind we assume you have a running `kind` cluster set as current kubernetes context. To load the required docker images onto the `kind` nodes, run
+For kind we assume you have a running `kind` cluster set as current kubernetes context. To load the required docker image onto the `kind` nodes, run
 
 ```shell
 make docker
 kind load docker-image $(yq e '.deployment.image' helm/values.yaml)
-kind load docker-image $(yq e '.deployment.helmHookImage' helm/values.yaml)
 ```
 
 You need to have the alerting interface running and attach it to the docker network that is used by the kind container just as for minikube using the docker driver. By default, it's name is `kind`, so if you renamed the docker network of the kind container, provide your custom name as `KIND_NETWORK`:

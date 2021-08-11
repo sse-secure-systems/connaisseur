@@ -24,7 +24,6 @@ runs:
     - name: Add images to KinD
       run: |
         kind load docker-image $(yq e '.deployment.image' helm/values.yaml)
-        kind load docker-image $(yq e '.deployment.helmHookImage' helm/values.yaml)
       shell: bash
     - name: Set environment variables for alerting listener
       run: |

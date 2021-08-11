@@ -16,9 +16,3 @@ runs:
               --exit-code 1
               --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
       shell: sh
-    - name: Scan Hook
-      run: trivy image --input ${GITHUB_SHA}_hook.tar
-              -o trivy-reports/hook.txt
-              --exit-code 1
-              --severity="UNKNOWN,MEDIUM,HIGH,CRITICAL"
-      shell: sh

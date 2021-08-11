@@ -104,6 +104,7 @@ nav:
       - adr/ADR-2_release-management.md
       - adr/ADR-3_multi_notary_config.md
       - adr/ADR-4_modular.md
+      - adr/ADR-5_no-more-bootstrap.md
   - Releases ⧉: https://github.com/sse-secure-systems/connaisseur/releases
   - Support ⧉: https://github.com/sse-secure-systems/connaisseur/discussions
 

@@ -142,6 +142,93 @@ else
   echo 'Successfully called mocked alert endpoints'
 fi
 
+echo 'Creating test namespaces'
+kubectl create namespace ignoredns
+kubectl label ns ignoredns securesystemsengineering.connaisseur/webhook=ignore
+kubectl create namespace validatedns
+kubectl label ns validatedns securesystemsengineering.connaisseur/webhook=validate
+
+echo '### Testing "ignore" label ###'
+
+echo 'Upgrading Connaisseur...'
+yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/namespaced-update.yaml
+make upgrade || { echo 'Failed to upgrade Connaisseur'; exit 1; }
+echo 'Successfully upgraded Connaisseur'
+
+echo 'Testing unsigned image in unlabelled namespace...'
+kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
+
+if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
+  echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully denied usage of unsigned image'
+fi
+
+echo 'Testing signed image in unlabelled namespace...'
+kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
+
+if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
+  echo 'Failed to allow signed image. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully allowed usage of signed image'
+fi
+
+echo 'Testing unsigned image in ignored namespace...'
+kubectl run pod --namespace ignoredns --image=securesystemsengineering/testimage:unsigned -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
+
+if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
+  echo 'Failed to allow unsigned image in ignored namespace. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully allowed usage of unsigned image in ignored namespace'
+fi
+
+echo '### Testing "validate" label ###'
+
+yq e '.namespacedValidation.mode="validate"' -i "helm/values.yaml"
+
+echo 'Upgrading Connaisseur again...'
+helm upgrade connaisseur helm --wait --namespace connaisseur || { echo 'Failed to upgrade Connaisseur'; exit 1; }
+echo 'Successfully upgrade Connaisseur again'
+
+echo 'Testing unsigned image in enabled namespace...'
+kubectl run pod --namespace validatedns --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
+
+if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
+  echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully denied usage of unsigned image'
+fi
+
+echo 'Testing signed image in enabled namespace...'
+kubectl run pod --namespace validatedns --image=securesystemsengineering/testimage:signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
+
+if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
+  echo 'Failed to allow signed image. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully allowed usage of signed image'
+fi
+
+echo 'Testing unsigned image in unlabelled namespace...'
+kubectl run pod2 --namespace connaisseur --image=securesystemsengineering/testimage:unsigned -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
+
+if [[ "$(cat output.log)" != 'pod/pod2 created' ]]; then
+  echo 'Failed to allow unsigned image in ignored namespace. Output:'
+  cat output.log
+  exit 1
+else
+  echo 'Successfully allowed usage of unsigned image in ignored namespace'
+fi
+
 echo 'Uninstalling Connaisseur...'
 # 'make' is chosen deliberately below to test the Makefile, while other tests use 'helm' directly
 make uninstall || { echo 'Failed to uninstall Connaisseur'; exit 1; }

@@ -13,19 +13,92 @@ metadata:
     {{- include "helm.labels" . | nindent 4 }}
 type: Opaque
 data:
-  tls.crt: {{ $certs.Cert | b64enc }}
-  tls.key: {{ $certs.Key | b64enc }}
+  tls.crt: {{ default ($certs.Cert | b64enc) (include "getInstalledTLSCert" .) }}
+  tls.key: {{ default ($certs.Key | b64enc) (include "getInstalledTLSKey" .) }}
 ---
-apiVersion: v1
-kind: ConfigMap
+{{ if lt (.Capabilities.KubeVersion.Minor | int) 16 }}
+apiVersion: admissionregistration.k8s.io/v1beta1
+{{ else }}
+apiVersion: admissionregistration.k8s.io/v1
+{{ end }}
+kind: MutatingWebhookConfiguration
 metadata:
-  name: {{ .Chart.Name }}-script
-  namespace: {{ .Release.Namespace }}
+  name: {{ .Chart.Name }}-webhook
   labels:
     {{- include "helm.labels" . | nindent 4 }}
   annotations:
-    helm.sh/hook: post-install, post-upgrade
-    helm.sh/hook-delete-policy: hook-succeeded, hook-failed
-data:
-  webhook.yaml: |
-    {{- include "webhooks.yaml.tpl" (dict "context" . "cert" $certs.Cert) | indent 4}}
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+webhooks:
+  - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
+    failurePolicy: Ignore
+    clientConfig:
+      service:
+        name: {{ .Chart.Name }}-svc
+        namespace: {{ .Release.Namespace }}
+        path: /mutate
+      caBundle: {{ default ($certs.Cert | b64enc) (include "getInstalledTLSCert" .) }}
+    rules: []
+    sideEffects: None
+    {{- if lt (.Capabilities.KubeVersion.Minor | int) 16 }}
+    admissionReviewVersions: ["v1beta1"]
+    {{- else }}
+    admissionReviewVersions: ["v1"]
+    {{- end }}
+---
+{{ if lt (.Capabilities.KubeVersion.Minor | int) 16 -}}
+apiVersion: admissionregistration.k8s.io/v1beta1
+{{ else -}}
+apiVersion: admissionregistration.k8s.io/v1
+{{ end -}}
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ .Chart.Name }}-webhook
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade, post-rollback
+webhooks:
+  - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
+    {{- if .Values.deployment.failurePolicy }}
+    failurePolicy: {{ .Values.deployment.failurePolicy }}
+    {{- else }}
+    failurePolicy: Fail
+    {{- end }}
+    clientConfig:
+      service:
+        name: {{ .Chart.Name }}-svc
+        namespace: {{ .Release.Namespace }}
+        path: /mutate
+      caBundle: {{ default ($certs.Cert | b64enc) (include "getInstalledTLSCert" .) }}
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
+    sideEffects: None
+    {{- if lt (.Capabilities.KubeVersion.Minor | int) 16 }}
+    admissionReviewVersions: ["v1beta1"]
+    {{- else }}
+    admissionReviewVersions: ["v1"]
+    {{- end }}
+    {{- if .Values.namespacedValidation }}
+    {{- if .Values.namespacedValidation.enabled }}
+    namespaceSelector:
+      matchExpressions:
+      - key: securesystemsengineering.connaisseur/webhook
+    {{- if not .Values.namespacedValidation.mode}}
+        operator: NotIn
+        values:
+          - ignore
+    {{- else if eq .Values.namespacedValidation.mode "ignore"}}
+        operator: NotIn
+        values:
+          - ignore
+    {{- else if eq .Values.namespacedValidation.mode "validate"}}
+        operator: In
+        values:
+          - validate
+   {{- end }}
+   {{- end }}
+   {{- end }}

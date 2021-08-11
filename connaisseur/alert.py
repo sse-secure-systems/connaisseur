@@ -13,7 +13,6 @@ from connaisseur.exceptions import (
     InvalidConfigurationFormatError,
     InvalidImageFormatError,
 )
-from connaisseur.image import Image
 from connaisseur.admission_request import AdmissionRequest
 
 
@@ -158,8 +157,6 @@ class Alert:
 def send_alerts(
     admission_request: AdmissionRequest, admit_event: bool, reason: str = None
 ):
-    if __is_hook_image(admission_request):
-        return
     al_config = AlertingConfiguration()
     event_category = "admit_request" if admit_event else "reject_request"
     if al_config.alerting_required(event_category):
@@ -170,13 +167,3 @@ def send_alerts(
                 else f"CONNAISSEUR rejected a request: {reason}"
             )
             Alert(message, receiver, admission_request).send_alert()
-
-
-def __is_hook_image(admission_request: AdmissionRequest):
-    try:
-        normalized_hook_image = Image(os.getenv("HELM_HOOK_IMAGE"))
-        return [
-            str(image) for image in admission_request.wl_object.containers.values()
-        ] == [str(normalized_hook_image)]
-    except InvalidImageFormatError:
-        return False

@@ -24,5 +24,3 @@ policy:
   validator: cosign
   with:
     trust_root: sse
-- pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
-  validator: allow

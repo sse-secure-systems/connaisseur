@@ -22,7 +22,6 @@ jobs:
         run: |
           mkdir images
           docker save $(yq e '.deployment.image' helm/values.yaml) -o images/${GITHUB_SHA}_image.tar
-          docker save $(yq e '.deployment.helmHookImage' helm/values.yaml) -o images/${GITHUB_SHA}_hook.tar
       - uses: actions/upload-artifact@v2
         with:
           name: images
@@ -189,7 +188,6 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           cat trivy-reports/image.txt
-          cat trivy-reports/hook.txt
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
@@ -206,7 +204,6 @@ jobs:
           'integration-test.sh',
           'preconfig-integration-test.sh',
           'cosign-integration-test.sh',
-          'namespaced-integration-test.sh',
           'deployment-integration-test.sh'
         ]
     services:
@@ -219,11 +216,16 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: images
+      - name: Install yq
+        run: |
+          sudo snap install yq
       - name: Load Docker images
         run: |
           docker load -i ${GITHUB_SHA}_image.tar
-          docker load -i ${GITHUB_SHA}_hook.tar
         shell: bash
+      - name: Update policy
+        run: |
+          yq e -i '.policy += {"pattern": "docker.io/securesystemsengineering/connaisseur:*", "validator": "allow"}' tests/integration/update.yaml
       - uses: ./.github/actions/integration-test
         with:
           integration-test-script: ${{ matrix.integration-test-script }}

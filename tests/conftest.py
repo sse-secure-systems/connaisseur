@@ -170,9 +170,6 @@ def mock_request_kube(match: re.Match, **kwargs):
     )
 
     try:
-        if "sentinel" in name or "webhook" in name:
-            return MockResponse(get_k8s_res(name))
-
         return MockResponse(get_k8s_res(kind))
     except FileNotFoundError as err:
         return MockResponse({}, status_code=500)
@@ -421,9 +418,6 @@ def m_safe_path_func(monkeypatch):
 @pytest.fixture
 def m_alerting(monkeypatch, m_safe_path_func):
     monkeypatch.setenv("DETECTION_MODE", "0")
-    monkeypatch.setenv(
-        "HELM_HOOK_IMAGE", "securesystemsengineering/connaisseur:helm-hook"
-    )
     monkeypatch.setenv("POD_NAME", "connaisseur-pod-123")
     monkeypatch.setenv("CLUSTER_NAME", "minikube")
     connaisseur.alert.AlertingConfiguration._AlertingConfiguration__PATH = (

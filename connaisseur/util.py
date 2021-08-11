@@ -1,5 +1,6 @@
 import os
 import base64
+import re
 import json
 import yaml
 from jsonschema import validate, ValidationError, FormatChecker
@@ -70,8 +71,10 @@ def get_admission_review(
           }
         }
     """
+    _, minor, _ = get_kube_version()
+    api = "v1beta" if minor < 16 else "v1"
     review = {
-        "apiVersion": "admission.k8s.io/v1beta1",
+        "apiVersion": f"admission.k8s.io/{api}",
         "kind": "AdmissionReview",
         "response": {
             "uid": uid,
@@ -107,3 +110,10 @@ def validate_schema(data: dict, schema_path: str, kind: str, exception):
             validation_kind=kind,
             validation_err=str(err),
         ) from err
+
+
+def get_kube_version():
+    version = os.environ.get("KUBE_VERSION", "v0.0.0")  # e.g. v1.20.0
+    regex = r"v(\d)\.(\d{1,2})\.(\d{1,2})"
+    match = re.match(regex, version)
+    return list(map(int, list(match.groups()))) if match else [0, 0, 0]
