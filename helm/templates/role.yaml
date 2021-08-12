@@ -9,3 +9,14 @@ rules:
 - apiGroups: ["*"]
   resources: ["deployments", "pods", "replicacontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs", "imagepolicies", "mutatingwebhookconfigurations"]
   verbs: ["get"]
+{{- if .Values.deployment.podSecurityPolicy }}
+{{- if .Values.deployment.podSecurityPolicy.enabled }}
+- apiGroups: ['policy']
+  resources: ['podsecuritypolicies']
+  verbs:     ['use']
+  resourceNames:
+    {{- range  .Values.deployment.podSecurityPolicy.name }}
+    - {{ . | quote }}
+    {{- end }}
+{{- end}}
+{{- end}}

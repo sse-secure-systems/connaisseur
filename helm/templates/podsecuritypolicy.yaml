@@ -1,0 +1,36 @@
+{{- if .Values.deployment.podSecurityPolicy }}
+{{- if .Values.deployment.podSecurityPolicy.enabled }}
+{{- if has "connaisseur-psp" .Values.deployment.podSecurityPolicy.name }}
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: {{ .Chart.Name }}-psp
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: runtime/default,docker/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+  - ALL
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  readOnlyRootFilesystem: true
+  volumes:
+  - configMap
+  - secret
+{{- end }}
+{{- end }}
+{{- end }}
