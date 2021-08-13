@@ -922,7 +922,7 @@
                 
                 
                 <h1 id="notary-v1-dct">Notary (V1) / DCT<a class="headerlink" href="#notary-v1-dct" title="Permanent link">⚓︎</a></h1>
-<p><a href="https://github.com/theupdateframework/notary">Notary</a> (V1<sup>*</sup>) works as an external service holding signatures and trust data of artifacts based on <a href="https://theupdateframework.io/">The Update Framework (TUF)</a>.
+<p><a href="https://github.com/theupdateframework/notary">Notary</a> (V1<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>) works as an external service holding signatures and trust data of artifacts based on <a href="https://theupdateframework.io/">The Update Framework (TUF)</a>.
 <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust (DCT)</a> is a client implementation by Docker to manage such trust data for container images like signing images or verifying the corresponding signatures.
 It is part of the standard Docker CLI (<code>docker</code>) and for example provides the <a href="https://docs.docker.com/engine/reference/commandline/trust/"><code>docker trust</code></a> commands.</p>
 <p>Using DCT, the trust data is per default pushed to the Notary server associated to the container registry.
@@ -933,9 +933,6 @@ Besides the public Notary instances, Notary can also be run as a private or even
 <a href="https://goharbor.io/">Harbor</a> for example comes along with an associated Notary instance.</p>
 <p>Validating a container image via DCT requires a repository's public root key as well as fetching the repository's trust data from the associated Notary server.
 While DCT relies on <em>trust on first use</em> (TOFU) for repositories' public root keys, Connaisseur enforces manual pinning to a public root key that must be configured in advance.</p>
-<blockquote>
-<p><sup>*</sup> Notary does traditionally not carry the version number. However, in differentiation to the new <a href="https://github.com/notaryproject/notaryproject">Notary V2 project</a> we decided to add a careful "(V1)" whenever we refer to the original project.</p>
-</blockquote>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
 <p>In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the public root key of other images and configure Connaisseur via <code>validators[*].trust_roots[*].key</code> in <code>helm/values.yaml</code> to pin trust to those keys.
 Both is described below.
@@ -1221,6 +1218,14 @@ Another use case is to sign an image with delegation keys in various stages of y
 az ad sp create-for-rbac --name <span class="s2">&quot;&lt;SERVICE-PRINCIPLE-NAME&gt;&quot;</span> --role Reader --scopes <span class="si">${</span><span class="nv">REGISTRY_ID</span><span class="si">}</span>
 </code></pre></div>
 <p>Use the resulting <code>applicationID</code> as <code>auth.username</code>, the resulting <code>password</code> as <code>auth.password</code> and set <code>&lt;ACR&gt;.azurecr.io</code> as <code>host</code> in the <code>helm/values.yaml</code> and you're ready to go!</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Notary does traditionally not carry the version number. However, in differentiation to the new <a href="https://github.com/notaryproject/notaryproject">Notary V2 project</a> we decided to add a careful "(V1)" whenever we refer to the original project.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
                 
               
               
