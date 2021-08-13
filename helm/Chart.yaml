@@ -1,14 +1,14 @@
 apiVersion: v2
 name: connaisseur
-description: A Helm chart for the Connaisseur Admission Controller to validate docker image signatures.
+description: A Helm chart for the Connaisseur Admission Controller to validate container image signatures.
 type: application
 version: 1.0.0
-appVersion: 2.0.0
+appVersion: 2.1.1
 keywords:
-  - docker image
+  - container image
   - signature
   - verification
-home: https://github.com/sse-secure-systems/connaisseur
+home: https://sse-secure-systems.github.io/connaisseur/latest
 sources:
   - https://github.com/sse-secure-systems/connaisseur
 maintainers:

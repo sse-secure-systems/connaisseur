@@ -13,12 +13,14 @@ Releasing a new version of Connaisseur includes the following steps:
 
 ## Check readiness
 
-Before starting the release, make sure everything is ready and in order.
-See that all tests are running smoothly.
-Check that documentation changes show up correctly [here](https://sse-secure-systems.github.io/connaisseur/develop/).
-Make sure the Connaisseur version is incremented correctly according to the changes.
-See if the docs announcements should be adjusted [here](https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html).
-Consider making a [GitHub Discussions *announcement*](https://github.com/sse-secure-systems/connaisseur/discussions).
+Before starting the release, make sure everything is ready and in order:
+
+- See that all tests are running smoothly.
+- Check that documentation changes show up correctly [here](https://sse-secure-systems.github.io/connaisseur/develop/).
+- Make sure the Connaisseur version is incremented correctly according to the changes.
+- Make sure Connaisseur version `helm/values.yaml` is matched to `helm/Chart.yaml`.
+- See if the docs announcements should be adjusted [here](https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html).
+- Consider making a [GitHub Discussions *announcement*](https://github.com/sse-secure-systems/connaisseur/discussions).
 
 ## Add new tag
 
