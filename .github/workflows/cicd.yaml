@@ -71,7 +71,7 @@ jobs:
         # Since we run inside an alpine based container, we cannot compile yarl and multidic
         run: YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
       - name: Lint
-        run: cd connaisseur && pylint --ignore-patterns=tests,coverage *.*
+        run: pylint --ignore-patterns=tests,coverage connaisseur
 
   pytest:
     runs-on: ubuntu-latest
