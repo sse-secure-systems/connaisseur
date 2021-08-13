@@ -12,7 +12,8 @@ rm update
 echo 'Config set'
 
 echo 'Installing Connaisseur...'
-helm install connaisseur helm --atomic || { echo 'Failed to install Connaisseur'; exit 1; }
+# 'make' is chosen deliberately below to test the Makefile, while other tests use 'helm' directly
+make install || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
 echo 'Testing unsigned image...'
@@ -142,7 +143,8 @@ else
 fi
 
 echo 'Uninstalling Connaisseur...'
-helm uninstall connaisseur || { echo 'Failed to uninstall Connaisseur'; exit 1; }
+# 'make' is chosen deliberately below to test the Makefile, while other tests use 'helm' directly
+make uninstall || { echo 'Failed to uninstall Connaisseur'; exit 1; }
 echo 'Successfully uninstalled Connaisseur'
 
 rm output.log

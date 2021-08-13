@@ -22,13 +22,11 @@ install:
 	helm install connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE)
 
 uninstall:
-	kubectl config set-context --current --namespace $(NAMESPACE)
-	helm uninstall connaisseur
+	helm uninstall connaisseur -n $(NAMESPACE)
 	kubectl delete ns $(NAMESPACE)
 
 upgrade:
-	kubectl config set-context --current --namespace $(NAMESPACE)
-	helm upgrade connaisseur helm --wait
+	helm upgrade connaisseur helm  -n $(NAMESPACE) --wait
 
 annihilate:
 	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies,secrets,serviceaccounts,crds -lapp.kubernetes.io/instance=connaisseur
