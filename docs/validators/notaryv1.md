@@ -179,7 +179,7 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 | `trust_roots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `trust_roots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public root key. |
 | `auth` | - | | Authentication credentials for the Notary server in case the trust data is not public. |
-| `auth.secret_name` | - | | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist beforehand. Create a file `auth.yaml` containing <br/>&nbsp;&nbsp; `username: <user>` <br/>&nbsp;&nbsp; `password: <password>` <br/> and run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml`.|
+| `auth.secret_name` | - | | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file `auth.yaml` containing:<br/>&nbsp; `username: <user>` <br/>&nbsp; `password: <password>` <br/>Run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml -n connaisseur` to create the secret.|
 | `auth.username` | - | | Username to authenticate with. It is recommended to use `auth.secret_name` instead. |
 | `auth.password` | - | | Password or access token to authenticate with. It is recommended to use `auth.secret_name` instead. |
 | `cert` | - | | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |

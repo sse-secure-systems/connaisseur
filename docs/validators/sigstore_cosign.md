@@ -90,7 +90,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `trust_roots[*].key` | | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public key from `cosign.pub` file. |
 | `host` | | | Not yet implemented. |
 | `auth.` | | | Authentication credentials for private registries. |
-| `auth.secret_name` | | | Name of a Kubernetes secret that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#authentication). |
+| `auth.secret_name` | | | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#authentication). |
 
 ### Example
 
@@ -118,7 +118,7 @@ policy:
 ### Authentication
 
 When using a private registry for images and signature data, the credentials need to be provided to Connaisseur.
-This is done by creating a [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) Kubernetes secret and passing the secret name to Connaisseur as `auth.secret_name`.
+This is done by creating a [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) Kubernetes secret in the Connaisseur namespace and passing the secret name to Connaisseur as `auth.secret_name`.
 The secret can for example be created directly from your local `config.json` (for docker this resides in `~/.docker/config.json`):
 
 ```bash
