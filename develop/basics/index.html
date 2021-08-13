@@ -1188,7 +1188,9 @@ However, other ways to implement such trust pinning exist and as a consequence w
 <h3 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">⚓︎</a></h3>
 <p>The configuration of Connaisseur is completely done in the <code>helm/values.yaml</code>.
 The upper <code>deployment</code> section offers some general Kubernetes typical configurations like image version or resources.
-The actual configuration consists of the <code>validators</code> and image <code>policy</code> sections.
+Specifically, the <code>deployment.failurePolicy</code> allows configuration whether the mutating admission webhook should fail closed (<code>Fail</code>, <em>default</em>) or open (<code>Ignore</code>) should the Connaisseur service become unavailable.
+While Connaisseur is configured to be secure by default, setting the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> to <code>Ignore</code> allows to prioritize cluster access<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
+<p>The actual configuration consists of the <code>validators</code> and image <code>policy</code> sections.
 These are described in detail <a href="#detailed-configuration">below</a> and for initials steps it is instructive to follow the <a href="../getting_started/">getting started guide</a>.
 Other features are described on the <a href="../features/">respective pages</a>.</p>
 <p>Connaisseur ships with a pre-configuration that does not need any adjustments for testing.
@@ -1682,6 +1684,14 @@ However, explicit is better than implicit.</p>
 <span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
   <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
 </code></pre></div>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>This is not to be confused with the <a href="../features/detection_mode/">detection mode</a> feature: In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
                 
               
               
