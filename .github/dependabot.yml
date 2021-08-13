@@ -8,14 +8,6 @@ updates:
       prefix: "update"
     insecure-external-code-execution: "deny"
     target-branch: "develop"
-  - package-ecosystem: "pip"
-    directory: "/docs"
-    schedule:
-      interval: "daily"
-    commit-message:
-      prefix: "update"
-    insecure-external-code-execution: "deny"
-    target-branch: "develop"
   - package-ecosystem: "docker"
     directory: "/docker"
     schedule:
