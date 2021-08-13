@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/RELEASING/">
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.3">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.4">
     
     
       
@@ -76,8 +76,8 @@
     </div>
     <div data-md-component="announce">
       
-        <aside class="md-announce">
-          <div class="md-announce__inner md-grid md-typeset">
+        <aside class="md-banner md-announce">
+          <div class="md-banner__inner md-announce__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
    <header style="font-size:17px">
@@ -854,12 +854,15 @@
 <li>shoot some trouble</li>
 </ul>
 <h2 id="check-readiness">Check readiness<a class="headerlink" href="#check-readiness" title="Permanent link">⚓︎</a></h2>
-<p>Before starting the release, make sure everything is ready and in order.
-See that all tests are running smoothly.
-Check that documentation changes show up correctly <a href="https://sse-secure-systems.github.io/connaisseur/develop/">here</a>.
-Make sure the Connaisseur version is incremented correctly according to the changes.
-See if the docs announcements should be adjusted <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html">here</a>.
-Consider making a <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions <em>announcement</em></a>.</p>
+<p>Before starting the release, make sure everything is ready and in order:</p>
+<ul>
+<li>See that all tests are running smoothly.</li>
+<li>Check that documentation changes show up correctly <a href="https://sse-secure-systems.github.io/connaisseur/develop/">here</a>.</li>
+<li>Make sure the Connaisseur version is incremented correctly according to the changes.</li>
+<li>Make sure Connaisseur version <code>helm/values.yaml</code> is matched to <code>helm/Chart.yaml</code>.</li>
+<li>See if the docs announcements should be adjusted <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html">here</a>.</li>
+<li>Consider making a <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions <em>announcement</em></a>.</li>
+</ul>
 <h2 id="add-new-tag">Add new tag<a class="headerlink" href="#add-new-tag" title="Permanent link">⚓︎</a></h2>
 <p>Before adding the new tag, make sure the Connaisseur version is updated in the <code>helm/values.yaml</code> and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version. Then add the tag (on <code>develop</code> branch) with <code>git tag v&lt;new-conny-version&gt;</code> (e.g. <code>git tag v1.4.6</code>).</p>
 <h2 id="create-changelog">Create changelog<a class="headerlink" href="#create-changelog" title="Permanent link">⚓︎</a></h2>
@@ -1015,7 +1018,7 @@ Consider making a <a href="https://github.com/sse-secure-systems/connaisseur/dis
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.709b4209.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.29db7785.min.js"></script>
+      <script src="../assets/javascripts/bundle.febc23d1.min.js"></script>
       
     
   </body>
