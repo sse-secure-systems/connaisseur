@@ -40,7 +40,7 @@ else
 fi
 
 echo 'Testing signed image...'
-kubectl run pod --image=securesystemsengineering/testimage:signed >output.log 2>&1 || true
+kubectl run pod --image=securesystemsengineering/testimage:signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 NUMBER_OF_VALID_DEPLOYMENTS+=1
 
 if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
@@ -61,7 +61,7 @@ else
 fi
 
 echo 'Testing signed image with designated signer...'
-kubectl run pod2 --image=securesystemsengineering/testimage:special_sig >output.log 2>&1 || true
+kubectl run pod2 --image=securesystemsengineering/testimage:special_sig -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 NUMBER_OF_VALID_DEPLOYMENTS+=1
 
 if [[ "$(cat output.log)" != 'pod/pod2 created' ]]; then

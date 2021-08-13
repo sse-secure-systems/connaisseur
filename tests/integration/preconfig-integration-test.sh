@@ -26,7 +26,7 @@ else
 fi
 
 echo 'Testing nv1 signed image...'
-kubectl run npod --image=securesystemsengineering/testimage:signed >output.log 2>&1 || true
+kubectl run npod --image=securesystemsengineering/testimage:signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/npod created' ]]; then
   echo 'Failed to allow signed image. Output:'
@@ -37,7 +37,7 @@ else
 fi
 
 echo 'Testing signed official docker image...'
-kubectl run dpod --image=docker.io/library/hello-world >output.log 2>&1 || true
+kubectl run dpod --image=docker.io/library/hello-world -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/dpod created' ]]; then
   echo 'Failed to allow signed image. Output:'

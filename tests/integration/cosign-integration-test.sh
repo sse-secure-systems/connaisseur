@@ -34,7 +34,7 @@ else
 fi
 
 echo 'Testing signed image...'
-kubectl run pod --image=securesystemsengineering/testimage:co-signed >output.log 2>&1 || true
+kubectl run pod --image=securesystemsengineering/testimage:co-signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
   echo 'Failed to allow signed image. Output:'

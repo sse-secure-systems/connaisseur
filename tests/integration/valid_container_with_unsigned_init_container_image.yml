@@ -3,6 +3,8 @@ kind: Pod
 metadata:
   name: connaisseur-integration-test-pod
   namespace: default
+  labels:
+    app.kubernetes.io/instance: connaisseur
 spec:
   containers:
   - name: valid_container

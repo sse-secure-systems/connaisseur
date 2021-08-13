@@ -31,7 +31,7 @@ else
 fi
 
 echo 'Testing signed image in unlabelled namespace...'
-kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:signed >output.log 2>&1 || true
+kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
   echo 'Failed to allow signed image. Output:'
@@ -42,7 +42,7 @@ else
 fi
 
 echo 'Testing unsigned image in ignored namespace...'
-kubectl run pod --namespace ignoredns --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
+kubectl run pod --namespace ignoredns --image=securesystemsengineering/testimage:unsigned -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
   echo 'Failed to allow unsigned image in ignored namespace. Output:'
@@ -77,7 +77,7 @@ else
 fi
 
 echo 'Testing signed image in enabled namespace...'
-kubectl run pod --namespace validatedns --image=securesystemsengineering/testimage:signed >output.log 2>&1 || true
+kubectl run pod --namespace validatedns --image=securesystemsengineering/testimage:signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
   echo 'Failed to allow signed image. Output:'
@@ -88,7 +88,7 @@ else
 fi
 
 echo 'Testing unsigned image in unlabelled namespace...'
-kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
+kubectl run pod --namespace connaisseur --image=securesystemsengineering/testimage:unsigned -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
 
 if [[ "$(cat output.log)" != 'pod/pod created' ]]; then
   echo 'Failed to allow unsigned image in ignored namespace. Output:'
