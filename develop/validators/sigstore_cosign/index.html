@@ -954,7 +954,7 @@ In case you just use the default values for the validator and image policy given
 <td><code>auth.secret_name</code></td>
 <td></td>
 <td></td>
-<td>Name of a Kubernetes secret that contains <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> for registry authentication. See additional notes <a href="#authentication">below</a>.</td>
+<td>Name of a Kubernetes secret in Connaisseur namespace that contains <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> for registry authentication. See additional notes <a href="#authentication">below</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -979,7 +979,7 @@ In case you just use the default values for the validator and image policy given
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">⚓︎</a></h3>
 <p>When using a private registry for images and signature data, the credentials need to be provided to Connaisseur.
-This is done by creating a <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> Kubernetes secret and passing the secret name to Connaisseur as <code>auth.secret_name</code>.
+This is done by creating a <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> Kubernetes secret in the Connaisseur namespace and passing the secret name to Connaisseur as <code>auth.secret_name</code>.
 The secret can for example be created directly from your local <code>config.json</code> (for docker this resides in <code>~/.docker/config.json</code>):</p>
 <div class="highlight"><pre><span></span><code>kubectl create secret generic my-secret <span class="se">\</span>
   --from-file<span class="o">=</span>.dockerconfigjson<span class="o">=</span>path/to/config.json <span class="se">\</span>
