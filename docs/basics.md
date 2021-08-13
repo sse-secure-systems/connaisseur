@@ -35,6 +35,11 @@ git clone https://github.com/sse-secure-systems/connaisseur.git
 
 The configuration of Connaisseur is completely done in the `helm/values.yaml`.
 The upper `deployment` section offers some general Kubernetes typical configurations like image version or resources.
+Specifically, the `deployment.failurePolicy` allows configuration whether the mutating admission webhook should fail closed (`Fail`, *default*) or open (`Ignore`) should the Connaisseur service become unavailable.
+While Connaisseur is configured to be secure by default, setting the [failure policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) to `Ignore` allows to prioritize cluster access[^1].
+
+[^1]: This is not to be confused with the [detection mode](features/detection_mode.md) feature: In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.
+
 The actual configuration consists of the `validators` and image `policy` sections.
 These are described in detail [below](#detailed-configuration) and for initials steps it is instructive to follow the [getting started guide](getting_started.md).
 Other features are described on the [respective pages](features/README.md).

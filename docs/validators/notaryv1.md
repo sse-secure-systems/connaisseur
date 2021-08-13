@@ -191,7 +191,7 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 | - | - | - | - |
 | `with.delegations` | - | | List of delegation names to enforce specific signers to be present. Refer to section on [enforcing delegations](#enforcing-delegations) for more information. |
 
-#### Example
+### Example
 
 ```yaml
 validators:

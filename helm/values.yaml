@@ -4,6 +4,7 @@ deployment:
   image: securesystemsengineering/connaisseur:v2.1.1
   helmHookImage: securesystemsengineering/connaisseur:helm-hook-v1.0
   imagePullPolicy: Always
+  failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
   resources:
     limits:
       cpu: 1000m
