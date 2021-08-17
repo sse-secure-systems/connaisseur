@@ -1,4 +1,4 @@
-name: trivy
+name: trivy vuln scan
 description: 'action that runs trivy '
 runs:
   using: "composite"

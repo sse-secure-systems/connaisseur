@@ -129,6 +129,37 @@ jobs:
           name: safety-report
           path: safety-report.txt
 
+  trivy-config-scanner:
+    name: trivy config scan
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Render Helm charts
+        run: |
+          mkdir deployment
+          helm template helm > deployment/deployment.yaml
+      - name: Run Trivy on deployment.yaml
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: 'deployment'
+          hide-progress: false
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: false
+          severity: 'CRITICAL,HIGH'
+      - name: Run Trivy on Dockerfiles
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: 'docker'
+          hide-progress: false
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: false
+          severity: 'CRITICAL,HIGH'
+
   docs:
     runs-on: ubuntu-latest
     steps:
@@ -142,7 +173,8 @@ jobs:
           pip install -r docs/requirements_docs.txt
           mkdocs build
 
-  trivy:
+  trivy-vuln-scan:
+    name: trivy vuln scan
     runs-on: ubuntu-latest
     container:
       image: docker:stable
