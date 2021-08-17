@@ -8,8 +8,6 @@
 
 A Kubernetes admission controller to integrate container image signature verification and trust pinning into a cluster.
 
-:tada: **Connaisseur 2.0 is out now! Find more information on new features in our [announcement](https://github.com/sse-secure-systems/connaisseur/discussions/187)** :tada:
-
 **:point_right: The full documentation is available [here](https://sse-secure-systems.github.io/connaisseur/) :book:**
 
 **:point_right: Feel free to reach out via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions) :speech_balloon:**
