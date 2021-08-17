@@ -1,9 +1,8 @@
 from connaisseur.image import Image
-from connaisseur.admission_request import AdmissionRequest
 
 
 class ValidatorInterface:
-    def __init__(self, name: str, **kwargs):
+    def __init__(self, name: str, **kwargs):  # pylint: disable=unused-argument
         """
         Initializes a validator based on the data from the configuration file.
         """

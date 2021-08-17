@@ -12,15 +12,7 @@ from connaisseur.image import Image
 
 
 @pytest.fixture
-def mock_safe_path_func(monkeypatch):
-    def m_safe_path_func(callback: callable, base_dir: str, path: str, *args, **kwargs):
-        return callback(path, *args, **kwargs)
-
-    monkeypatch.setattr(notary, "safe_path_func", m_safe_path_func)
-
-
-@pytest.fixture
-def sample_notaries(mock_safe_path_func):
+def sample_notaries():
     notary.Notary.CERT_PATH = "tests/data/notary/{}.cert"
     li = []
     for file_name in ("notary1", "notary2", "unhealthy_notary"):

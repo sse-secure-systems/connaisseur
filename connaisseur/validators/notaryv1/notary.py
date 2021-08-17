@@ -4,19 +4,16 @@ import re
 import ssl
 from urllib.parse import quote, urlencode
 import requests
-import yaml
 import aiohttp
 from connaisseur.image import Image
 from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
 from connaisseur.exceptions import (
-    UnreachableError,
     NotFoundException,
     InvalidFormatException,
     UnknownTypeException,
     PathTraversalError,
 )
-from connaisseur.util import safe_path_func
 
 
 class Notary:
@@ -36,10 +33,10 @@ class Notary:
         host: str,
         trust_roots: list,
         is_acr: bool = False,
-        auth: dict = {},
+        auth: dict = None,
         cert: str = None,
         **kwargs,
-    ):
+    ):  # pylint: disable=unused-argument
         """
         Creates a Notary object from a dictionary.
         """
@@ -48,6 +45,8 @@ class Notary:
         self.host = host
         self.pub_root_keys = trust_roots or []
         self.is_acr = is_acr
+        if auth is None:
+            auth = {}
         self.auth = {"login" if k == "username" else k: v for k, v in auth.items()}
         self.cert = self.__get_context(cert) if cert else None
 

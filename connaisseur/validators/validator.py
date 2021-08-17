@@ -13,9 +13,10 @@ class Validator:
         "static": StaticValidator,
     }
 
-    def __new__(cls, type: str, **kwargs):
+    def __new__(cls, **kwargs):
+        validator_type = kwargs.pop("type")
         try:
-            return cls.class_map[type](**kwargs)
+            return cls.class_map[validator_type](**kwargs)
         except KeyError:
-            msg = f"{type} is not a supported validator."
-            raise NoSuchClassError(message=msg)
+            msg = f"{validator_type} is not a supported validator."
+            raise NoSuchClassError(message=msg)  # pylint: disable=raise-missing-from

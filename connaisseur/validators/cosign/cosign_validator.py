@@ -20,7 +20,7 @@ class CosignValidator(ValidatorInterface):
     trust_roots: list
 
     def __init__(self, name: str, trust_roots: list, **kwargs):
-        self.name = name
+        super().__init__(name, **kwargs)
         self.trust_roots = trust_roots
 
     def __get_key(self, key_name: str = None):
@@ -30,15 +30,15 @@ class CosignValidator(ValidatorInterface):
                 key["key"] for key in self.trust_roots if key["name"] == key_name
             )
         except StopIteration as err:
-            msg = (
-                'Trust root "{key_name}" not configured for validator "{notary_name}".'
-            )
+            msg = 'Trust root "{key_name}" not configured for validator "{validator_name}".'
             raise NotFoundException(
-                message=msg, key_name=key_name, notary_name=self.name
+                message=msg, key_name=key_name, validator_name=self.name
             ) from err
         return "".join(key)
 
-    def validate(self, image: Image, trust_root: str = None, **kwargs):
+    def validate(
+        self, image: Image, trust_root: str = None, **kwargs
+    ):  # pylint: disable=arguments-differ
         pub_key = self.__get_key(trust_root)
         return self.__get_cosign_validated_digests(str(image), pub_key).pop()
 
@@ -89,7 +89,8 @@ class CosignValidator(ValidatorInterface):
                 stderr=stderr,
             )
         elif re.match(
-            r"^error: fetching signatures: getting signature manifest: GET https://[^ ]+ MANIFEST_UNKNOWN:.*",
+            r"^error: fetching signatures: getting signature manifest: "
+            r"GET https://[^ ]+ MANIFEST_UNKNOWN:.*",
             stderr,
         ):
             msg = 'No trust data for image "{image}".'

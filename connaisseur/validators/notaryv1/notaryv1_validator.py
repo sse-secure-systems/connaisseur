@@ -1,22 +1,14 @@
-import os
 import base64
 import asyncio
 import datetime as dt
 import logging
 from connaisseur.validators.interface import ValidatorInterface
 from connaisseur.image import Image
-from connaisseur.admission_request import AdmissionRequest
 from connaisseur.validators.notaryv1.notary import Notary
-from connaisseur.util import safe_path_func
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
 from connaisseur.validators.notaryv1.key_store import KeyStore
-from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.exceptions import (
-    UnreachableError,
     NotFoundException,
-    InvalidFormatException,
-    UnknownTypeException,
-    PathTraversalError,
     AmbiguousDigestError,
     InsufficientTrustDataError,
 )
@@ -36,8 +28,10 @@ class NotaryV1Validator(ValidatorInterface):
         self.notary = Notary(name, **kwargs)
 
     def validate(
-        self, image: Image, trust_root: str = None, delegations: list = [], **kwargs
-    ):
+        self, image: Image, trust_root: str = None, delegations: list = None, **kwargs
+    ):  # pylint: disable=arguments-differ
+        if delegations is None:
+            delegations = []
         # get the public root key
         pub_key = self.notary.get_key(trust_root)
         # prepend `targets/` to the required delegation roles, if not already present
@@ -117,12 +111,12 @@ class NotaryV1Validator(ValidatorInterface):
         tuf_roles = ["root", "snapshot", "timestamp", "targets"]
 
         # load all trust data
-        t1 = dt.datetime.now()
+        t_start = dt.datetime.now()
         trust_data_list = await asyncio.gather(
             *[self.notary.get_trust_data(image, TUFRole(role)) for role in tuf_roles]
         )
-        t2 = (dt.datetime.now() - t1).total_seconds()
-        logging.debug(f"Pulled trust data for image {str(image)} in {t2} seconds.")
+        duration = (dt.datetime.now() - t_start).total_seconds()
+        logging.debug("Pulled trust data for image %s in %s seconds.", image, duration)
         trust_data = {tuf_roles[i]: trust_data_list[i] for i in range(len(tuf_roles))}
 
         # validate signature and expiry data of and load root file
