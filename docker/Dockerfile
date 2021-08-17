@@ -38,7 +38,7 @@ COPY --from=cosign_loader /go/cosign/cosign-linux-amd64 /app/cosign/cosign
 RUN chmod 111 /app/cosign/cosign
 COPY connaisseur /app/connaisseur
 
-USER 1000:2000
+USER 10001:20001
 
 LABEL maintainer="Philipp Belitz <philipp.belitz@securesystems.de>"
 

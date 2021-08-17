@@ -46,9 +46,9 @@ capabilities:
     - ALL
 privileged: false
 readOnlyRootFilesystem: true
-runAsGroup: 2000
+runAsGroup: 20001
 runAsNonRoot: true
-runAsUser: 1000
+runAsUser: 10001
 {{- if gt (.Capabilities.KubeVersion.Minor | int) 18 }}
 seccompProfile:
   type: RuntimeDefault

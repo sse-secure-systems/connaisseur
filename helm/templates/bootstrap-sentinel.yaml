@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
   - name: {{ .Chart.Name }}
-    image: busybox
+    image: busybox:stable
     imagePullPolicy: Always
     command: ['sh', '-c', 'sleep 300s']
     resources:
@@ -25,9 +25,9 @@ spec:
           - ALL
       privileged: false
       readOnlyRootFilesystem: true
-      runAsGroup: 2000
+      runAsGroup: 20001
       runAsNonRoot: true
-      runAsUser: 1000
+      runAsUser: 10001
       {{- if gt (.Capabilities.KubeVersion.Minor | int) 18 }}
       seccompProfile:
         type: RuntimeDefault

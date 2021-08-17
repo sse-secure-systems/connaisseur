@@ -10,4 +10,6 @@ RUN ["pip3", "install", "-r", "/app/requirements.txt"]
 RUN ["pip3", "install", "/app"]
 RUN ["pip3", "install", "cryptography"]
 
+USER 10001:20001
+
 ENTRYPOINT [ "python3", "/app/get_root_key.py" ]

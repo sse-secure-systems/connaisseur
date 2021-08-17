@@ -12,4 +12,6 @@ RUN sh /harden.sh && rm /harden.sh
 
 COPY scripts/helm_hook.sh /
 
+USER 10001:20001
+
 ENTRYPOINT ["ash", "/helm_hook.sh"]
