@@ -13,11 +13,8 @@ runs:
         sudo apt update
         sudo apt install bash -y
       shell: bash
-    - name: Create KinD cluster
-      run: |
-        GO111MODULE="on" go get sigs.k8s.io/kind
-        kind create cluster --wait 120s
-      shell: bash
+    - name: Create k8s Kind Cluster
+      uses: helm/kind-action@v1.2.0
     - name: Check KinD cluster
       run: kubectl get nodes
       shell: bash
