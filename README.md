@@ -83,8 +83,6 @@ To uninstall Connaisseur use:
 helm uninstall connaisseur --namespace connaisseur
 ```
 
-To uninstall all components add the `--purge` flag.
-
 Congrats :tada: you just validated the first images in your cluster!
 To get started configuring and verifying your own images and signatures, please follow our [setup guide](https://sse-secure-systems.github.io/connaisseur/latest/getting_started/).
 
