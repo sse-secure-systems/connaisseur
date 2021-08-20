@@ -1,8 +1,14 @@
 import os
 import collections
+import fnmatch
 import yaml
+from connaisseur.image import Image
 from connaisseur.util import validate_schema
-from connaisseur.exceptions import NotFoundException, InvalidConfigurationFormatError
+from connaisseur.exceptions import (
+    NotFoundException,
+    InvalidConfigurationFormatError,
+    NoMatchingPolicyRuleError,
+)
 from connaisseur.validators.validator import Validator
 from connaisseur.util import safe_path_func
 
@@ -17,6 +23,7 @@ class Config:
     __EXTERNAL_PATH = "/app/connaisseur-config/"
     __SCHEMA_PATH = "/app/connaisseur/res/config_schema.json"
     validators: list = []
+    policy: list = []
 
     def __init__(self):
         """
@@ -42,10 +49,13 @@ class Config:
 
         self.__validate(config)
 
-        self.validators = [Validator(**validator) for validator in config]
+        self.validators = [
+            Validator(**validator) for validator in config.get("validators")
+        ]
+        self.policy = config.get("policy")
 
     def __merge_configs(self, config: dict, secrets_config: dict):
-        for validator in config:
+        for validator in config.get("validators", {}):
             validator.update(secrets_config.get(validator.get("name"), {}))
             # keep in mind that neither the contents of `validator`, `secrets_config` or
             # `auth_file` are considered secure yet, as they haven't been matched against
@@ -70,7 +80,9 @@ class Config:
             "Connaisseur configuration",
             InvalidConfigurationFormatError,
         )
-        validator_names = [validator.get("name") for validator in config]
+        validator_names = [
+            validator.get("name") for validator in config.get("validators")
+        ]
         if collections.Counter(validator_names)["default"] > 1:
             msg = "Too many default validator configurations."
             raise InvalidConfigurationFormatError(message=msg)
@@ -92,3 +104,107 @@ class Config:
         except IndexError as err:
             msg = "Unable to find validator configuration {validator_name}."
             raise NotFoundException(message=msg, validator_name=validator_name) from err
+
+    def get_policy_rule(self, image: Image):
+        best_match = Match("", "")
+        for rule in map(lambda x: x["pattern"], self.policy):
+            rule_with_tag = f"{rule}:*" if ":" not in rule else rule
+            if fnmatch.fnmatch(str(image), rule_with_tag):
+                match = Match(rule, str(image))
+                best_match = match.compare(best_match)
+
+        if not best_match:
+            msg = "No matching policy rule could be found for image {image_name}."
+            raise NoMatchingPolicyRuleError(message=msg, image_name=str(image))
+
+        most_specific_rule = next(
+            filter(lambda x: x["pattern"] == best_match.key, self.policy), None
+        )
+
+        return Rule(**most_specific_rule)
+
+
+class Rule:
+    def __init__(self, pattern: str, **kwargs):
+        self.pattern = pattern
+        self.validator = kwargs.get("validator")
+        self.arguments = kwargs.get("with", {})
+
+    def __str__(self):
+        return self.pattern
+
+
+class Match:
+    """
+    Matching object that represents a `rule` pattern. Hold information about
+    number of components and longest prefix matches between its components and
+    the `images` components.
+    """
+
+    key: str
+    pattern: str
+    component_count: int
+    component_lengths: list
+    prefix_lengths: list
+
+    def __init__(self, rule: str, image: str):
+        self.key = rule
+
+        self.pattern = f"{rule}:*" if ":" not in rule else rule
+
+        components = self.pattern.split("/")
+        self.component_count = len(components)
+
+        self.component_lengths = [
+            len(components[index]) for index in range(self.component_count)
+        ]
+
+        image_components = str(image).split("/")
+        self.prefix_lengths = [
+            len(
+                self.longest_common_prefix([image_components[index], components[index]])
+            )
+            for index in range(len(components))
+        ]
+
+    def __bool__(self):
+        return bool(self.key)
+
+    def longest_common_prefix(self, strings: list):
+        """
+        Returns the longest matching prefix among all given `strings`.
+        """
+        if not strings:
+            return ""
+        low, high = 0, min(map(len, strings))
+        # the binary search on the length of prefix on the first word
+        while low <= high:
+            mid = (low + high) // 2
+            # take all strings of length `mid` and put them into a set
+            # if all strings match, the set has size 1
+            if len({x[:mid] for x in strings}) == 1:
+                low = mid + 1
+            else:
+                high = mid - 1
+        return strings[0][:high]
+
+    def compare(self, match):
+        """
+        Compares the match object with another `match`. Returns the more
+        specific one.
+        """
+        if self.component_count > match.component_count:
+            return self
+        elif self.component_count < match.component_count:
+            return match
+        else:
+            for p_i in range(len(self.prefix_lengths)):
+                if self.prefix_lengths[p_i] > match.prefix_lengths[p_i]:
+                    return self
+                elif self.prefix_lengths[p_i] < match.prefix_lengths[p_i]:
+                    return match
+            for c_i in range(len(self.component_lengths)):
+                if self.component_lengths[c_i] > match.component_lengths[c_i]:
+                    return self
+                else:
+                    return match

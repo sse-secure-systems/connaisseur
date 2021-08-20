@@ -1,157 +1,190 @@
 {
-    "type": "array",
-    "items": {
-        "type": "object",
-        "properties": {
-            "name": {
-                "type": "string",
-                "pattern": "^[^\/\\\\]+$"
-            },
-            "type": {
-                "type": "string",
-                "enum": [
-                    "notaryv1",
-                    "notaryv2",
-                    "cosign",
-                    "static"
-                ]
-            }
-        },
-        "required": [
-            "name",
-            "type"
-        ],
-        "allOf": [
-            {
-                "if": {
-                    "properties": {
-                        "type": {
-                            "const": "notaryv1"
-                        }
+    "type": "object",
+    "properties": {
+        "validators": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "pattern": "^[^\/\\\\]+$"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "notaryv1",
+                            "notaryv2",
+                            "cosign",
+                            "static"
+                        ]
                     }
                 },
-                "then": {
-                    "properties": {
-                        "host": {
-                            "type": "string",
-                            "pattern": "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}"
-                        },
-                        "trust_roots": {
-                            "type": ["array", "null"],
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "key": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "name",
-                                    "key"
-                                ]
-                            },
-                            "minItems": 0,
-                            "uniqueItems": true
-                        },
-                        "is_acr": {
-                            "type": "boolean"
-                        },
-                        "cert": {
-                            "type": "string",
-                            "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\/\\s])*={0,4})\n(?:-+END\\sCERTIFICATE[-]+)"
-                        },
-                        "auth": {
-                            "type": "object",
+                "required": [
+                    "name",
+                    "type"
+                ],
+                "allOf": [
+                    {
+                        "if": {
                             "properties": {
-                                "username": {
-                                    "type": "string"
+                                "type": {
+                                    "const": "notaryv1"
+                                }
+                            }
+                        },
+                        "then": {
+                            "properties": {
+                                "host": {
+                                    "type": "string",
+                                    "pattern": "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}"
                                 },
-                                "password": {
-                                    "type": "string"
+                                "trust_roots": {
+                                    "type": [
+                                        "array",
+                                        "null"
+                                    ],
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "key": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "name",
+                                            "key"
+                                        ]
+                                    },
+                                    "minItems": 0,
+                                    "uniqueItems": true
+                                },
+                                "is_acr": {
+                                    "type": "boolean"
+                                },
+                                "cert": {
+                                    "type": "string",
+                                    "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\/\\s])*={0,4})\n(?:-+END\\sCERTIFICATE[-]+)"
+                                },
+                                "auth": {
+                                    "type": "object",
+                                    "properties": {
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "password": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "username",
+                                        "password"
+                                    ]
                                 }
                             },
                             "required": [
-                                "username",
-                                "password"
+                                "host",
+                                "trust_roots"
                             ]
                         }
                     },
-                    "required": [
-                        "host",
-                        "trust_roots"
-                    ]
-                }
-            },
-            {
-                "if": {
-                    "properties": {
-                        "type": {
-                            "const": "notaryv2"
-                        }
-                    }
-                },
-                "then": {}
-            },
-            {
-                "if": {
-                    "properties": {
-                        "type": {
-                            "const": "cosign"
-                        }
-                    }
-                },
-                "then": {
-                    "properties": {
-                        "trust_roots": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
+                    {
+                        "if": {
+                            "properties": {
+                                "type": {
+                                    "const": "notaryv2"
+                                }
+                            }
+                        },
+                        "then": {}
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "type": {
+                                    "const": "cosign"
+                                }
+                            }
+                        },
+                        "then": {
+                            "properties": {
+                                "trust_roots": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "key": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "name",
+                                            "key"
+                                        ]
                                     },
-                                    "key": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "name",
-                                    "key"
-                                ]
+                                    "minItems": 1,
+                                    "uniqueItems": true
+                                }
                             },
-                            "minItems": 1,
-                            "uniqueItems": true
+                            "required": [
+                                "trust_roots"
+                            ]
                         }
                     },
-                    "required": [
-                        "trust_roots"
-                    ]
-                }
-            },
-            {
-                "if": {
-                    "properties": {
-                        "type": {
-                            "const": "static"
+                    {
+                        "if": {
+                            "properties": {
+                                "type": {
+                                    "const": "static"
+                                }
+                            }
+                        },
+                        "then": {
+                            "properties": {
+                                "approve": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "approve"
+                            ]
                         }
                     }
-                },
-                "then": {
-                    "properties": {
-                        "approve": {
-                            "type": "boolean"
-                        }
+                ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        },
+        "policy": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "pattern": "^((\\w+\\.[\\.\\w]*\\/)?([^\\s]+\\/)?)([^\\/\\:@]+)((@sha256:([a-f0-9]{64}))|(:(.+)))?$"
                     },
-                    "required": [
-                        "approve"
-                    ]
-                }
+                    "validator": {
+                        "type": "string"
+                    },
+                    "with": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "pattern"
+                ]
             }
-        ]
+        }
     },
-    "minItems": 1,
-    "uniqueItems": true
+    "required": [
+        "validators",
+        "policy"
+    ]
 }

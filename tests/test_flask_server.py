@@ -13,6 +13,46 @@ from connaisseur.validators.static.static_validator import StaticValidator
 def m_config(monkeypatch, sample_nv1):
     def mock_init(self):
         self.validators = [sample_nv1, StaticValidator("allow", True)]
+        self.policy = [
+            {
+                "pattern": "*:*",
+                "validator": "",
+                "with": {"delegations": ["phbelitz", "chamsen"]},
+            },
+            {
+                "pattern": "docker.io/*:*",
+                "validator": "dockerhub",
+                "with": {"delegations": ["phbelitz"]},
+            },
+            {"pattern": "k8s.gcr.io/*:*", "validator": "allow"},
+            {"pattern": "gcr.io/*:*", "validator": "allow"},
+            {
+                "pattern": "docker.io/securesystemsengineering/*:*",
+                "validator": "dockerhub",
+                "with": {"delegations": ["someuserthatdidnotsign"]},
+            },
+            {
+                "pattern": "docker.io/securesystemsengineering/sample",
+                "validator": "dockerhub",
+                "with": {"delegations": ["phbelitz", "chamsen"]},
+            },
+            {
+                "pattern": "docker.io/securesystemsengineering/sample:v4",
+                "validator": "allow",
+            },
+            {
+                "pattern": "docker.io/securesystemsengineering/connaisseur:*",
+                "validator": "allow",
+            },
+            {
+                "pattern": "docker.io/securesystemsengineering/sample-san-sama",
+                "validator": "allow",
+            },
+            {
+                "pattern": "docker.io/securesystemsengineering/alice-image",
+                "validator": "dockerhub",
+            },
+        ]
 
     monkeypatch.setattr(co.Config, "__init__", mock_init)
     monkeypatch.setenv("KUBE_VERSION", "v1.20.0")
@@ -31,7 +71,6 @@ def test_mutate(
     adm_req_samples,
     index,
     m_request,
-    m_policy,
     m_expiry,
     m_trust_data,
     m_alerting,
@@ -129,7 +168,7 @@ def test_create_logging_msg(msg, kwargs, out):
     ],
 )
 def test_admit(
-    adm_req_samples, index, m_request, m_policy, m_expiry, m_trust_data, out, exception
+    adm_req_samples, index, m_request, m_expiry, m_trust_data, out, exception
 ):
     with exception:
         with aioresponses() as aio:

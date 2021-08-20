@@ -1,3 +1,4 @@
+validators:
 - name: default
   host: notary.docker.io
   type: notaryv1
@@ -45,3 +46,31 @@
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEH+G0yM9CQ8KjN2cF8iHpiTA9Q69q
       3brrzLkY1kjmRNOs0c2sx2nm8j2hFZRbyaVsd52Mkw0k5WrX+9vBfbjtdQ==
       -----END PUBLIC KEY-----
+policy:
+- pattern: "*:*"
+  with:
+    delegations: ["phbelitz", "chamsen"]
+- pattern: "docker.io/*:*"
+  validator: dockerhub
+  with:
+    delegations: ["phbelitz"]
+- pattern: "k8s.gcr.io/*:*"
+  validator: allow
+- pattern: "gcr.io/*:*"
+  validator: allow
+- pattern: "docker.io/securesystemsengineering/*:*"
+  validator: dockerhub
+  with:
+    delegations: ["someuserthatdidnotsign"]
+- pattern: "docker.io/securesystemsengineering/sample"
+  validator: dockerhub
+  with:
+    delegations: ["phbelitz", "chamsen"]
+- pattern: "docker.io/securesystemsengineering/sample:v4"
+  validator: allow
+- pattern: "docker.io/securesystemsengineering/connaisseur:*"
+  validator: allow
+- pattern: "docker.io/securesystemsengineering/sample-san-sama"
+  validator: allow
+- pattern: "docker.io/securesystemsengineering/alice-image"
+  validator: dockerhub

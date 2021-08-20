@@ -11,7 +11,6 @@ from connaisseur.util import get_admission_review
 from connaisseur.alert import send_alerts
 from connaisseur.config import Config
 from connaisseur.admission_request import AdmissionRequest
-from connaisseur.policy import ImagePolicy
 
 
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
@@ -93,7 +92,6 @@ def __create_logging_msg(msg: str, **kwargs):
 
 def __admit(admission_request: AdmissionRequest):
     logging_context = dict(admission_request.context)
-    policy = ImagePolicy()
     patches = []
 
     for type_index, image in admission_request.wl_object.containers.items():
@@ -112,7 +110,7 @@ def __admit(admission_request: AdmissionRequest):
             continue
 
         try:
-            policy_rule = policy.get_matching_rule(image)
+            policy_rule = CONFIG.get_policy_rule(image)
             validator = CONFIG.get_validator(policy_rule.validator)
 
             msg = (

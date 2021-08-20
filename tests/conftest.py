@@ -4,7 +4,6 @@ import pytest
 import requests
 from aioresponses import CallbackResult
 import connaisseur.kube_api
-import connaisseur.policy
 import connaisseur.config as co
 import connaisseur.admission_request as admreq
 import connaisseur.alert as alert
@@ -265,60 +264,6 @@ def m_expiry(monkeypatch):
         pass
 
     monkeypatch.setattr(td.TrustData, "validate_expiry", mock_expiry)
-
-
-@pytest.fixture
-def m_policy():
-    def get_policy():
-        return {
-            "rules": [
-                {
-                    "pattern": "*:*",
-                    "validator": "",
-                    "with": {"delegations": ["phbelitz", "chamsen"]},
-                },
-                {
-                    "pattern": "docker.io/*:*",
-                    "validator": "dockerhub",
-                    "with": {"delegations": ["phbelitz"]},
-                },
-                {"pattern": "k8s.gcr.io/*:*", "validator": "allow"},
-                {"pattern": "gcr.io/*:*", "validator": "allow"},
-                {
-                    "pattern": "docker.io/securesystemsengineering/*:*",
-                    "validator": "dockerhub",
-                    "with": {"delegations": ["someuserthatdidnotsign"]},
-                },
-                {
-                    "pattern": "docker.io/securesystemsengineering/sample",
-                    "validator": "dockerhub",
-                    "with": {"delegations": ["phbelitz", "chamsen"]},
-                },
-                {
-                    "pattern": "docker.io/securesystemsengineering/sample:v4",
-                    "validator": "allow",
-                },
-                {
-                    "pattern": "docker.io/securesystemsengineering/connaisseur:*",
-                    "validator": "allow",
-                },
-                {
-                    "pattern": "docker.io/securesystemsengineering/sample-san-sama",
-                    "validator": "allow",
-                },
-                {
-                    "pattern": "docker.io/securesystemsengineering/alice-image",
-                    "validator": "dockerhub",
-                },
-            ]
-        }
-
-    connaisseur.policy.ImagePolicy._ImagePolicy__get_image_policy = staticmethod(
-        get_policy
-    )
-    connaisseur.policy.ImagePolicy._ImagePolicy__SCHEMA_PATH = (
-        "connaisseur/res/policy_schema.json"
-    )
 
 
 @pytest.fixture

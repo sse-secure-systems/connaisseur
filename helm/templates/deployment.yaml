@@ -5,6 +5,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "helm.labels" . | nindent 4 }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.deployment.replicasCount }}
   selector:

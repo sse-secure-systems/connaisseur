@@ -7,6 +7,7 @@ metadata:
     {{- include "helm.labels" . | nindent 4 }}
 data:
   config.yaml: |
+    validators:
     {{- range .Values.validators -}}
       {{- $validator := deepCopy . -}}
       {{- if eq $validator.type "notaryv1" -}}
@@ -15,4 +16,8 @@ data:
       {{- else if eq $validator.type "cosign" -}}
       {{- end }}
     - {{- $validator | toYaml | trim | nindent 6 -}}
+    {{- end }}
+    policy:
+    {{- range $k,$v := .Values.policy }}
+    - {{- $v | toYaml | trim | nindent 6 -}}
     {{- end }}

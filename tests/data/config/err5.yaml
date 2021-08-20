@@ -1,22 +1,24 @@
 validators:
-- name: dockerhub
-  ost: notary.docker.io
-  rootKys:
-  - nae: library
-    ke: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-      QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
-      -----END PUBLIC KEY-----
-  - nme: connytest
-    ey: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
-      BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
-      -----END PUBLIC KEY-----
+- name: default
+  type: notaryv1
+  host: notary.docker.io
+  trust_roots:
+    - name: default
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+        QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+        -----END PUBLIC KEY-----
+    - name: connytest
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETBDLAICCabJQXB01DOy315nDm0aD
+        BREZ4aWG+uphuFrZWw0uAVLW9B/AIcJkHa7xQ/NLtrDi3Ou5dENzDy+Lkg==
+        -----END PUBLIC KEY-----
 # private notary
 - name: harbor
-  hst: notary.harbor.domain
+  type: notaryv1
+  host: notary.harbor.domain
   selfsigned_cert: |
     -----BEGIN CERTIFICATE-----
     MIIDEzCCAfugAwIBAgIQEHy1Je1mbrt0RaLDjDajszANBgkqhkiG9w0BAQsFADAU
@@ -44,33 +46,32 @@ validators:
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEH+G0yM9CQ8KjN2cF8iHpiTA9Q69q
       3brrzLkY1kjmRNOs0c2sx2nm8j2hFZRbyaVsd52Mkw0k5WrX+9vBfbjtdQ==
       -----END PUBLIC KEY-----
-  auth:
-    secretName: harbor-creds
+- name: allow
+  type: static
+  approve: True
+- name: deny
+  type: static
+  approve: False
+- name: cosign-example
+  type: cosign
+  trust_roots:
+  - name: default
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+      -----END PUBLIC KEY-----
+- name: ext
+  type: notaryv1
+  host: notary.external.domain
+  trust_roots:
+    - name: default
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+        QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+        -----END PUBLIC KEY-----
 policy:
-- pattern: "*:*"
+- puttern: "*:*"
   with:
     delegations: ["phbelitz", "chamsen"]
-- pattern: "docker.io/*:*"
-  validator: dockerhub
-  with:
-    delegations: ["phbelitz"]
-- pattern: "k8s.gcr.io/*:*"
-  validator: allow
-- pattern: "gcr.io/*:*"
-  validator: allow
-- pattern: "docker.io/securesystemsengineering/*:*"
-  validator: dockerhub
-  with:
-    delegations: ["someuserthatdidnotsign"]
-- pattern: "docker.io/securesystemsengineering/sample"
-  validator: dockerhub
-  with:
-    delegations: ["phbelitz", "chamsen"]
-- pattern: "docker.io/securesystemsengineering/sample:v4"
-  validator: allow
-- pattern: "docker.io/securesystemsengineering/connaisseur:*"
-  validator: allow
-- pattern: "docker.io/securesystemsengineering/sample-san-sama"
-  validator: allow
-- pattern: "docker.io/securesystemsengineering/alice-image"
-  validator: dockerhub
