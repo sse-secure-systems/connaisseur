@@ -95,7 +95,7 @@ def get_admission_review(
 
 
 def validate_schema(data: dict, schema_path: str, kind: str, exception):
-    with open(schema_path, "r") as schema_file:
+    with open(schema_path, "r", encoding="utf-8") as schema_file:
         schema = json.load(schema_file)
 
     try:

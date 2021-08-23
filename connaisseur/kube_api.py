@@ -28,5 +28,5 @@ def __get_token(path: str):
     """
     Gets the API token from the containers file system.
     """
-    with open(path, "r") as file:
+    with open(path, "r", encoding="utf-8") as file:
         return file.read()

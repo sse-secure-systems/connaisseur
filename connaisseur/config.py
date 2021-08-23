@@ -28,14 +28,14 @@ class Config:
 
         Raises `InvalidFormatException` if the configuration file has an invalid format.
         """
-        with open(self.__PATH, "r") as configfile:
+        with open(self.__PATH, "r", encoding="utf-8") as configfile:
             config_content = yaml.safe_load(configfile)
 
         if not config_content:
             msg = "Error loading connaisseur config file."
             raise NotFoundException(message=msg)
 
-        with open(self.__SECRETS_PATH, "r") as secrets_configfile:
+        with open(self.__SECRETS_PATH, "r", encoding="utf-8") as secrets_configfile:
             secrets_config_content = yaml.safe_load(secrets_configfile)
 
         config = self.__merge_configs(config_content, secrets_config_content)
