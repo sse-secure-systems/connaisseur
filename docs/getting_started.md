@@ -43,6 +43,7 @@ Cosign on the other hand is somewhat more straightforward to use.
 === "Docker Content Trust"
 
     General usage of DCT is described in the [docker documentation](https://docs.docker.com/engine/security/trust/).
+    Detailed information on all configuration options for Connaisseur is provided in the [Notary (V1) validator section](validators/notaryv1.md).
     For now, we just need to generate a public-private root key pair via:
 
     ```bash
@@ -66,6 +67,7 @@ Cosign on the other hand is somewhat more straightforward to use.
 
     Usage of Cosign is very well described in the [docs](https://github.com/sigstore/cosign).
     You can download Cosign from its [GitHub repository](https://github.com/sigstore/cosign/releases).
+    Detailed information on all configuration options for Connaisseur is provided in the [Cosign validator section](validators/sigstore_cosign.md).
     A keypair is generated via:
 
     ```bash

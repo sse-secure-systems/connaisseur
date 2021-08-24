@@ -4,7 +4,12 @@
 As part of the sigstore project, [Cosign](https://github.com/sigstore/cosign) allows seamless container signing, verification and storage.
 You can read more about it [here](https://blog.sigstore.dev/).
 
-Connaisseur currently supports the elementary function of verifying Cosign-generated signatures against the locally created corresponding public keys.
+Connaisseur currently supports the elementary function of verifying Cosign-generated signatures based on the following types of keys:
+
+- [Locally-generated key pair](https://github.com/sigstore/cosign#generate-a-keypair)
+- [KMS](https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms) (export the public key)
+- [Hardware-based token](https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms) (export the public key)
+
 We plan to expose further features of Cosign and sigstore in upcoming releases, so stay tuned!
 
 ## Basic usage
