@@ -18,10 +18,9 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "helm.name" . }}
         app.kubernetes.io/instance: {{ .Chart.Name }}
-      {{- /* This will be set automatically by Kubernetes 1.19 when using the securityContext.seccompProfile  */ -}}
-      {{- if lt (.Capabilities.KubeVersion.Minor | int) 19 }}
+      {{- if .Values.deployment.annotations }}
       annotations:
-        seccomp.security.alpha.kubernetes.io/pod: runtime/default
+        {{- toYaml .Values.deployment.annotations | nindent 8 }}
       {{- end }}
     spec:
       serviceAccountName: {{ .Chart.Name }}-serviceaccount
@@ -73,19 +72,7 @@ spec:
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            privileged: false
-            readOnlyRootFilesystem: true
-            runAsGroup: 20001
-            runAsNonRoot: true
-            runAsUser: 10001
-            {{- if gt (.Capabilities.KubeVersion.Minor | int) 18 }}
-            seccompProfile:
-              type: RuntimeDefault
-            {{- end }}
+            {{- toYaml .Values.deployment.securityContext | nindent 12 }}
       {{- with .Values.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
