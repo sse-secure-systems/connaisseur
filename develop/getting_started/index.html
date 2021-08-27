@@ -848,6 +848,7 @@ Otherwise, pick your preferred signing solution below.</p>
 Cosign on the other hand is somewhat more straightforward to use.</p>
 <div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Docker Content Trust</label><div class="tabbed-content">
 <p>General usage of DCT is described in the <a href="https://docs.docker.com/engine/security/trust/">docker documentation</a>.
+Detailed information on all configuration options for Connaisseur is provided in the <a href="../validators/notaryv1/">Notary (V1) validator section</a>.
 For now, we just need to generate a public-private root key pair via:</p>
 <div class="highlight"><pre><span></span><code>docker trust key generate root
 </code></pre></div>
@@ -864,6 +865,7 @@ YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ<span class="o">==</sp
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Cosign</label><div class="tabbed-content">
 <p>Usage of Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>.
 You can download Cosign from its <a href="https://github.com/sigstore/cosign/releases">GitHub repository</a>.
+Detailed information on all configuration options for Connaisseur is provided in the <a href="../validators/sigstore_cosign/">Cosign validator section</a>.
 A keypair is generated via:</p>
 <div class="highlight"><pre><span></span><code>cosign generate-key-pair
 </code></pre></div>

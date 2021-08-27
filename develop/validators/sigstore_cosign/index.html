@@ -857,8 +857,13 @@
 <p><a href="https://sigstore.dev/">sigstore</a> is a <a href="https://linuxfoundation.org/">Linux Foundation</a> project that aims to provide public software signing and transparency to improve open source supply chain security.
 As part of the sigstore project, <a href="https://github.com/sigstore/cosign">Cosign</a> allows seamless container signing, verification and storage.
 You can read more about it <a href="https://blog.sigstore.dev/">here</a>.</p>
-<p>Connaisseur currently supports the elementary function of verifying Cosign-generated signatures against the locally created corresponding public keys.
-We plan to expose further features of Cosign and sigstore in upcoming releases, so stay tuned!</p>
+<p>Connaisseur currently supports the elementary function of verifying Cosign-generated signatures based on the following types of keys:</p>
+<ul>
+<li><a href="https://github.com/sigstore/cosign#generate-a-keypair">Locally-generated key pair</a></li>
+<li><a href="https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms">KMS</a> (export the public key)</li>
+<li><a href="https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms">Hardware-based token</a> (export the public key)</li>
+</ul>
+<p>We plan to expose further features of Cosign and sigstore in upcoming releases, so stay tuned!</p>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
 <p>Getting started with Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>.
 You can download Cosign from its <a href="https://github.com/sigstore/cosign/releases">GitHub repository</a>.
