@@ -8,8 +8,8 @@ COSIGN_VERSION = 1.0.0
 all: docker install
 
 docker:
-	docker build --build-arg COSIGN_VERSION=$(COSIGN_VERSION) -f docker/Dockerfile -t $(IMAGE) .
-	docker build -f docker/Dockerfile.hook -t $(HELM_HOOK_IMAGE) .
+	docker build --pull --build-arg COSIGN_VERSION=$(COSIGN_VERSION) -f docker/Dockerfile -t $(IMAGE) .
+	docker build --pull -f docker/Dockerfile.hook -t $(HELM_HOOK_IMAGE) .
 
 install:
 	#
