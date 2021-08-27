@@ -21,7 +21,8 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends openssl=1.1.1d-0+deb10u6 libssl1.1=1.1.1d-0+deb10u6 ca-certificates=20200601~deb10u2 wget=1.20.1-1.1 \
  && wget -nv https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-amd64 \
  && wget -nv https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-amd64.sig \
- && openssl dgst -sha256 -verify release-cosign.pub -signature <(base64 -d cosign-linux-amd64.sig) cosign-linux-amd64
+ && openssl dgst -sha256 -verify release-cosign.pub -signature <(base64 -d cosign-linux-amd64.sig) cosign-linux-amd64 \
+ && chmod 111 /go/cosign/cosign-linux-amd64
 
 # Build Connaisseur image
 FROM base
@@ -35,7 +36,6 @@ RUN sh /harden.sh && rm /harden.sh
 # Copy source code and install packages
 COPY --from=builder /install /usr/local
 COPY --from=cosign_loader /go/cosign/cosign-linux-amd64 /app/cosign/cosign
-RUN chmod 111 /app/cosign/cosign
 COPY connaisseur /app/connaisseur
 
 USER 10001:20001
