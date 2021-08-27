@@ -124,7 +124,15 @@ class CosignValidator(ValidatorInterface):
 
         key = load_key(pubkey)  # raises if invalid
         home = f"/app/connaisseur-config/{self.name}"
-        cmd = ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image]
+        cmd = [
+            "/app/cosign/cosign",
+            "verify",
+            "-output",
+            "text",
+            "-key",
+            "/dev/stdin",
+            image,
+        ]
 
         with subprocess.Popen(  # nosec
             cmd,

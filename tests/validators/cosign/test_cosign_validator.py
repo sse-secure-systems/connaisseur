@@ -255,7 +255,15 @@ def test_invoke_cosign(fake_process, image, process_input):
     # It seems there is a bug that, when appending the input to a data stream (e.g. stderr),
     # eats the other data stream (stdout in that case). Thus, simply appending to both.
     fake_process.register_subprocess(
-        ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image],
+        [
+            "/app/cosign/cosign",
+            "verify",
+            "-output",
+            "text",
+            "-key",
+            "/dev/stdin",
+            image,
+        ],
         stderr=cosign_stderr_at_success,
         stdout=bytes(cosign_payload, "utf-8"),
         stdin_callable=stdin_function,
@@ -267,6 +275,8 @@ def test_invoke_cosign(fake_process, image, process_input):
     assert [
         "/app/cosign/cosign",
         "verify",
+        "-output",
+        "text",
         "-key",
         "/dev/stdin",
         image,
@@ -293,7 +303,15 @@ def test_invoke_cosign_timeout_expired(
         fake_process_raising_timeout.wait(timeout=0.1)
 
     fake_process.register_subprocess(
-        ["/app/cosign/cosign", "verify", "-key", "/dev/stdin", image],
+        [
+            "/app/cosign/cosign",
+            "verify",
+            "-output",
+            "text",
+            "-key",
+            "/dev/stdin",
+            image,
+        ],
         stdin_callable=callback_function,
     )
 
