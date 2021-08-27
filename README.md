@@ -94,6 +94,16 @@ We are always excited about direct contributions to improve the tool! Please ref
 
 We are grateful for any community support reporting vulnerabilities! How to submit a report is described in our [Security Policy](docs/SECURITY.md).
 
+## Wall of fame
+
+Thanks to all the fine people directly contributing commits/PRs to Connaisseur:
+
+<a href="https://github.com/sse-secure-systems/connaisseur/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=sse-secure-systems/connaisseur" />
+</a>
+
+Big shout-out also to all who support the project via issues, discussions and feature requests :pray:
+
 ## Contact
 
 You can reach us via email under [connaisseur@securesystems.dev](mailto:connaisseur@securesystems.dev).

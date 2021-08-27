@@ -180,6 +180,16 @@ Bug reports should be filed as [GitHub issues](https://github.com/sse-secure-sys
 We hope to get as many direct contributions and insights from the community as possible to steer further development.
 Please refer to our [contributing guide](CONTRIBUTING.md), [create an issue](https://github.com/sse-secure-systems/connaisseur/issues/new/choose) or [reach out to us via GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions) :pray:
 
+## Wall of fame
+
+Thanks to all the fine people directly contributing commits/PRs to Connaisseur:
+
+<a href="https://github.com/sse-secure-systems/connaisseur/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=sse-secure-systems/connaisseur" />
+</a>
+
+Big shout-out also to all who support the project via issues, discussions and feature requests :pray:
+
 ## Resources
 
 Several resources are available to learn more about Connaisseur and related topics:
