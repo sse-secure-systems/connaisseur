@@ -2,7 +2,7 @@
 deployment:
   replicasCount: 3
   image: securesystemsengineering/connaisseur:v2.1.1
-  helmHookImage: securesystemsengineering/connaisseur:helm-hook-v1.0
+  helmHookImage: securesystemsengineering/connaisseur:helm-hook-v1.1
   imagePullPolicy: Always
   failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
   resources:
