@@ -271,4 +271,57 @@ jobs:
         run: |
           bash tests/integration/workload-objects-integration-test.sh
         shell: bash
+  
+  upgrade-test:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install yq and bash
+        run: |
+          sudo snap install yq
+          sudo apt update
+          sudo apt install bash -y
+        shell: bash
+      - uses: actions/download-artifact@v2
+        with:
+          name: images
+      - name: Load Docker images
+        run: |
+          docker load -i ${GITHUB_SHA}_image.tar
+        shell: bash
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: v1.22
+      - uses: actions/checkout@v2
+        with:
+          ref: 'master'
+      - name: Configure Connaisseur (master)
+        run: |
+          yq e '.detectionMode=true' -i helm/values.yaml
+      - name: Install Connaisseur (master)
+        run: |
+          make install
+      - name: Get image name & version (master)
+        run: |
+          kubectl get pods -n connaisseur -o jsonpath="{.items[*].spec.containers[*].image}"
+      - name: Run integration tests (master)
+        run: |
+          bash tests/integration/upgrade-integration-test.sh
+        shell: bash
+      - uses: actions/checkout@v2
+      - name: Upgrade Connaisseur to current branch
+        run: |
+          make upgrade
+      - name: Get image name & version (branch)
+        run: |
+          kubectl get pods -n connaisseur -o jsonpath="{.items[*].spec.containers[*].image}"
+      - name: Run integration tests (branch)
+        run: |
+          bash tests/integration/upgrade-integration-test.sh
+        shell: bash
+      - name: Uninstall Connaisseur
+        run: |
+          make uninstall
 
