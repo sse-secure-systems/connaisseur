@@ -1,4 +1,4 @@
-# Notary (V1) / Docker Content Trust
+# Notary (V1) / DCT
 
 [Notary](https://github.com/theupdateframework/notary) (V1[^1]) works as an external service holding signatures and trust data of artifacts based on [The Update Framework (TUF)](https://theupdateframework.io/).
 [Docker Content Trust (DCT)](https://docs.docker.com/engine/security/trust/) is a client implementation by Docker to manage such trust data for container images like signing images or verifying the corresponding signatures.
