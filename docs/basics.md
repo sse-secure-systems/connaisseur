@@ -6,7 +6,12 @@ In the following, we aim to lay the foundation on Connaisseur's core concepts, h
 
 Connaisseur works as a [mutating admission controller](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/).
 It intercepts all *CREATE* and *UPDATE* resource requests for *Pods*, *Deployments*, *ReplicationControllers*, *ReplicaSets*, *DaemonSets*, *StatefulSets*, *Jobs*, and *CronJobs* and extracts all image references for validation.
-Validation relies on two core concepts: image policy and validators.
+
+Per default, Connaisseur uses *automatic child approval* by which the child of a Kubernetes resource is automatically admitted without re-verification of the signature in order to avoid duplicate validation and handle inconsistencies with the image policy.
+Essentially, this is done since an image that is deployed as part of an already deployed object (e.g. a Pod deployed as a child of a Deployment) has already been validated and potentially mutated during admission of the parent.
+More information and configuration options can be found in the [feature documentation for automatic child approval](features/automatic_child_approval.md).
+
+Validation itself relies on two core concepts: image policy and validators.
 A validator is a set of configuration options required for validation like the type of signature, public key to use for verification, path to signature data, or authentication.
 The image policy defines a set of rules which maps different images to those validators.
 This is done via glob matching of the image name which for example allows to use different validators for different registries, repositories, images or even tags.

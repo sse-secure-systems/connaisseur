@@ -75,7 +75,15 @@ webhooks:
       - operations: ["CREATE", "UPDATE"]
         apiGroups: ["*"]
         apiVersions: ["*"]
+        {{- if .Values.automaticChildApproval }}
+        {{- if .Values.automaticChildApproval.enabled }}
         resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
+        {{- else }}
+        resources: ["pods"]
+        {{- end }}
+        {{- else }}
+        resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
+        {{- end }}
     sideEffects: None
     {{- if lt (.Capabilities.KubeVersion.Minor | int) 16 }}
     admissionReviewVersions: ["v1beta1"]

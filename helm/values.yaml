@@ -123,6 +123,10 @@ namespacedValidation:
   enabled: false
   mode: ignore  # 'ignore' or 'validate'
 
+# TODO: document ACA
+automaticChildApproval:
+  enabled: true
+
 # debug: true
 
 # alerting is implemented in form of simple POST requests with json payload

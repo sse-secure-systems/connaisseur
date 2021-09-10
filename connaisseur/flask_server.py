@@ -104,7 +104,14 @@ def __admit(admission_request: AdmissionRequest):
         # lookups for already approved images. so child resources are automatically
         # approved without further check ups, when their parents were approved
         # earlier.
-        if image in admission_request.wl_object.parent_containers.values():
+
+        child_approval_on = (
+            os.environ.get("AUTOMATIC_CHILD_APPROVAL_ENABLED", "1") == "1"
+        )
+
+        if child_approval_on & (
+            image in admission_request.wl_object.parent_containers.values()
+        ):
             msg = f'automatic child approval for "{original_image}".'
             logging.info(__create_logging_msg(msg, **logging_context))
             continue
