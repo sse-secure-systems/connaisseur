@@ -195,6 +195,35 @@ jobs:
         with:
            name: trivy-reports
            path: trivy-reports
+  
+  publish_chart:
+    runs-on: ubuntu-latest
+    needs: [version-match, integration-test]
+    steps:
+    - name: Install helm
+      run: |
+        curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+        sudo apt-get install apt-transport-https --yes
+        echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+        sudo apt-get update
+        sudo apt-get install helm git
+    - name: Lint helm chart
+      run: helm lint ./helm
+    - name: Package and upload helm chart
+      run: |
+        git config user.name "versioning_user"
+        git config user.email "connaisseur@securesystems.dev"
+        git clone https://github.com/sse-secure-systems/connaisseur.git
+        cd connaisseur
+        git checkout gh-pages
+        helm package ./helm
+        mkdir -p charts
+        mv connaisseur*.tgz ./charts
+        cd charts
+        helm repo index . --url https://sse-secure-systems.github.io/connaisseur/
+        git add ./charts
+        git commit -m "Publish helm chart"
+        git push https://${{ secrets.GITHUB_TOKEN }}@github.com/sse-secure-systems/connaisseur.git
 
   integration-test:
     runs-on: ubuntu-latest
