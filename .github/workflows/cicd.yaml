@@ -207,7 +207,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install helm git
     - name: Lint helm chart
-      run: helm lint ./helm
+      run: helm lint helm
     - name: Package and upload helm chart
       run: |
         git config user.name "versioning_user"
@@ -215,7 +215,7 @@ jobs:
         git clone https://github.com/sse-secure-systems/connaisseur.git
         cd connaisseur
         git checkout gh-pages
-        helm package ./helm
+        helm package helm
         mkdir -p charts
         mv connaisseur*.tgz ./charts
         cd charts
