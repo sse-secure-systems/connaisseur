@@ -198,7 +198,6 @@ jobs:
   
   publish_chart:
     runs-on: ubuntu-latest
-    needs: [version-match, integration-test]
     steps:
     - name: Install helm
       run: |
