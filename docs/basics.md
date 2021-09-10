@@ -26,15 +26,27 @@ Some general administration tasks like deployment or uninstallation when using C
 
 ### Requirements
 
-Using Connaisseur requires [Git](https://git-scm.com/), some [Kubernetes](https://kubernetes.io/) cluster, [Helm](https://helm.sh/) and [Docker](https://www.docker.com/) (only for local setups) to be installed and set up.
+Using Connaisseur requires a [Kubernetes](https://kubernetes.io/) cluster, [Helm](https://helm.sh/) and, if installing from source, [Git](https://git-scm.com/) to be installed and set up.
 
-### Get the code
+### Get the code/chart
 
-The Connaisseur source code can be cloned directly from GitHub and includes the application and Helm charts in a single repository:
+Download the Connaisseur resources required for installation either by cloning the source code via Git or directly add the chart repository via Helm.
 
-```bash
-git clone https://github.com/sse-secure-systems/connaisseur.git
-```
+=== "Clone via Git"
+
+    The Connaisseur source code can be cloned directly from GitHub and includes the application and Helm charts in a single repository:
+
+    ```bash
+    git clone https://github.com/sse-secure-systems/connaisseur.git
+    ```
+
+=== "Add via Helm"
+
+    The Helm chart can be added by:
+
+    ```bash
+    helm repo add connaisseur https://sse-secure-systems.github.io/connaisseur/charts
+    ```
 
 ### Configure
 
@@ -59,15 +71,33 @@ However, validating your own images requires additional configuration.
 
 ### Deploy
 
-Install Connaisseur by using Helm:
+Install Connaisseur via Helm:
 
-```bash
-helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
-```
+=== "Cloned via Git"
 
-This will install Connaisseur in its own namespace called `connaisseur`.
-The installation itself may take a moment, as the installation order of the Connaisseur components is critical.
-Only when the Connaisseur pods are up and running, the admission webhook can be applied for intercepting requests.
+    Install Connaisseur by using the Helm template definition files in the `helm` directory:
+
+    ```bash
+    helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+    ```
+
+=== "Added via Helm"
+
+    Install Connaisseur using the default configuration from the chart repository:
+    
+    ```bash
+    helm install connaisseur connaisseur/connaisseur --atomic --create-namespace --namespace connaisseur
+    ```
+
+    To customize Connaisseur, craft a `values.yaml` according to your needs and apply:
+
+    ```bash
+    helm install connaisseur connaisseur/connaisseur --atomic --create-namespace --namespace connaisseur -f values.yaml
+    ```
+
+This deploys Connaisseur to its own namespace called `connaisseur`.
+The installation itself may take a moment, as the installation order of the Connaisseur components is critical:
+The admission webhook for intercepting requests can only be applied when the Connaisseur pods are up and ready to receive admission requests.
 
 ### Check
 

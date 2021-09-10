@@ -57,6 +57,9 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/r/securesystemsengineering/connaisseur
       name: Connaisseur images on Docker Hub
+    - icon: fontawesome/solid/box-open
+      link: https://artifacthub.io/packages/helm/connaisseur/connaisseur
+      name: Connaisseur helm chart on Artifact Hub
     - icon: fontawesome/brands/medium
       link: https://medium.com/sse-blog
       name: SSE on Medium

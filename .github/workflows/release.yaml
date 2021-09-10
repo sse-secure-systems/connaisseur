@@ -51,3 +51,37 @@ jobs:
       - uses: ./.github/actions/integration-test
         with:
           integration-test-script: ${{ matrix.integration-test-script }}
+
+  publish_chart:
+    runs-on: ubuntu-latest
+    needs: [version-match, integration-test]
+    steps:
+    - name: Install helm and git
+      run: |
+        curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+        sudo apt-get install apt-transport-https --yes
+        echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+        sudo apt-get update
+        sudo apt-get install helm git
+    - name: Install yq
+      run: sudo snap install yq
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Lint helm chart
+      run: helm lint helm
+    - name: Package and upload helm chart
+      run: |
+        git config user.name "versioning_user"
+        git config user.email "connaisseur@securesystems.dev"
+        CHART_VERSION=$(yq e '.version' helm/Chart.yaml)
+        helm package helm
+        mkdir -p charts
+        mv connaisseur*.tgz ./charts
+        git checkout gh-pages
+        cd charts
+        helm repo index . --url https://sse-secure-systems.github.io/connaisseur/charts
+        cd ..
+        git add ./charts
+        git commit -m "Publish helm chart ${CHART_VERSION}"
+        git push https://${{ secrets.GITHUB_TOKEN }}@github.com/sse-secure-systems/connaisseur.git

@@ -1,6 +1,6 @@
 apiVersion: v2
 name: connaisseur
-description: A Helm chart for the Connaisseur Admission Controller to validate container image signatures.
+description: Helm chart for Connaisseur - a Kubernetes admission controller to integrate container image signature verification and trust pinning into a cluster.
 type: application
 version: 1.0.0
 appVersion: 2.1.1
@@ -11,10 +11,11 @@ keywords:
 home: https://sse-secure-systems.github.io/connaisseur/latest
 sources:
   - https://github.com/sse-secure-systems/connaisseur
+icon: https://raw.githubusercontent.com/sse-secure-systems/connaisseur/master/docs/assets/logo.svg
 maintainers:
   - name: Philipp Belitz
     email: philipp.belitz@securesystems.de
-  - name: Peter Thomassen
-    email: peter.thomassen@securesystems.de
   - name: Christoph Hamsen
     email: christoph.hamsen@securesystems.de
+  - name: Peter Thomassen
+    email: peter.thomassen@securesystems.de
