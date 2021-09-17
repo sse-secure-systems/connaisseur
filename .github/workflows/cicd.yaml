@@ -207,6 +207,8 @@ jobs:
         sudo apt-get update
         sudo apt-get install helm git
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Lint helm chart
       run: helm lint helm
     - name: Package and upload helm chart
