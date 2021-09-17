@@ -213,14 +213,12 @@ jobs:
       run: |
         git config user.name "versioning_user"
         git config user.email "connaisseur@securesystems.dev"
-        git clone https://github.com/sse-secure-systems/connaisseur.git
-        cd connaisseur
-        git checkout gh-pages
         helm package helm
         mkdir -p charts
         mv connaisseur*.tgz ./charts
         cd charts
         helm repo index . --url https://sse-secure-systems.github.io/connaisseur/
+        git checkout gh-pages
         git add ./charts
         git commit -m "Publish helm chart"
         git push https://${{ secrets.GITHUB_TOKEN }}@github.com/sse-secure-systems/connaisseur.git
