@@ -221,6 +221,7 @@ jobs:
         cd charts
         helm repo index . --url https://sse-secure-systems.github.io/connaisseur/
         git checkout gh-pages
+        cd ..
         git add ./charts
         git commit -m "Publish helm chart"
         git push https://${{ secrets.GITHUB_TOKEN }}@github.com/sse-secure-systems/connaisseur.git
