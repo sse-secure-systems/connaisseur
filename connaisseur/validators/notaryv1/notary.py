@@ -158,7 +158,7 @@ class Notary:
             "SCRAM-SHA-256",
             "vapid",
         ]
-        auth_type_re = re.compile("({}) realm".format("|".join(auth_types)))
+        auth_type_re = re.compile(f'({"|".join(auth_types)}) realm')
         params_re = re.compile(r'(\w+)="?([\w\.\/\:\-\_]+)"?')
 
         auth_type = next(iter(auth_type_re.findall(header)), None)
