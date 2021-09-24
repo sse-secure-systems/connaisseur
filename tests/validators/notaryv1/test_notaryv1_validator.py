@@ -1,3 +1,4 @@
+import os
 import re
 import pytest
 from aioresponses import aioresponses
@@ -130,6 +131,7 @@ req_delegations2 = []
 req_delegations3 = ["targets/someuserthatdidnotsign"]
 req_delegations4 = ["targets/del1"]
 req_delegations5 = ["targets/del2"]
+req_delegations6 = ["targets/phbelitz"]
 root_keys = [
     (
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu7WMF8tCjVgeORA"
@@ -202,13 +204,14 @@ targets6 = [
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "image, delegations, key, targets, exception",
+    "image, delegations, key, targets, delegation_count, exception",
     [
         (
             "securesystemsengineering/alice-image",
             req_delegations1,
             root_keys[0],
             targets1,
+            2,
             fix.no_exc(),
         ),
         (
@@ -216,6 +219,7 @@ targets6 = [
             req_delegations2,
             root_keys[0],
             targets2,
+            0,
             fix.no_exc(),
         ),
         (
@@ -223,6 +227,7 @@ targets6 = [
             req_delegations2,
             root_keys[1],
             targets3,
+            0,
             fix.no_exc(),
         ),
         (
@@ -230,6 +235,7 @@ targets6 = [
             req_delegations2,
             root_keys[1],
             targets4,
+            1,
             fix.no_exc(),
         ),
         (
@@ -237,6 +243,7 @@ targets6 = [
             req_delegations2,
             root_keys[1],
             targets5,
+            1,
             fix.no_exc(),
         ),
         (
@@ -244,6 +251,7 @@ targets6 = [
             req_delegations4,
             root_keys[1],
             targets5,
+            1,
             fix.no_exc(),
         ),
         (
@@ -251,21 +259,58 @@ targets6 = [
             req_delegations5,
             root_keys[1],
             targets6,
+            1,
+            fix.no_exc(),
+        ),
+        (
+            "securesystemsengineering/alice-image",
+            req_delegations6,
+            root_keys[0],
+            [targets1[0]],
+            1,
+            fix.no_exc(),
+        ),
+        (
+            "securesystemsengineering/alice-image",
+            req_delegations5,
+            root_keys[0],
+            None,
+            0,
+            pytest.raises(exc.NotFoundException, match=r"Unable to find.*"),
+        ),
+        (
+            "securesystemsengineering/eve-image",
+            req_delegations5,
+            root_keys[1],
+            None,
+            0,
+            pytest.raises(exc.NotFoundException, match=r"Unable to find.*"),
+        ),
+        (
+            "securesystemsengineering/eve-image",
+            req_delegations2,
+            root_keys[1],
+            targets3,
+            1,
             fix.no_exc(),
         ),
     ],
 )
 async def test_process_chain_of_trust(
+    monkeypatch,
     sample_nv1,
     m_request,
     m_trust_data,
     m_expiry,
+    count_loaded_delegations,
     image: str,
     delegations: list,
     key: str,
     targets: list,
+    delegation_count: int,
     exception,
 ):
+    monkeypatch.setenv("DELEGATION_COUNT", "0")
     with exception:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
@@ -276,6 +321,7 @@ async def test_process_chain_of_trust(
             )
 
             assert signed_targets == targets
+            assert delegation_count == int(os.getenv("DELEGATION_COUNT"))
 
 
 @pytest.mark.parametrize(

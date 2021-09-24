@@ -1,3 +1,4 @@
+import os
 import re
 import json
 import pytest
@@ -390,3 +391,21 @@ def m_alerting_without_send(monkeypatch, m_safe_path_func, mocker):
         "connaisseur/res/alertconfig_schema.json"
     )
     connaisseur.alert.Alert._Alert__TEMPLATE_PATH = "tests/data/alerting/templates"
+
+
+@pytest.fixture
+def count_loaded_delegations(monkeypatch):
+    async def get_delegation_trust_data_counted(self, image, role, token=None):
+        monkeypatch.setenv(
+            "DELEGATION_COUNT", str(int(os.getenv("DELEGATION_COUNT")) + 1)
+        )
+        try:
+            return await no.Notary.get_trust_data(self, image, role, token)
+        except Exception as ex:
+            if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
+                raise ex
+            return None
+
+    monkeypatch.setattr(
+        no.Notary, "get_delegation_trust_data", get_delegation_trust_data_counted
+    )

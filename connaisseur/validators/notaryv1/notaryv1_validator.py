@@ -164,31 +164,41 @@ class NotaryV1Validator(ValidatorInterface):
 
         # if the 'targets.json' has delegation roles defined, get their trust data
         # as well
-        delegations = trust_data["targets"].get_delegations()
-        if trust_data["targets"].has_delegations():
-            await self.__update_with_delegation_trust_data(
-                trust_data, delegations, key_store, image
+        if trust_data["targets"].has_delegations() or req_delegations:
+            # if no delegations are required, take the "targets/releases" per default
+            req_delegations = req_delegations or ["targets/releases"]
+
+            # validate existence of required delegations
+            NotaryV1Validator.__validate_all_required_delegations_present(
+                req_delegations, trust_data["targets"].get_delegations()
             )
 
-        # validate existence of required delegations
-        NotaryV1Validator.__validate_all_required_delegations_present(
-            req_delegations, delegations
-        )
+            # download only the required delegation files
+            await self.__update_with_delegation_trust_data(
+                trust_data, req_delegations, key_store, image
+            )
 
-        # if certain delegations are required, then only take the targets fields of the
-        # required delegation JSONs. otherwise take the targets field of the targets JSON,
-        # as long as no delegations are defined in the targets JSON. should there be
-        # delegations defined in the targets JSON the targets field of the releases
-        # JSON will be used. unfortunately there is a case, where delegations could have
-        # been added to a repository, but no signatures were created using the
-        # delegations. in this special case, the releases JSON doesn't exist yet and
-        # the targets JSON must be used instead
-        if req_delegations:
-            if not all(trust_data[target_role] for target_role in req_delegations):
+            # if certain delegations are required, then only take the targets fields of the
+            # required delegation JSONs. otherwise take the targets field of the targets JSON,
+            # as long as no delegations are defined in the targets JSON. should there be
+            # delegations defined in the targets JSON the targets field of the releases
+            # JSON will be used. unfortunately there is a case, where delegations could have
+            # been added to a repository, but no signatures were created using the
+            # delegations. in this special case, the releases JSON doesn't exist yet and
+            # the targets JSON must be used instead
+            if req_delegations == ["targets/releases"] and (
+                "targets/releases" not in trust_data
+                or not trust_data["targets/releases"]
+            ):
+                req_delegations = ["targets"]
+            elif not all(
+                target_role in trust_data and trust_data[target_role]
+                for target_role in req_delegations
+            ):
                 tuf_roles = [
                     target_role
                     for target_role in req_delegations
-                    if not trust_data[target_role]
+                    if target_role not in trust_data or not trust_data[target_role]
                 ]
                 msg = (
                     "Unable to find trust data for delegation "
@@ -203,13 +213,7 @@ class NotaryV1Validator(ValidatorInterface):
                 for target_role in req_delegations
             ]
         else:
-            targets_key = (
-                "targets/releases"
-                if trust_data["targets"].has_delegations()
-                and trust_data["targets/releases"]
-                else "targets"
-            )
-            image_targets = [trust_data[targets_key].signed.get("targets", {})]
+            image_targets = [trust_data["targets"].signed.get("targets", {})]
 
         if not any(image_targets):
             msg = "Unable to find any image digests in trust data."
@@ -272,8 +276,6 @@ class NotaryV1Validator(ValidatorInterface):
             if present_delegations:
                 req_delegations_set = set(required_delegations)
                 delegations_set = set(present_delegations)
-
-                delegations_set.discard("targets/releases")
 
                 # make an intersection between required delegations and actually
                 # present ones
