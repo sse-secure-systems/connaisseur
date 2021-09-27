@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Scan repo
         id: kube-lint-repo
-        uses: stackrox/kube-linter-action@v1.0.2
+        uses: stackrox/kube-linter-action@v1.0.3
         with:
           directory: helm
           config: .kube-linter/config.yaml
