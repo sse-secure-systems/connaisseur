@@ -72,13 +72,13 @@ validators:
   #  username: myuser
   #  password: mypass
 # pre-configured nv1 validator for public notary from Docker Hub
-- name: dockerhub_basics
+- name: dockerhub-basics
   type: notaryv1
   host: notary.docker.io
   trust_roots:
     # public key for official docker images (https://hub.docker.com/search?q=&type=image&image_filter=official)
     # !if not needed feel free to remove the key!
-  - name: docker_official
+  - name: docker-official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
@@ -86,7 +86,7 @@ validators:
       -----END PUBLIC KEY-----
   # public key securesystemsengineering repo including Connaisseur images
   # !this key is critical for Connaisseur!
-  - name: securesystemsengineering_official
+  - name: securesystemsengineering-official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
@@ -99,15 +99,15 @@ validators:
 policy:
 - pattern: "*:*"
 - pattern: "docker.io/library/*:*"
-  validator: dockerhub_basics
+  validator: dockerhub-basics
   with:
-    trust_root: docker_official
+    trust_root: docker-official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: "docker.io/securesystemsengineering/*:*"
-  validator: dockerhub_basics
+  validator: dockerhub-basics
   with:
-    trust_root: securesystemsengineering_official
+    trust_root: securesystemsengineering-official
 
 # in detection mode, deployment will not be denied, but only prompted
 # and logged. this allows testing the functionality without

@@ -16,17 +16,17 @@ validators:
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
       qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
       -----END PUBLIC KEY-----
-- name: dockerhub_basics
+- name: dockerhub-basics
   type: notaryv1
   host: notary.docker.io
   trust_roots:
-  - name: docker_official
+  - name: docker-official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
       QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
       -----END PUBLIC KEY-----
-  - name: securesystemsengineering_official
+  - name: securesystemsengineering-official
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
@@ -36,15 +36,15 @@ policy:
 - pattern: "*:*"
   validator: deny
 - pattern: "docker.io/library/*:*"
-  validator: dockerhub_basics
+  validator: dockerhub-basics
   with:
-    trust_root: docker_official
+    trust_root: docker-official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: "docker.io/securesystemsengineering/*:*"
-  validator: dockerhub_basics
+  validator: dockerhub-basics
   with:
-    trust_root: securesystemsengineering_official
+    trust_root: securesystemsengineering-official
 - pattern: "docker.io/securesystemsengineering/testimage:co*"
   validator: sse-cosign
 - pattern: "docker.io/securesystemsengineering/connaisseur:helm-hook-*"
