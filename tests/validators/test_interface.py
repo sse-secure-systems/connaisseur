@@ -6,9 +6,10 @@ def test_init():
     assert vi.ValidatorInterface("")
 
 
-def test_validate():
+@pytest.mark.asyncio
+async def test_validate():
     with pytest.raises(NotImplementedError):
-        assert vi.ValidatorInterface("").validate(None)
+        assert await vi.ValidatorInterface("").validate(None)
 
 
 def test_healthy():

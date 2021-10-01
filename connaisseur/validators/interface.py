@@ -8,7 +8,7 @@ class ValidatorInterface:
         """
         self.name = name
 
-    def validate(self, image: Image, **kwargs) -> str:
+    async def validate(self, image: Image, **kwargs) -> str:
         """
         Validates an admission request, using the extra arguments from the image policy.
 

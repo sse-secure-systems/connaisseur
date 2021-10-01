@@ -27,7 +27,7 @@ class NotaryV1Validator(ValidatorInterface):
         super().__init__(name, **kwargs)
         self.notary = Notary(name, **kwargs)
 
-    def validate(
+    async def validate(
         self, image: Image, trust_root: str = None, delegations: list = None, **kwargs
     ):  # pylint: disable=arguments-differ
         if delegations is None:
@@ -41,8 +41,8 @@ class NotaryV1Validator(ValidatorInterface):
 
         # get list of targets fields, containing tag to signed digest mapping from
         # `targets.json` and all potential delegation roles
-        signed_image_targets = asyncio.run(
-            self.__process_chain_of_trust(image, req_delegations, pub_key)
+        signed_image_targets = await self.__process_chain_of_trust(
+            image, req_delegations, pub_key
         )
 
         # search for digests or tag, depending on given image

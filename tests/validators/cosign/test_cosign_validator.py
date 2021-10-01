@@ -119,6 +119,7 @@ def test_get_key(index: int, key_name: str, key: str, exception):
         assert val._CosignValidator__get_key(key_name) == key
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "status_code, stdout, stderr, image, digest",
     [
@@ -138,8 +139,8 @@ def test_get_key(index: int, key_name: str, key: str, exception):
         ),
     ],
 )
-def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, digest):
-    assert co.CosignValidator(**static_cosigns[0]).validate(image) == digest
+async def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, digest):
+    assert await co.CosignValidator(**static_cosigns[0]).validate(image) == digest
 
 
 @pytest.mark.parametrize(

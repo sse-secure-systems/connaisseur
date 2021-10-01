@@ -12,11 +12,12 @@ def test_init(name, approve):
     assert val.approve == approve
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "approve, out, exception",
     [(True, None, fix.no_exc()), (False, None, pytest.raises(exc.ValidationError))],
 )
-def test_validate(approve, out, exception):
+async def test_validate(approve, out, exception):
     with exception:
         val = st.StaticValidator("sample", approve)
-        assert val.validate(Image("sample")) == out
+        assert await val.validate(Image("sample")) == out
