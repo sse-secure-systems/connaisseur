@@ -14,7 +14,7 @@ echo 'Installing Connaisseur...'
 helm install connaisseur helm --atomic --create-namespace --namespace connaisseur || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
-sleep 2
+sleep 3
 
 echo 'Testing nv1 unsigned image...'
 kubectl run pod --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true

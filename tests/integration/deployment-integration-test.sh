@@ -11,7 +11,7 @@ echo 'Installing Connaisseur...'
 helm install connaisseur helm --atomic --create-namespace --namespace connaisseur || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
-sleep 2
+sleep 3
 
 echo 'Testing 1 signed image deployment...'
 kubectl apply -f tests/integration/deployments/deployment_i1.yaml >output.log 2>&1 || true
