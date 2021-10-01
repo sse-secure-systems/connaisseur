@@ -15,6 +15,7 @@ def test_init(m_notary, val_config):
     assert val.name == val_config["name"]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "image, key, delegations, digest, exception",
     [
@@ -75,7 +76,7 @@ def test_init(m_notary, val_config):
         ),
     ],
 )
-def test_validate(
+async def test_validate(
     sample_nv1,
     m_trust_data,
     m_request,
@@ -89,7 +90,7 @@ def test_validate(
     with exception:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-            signed_digest = sample_nv1.validate(Image(image), key, delegations)
+            signed_digest = await sample_nv1.validate(Image(image), key, delegations)
             assert signed_digest == digest
 
 

@@ -12,7 +12,7 @@ class StaticValidator(ValidatorInterface):
         super().__init__(name, **kwargs)
         self.approve = approve
 
-    def validate(self, image: Image, **kwargs):
+    async def validate(self, image: Image, **kwargs):
         if not self.approve:
             msg = "Static deny."
             raise ValidationError(message=msg)

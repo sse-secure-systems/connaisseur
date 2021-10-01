@@ -113,6 +113,7 @@ def test_create_logging_msg(msg, kwargs, out):
     assert pytest.fs.__create_logging_msg(msg, **kwargs) == str(out)
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "index, out, exception",
     [
@@ -167,13 +168,14 @@ def test_create_logging_msg(msg, kwargs, out):
         ),
     ],
 )
-def test_admit(
+async def test_admit(
     adm_req_samples, index, m_request, m_expiry, m_trust_data, out, exception
 ):
     with exception:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-            assert pytest.fs.__admit(AdmissionRequest(adm_req_samples[index])) == out
+            response = await pytest.fs.__admit(AdmissionRequest(adm_req_samples[index]))
+            assert response == out
 
 
 @pytest.mark.parametrize(

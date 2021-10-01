@@ -36,7 +36,7 @@ class CosignValidator(ValidatorInterface):
             ) from err
         return "".join(key)
 
-    def validate(
+    async def validate(
         self, image: Image, trust_root: str = None, **kwargs
     ):  # pylint: disable=arguments-differ
         pub_key = self.__get_key(trust_root)
