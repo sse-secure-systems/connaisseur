@@ -16,6 +16,8 @@ echo 'Installing Connaisseur...'
 make install || { echo 'Failed to install Connaisseur'; exit 1; }
 echo 'Successfully installed Connaisseur'
 
+sleep 10
+
 echo 'Testing unsigned image...'
 kubectl run pod --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
 NUMBER_OF_INVALID_DEPLOYMENTS+=1
