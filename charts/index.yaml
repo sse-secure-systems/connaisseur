@@ -3,11 +3,12 @@ entries:
   connaisseur:
   - apiVersion: v2
     appVersion: 2.1.2
-    created: "2021-10-01T14:53:25.376366165+02:00"
+    created: "2021-10-15T11:34:06.997752692+02:00"
     description: A Helm chart for the Connaisseur Admission Controller to validate
       container image signatures.
-    digest: aaac079e130bfda2113a1dd101f88078d8c8c6f9ce08bde37ff4a6039ca7f555
+    digest: d4775c9ac40c5d79c2391d607e9cba39be2bb0e2965bd1a00ec93c89550280e1
     home: https://sse-secure-systems.github.io/connaisseur/latest
+    icon: https://github.com/sse-secure-systems/connaisseur/blob/master/docs/assets/logo.svg
     keywords:
     - container image
     - signature
@@ -26,4 +27,4 @@ entries:
     urls:
     - https://sse-secure-systems.github.io/connaisseur/charts/connaisseur-1.0.0.tgz
     version: 1.0.0
-generated: "2021-10-01T14:53:25.375082235+02:00"
+generated: "2021-10-15T11:34:06.996608417+02:00"
