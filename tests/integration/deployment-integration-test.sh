@@ -18,6 +18,7 @@ kubectl apply -f tests/integration/deployments/deployment_i1.yaml >output.log 2>
 
 if [[ ! "$(cat output.log)" =~ 'deployment.apps/i1-deployment created' ]]; then
   echo 'Failed to allow deployment with signed image or failed with unexpected error. Output:'
+  kubectl get all -n connaisseur
   cat output.log
   exit 1
 else

@@ -18,6 +18,7 @@ kubectl run pod --image=securesystemsengineering/testimage:co-unsigned >output.l
 
 if [[ ! "$(cat output.log)" =~ 'No trust data for image "docker.io/securesystemsengineering/testimage:co-unsigned".' ]]; then
   echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
+  kubectl get all -n connaisseur
   cat output.log
   exit 1
 else

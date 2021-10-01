@@ -26,6 +26,7 @@ kubectl run pod --namespace connaisseur --image=securesystemsengineering/testima
 
 if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
   echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
+  kubectl get all -n connaisseur
   cat output.log
   exit 1
 else
