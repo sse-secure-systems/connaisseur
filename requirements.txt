@@ -1,4 +1,4 @@
-Flask~=2.0.1
+Flask~=2.0.2
 requests~=2.26.0
 rfc3339-validator~=0.1.4
 ecdsa~=0.17
