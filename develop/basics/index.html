@@ -717,6 +717,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/automatic_child_approval/" class="md-nav__link">
+        Automatic Child Approval
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1282,8 +1296,11 @@
 <p>In the following, we aim to lay the foundation on Connaisseur's core concepts, how to configure and administer it.</p>
 <h2 id="admission-control-validators-and-image-policy">Admission control, validators and image policy<a class="headerlink" href="#admission-control-validators-and-image-policy" title="Permanent link">⚓︎</a></h2>
 <p>Connaisseur works as a <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">mutating admission controller</a>.
-It intercepts all <em>CREATE</em> and <em>UPDATE</em> resource requests for <em>Pods</em>, <em>Deployments</em>, <em>ReplicationControllers</em>, <em>ReplicaSets</em>, <em>DaemonSets</em>, <em>StatefulSets</em>, <em>Jobs</em>, and <em>CronJobs</em> and extracts all image references for validation.
-Validation relies on two core concepts: image policy and validators.
+It intercepts all <em>CREATE</em> and <em>UPDATE</em> resource requests for <em>Pods</em>, <em>Deployments</em>, <em>ReplicationControllers</em>, <em>ReplicaSets</em>, <em>DaemonSets</em>, <em>StatefulSets</em>, <em>Jobs</em>, and <em>CronJobs</em> and extracts all image references for validation.</p>
+<p>Per default, Connaisseur uses <em>automatic child approval</em> by which the child of a Kubernetes resource is automatically admitted without re-verification of the signature in order to avoid duplicate validation and handle inconsistencies with the image policy.
+Essentially, this is done since an image that is deployed as part of an already deployed object (e.g. a Pod deployed as a child of a Deployment) has already been validated and potentially mutated during admission of the parent.
+More information and configuration options can be found in the <a href="../features/automatic_child_approval/">feature documentation for automatic child approval</a>.</p>
+<p>Validation itself relies on two core concepts: image policy and validators.
 A validator is a set of configuration options required for validation like the type of signature, public key to use for verification, path to signature data, or authentication.
 The image policy defines a set of rules which maps different images to those validators.
 This is done via glob matching of the image name which for example allows to use different validators for different registries, repositories, images or even tags.

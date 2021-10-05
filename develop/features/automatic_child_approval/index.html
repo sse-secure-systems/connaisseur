@@ -11,21 +11,21 @@
       
       
       
-        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/adr/">
+        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/features/automatic_child_approval/">
       
-      <link rel="icon" href="../assets/favicon.svg">
+      <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.1">
     
     
       
-        <title>Architecture Decision Records - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>Automatic Child Approval - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.1c75ef36.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1c75ef36.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
         
           
           
@@ -61,7 +61,7 @@
     <body dir="ltr" data-md-color-scheme="" data-md-color-primary="blue" data-md-color-accent="">
   
     
-    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#architecture-decision-records" class="md-skip">
+        <a href="#automatic-child-approval" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +92,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
-  <img src="../assets/logo.svg" alt="logo">
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Architecture Decision Records
+              Automatic Child Approval
             
           </span>
         </div>
@@ -191,9 +191,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
-  <img src="../assets/logo.svg" alt="logo">
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     CONNAISSEUR - Verify Container Image Signatures in Kubernetes
@@ -222,7 +222,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         Overview
       </a>
     </li>
@@ -237,7 +237,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/" class="md-nav__link">
+      <a href="../../getting_started/" class="md-nav__link">
         Getting Started
       </a>
     </li>
@@ -250,12 +250,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
       
       
       
@@ -278,7 +280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basics/" class="md-nav__link">
+      <a href="../../basics/" class="md-nav__link">
         Basics
       </a>
     </li>
@@ -318,7 +320,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validators/" class="md-nav__link">
+      <a href="../../validators/" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -332,7 +334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validators/notaryv1/" class="md-nav__link">
+      <a href="../../validators/notaryv1/" class="md-nav__link">
         Notary (V1) / DCT
       </a>
     </li>
@@ -346,7 +348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validators/sigstore_cosign/" class="md-nav__link">
+      <a href="../../validators/sigstore_cosign/" class="md-nav__link">
         sigstore / Cosign
       </a>
     </li>
@@ -360,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validators/notaryv2/" class="md-nav__link">
+      <a href="../../validators/notaryv2/" class="md-nav__link">
         Notary V2
       </a>
     </li>
@@ -379,12 +381,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" checked>
       
       
       
@@ -407,7 +411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../features/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -421,7 +425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../features/detection_mode/" class="md-nav__link">
+      <a href="../detection_mode/" class="md-nav__link">
         Detection Mode
       </a>
     </li>
@@ -435,7 +439,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../features/namespaced_validation/" class="md-nav__link">
+      <a href="../namespaced_validation/" class="md-nav__link">
         Namespaced Validation
       </a>
     </li>
@@ -449,7 +453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../features/alerting/" class="md-nav__link">
+      <a href="../alerting/" class="md-nav__link">
         Alerting
       </a>
     </li>
@@ -461,11 +465,78 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../features/automatic_child_approval/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Automatic Child Approval
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Automatic Child Approval
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-notes" class="md-nav__link">
+    Additional notes
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caching-ttl" class="md-nav__link">
+    Caching TTL
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -518,7 +589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../threat_model/" class="md-nav__link">
+      <a href="../../threat_model/" class="md-nav__link">
         Threat Model
       </a>
     </li>
@@ -532,7 +603,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../SECURITY/" class="md-nav__link">
+      <a href="../../SECURITY/" class="md-nav__link">
         Security Policy
       </a>
     </li>
@@ -552,14 +623,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
       
       
       
@@ -582,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../CONTRIBUTING/" class="md-nav__link">
+      <a href="../../CONTRIBUTING/" class="md-nav__link">
         Contributing
       </a>
     </li>
@@ -596,7 +665,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../RELEASING/" class="md-nav__link">
+      <a href="../../RELEASING/" class="md-nav__link">
         Releasing
       </a>
     </li>
@@ -608,14 +677,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
       
       
       
@@ -636,21 +703,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../adr/" class="md-nav__link">
         Architecture Decision Records
       </a>
-      
     </li>
   
 
@@ -662,7 +719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ADR-1_bootstrap-sentinel/" class="md-nav__link">
+      <a href="../../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
         ADR 1: Bootstrap Sentinel
       </a>
     </li>
@@ -676,7 +733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ADR-2_release-management/" class="md-nav__link">
+      <a href="../../adr/ADR-2_release-management/" class="md-nav__link">
         ADR 2: Release Management
       </a>
     </li>
@@ -690,7 +747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ADR-3_multi_notary_config/" class="md-nav__link">
+      <a href="../../adr/ADR-3_multi_notary_config/" class="md-nav__link">
         ADR 3: Multiple Notary Configuration
       </a>
     </li>
@@ -704,7 +761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ADR-4_modular/" class="md-nav__link">
+      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
         ADR 4: Modular Validation
       </a>
     </li>
@@ -718,7 +775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ADR-5_no-more-bootstrap/" class="md-nav__link">
+      <a href="../../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
         ADR 5: No More Bootstrap Pods
       </a>
     </li>
@@ -732,7 +789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ADR-6_dynamic-config/" class="md-nav__link">
+      <a href="../../adr/ADR-6_dynamic-config/" class="md-nav__link">
         ADR 6: Dynamic Configuration
       </a>
     </li>
@@ -802,6 +859,48 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-notes" class="md-nav__link">
+    Additional notes
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caching-ttl" class="md-nav__link">
+    Caching TTL
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -813,10 +912,60 @@
               
                 
                 
-                <h1 id="architecture-decision-records">Architecture Decision Records<a class="headerlink" href="#architecture-decision-records" title="Permanent link">⚓︎</a></h1>
-<p>We strive to make decisions taken during the devlopment of Connaisseur transparent, whenever they may seem weird or unintuitive towards someone new to the project.</p>
-<p>Hence, when encountering a problem that took either considerable time to find a solution for or that spawned a lot of discussion, be it internal or from the community, the decision with the factors leading up to the particular choice should be documented. Additionally, we should make clear what other options were under consideration and why they were discarded to help both with making the decision comprehensible to people not involved at the time but also to not repeat discussions at a later point in time.</p>
-<p>Since each Architecture Decision may be slightly different, the format is not completely set in stone. However, you should give at least title, status, some context, decisions taken and options discarded and some reasoning as to why one option was deemed better than the others.</p>
+                <h1 id="automatic-child-approval">Automatic Child Approval<a class="headerlink" href="#automatic-child-approval" title="Permanent link">⚓︎</a></h1>
+<blockquote>
+<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
+</blockquote>
+<p>Per default, Connaisseur uses <em>automatic child approval</em> by which the child of a Kubernetes resource is automatically admitted without re-verification of the signature in order to avoid duplicate validation and handle inconsistencies with the image policy.
+This behavior can be configured or even disabled.</p>
+<p>When automatic child approval is enabled, images that are deployed as part of already deployed objects (e.g. a Pod deployed as a child of a Deployment) are already validated and potentially mutated during admission of the parent.
+In consequence, the images of child resources are directly admitted without re-verification of the signature.
+This is done as the parent (and thus the child) has already been validated and might have been mutated, which would lead to duplicate validation and could cause image policy pattern mismatch.
+For example, given a Deployment which contains Pods with <code>image:tag</code> that gets mutated to contain Pods with <code>image@sha256:digest</code>.
+Then a) the Pod would not need another validation as the image was validated during the admittance of the Deployment and b) if there exists a specific rule with pattern <code>image:tag</code> and another less specific rule with <code>image*</code>, then after mutating the Deployment, the Pod would be falsely validated against <code>image*</code> instead of <code>image:tag</code>.
+To ensure the child resource is legit in this case, the parent resource is requested via the Kubernetes API and only those images it lists are accepted.</p>
+<p>When automatic child approval is disabled, Connaisseur only validates and potentially mutates Pod resources.</p>
+<p>There is trade-offs between the two behaviors:
+With automatic child approval, Connaisseur only verifies that the image reference in a child resource is the same as in the parent.
+This means that resources deployed prior to Connaisseur will never be validated until they are re-deployed even if a corresponding Pod is restarted.
+Consequently, a restarting Pod with an expired signature would still be admitted.
+However, this avoids unexpected failures when restarting Pods, avoids inconsistencies with the image policy and reduces the number of validations and thus the load.
+Furthermore, disabling automatic child approval also means that deployments with invalid images will be successful even though the Pods are denied.</p>
+<p>The extension of the feature (disabling, caching) is currently under development to improve security without compromising on usability.</p>
+<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
+<p><code>automaticChildApproval</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>true</td>
+<td></td>
+<td><code>true</code> or <code>false</code>; when <code>false</code>, Connaisseur will disable automatic child approval</td>
+</tr>
+<tr>
+<td><code>ttl</code></td>
+<td>?</td>
+<td></td>
+<td>Not yet implemented. See <a href="#caching-ttl">below</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
+<p>In <code>helm/values.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code>automaticChildApproval:
+  enabled: true
+</code></pre></div>
+<h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
+<h3 id="caching-ttl">Caching TTL<a class="headerlink" href="#caching-ttl" title="Permanent link">⚓︎</a></h3>
+<p>It is planned to implement a caching by which Connaisseur might perform automatic child approval only for a limited time after creation of the parent resource.</p>
                 
               
               
@@ -841,7 +990,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../RELEASING/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Releasing" rel="prev">
+        <a href="../alerting/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Alerting" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -850,20 +999,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Releasing
+              Alerting
             </div>
           </div>
         </a>
       
       
         
-        <a href="ADR-1_bootstrap-sentinel/" class="md-footer__link md-footer__link--next" aria-label="Next: ADR 1: Bootstrap Sentinel" rel="next">
+        <a href="../../threat_model/" class="md-footer__link md-footer__link--next" aria-label="Next: Threat Model" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              ADR 1: Bootstrap Sentinel
+              Threat Model
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -950,10 +1099,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.e99e714c.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.e99e714c.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.c7d1b464.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c7d1b464.min.js"></script>
       
     
   </body>
