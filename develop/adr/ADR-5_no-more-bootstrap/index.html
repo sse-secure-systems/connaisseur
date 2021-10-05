@@ -11,21 +11,21 @@
       
       
       
-        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/">
+        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-5_no-more-bootstrap/">
       
-      <link rel="icon" href="assets/favicon.svg">
+      <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.1">
     
     
       
-        <title>CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>ADR 5: No More Bootstrap Pods - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.1c75ef36.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1c75ef36.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
         
           
           
@@ -61,7 +61,7 @@
     <body dir="ltr" data-md-color-scheme="" data-md-color-primary="blue" data-md-color-accent="">
   
     
-    <script>function __prefix(e){return new URL(".",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#welcome-to-connaisseur" class="md-skip">
+        <a href="#adr-5-no-more-bootstrap-pods" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +92,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
-  <img src="assets/logo.svg" alt="logo">
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Overview
+              ADR 5: No More Bootstrap Pods
             
           </span>
         </div>
@@ -191,9 +191,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
-  <img src="assets/logo.svg" alt="logo">
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     CONNAISSEUR - Verify Container Image Signatures in Kubernetes
@@ -220,127 +220,11 @@
 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Overview
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         Overview
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#what-is-connaisseur" class="md-nav__link">
-    What is Connaisseur?
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
-    Quick start
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-does-it-work" class="md-nav__link">
-    How does it work?
-  </a>
-  
-    <nav class="md-nav" aria-label="How does it work?">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#trusted-digests" class="md-nav__link">
-    Trusted digests
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mutating-admission-controller" class="md-nav__link">
-    Mutating admission controller
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#image-policy-and-validators" class="md-nav__link">
-    Image policy and validators
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#compatibility" class="md-nav__link">
-    Compatibility
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#versions" class="md-nav__link">
-    Versions
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development" class="md-nav__link">
-    Development
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#wall-of-fame" class="md-nav__link">
-    Wall of fame
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#resources" class="md-nav__link">
-    Resources
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -353,7 +237,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/" class="md-nav__link">
+      <a href="../../getting_started/" class="md-nav__link">
         Getting Started
       </a>
     </li>
@@ -394,7 +278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="basics/" class="md-nav__link">
+      <a href="../../basics/" class="md-nav__link">
         Basics
       </a>
     </li>
@@ -434,7 +318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="validators/" class="md-nav__link">
+      <a href="../../validators/" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -448,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="validators/notaryv1/" class="md-nav__link">
+      <a href="../../validators/notaryv1/" class="md-nav__link">
         Notary (V1) / DCT
       </a>
     </li>
@@ -462,7 +346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="validators/sigstore_cosign/" class="md-nav__link">
+      <a href="../../validators/sigstore_cosign/" class="md-nav__link">
         sigstore / Cosign
       </a>
     </li>
@@ -476,7 +360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="validators/notaryv2/" class="md-nav__link">
+      <a href="../../validators/notaryv2/" class="md-nav__link">
         Notary V2
       </a>
     </li>
@@ -523,7 +407,7 @@
   
   
     <li class="md-nav__item">
-      <a href="features/" class="md-nav__link">
+      <a href="../../features/" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -537,7 +421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="features/detection_mode/" class="md-nav__link">
+      <a href="../../features/detection_mode/" class="md-nav__link">
         Detection Mode
       </a>
     </li>
@@ -551,7 +435,7 @@
   
   
     <li class="md-nav__item">
-      <a href="features/namespaced_validation/" class="md-nav__link">
+      <a href="../../features/namespaced_validation/" class="md-nav__link">
         Namespaced Validation
       </a>
     </li>
@@ -565,7 +449,7 @@
   
   
     <li class="md-nav__item">
-      <a href="features/alerting/" class="md-nav__link">
+      <a href="../../features/alerting/" class="md-nav__link">
         Alerting
       </a>
     </li>
@@ -620,7 +504,7 @@
   
   
     <li class="md-nav__item">
-      <a href="threat_model/" class="md-nav__link">
+      <a href="../../threat_model/" class="md-nav__link">
         Threat Model
       </a>
     </li>
@@ -634,7 +518,7 @@
   
   
     <li class="md-nav__item">
-      <a href="SECURITY/" class="md-nav__link">
+      <a href="../../SECURITY/" class="md-nav__link">
         Security Policy
       </a>
     </li>
@@ -654,12 +538,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
       
       
       
@@ -682,7 +568,7 @@
   
   
     <li class="md-nav__item">
-      <a href="CONTRIBUTING/" class="md-nav__link">
+      <a href="../../CONTRIBUTING/" class="md-nav__link">
         Contributing
       </a>
     </li>
@@ -696,7 +582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="RELEASING/" class="md-nav__link">
+      <a href="../../RELEASING/" class="md-nav__link">
         Releasing
       </a>
     </li>
@@ -708,12 +594,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
       
       
       
@@ -736,7 +624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Architecture Decision Records
       </a>
     </li>
@@ -750,7 +638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
+      <a href="../ADR-1_bootstrap-sentinel/" class="md-nav__link">
         ADR 1: Bootstrap Sentinel
       </a>
     </li>
@@ -764,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/ADR-2_release-management/" class="md-nav__link">
+      <a href="../ADR-2_release-management/" class="md-nav__link">
         ADR 2: Release Management
       </a>
     </li>
@@ -778,7 +666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/ADR-3_multi_notary_config/" class="md-nav__link">
+      <a href="../ADR-3_multi_notary_config/" class="md-nav__link">
         ADR 3: Multiple Notary Configuration
       </a>
     </li>
@@ -792,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/ADR-4_modular/" class="md-nav__link">
+      <a href="../ADR-4_modular/" class="md-nav__link">
         ADR 4: Modular Validation
       </a>
     </li>
@@ -804,11 +692,134 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ADR 5: No More Bootstrap Pods
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         ADR 5: No More Bootstrap Pods
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problem-1-installation-order" class="md-nav__link">
+    Problem 1 - Installation order
+  </a>
+  
+    <nav class="md-nav" aria-label="Problem 1 - Installation order">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#solution-11-empty-webhook-as-part-of-helm-release" class="md-nav__link">
+    Solution 1.1 - Empty webhook as part of Helm release
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-12-bootstrap-sentinel-and-helm-hook" class="md-nav__link">
+    Solution 1.2 - Bootstrap Sentinel and Helm hook
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-13-uninstallation-of-webhook-during-helm-hooks" class="md-nav__link">
+    Solution 1.3 - (Un)installation of webhook during Helm hooks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-outcome-1" class="md-nav__link">
+    Decision outcome (1)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2" class="md-nav__link">
+    Problem 2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-21-lookup" class="md-nav__link">
+    Solution 2.1 - Lookup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-22-restart" class="md-nav__link">
+    Solution 2.2 - Restart
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-23-external-tls" class="md-nav__link">
+    Solution 2.3 - External TLS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-outcome-2" class="md-nav__link">
+    Decision outcome (2)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -883,85 +894,92 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-is-connaisseur" class="md-nav__link">
-    What is Connaisseur?
+  <a href="#status" class="md-nav__link">
+    Status
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
-    Quick start
+  <a href="#context" class="md-nav__link">
+    Context
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-does-it-work" class="md-nav__link">
-    How does it work?
+  <a href="#problem-1-installation-order" class="md-nav__link">
+    Problem 1 - Installation order
   </a>
   
-    <nav class="md-nav" aria-label="How does it work?">
+    <nav class="md-nav" aria-label="Problem 1 - Installation order">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#trusted-digests" class="md-nav__link">
-    Trusted digests
+  <a href="#solution-11-empty-webhook-as-part-of-helm-release" class="md-nav__link">
+    Solution 1.1 - Empty webhook as part of Helm release
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#mutating-admission-controller" class="md-nav__link">
-    Mutating admission controller
+  <a href="#solution-12-bootstrap-sentinel-and-helm-hook" class="md-nav__link">
+    Solution 1.2 - Bootstrap Sentinel and Helm hook
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#image-policy-and-validators" class="md-nav__link">
-    Image policy and validators
+  <a href="#solution-13-uninstallation-of-webhook-during-helm-hooks" class="md-nav__link">
+    Solution 1.3 - (Un)installation of webhook during Helm hooks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-outcome-1" class="md-nav__link">
+    Decision outcome (1)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-2" class="md-nav__link">
+    Problem 2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-21-lookup" class="md-nav__link">
+    Solution 2.1 - Lookup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-22-restart" class="md-nav__link">
+    Solution 2.2 - Restart
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-23-external-tls" class="md-nav__link">
+    Solution 2.3 - External TLS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-outcome-2" class="md-nav__link">
+    Decision outcome (2)
   </a>
   
 </li>
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#compatibility" class="md-nav__link">
-    Compatibility
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#versions" class="md-nav__link">
-    Versions
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#development" class="md-nav__link">
-    Development
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#wall-of-fame" class="md-nav__link">
-    Wall of fame
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#resources" class="md-nav__link">
-    Resources
-  </a>
   
 </li>
       
@@ -978,156 +996,44 @@
               
                 
                 
-                <h1 id="welcome-to-connaisseur">Welcome to Connaisseur<a class="headerlink" href="#welcome-to-connaisseur" title="Permanent link">⚓︎</a></h1>
-<p>A Kubernetes admission controller to integrate container image signature verification and trust pinning into a cluster.</p>
-<h2 id="what-is-connaisseur">What is Connaisseur?<a class="headerlink" href="#what-is-connaisseur" title="Permanent link">⚓︎</a></h2>
-<p>Connaisseur ensures integrity and provenance of container images in a Kubernetes cluster.
-To do so, it intercepts resource creation or update requests sent to the Kubernetes cluster, identifies all container images and verifies their signatures against pre-configured public keys.
-Based on the result, it either accepts or denies those requests.</p>
-<p>Connaisseur is developed under three core values: <em>Security</em>, <em>Usability</em>, <em>Compatibility</em>.
-It is built to be extendable and currently aims to support the following signing solutions:</p>
-<ul>
-<li><a href="https://github.com/theupdateframework/notary">Notary (V1)</a> / <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a></li>
-<li><a href="https://sigstore.dev/">sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a></li>
-<li><a href="https://github.com/notaryproject/nv2">Notary V2</a> (PLANNED)</li>
-</ul>
-<p>It provides several additional features:</p>
-<ul>
-<li><a href="features/detection_mode/">Detection Mode</a>: <em>warn but do not block invalid images</em></li>
-<li><a href="features/namespaced_validation/">Namespaced Validation</a>: <em>restrict validation to dedicated namespaces</em></li>
-<li><a href="features/alerting/">Alerting</a>: <em>send alerts based on verification result</em></li>
-</ul>
-<p>Feel free to reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a>!</p>
-<h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">⚓︎</a></h2>
-<p>Getting started to verify image signatures is only a matter of minutes:</p>
-<p><img alt="" src="assets/connaisseur_demo.gif" /></p>
-<blockquote>
-<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> Only try this out on a test cluster as deployments with unsigned images will be blocked. <img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /></p>
-</blockquote>
-<p>Connaisseur comes pre-configured with public keys for its own repository and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> (official images can be found <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">here</a>).
-It can be fully configured via <code>helm/values.yaml</code>.
-For a quick start, clone the Connaisseur repository:</p>
-<div class="highlight"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
-</code></pre></div>
-<p>Next, install Connaisseur via <a href="https://helm.sh">Helm</a>:</p>
-<div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
-</code></pre></div>
-<p>Once installation has finished, you are good to go.
-Successful verification can be tested via official Docker images like <code>hello-world</code>:</p>
-<div class="highlight"><pre><span></span><code>kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
-</code></pre></div>
-<p>Or our signed <code>testimage</code>:</p>
-<div class="highlight"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:signed
-</code></pre></div>
-<p>Both will return <code>pod/&lt;name&gt; created</code>. However, when trying to deploy an unsigned image:</p>
-<div class="highlight"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
-</code></pre></div>
-<p>Connaisseur denies the request and returns an error <code>(...) Unable to find signed digest (...)</code>. Since the images above are signed using Docker Content Trust, you can inspect the trust data using <code>docker trust inspect --pretty &lt;image-name&gt;</code>.</p>
-<p>To uninstall Connaisseur use:</p>
-<div class="highlight"><pre><span></span><code>helm uninstall connaisseur --namespace connaisseur
-</code></pre></div>
-<p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster!
-To get started configuring and verifying your own images and signatures, please follow our <a href="getting_started/">setup guide</a>.</p>
-<h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">⚓︎</a></h2>
-<p>Integrity and provenance of container images deployed to a Kubernetes cluster can be ensured via digital signatures.
-On a very basic level, this requires two steps:</p>
-<ol>
-<li>Signing container images <em>after building</em></li>
-<li>Verifying the image signatures <em>before deployment</em></li>
-</ol>
-<p>Connaisseur aims to solve step two.
-This is achieved by implementing several <em>validators</em>, i.e. configurable signature verification modules for different signing solutions (e.g. Notary V1).
-While the detailed security considerations mainly depend on the applied solution, Connaisseur in general verifies the signature over the container image content against a trust anchor or <em>trust root</em> (e.g. public key) and thus let's you ensure that images have not been tampered with (integrity) and come from a valid source (provenance).</p>
-<p><img alt="" src="assets/sign-verify.png" /></p>
-<h3 id="trusted-digests">Trusted digests<a class="headerlink" href="#trusted-digests" title="Permanent link">⚓︎</a></h3>
-<p>But what is actually verified?
-Container images can be referenced in two different ways based on their registry, repository, image name (<code>&lt;registry&gt;/&lt;repository&gt;/&lt;image name&gt;</code>) followed by either tag or digest:</p>
-<ul>
-<li>tag: <em>docker.io/library/nginx:</em><strong><em>1.20.1</em></strong></li>
-<li>digest: <em>docker.io/library/nginx@</em><strong><em>sha256:af9c...69ce</em></strong></li>
-</ul>
-<p>While the tag is a mutable, human readable description, the digest is an immutable, inherent property of the image, namely the SHA256 hash of its content.
-This also means that a tag can correspond to varying digests whereas digests are unique for each image.
-The container runtime (e.g. containerd) compares the image content with the received digest before spinning up the container.
-As a result, Connaisseur just needs to make sure that only <em>trusted digests</em> (signed by a trusted entity) are passed to the container runtime.
-Depending on how an image for deployment is referenced, it will either attempt to translate the tag to a trusted digest or validate whether the digest is trusted.
-How the digest is signed in detail, where the signature is stored, what it is verfied against and how different image distribution and updating attacks are mitigated depends on the signature solutions.</p>
-<h3 id="mutating-admission-controller">Mutating admission controller<a class="headerlink" href="#mutating-admission-controller" title="Permanent link">⚓︎</a></h3>
-<p>How to validate images <em>before</em> deployment to a cluster?
-The <a href="https://kubernetes.io/docs/concepts/overview/kubernetes-api/">Kubernetes API</a> is the fundamental fabric behind the control plane.
-It allows operators and cluster components to communicate with each other and, for example, query, create, modify or delete Kubernetes resources.
-Each request passes through several phases such as authentication and authorization before it is persisted to <em>etcd</em>.
-Among those phases are two steps of <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">admission control</a>: mutating and validating admission.
-In those phases the API sends admission requests to configured webhooks (admission controllers) and receives admission responses (admit, deny, or modify).
-Connaisseur uses a mutating admission webhook, as requests are not only admitted or denied based on the validation result but might also require modification of contained images referenced by tags to trusted digests.
-The webhook is configured to only forward resource creation or update requests to the Connaisseur service running inside the cluster, since only deployments of images to the cluster are relevant for signature verification.
-This allows Connaisseur to intercept requests before deployment and based on the validation:</p>
-<ul>
-<li><em>admit</em> if all images are referenced by trusted digests</li>
-<li><em>modify</em> if all images can be translated to trusted digests</li>
-<li><em>deny</em> if at least one of the requested images does not have a trusted digest</li>
-</ul>
-<p><img alt="" src="assets/admission-controller.png" /></p>
-<h3 id="image-policy-and-validators">Image policy and validators<a class="headerlink" href="#image-policy-and-validators" title="Permanent link">⚓︎</a></h3>
-<p>Now, how does Connaisseur process admission requests?
-A newly received request is first inspected for container image references that need to be validated (1).
-The resulting list of images referenced by tag or digest is passed to the image policy (2).
-The image policy matches the identified images to the configured validators and corresponding trust roots (e.g. public keys) to be used for verification.
-Image policy and validator configuration form the central logic behind Connaisseur and are described in detail und <a href="basics/">basics</a>.
-Validation is the step where the actual signature verification takes place (3).
-For each image, the required trust data is retrieved from external sources such as Notary server, registry or sigstore transparency log and validated against the pre-configured trust root (e.g. public key).
-This forms the basis for deciding on the request (4).
-In case no trusted digest is found for any of the images (i.e. either no signed digest available or no signature matching the public key), the whole request is denied.
-Otherwise, Connaisseur translates all image references in the original request to trusted digests and admits it (5).</p>
-<p><img alt="" src="assets/connaisseur-overview.png" /></p>
-<h2 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">⚓︎</a></h2>
-<p>Supported signature solutions and configuration options are documented under <a href="validators/">validators</a>.</p>
-<p>Connaisseur is expected to be compatible with most Kubernetes services. It has been successfully tested with:</p>
-<ul>
-<li><a href="https://github.com/rancher/k3s">K3s</a> ✅</li>
-<li><a href="https://kind.sigs.k8s.io/">kind</a> ✅</li>
-<li><a href="https://github.com/ubuntu/microk8s">MicroK8s</a> ✅ (enable DNS addon via <code>sudo microk8s enable dns</code>)</li>
-<li><a href="https://github.com/kubernetes/minikube">minikube</a> ✅</li>
-<li><a href="https://docs.aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (EKS)</a> ✅</li>
-<li><a href="https://docs.microsoft.com/en-us/azure/aks/">Azure Kubernetes Service (AKS)</a> ✅</li>
-<li><a href="https://cloud.google.com/kubernetes-engine/docs/">Google Kubernetes Engine</a> ✅</li>
-<li><a href="https://docs.syseleven.de/metakube">SysEleven MetaKube</a> ✅</li>
-</ul>
-<p>All registry interactions use the <a href="https://github.com/opencontainers/distribution-spec/blob/main/spec.md">OCI Distribution Specification</a> that is based on the <a href="https://docs.docker.com/registry/spec/api/">Docker Registry HTTP API V2</a> which is the standard for all common image registries.
-For using Notary (V1) as a signature solution, only some registries provide the required Notary server attached to the registry with e.g. shared authentication.
-Connaisseur has been tested with the following Notary (V1) supporting image registries:</p>
-<ul>
-<li><a href="https://hub.docker.com/">Docker Hub</a> ✅</li>
-<li><a href="https://goharbor.io/">Harbor</a> ✅</li>
-<li><a href="https://docs.microsoft.com/en-us/azure/container-registry/">Azure Container Registry (ACR)</a> ✅ (check our <a href="validators/notaryv1/#using-azure-container-registry">configuration notes</a>)</li>
-</ul>
-<p>In case you identify any incompatibilities, please <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">create an issue</a> <img alt="♥" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2665.svg" title=":hearts:" /></p>
-<h2 id="versions">Versions<a class="headerlink" href="#versions" title="Permanent link">⚓︎</a></h2>
-<p>The latest stable version of Connaisseur is available on the <a href="https://github.com/sse-secure-systems/connaisseur"><code>master</code></a> branch.
-<a href="https://github.com/sse-secure-systems/connaisseur/releases">Releases</a> follow <a href="https://semver.org/">semantic versioning</a> standards to facilitate compatibility.
-For each release, a signed container image tagged with the version is published in the <a href="https://hub.docker.com/repository/docker/securesystemsengineering/connaisseur">Connaisseur Docker Hub repository</a>.
-Latest developments are available on the <a href="https://github.com/sse-secure-systems/connaisseur/tree/develop"><code>develop</code></a> branch, but should be considered unstable and no pre-built container image is provided.</p>
-<h2 id="development">Development<a class="headerlink" href="#development" title="Permanent link">⚓︎</a></h2>
-<p>Connaisseur is open source and open development.
-We try to make major changes transparent via <a href="adr/"><em>Architecture Decision Records</em> (ADRs)</a> and announce developments via <a href="https://github.com/sse-secure-systems/connaisseur/discussions/categories/announcements">GitHub Discussions</a>.
-Information on responsible disclosure of vulnerabilities and tracking of past findings is available in the <a href="SECURITY/">Security Policy</a>.
-Bug reports should be filed as <a href="https://github.com/sse-secure-systems/connaisseur/issues/new?assignees=&amp;labels=&amp;template=bug_report.md&amp;title=">GitHub issues</a> to share status and potential fixes with other users.</p>
-<p>We hope to get as many direct contributions and insights from the community as possible to steer further development.
-Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="https://github.com/sse-secure-systems/connaisseur/issues/new/choose">create an issue</a> or <a href="https://github.com/sse-secure-systems/connaisseur/discussions">reach out to us via GitHub Discussions</a> <img alt="🙏" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f64f.svg" title=":pray:" /></p>
-<h2 id="wall-of-fame">Wall of fame<a class="headerlink" href="#wall-of-fame" title="Permanent link">⚓︎</a></h2>
-<p>Thanks to all the fine people directly contributing commits/PRs to Connaisseur:</p>
-<p><a href="https://github.com/sse-secure-systems/connaisseur/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=sse-secure-systems/connaisseur" />
-</a></p>
-<p>Big shout-out also to all who support the project via issues, discussions and feature requests <img alt="🙏" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f64f.svg" title=":pray:" /></p>
-<h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">⚓︎</a></h2>
-<p>Several resources are available to learn more about Connaisseur and related topics:</p>
-<ul>
-<li>"<a href="https://medium.com/sse-blog/container-image-signatures-in-kubernetes-19264ac5d8ce"><em>Container Image Signatures in Kubernetes</em></a>" - blog post (full introduction)</li>
-<li>"<a href="https://berlin-crypto.github.io/event/dockerimagesignatures.html"><em>Integrity of Docker images</em></a>" - talk at Berlin Crypto Meetup (<em>The Update Framework</em>, <em>Notary</em>, <em>Docker Content Trust</em> &amp; Connaisseur [live demo])</li>
-<li>"<a href="https://blog.sigstore.dev/verify-oci-container-image-signatures-in-kubernetes-33663a9ec7d8"><em>Verifying Container Image Signatures from an OCI Registry in Kubernetes</em></a>" - blog post (experimental support of <em>sigstore</em>/<em>Cosign</em>)</li>
-<li>"<a href="https://medium.com/sse-blog/verify-container-image-signatures-in-kubernetes-using-notary-or-cosign-or-both-c25d9e79ec45"><em>Verify Container Image Signatures in Kubernetes using Notary or Cosign or both</em></a>" - blog post (Connaisseur v2.0 release)</li>
-</ul>
+                <h1 id="adr-5-no-more-bootstrap-pods">ADR 5: No More Bootstrap Pods<a class="headerlink" href="#adr-5-no-more-bootstrap-pods" title="Permanent link">⚓︎</a></h1>
+<h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">⚓︎</a></h2>
+<p>Accepted</p>
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">⚓︎</a></h2>
+<p>Installing Connaisseur isn't as simple as one might think. There is more to it then just applying some yaml files, all due to the nature of being an admission controller, which might block itself in various ways. This ADR depicts some issues during installation of Connaisseur and shows solutions, that try make the process simpler and easier to understand.</p>
+<h2 id="problem-1-installation-order">Problem 1 - Installation order<a class="headerlink" href="#problem-1-installation-order" title="Permanent link">⚓︎</a></h2>
+<p>Connaisseur's installation order is fairly critical. The webhook responsible for intercepting all requests is dependent on the Connaisseur pods and can only work, if those pods are available and ready. If not and  <code>FailurePolicy</code> is set to <code>Fail</code>, the webhook will block anything and everything, including the Connaisseur pods themselves. This means, the webhook must be installed <em>after</em> the Connaisseur pods are ready. This was previously solved using the <code>post-install</code> Helm hook, which installs the webhook configuration after all other resources have been applied and are considered ready. Just for installation purposes, this solution suffices. A downside of this is, every resource installed via a Helm hook isn't natively considered to be part of the chart, meaning a <code>helm uninstall</code> would completely ignore those resources and leave the webhook configuration in place. Then the situation of everything and anything being blocked arises again. Additionally, upgrading won't be possible, since you can't tell Helm to temporarily delete resources and then reapply them. That's why the <code>helm-hook</code> image and <code>bootstrap-sentinel</code> where introduced. They were used to temporarily delete the webhook and reapply it before and after installations, in order to beat the race conditions. Unfortunately, this solution always felt a bit clunky and added a lot of complexity for a seemingly simple problem.</p>
+<h3 id="solution-11-empty-webhook-as-part-of-helm-release">Solution 1.1 - Empty webhook as part of Helm release<a class="headerlink" href="#solution-11-empty-webhook-as-part-of-helm-release" title="Permanent link">⚓︎</a></h3>
+<p>The <code>bootstrap sentinel</code> and <code>helm-hook</code> image won't be used anymore. Instead, an empty webhook configuration (a configuration without any rules) will be applied along all other resources during the normal Helm installation phase. This way the webhook can be normally deleted with the <code>helm uninstall</code> command. Additionally, during the <code>post-install</code> (and <code>post-upgrade</code>/<code>post-rollback</code>) Helm hook, the webhook will be updated so it can actually intercept incoming request. So in a sense an unloaded webhook gets installed, which then gets "armed" during <code>post-install</code>. This also works during an upgrade, since the now "armed" webhook will be overwritten by the empty one when trying to apply the chart again! This will obviously be reverted back again after upgrading, with a <code>post-upgrade</code> Helm hook.</p>
+<p><strong>Pros:</strong> Less clunky and more k8s native.
+<strong>Cons:</strong> Connaisseur will be deactivated for a short time during upgrading.</p>
+<h3 id="solution-12-bootstrap-sentinel-and-helm-hook">Solution 1.2 - Bootstrap Sentinel and Helm hook<a class="headerlink" href="#solution-12-bootstrap-sentinel-and-helm-hook" title="Permanent link">⚓︎</a></h3>
+<p>Everything stays as is! The Helm hook image is still used to (un)install the webhook, while the bootstrap sentinel is there to mark the Connaisseur pods as ready for initial installation.</p>
+<p><strong>Pros:</strong> Never change a running system.
+<strong>Cons:</strong> Clunky, at times confusing for anyone not familiar with the Connaisseur installation order problem, inactive webhook during upgrade.</p>
+<h3 id="solution-13-uninstallation-of-webhook-during-helm-hooks">Solution 1.3 - (Un)installation of webhook during Helm hooks<a class="headerlink" href="#solution-13-uninstallation-of-webhook-during-helm-hooks" title="Permanent link">⚓︎</a></h3>
+<p>The webhook can be easily installed during the <code>post-install</code> step of the Helm installation, but then it isn't part of the Helm release and can't be uninstalled, as mentioned above. With a neat little trick this is still possible: in the <code>post-delete</code> step the webhook can be reapplied in an empty ("unarmed") form, while setting the <code>hook-delete-policy</code> to delete the resource in either way (no matter if the Helm hook step fails or not). So in a way the webhook gets reapplied and then immediately deleted. This still works with upgrading Connaisseur if a rolling update strategy is pursued, meaning the old pods will still be available for admitting the new ones, while with more and more new pods being ready, the old ones get deleted.</p>
+<p><strong>Pros:</strong> Less clunky and more k8s native, no inactivity of the webhook during upgrade.
+<strong>Cons:</strong> Slower upgrade of Connaisseur compared to solution 1.</p>
+<h3 id="decision-outcome-1">Decision outcome (1)<a class="headerlink" href="#decision-outcome-1" title="Permanent link">⚓︎</a></h3>
+<p>Solution 1.3 was chosen, as it is the more Kubernetes native way of doing things and Connaisseur will be always available, even during its own upgrade.</p>
+<h3 id="problem-2">Problem 2<a class="headerlink" href="#problem-2" title="Permanent link">⚓︎</a></h3>
+<p>All admission webhooks must use TLS for communication purposes or they won't be accepted by Kubernetes. That is why Connaisseur creates its own self signed certificate, which it uses for communication between the webhook and its pods. This certificate is created within the Helm chart, using the native <code>genSelfSignedCert</code> function, which makes Connaisseur pipeline friendly as there is no need for additional package installation such as OpenSSL. Unfortunately, this certificate gets created every time Helm is used, whether that being a <code>helm install</code> or <code>helm upgrade</code>. Especially during an upgrade, the webhook will get a new certificate, while the pods will get their new one written into a secret. The problem is that the pods will only capitalize on the new certificate inside the secret once they are restarted. If no restart happens, the pods and webhook will have different certificates and any validation will fail.</p>
+<h3 id="solution-21-lookup">Solution 2.1 - Lookup<a class="headerlink" href="#solution-21-lookup" title="Permanent link">⚓︎</a></h3>
+<p>Instead of always generating a new certificate, the <code>lookup</code> function for Helm templates could be used to see whether there already is a secret defined that contains a certificate and then use this one. This way the same certificate is reused the whole time so no pod restarts are necessary. Should there be no secret with certificate to begin with, a new one can be generated within the Helm chart.</p>
+<p><strong>Pros:</strong> No need for restarts and changing of TLS certificates.
+<strong>Cons:</strong> The lookup function takes some time to gather the current certs.</p>
+<h3 id="solution-22-restart">Solution 2.2 - Restart<a class="headerlink" href="#solution-22-restart" title="Permanent link">⚓︎</a></h3>
+<p>On each upgrade of the Helm release, all pods will be restarted so they incorporate the new TLS secrets.</p>
+<p><strong>Pros:</strong> -
+<strong>Cons:</strong> Restarting takes time and may break if too many Connaisseur pods are unavailable at the same time.</p>
+<h3 id="solution-23-external-tls">Solution 2.3 - External TLS<a class="headerlink" href="#solution-23-external-tls" title="Permanent link">⚓︎</a></h3>
+<p>Go back to using an external TLS certificate which is not being generated within the Helm chart, but by pre-configuring it or using OpenSSL.</p>
+<p><strong>Pros:</strong> Fastest solution.
+<strong>Cons:</strong> More configurational effort and/or not pipeline friendly (may need OpenSSL).</p>
+<h3 id="decision-outcome-2">Decision outcome (2)<a class="headerlink" href="#decision-outcome-2" title="Permanent link">⚓︎</a></h3>
+<p>Solution 2.1 is being implemented, as it is important that Connaisseur works with as little configuration effort as possible from the get-go. Nonetheless an external configuration of TLS certificates is still considered for later development.</p>
+<p>--</p>
                 
               
               
@@ -1151,21 +1057,21 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-      
         
-        <a href="getting_started/" class="md-footer__link md-footer__link--next" aria-label="Next: Getting Started" rel="next">
+        <a href="../ADR-4_modular/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ADR 4: Modular Validation" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
-                Next
+                Previous
               </span>
-              Getting Started
+              ADR 4: Modular Validation
             </div>
           </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
         </a>
+      
       
     </nav>
   
@@ -1246,10 +1152,10 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.e99e714c.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.e99e714c.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.c7d1b464.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c7d1b464.min.js"></script>
       
     
   </body>

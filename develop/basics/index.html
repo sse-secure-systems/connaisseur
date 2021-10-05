@@ -370,6 +370,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#delete" class="md-nav__link">
     Delete
   </a>
@@ -937,6 +944,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
+        ADR 5: No More Bootstrap Pods
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1058,6 +1079,13 @@
           <li class="md-nav__item">
   <a href="#use" class="md-nav__link">
     Use
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
   </a>
   
 </li>
@@ -1299,6 +1327,10 @@ In case you use the pre-configuration, you could for example run the following c
 kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
 &gt; pod/hello-world created
 </code></pre></div>
+<h3 id="upgrade">Upgrade<a class="headerlink" href="#upgrade" title="Permanent link">⚓︎</a></h3>
+<p>A running Connaisseur instance can be updated (i.e. its configuration via <code>helm/values.yaml</code> including the Connaisseur image itself) by a Helm upgrade of the current release:</p>
+<div class="highlight"><pre><span></span><code>helm upgrade connaisseur helm -n connaisseur --wait
+</code></pre></div>
 <h3 id="delete">Delete<a class="headerlink" href="#delete" title="Permanent link">⚓︎</a></h3>
 <p>Just like for installation, Helm can also be used to delete Connaisseur from your cluster:</p>
 <div class="highlight"><pre><span></span><code>helm uninstall connaisseur -n connaisseur
@@ -1312,10 +1344,11 @@ In case of major releases, the configuration structure might change which can ca
 <h3 id="makefile">Makefile<a class="headerlink" href="#makefile" title="Permanent link">⚓︎</a></h3>
 <p>Alternatively to using Helm, you can also run the Makefile for installing, deleting and more. Here the available commands:</p>
 <ul>
-<li><code>make install</code> -- Runs the <code>helm install</code> command.</li>
-<li><code>make uninstall</code> -- Switches the namespace to <code>connaisseur</code>, uses the <code>helm uninstall</code> command and deletes the <code>connaisseur</code> namespace.</li>
-<li><code>make annihilate</code> -- Deletes all resources labeled with <code>app.kubernetes.io/instance=connaisseur</code> as well as the <code>connaisseur</code> namespace. This command is usually helpful, should the normal <code>make uninstall</code> not work.</li>
-<li><code>make docker</code> -- Builds the <em>connaisseur</em> and <em>connaisseur:helm-hook</em> (relevant for installing Connaisseur) container images.</li>
+<li><code>make install</code> -- Install Connaisseur.</li>
+<li><code>make upgrade</code> -- Upgrade Connaisseur.</li>
+<li><code>make uninstall</code> -- Uninstall Connaisseur and delete the namespace.</li>
+<li><code>make annihilate</code> -- Remove all Connaisseur Kubernetes resources including its namespace. This command is usually helpful, should the normal <code>make uninstall</code> not work.</li>
+<li><code>make docker</code> -- Builds the <em>connaisseur</em> container image.</li>
 </ul>
 <h2 id="detailed-configuration">Detailed configuration<a class="headerlink" href="#detailed-configuration" title="Permanent link">⚓︎</a></h2>
 <p>All configuration is done in the <code>helm/values.yaml</code>.
