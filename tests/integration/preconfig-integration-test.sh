@@ -17,6 +17,8 @@ kubectl run pod --image=securesystemsengineering/testimage:unsigned >output.log 
 if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
   echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
   cat output.log
+  kubectl logs -n connaisseur deployment/connaisseur-deployment > output.log
+  cat output.log
   exit 1
 else
   echo 'Successfully denied usage of unsigned image'

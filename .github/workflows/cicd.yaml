@@ -230,3 +230,40 @@ jobs:
         with:
           integration-test-script: ${{ matrix.integration-test-script }}
 
+  k8s-versions:
+    runs-on: ubuntu-latest
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s-version: [
+          'v1.17',
+          'v1.18',
+          'v1.19',
+          'v1.20',
+          'v1.21',
+          'v1.22'
+        ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: actions/download-artifact@v2
+        with:
+          name: images
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+      - name: Configure Connaisseur
+        run: |
+          yq e '.deployment.imagePullPolicy = "Never"' -i tests/integration/preconfig-update.yaml
+          yq e '.policy +={"pattern": "docker.io/securesystemsengineering/connaisseur:v*"} | .policy[4].pattern style="double"' -i helm/values.yaml
+          yq e '.policy[4].validator = "allow"' -i helm/values.yaml
+          yq e '.deployment.replicasCount = "1"' -i helm/values.yaml
+      - name: Run actual integration test
+        run: |
+          bash tests/integration/preconfig-integration-test.sh
+        shell: bash
+

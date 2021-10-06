@@ -1,0 +1,26 @@
+name: k8s-version-config
+description: 'action to prepare testing different k8s versions'
+inputs:
+  k8s-version:
+    description: 'k8s version to be tested'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install yq and bash
+      run: |
+        sudo snap install yq
+        sudo apt update
+        sudo apt install bash -y
+      shell: bash
+    - uses: jupyterhub/action-k3s-helm@v2
+      with:
+        k3s-channel: ${{ inputs.k8s-version }}
+    - name: Adjust Configuration
+      run: |
+        bash tests/integration/${{ inputs.k8s-version }}/stable.sh
+      shell: bash
+    - name: Load Image
+      run: |
+        sudo k3s ctr images import ${GITHUB_SHA}_image.tar
+      shell: bash
