@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-many-containers
+  labels:
+    loadtest: loadtest
+spec:
+  containers:
+  - name: container1
+    image: busybox
+    command: ['sh', '-c', 'sleep 3600']
+  - name: container2
+    image: redis
+  - name: container3
+    image: node
+  - name: container4
+    image: nginx
+  - name: container5
+    image: rabbitmq
+  - name: container6
+    image: elasticsearch
+  - name: container7
+    image: sonarqube

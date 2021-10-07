@@ -1,8 +1,8 @@
 # configure Connaisseur deployment
 deployment:
-  replicasCount: 3
+  replicasCount: 1
   image: securesystemsengineering/connaisseur:v2.2.0
-  imagePullPolicy: IfNotPresent
+  imagePullPolicy: Never
   failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
   resources:
     limits:
