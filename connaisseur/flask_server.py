@@ -91,6 +91,31 @@ def __create_logging_msg(msg: str, **kwargs):
     return str({"message": msg, "context": dict(**kwargs)})
 
 
+async def __admit(admission_request: AdmissionRequest):
+    logging_context = dict(admission_request.context)
+    policy = ImagePolicy()
+    patches = []
+
+    patches = asyncio.gather(
+        *[
+            __validate_image(type_index, image, admission_request, policy)
+            for type_index, image in admission_request.wl_object.containers.items()
+        ]
+    )
+
+    try:
+        await patches
+    except BaseConnaisseurException as err:
+        err.update_context(**logging_context)
+        raise err
+
+    return get_admission_review(
+        admission_request.uid,
+        True,
+        patch=[patch for patch in patches.result() if patch],
+    )
+
+
 async def __validate_image(type_index, image, admission_request, policy):
     logging_context = dict(admission_request.context)
     original_image = str(image)
@@ -100,7 +125,7 @@ async def __validate_image(type_index, image, admission_request, policy):
     # child resources have mutated image names, as their parents got mutated
     # before their creation. this may result in mismatch of rules or duplicate
     # lookups for already approved images. so child resources are automatically
-    # approved without further check ups, when their parents were approved
+    # approved without further check ups, if their parents were approved
     # earlier.
     child_approval_on = os.environ.get("AUTOMATIC_CHILD_APPROVAL_ENABLED", "1") == "1"
 
@@ -134,29 +159,3 @@ async def __validate_image(type_index, image, admission_request, policy):
     if trusted_digest:
         image.set_digest(trusted_digest)
         return admission_request.wl_object.get_json_patch(image, type_, index)
-
-
-async def __admit(admission_request: AdmissionRequest):
-    logging_context = dict(admission_request.context)
-    patches = []
-
-    patches = asyncio.gather(
-        *[
-            __validate_image(type_index, image, admission_request, policy)
-            for type_index, image in admission_request.wl_object.containers.items()
-        ]
-    )
-
-    try:
-        await patches
-    except BaseConnaisseurException as err:
-        err.update_context(**logging_context)
-        raise err
-
-    print(patches.result())
-
-    return get_admission_review(
-        admission_request.uid,
-        True,
-        patch=[patch for patch in patches.result() if patch],
-    )
