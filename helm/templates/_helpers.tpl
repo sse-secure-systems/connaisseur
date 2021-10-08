@@ -40,6 +40,14 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 
+{{/*
+Extract Kubernetes Minor Version.
+*/}}
+{{- define "k8s-version-minor" -}}
+{{- trimSuffix "." (trimPrefix "v1." (regexFind "v\\d\\.\\d{1,2}\\." .Capabilities.KubeVersion.Version)) -}}
+{{- end -}}
+
+
 {{- define "config-secrets" -}}
 {{- $secret_dict := dict -}}
 {{- range .Values.validators -}}

@@ -1,3 +1,4 @@
+{{- $k8sMinor := (include "k8s-version-minor" .) -}}
 {{- $altNames := list -}}
 {{- $altNames = append $altNames (printf "%s-svc" .Chart.Name) -}}
 {{- $altNames = append $altNames (printf "%s-svc.%s" .Chart.Name .Release.Namespace) -}}
@@ -16,7 +17,7 @@ data:
   tls.crt: {{ default ($certs.Cert | b64enc) (include "getInstalledTLSCert" .) }}
   tls.key: {{ default ($certs.Key | b64enc) (include "getInstalledTLSKey" .) }}
 ---
-{{ if lt (.Capabilities.KubeVersion.Minor | int) 17 }}
+{{ if lt ($k8sMinor | int) 17 }}
 apiVersion: admissionregistration.k8s.io/v1beta1
 {{ else }}
 apiVersion: admissionregistration.k8s.io/v1
@@ -40,13 +41,13 @@ webhooks:
       caBundle: {{ default ($certs.Cert | b64enc) (include "getInstalledTLSCert" .) }}
     rules: []
     sideEffects: None
-    {{- if lt (.Capabilities.KubeVersion.Minor | int) 17 }}
+    {{- if lt ($k8sMinor | int) 17 }}
     admissionReviewVersions: ["v1beta1"]
     {{- else }}
     admissionReviewVersions: ["v1"]
     {{- end }}
 ---
-{{ if lt (.Capabilities.KubeVersion.Minor | int) 17 -}}
+{{ if lt ($k8sMinor | int) 17 -}}
 apiVersion: admissionregistration.k8s.io/v1beta1
 {{ else -}}
 apiVersion: admissionregistration.k8s.io/v1
@@ -85,10 +86,10 @@ webhooks:
         resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
         {{- end }}
     sideEffects: None
-    {{- if gt (.Capabilities.KubeVersion.Minor | int) 13 }}
+    {{- if gt ($k8sMinor | int) 13 }}
     timeoutSeconds: 30
     {{- end }}
-    {{- if lt (.Capabilities.KubeVersion.Minor | int) 17 }}
+    {{- if lt ($k8sMinor | int) 17 }}
     admissionReviewVersions: ["v1beta1"]
     {{- else }}
     admissionReviewVersions: ["v1"]
