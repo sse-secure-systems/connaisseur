@@ -72,7 +72,7 @@ def get_admission_review(
         }
     """
     _, minor, _ = get_kube_version()
-    api = "v1beta" if minor < 16 else "v1"
+    api = "v1beta" if int(minor) < 17 else "v1"
     review = {
         "apiVersion": f"admission.k8s.io/{api}",
         "kind": "AdmissionReview",
@@ -113,7 +113,16 @@ def validate_schema(data: dict, schema_path: str, kind: str, exception):
 
 
 def get_kube_version():
-    version = os.environ.get("KUBE_VERSION", "v0.0.0")  # e.g. v1.20.0
-    regex = r"v(\d)\.(\d{1,2})\.(\d{1,2})"
+    """
+    Returns the kubernetes version.
+
+     Return
+    ----------
+    (major, minor, patch): Tupel<str, str, str>
+        Major and minor version can always be assumed to be parseable as `int`s, the
+        patch version could be arbitrary text.
+    """
+    version = os.environ.get("KUBE_VERSION", "v0.0.0")  # e.g. `v1.20.0`
+    regex = r"v(\d)\.(\d{1,2})\.(.*)"
     match = re.match(regex, version)
-    return list(map(int, list(match.groups()))) if match else [0, 0, 0]
+    return match.groups() if match else ("0", "0", "0")

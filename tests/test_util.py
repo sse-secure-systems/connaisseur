@@ -143,8 +143,13 @@ def test_validate_schema(
 
 @pytest.mark.parametrize(
     "major, minor, patch, set_version",
-    [(1, 20, 0, "v1.20.0"), (0, 0, 0, "wrong_input"), (0, 0, 0, "")],
+    [
+        ("1", "20", "0", "v1.20.0"),
+        ("0", "0", "0", "wrong_input"),
+        ("0", "0", "0", ""),
+        ("1", "20", "11-34+7402e007632498", "v1.20.11-34+7402e007632498"),
+    ],
 )
 def test_get_kube_version(monkeypatch, major, minor, patch, set_version):
     monkeypatch.setenv("KUBE_VERSION", set_version)
-    assert ut.get_kube_version() == [major, minor, patch]
+    assert ut.get_kube_version() == (major, minor, patch)
