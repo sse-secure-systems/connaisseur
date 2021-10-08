@@ -93,12 +93,11 @@ def __create_logging_msg(msg: str, **kwargs):
 
 async def __admit(admission_request: AdmissionRequest):
     logging_context = dict(admission_request.context)
-    policy = ImagePolicy()
     patches = []
 
     patches = asyncio.gather(
         *[
-            __validate_image(type_index, image, admission_request, policy)
+            __validate_image(type_index, image, admission_request)
             for type_index, image in admission_request.wl_object.containers.items()
         ]
     )
@@ -116,7 +115,7 @@ async def __admit(admission_request: AdmissionRequest):
     )
 
 
-async def __validate_image(type_index, image, admission_request, policy):
+async def __validate_image(type_index, image, admission_request):
     logging_context = dict(admission_request.context)
     original_image = str(image)
     type_, index = type_index
@@ -137,7 +136,7 @@ async def __validate_image(type_index, image, admission_request, policy):
         return
 
     try:
-        policy_rule = policy.get_matching_rule(image)
+        policy_rule = CONFIG.get_policy_rule(image)
         validator = CONFIG.get_validator(policy_rule.validator)
 
         msg = (
