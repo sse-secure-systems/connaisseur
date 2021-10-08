@@ -85,6 +85,9 @@ webhooks:
         resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
         {{- end }}
     sideEffects: None
+    {{- if gt (.Capabilities.KubeVersion.Minor | int) 13 }}
+    timeoutSeconds: 30
+    {{- end }}
     {{- if lt (.Capabilities.KubeVersion.Minor | int) 16 }}
     admissionReviewVersions: ["v1beta1"]
     {{- else }}
