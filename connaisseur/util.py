@@ -72,7 +72,7 @@ def get_admission_review(
         }
     """
     _, minor, _ = get_kube_version()
-    api = "v1beta" if int(minor) < 17 else "v1"
+    api = "v1beta1" if int(minor) < 17 else "v1"
     review = {
         "apiVersion": f"admission.k8s.io/{api}",
         "kind": "AdmissionReview",
