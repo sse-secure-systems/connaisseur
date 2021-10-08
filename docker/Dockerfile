@@ -42,4 +42,4 @@ USER 10001:20001
 
 LABEL maintainer="Philipp Belitz <philipp.belitz@securesystems.de>"
 
-CMD ["gunicorn", "--bind=0.0.0.0:5000", "connaisseur.falcon_server:app", "--certfile=/app/certs/tls.crt", "--keyfile=/app/certs/tls.key", "--workers=4"]
+CMD ["python", "-m", "connaisseur"]

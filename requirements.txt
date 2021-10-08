@@ -1,4 +1,3 @@
-Flask~=2.0.2
 requests~=2.26.0
 rfc3339-validator~=0.1.4
 ecdsa~=0.17
@@ -9,4 +8,4 @@ python-dateutil~=2.8.2
 PyYAML~=6.0
 aiohttp~=3.7.4.post0
 falcon~=3.0.1
-gunicorn~=20.0.4
+cheroot~=8.5.2

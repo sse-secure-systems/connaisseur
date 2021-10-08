@@ -2,6 +2,7 @@ import os
 import logging
 import json
 import traceback
+import asyncio
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.alert import send_alerts
 from connaisseur.config import Config
@@ -35,68 +36,80 @@ class Mutate:
         admission_request = AdmissionRequest(json_content)
         req.context.ar = admission_request
 
-        rsp.text = json.dumps(self.__admit(admission_request))
+        response = asyncio.run(self.__admit(admission_request))
+        rsp.text = json.dumps(response)
         rsp.content_type = "application/json"
         rsp.status = falcon.HTTP_200
         send_alerts(admission_request, True)
 
-    def __admit(self, admission_request: AdmissionRequest):
+    async def __admit(self, admission_request: AdmissionRequest):
         logging_context = dict(admission_request.context)
         patches = []
 
-        for type_index, image in admission_request.wl_object.containers.items():
-            original_image = str(image)
-            type_, index = type_index
-            logging_context.update(image=original_image)
+        patches = asyncio.gather(
+            *[
+                self.__validate_image(type_index, image, admission_request)
+                for type_index, image in admission_request.wl_object.containers.items()
+            ]
+        )
 
-            # child resources have mutated image names, as their parents got mutated
-            # before their creation. this may result in mismatch of rules or duplicate
-            # lookups for already approved images. so child resources are automatically
-            # approved without further check ups, when their parents were approved
-            # earlier.
+        try:
+            await patches
+        except BaseConnaisseurException as err:
+            err.update_context(**logging_context)
+            raise err
 
-            child_approval_on = (
-                os.environ.get("AUTOMATIC_CHILD_APPROVAL_ENABLED", "1") == "1"
+        return get_admission_review(
+            admission_request.uid,
+            True,
+            patch=[patch for patch in patches.result() if patch],
+        )
+
+    async def __validate_image(self, type_index, image, admission_request):
+        logging_context = dict(admission_request.context)
+        original_image = str(image)
+        type_, index = type_index
+        logging_context.update(image=original_image)
+
+        # child resources have mutated image names, as their parents got mutated
+        # before their creation. this may result in mismatch of rules or duplicate
+        # lookups for already approved images. so child resources are automatically
+        # approved without further check ups, if their parents were approved
+        # earlier.
+        child_approval_on = (
+            os.environ.get("AUTOMATIC_CHILD_APPROVAL_ENABLED", "1") == "1"
+        )
+
+        if child_approval_on & (
+            image in admission_request.wl_object.parent_containers.values()
+        ):
+            msg = f'automatic child approval for "{original_image}".'
+            logging.info(self.__create_logging_msg(msg, **logging_context))
+            return
+
+        try:
+            policy_rule = self.config.get_policy_rule(image)
+            validator = self.config.get_validator(policy_rule.validator)
+
+            msg = (
+                f'starting verification of image "{original_image}" using rule '
+                f'"{str(policy_rule)}" with arguments {str(policy_rule.arguments)}'
+                f' and validator "{str(validator)}".'
+            )
+            logging.debug(
+                self.__create_logging_msg(
+                    msg, **logging_context, policy_rule=policy_rule, validator=validator
+                )
             )
 
-            if child_approval_on & (
-                image in admission_request.wl_object.parent_containers.values()
-            ):
-                msg = f'automatic child approval for "{original_image}".'
-                logging.info(self.__create_logging_msg(msg, **logging_context))
-                continue
-
-            try:
-                policy_rule = self.config.get_policy_rule(image)
-                validator = self.config.get_validator(policy_rule.validator)
-
-                msg = (
-                    f'starting verification of image "{original_image}" using rule '
-                    f'"{str(policy_rule)}" with arguments {str(policy_rule.arguments)}'
-                    f' and validator "{str(validator)}".'
-                )
-                logging.debug(
-                    self.__create_logging_msg(
-                        msg,
-                        **logging_context,
-                        policy_rule=policy_rule,
-                        validator=validator,
-                    )
-                )
-
-                trusted_digest = validator.validate(image, **policy_rule.arguments)
-            except BaseConnaisseurException as err:
-                err.update_context(**logging_context)
-                raise err
-
-            if trusted_digest:
-                image.set_digest(trusted_digest)
-                patches.append(
-                    admission_request.wl_object.get_json_patch(image, type_, index)
-                )
-            msg = f'successful verification of image "{original_image}"'
-            logging.info(self.__create_logging_msg(msg, **logging_context))
-        return get_admission_review(admission_request.uid, True, patch=patches)
+            trusted_digest = await validator.validate(image, **policy_rule.arguments)
+        except BaseConnaisseurException as err:
+            raise err
+        msg = f'successful verification of image "{original_image}"'
+        logging.info(self.__create_logging_msg(msg, **logging_context))
+        if trusted_digest:
+            image.set_digest(trusted_digest)
+            return admission_request.wl_object.get_json_patch(image, type_, index)
 
     def __create_logging_msg(self, msg: str, **kwargs):
         return str({"message": msg, "context": dict(**kwargs)})
@@ -123,11 +136,11 @@ def handle_exception(ex, req, rsp, params):
     rsp.status = falcon.HTTP_200
 
 
-app = falcon.App()
+APP = falcon.App()
 config = Config()
 
-app.add_route("/health", Health())
-app.add_route("/ready", Ready())
-app.add_route("/mutate", Mutate(config))
+APP.add_route("/health", Health())
+APP.add_route("/ready", Ready())
+APP.add_route("/mutate", Mutate(config))
 
-app.add_error_handler(Exception, handle_exception)
+APP.add_error_handler(Exception, handle_exception)
