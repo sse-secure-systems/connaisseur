@@ -61,8 +61,6 @@ spec:
               mountPath: /app/connaisseur-config/config-secrets.yaml
               subPath: config-secrets.yaml
               readOnly: true
-            - mountPath: /tmp
-              name: tmp
             {{ include "external-secrets-mount" . | nindent 12}}
           envFrom:
             - configMapRef:
@@ -104,6 +102,4 @@ spec:
         - name: {{ .Chart.Name }}-config-secrets
           secret:
             secretName: {{ .Chart.Name }}-config-secrets
-        - name: tmp
-          emptyDir: {} # might be bad since uses node storage
         {{ include "external-secrets-vol" . | nindent 8}}

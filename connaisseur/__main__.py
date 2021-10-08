@@ -34,5 +34,5 @@ if __name__ == "__main__":
 
     # the host needs to be set to `0.0.0.0` so it can be reachable from outside the
     # container
-    server = Server(("0.0.0.0", 5000), APP)
+    server = Server(("0.0.0.0", 5000), APP)  # nosec
     server.start()
