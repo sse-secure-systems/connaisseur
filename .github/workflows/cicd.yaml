@@ -237,6 +237,7 @@ jobs:
       fail-fast: false
       matrix:
         k8s-version: [
+          'v1.16',
           'v1.17',
           'v1.18',
           'v1.19',
