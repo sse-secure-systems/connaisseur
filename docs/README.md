@@ -143,7 +143,7 @@ Otherwise, Connaisseur translates all image references in the original request t
 
 Supported signature solutions and configuration options are documented under [validators](./validators/README.md).
 
-Connaisseur is expected to be compatible with most Kubernetes services. It has been successfully tested with:
+Connaisseur supports Kubernets v1.16 and higher. It is expected to be compatible with most Kubernetes services and has been successfully tested with:
 
 - [K3s](https://github.com/rancher/k3s) ✅
 - [kind](https://kind.sigs.k8s.io/) ✅

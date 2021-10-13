@@ -40,10 +40,15 @@ git clone https://github.com/sse-secure-systems/connaisseur.git
 
 The configuration of Connaisseur is completely done in the `helm/values.yaml`.
 The upper `deployment` section offers some general Kubernetes typical configurations like image version or resources.
-Specifically, the `deployment.failurePolicy` allows configuration whether the mutating admission webhook should fail closed (`Fail`, *default*) or open (`Ignore`) should the Connaisseur service become unavailable.
-While Connaisseur is configured to be secure by default, setting the [failure policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) to `Ignore` allows to prioritize cluster access[^1].
+Noteworthy configurations are:
+
+- `deployment.failurePolicy`: Failure policy allows configuration whether the mutating admission webhook should fail closed (`Fail`, *default*) or open (`Ignore`) should the Connaisseur service become unavailable. While Connaisseur is configured to be secure by default, setting the [failure policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) to `Ignore` allows to prioritize cluster access[^1].
+- `deployment.securityContext`: Connaisseur ships with secure defaults. However, some keys are not supported by all versions or flavors of Kubernetes and might need adjustment[^2]. This is mentioned in the comments to the best of our knowledge.
+- `deployment.podSecurityPolicy`: Some clusters require a PSP. A secure default PSP for Connaisseur is available.
 
 [^1]: This is not to be confused with the [detection mode](features/detection_mode.md) feature: In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.
+
+[^2]: In those cases, consider using security annotations via `deployment.annotations` or pod security policies `deployment.podSecurityPolicy` if available.
 
 The actual configuration consists of the `validators` and image `policy` sections.
 These are described in detail [below](#detailed-configuration) and for initials steps it is instructive to follow the [getting started guide](getting_started.md).
