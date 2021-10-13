@@ -137,7 +137,12 @@ namespacedValidation:
   enabled: false
   mode: ignore  # 'ignore' or 'validate'
 
-# TODO: document ACA
+# automatic child approval determines how admission of Kubernetes child resources is handled by Connaisseur.
+# per default, Connaisseur validates and mutates all resources, e.g. deployments, replicaSets, pods, and 
+# automatically approves child resources of those to avoid duplicate validation and inconsistencies with the
+# image policy. when disabled Connaisseur will only validate and mutate pods. check the docs for more 
+# information.
+# NOTE: configuration of automatic child approval is in EXPERIMENTAL state.
 automaticChildApproval:
   enabled: true
 
