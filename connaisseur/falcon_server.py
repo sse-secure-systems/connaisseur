@@ -30,10 +30,10 @@ class Mutate:
         self.config = config
 
     def on_post(self, req, rsp):
-        json_content = json.loads(req.stream.read())
-        logging.debug(json_content)
+        content = req.get_media()
+        logging.debug(content)
 
-        admission_request = AdmissionRequest(json_content)
+        admission_request = AdmissionRequest(content)
         req.context.ar = admission_request
 
         response = asyncio.run(self.__admit(admission_request))
@@ -123,13 +123,14 @@ def handle_exception(ex, req, rsp, params):
         err_log = str(traceback.format_exc())
         msg = "unknown error. please check the logs."
 
-    if req.context.ar:
+    uid = ""
+    if req.context.get("ar"):
         send_alerts(req.context.ar, False, msg)
         uid = req.context.ar.uid
     logging.error(err_log)
 
     dm = os.environ.get("DETECTION_MODE", "0") == "1"
-    data = get_admission_review(uid or "", False, msg=msg, detection_mode=dm)
+    data = get_admission_review(uid, False, msg=msg, detection_mode=dm)
 
     rsp.text = json.dumps(data)
     rsp.content_type = "application/json"
