@@ -97,8 +97,8 @@ async def __admit(admission_request: AdmissionRequest):
 
     patches = asyncio.gather(
         *[
-            __validate_image(type_index, image, admission_request)
-            for type_index, image in admission_request.wl_object.containers.items()
+            __validate_image(type_and_index, image, admission_request)
+            for type_and_index, image in admission_request.wl_object.containers.items()
         ]
     )
 
