@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "helm.labels" . | nindent 4 }}
   annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+    checksum/config: {{ include "getConfigFiles" . | sha256sum }}
 spec:
   replicas: {{ .Values.deployment.replicasCount }}
   selector:
@@ -18,10 +18,11 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "helm.name" . }}
         app.kubernetes.io/instance: {{ .Chart.Name }}
-      {{- if .Values.deployment.annotations }}
       annotations:
-        {{- toYaml .Values.deployment.annotations | nindent 8 }}
-      {{- end }}
+        checksum/config: {{ include "getConfigFiles" . | sha256sum }}
+        {{- if .Values.deployment.annotations }}
+          {{- toYaml .Values.deployment.annotations | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ .Chart.Name }}-serviceaccount
       containers:

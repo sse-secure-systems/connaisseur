@@ -132,3 +132,10 @@ Extract Kubernetes Minor Version.
     {{ get $data "tls.key" }}
 {{- end -}}
 {{- end -}}
+
+{{- define "getConfigFiles" -}}
+{{ include (print $.Template.BasePath "/config.yaml") . }}
+{{ include (print $.Template.BasePath "/config-secrets.yaml") . }}
+{{ include (print $.Template.BasePath "/env.yaml") . }}
+{{ include (print $.Template.BasePath "/alertconfig.yaml") . }}
+{{- end -}}
