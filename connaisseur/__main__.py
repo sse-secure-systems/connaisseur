@@ -3,10 +3,10 @@ Main method for connaisseur. It starts the web server.
 """
 import os
 from logging.config import dictConfig
-from connaisseur.falcon_server import APP
 from cheroot.server import HTTPServer
 from cheroot.ssl.builtin import BuiltinSSLAdapter
 from cheroot.wsgi import Server
+from connaisseur.falcon_server import APP
 
 if __name__ == "__main__":
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")

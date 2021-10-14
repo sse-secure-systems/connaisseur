@@ -3,6 +3,7 @@ import logging
 import json
 import traceback
 import asyncio
+import falcon
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.alert import send_alerts
 from connaisseur.config import Config
@@ -12,16 +13,15 @@ from connaisseur.exceptions import (
     ConfigurationError,
 )
 from connaisseur.util import get_admission_review
-import falcon
 
 
 class Health:
-    def on_get(self, req, rsp):
+    def on_get(self, req, rsp):  # pylint: disable=unused-argument
         rsp.status = falcon.HTTP_200
 
 
 class Ready:
-    def on_get(self, req, rsp):
+    def on_get(self, req, rsp):  # pylint: disable=unused-argument
         rsp.status = falcon.HTTP_200
 
 
@@ -115,7 +115,7 @@ class Mutate:
         return str({"message": msg, "context": dict(**kwargs)})
 
 
-def handle_exception(ex, req, rsp, params):
+def handle_base_exception(ex, req, rsp, params):  # pylint: disable=unused-argument
     if isinstance(ex, BaseConnaisseurException):
         err_log = str(ex)
         msg = ex.user_msg  # pylint: disable=no-member
@@ -129,19 +129,33 @@ def handle_exception(ex, req, rsp, params):
         uid = req.context.ar.uid
     logging.error(err_log)
 
-    dm = os.environ.get("DETECTION_MODE", "0") == "1"
-    data = get_admission_review(uid, False, msg=msg, detection_mode=dm)
+    detection_mode = os.environ.get("DETECTION_MODE", "0") == "1"
+    data = get_admission_review(uid, False, msg=msg, detection_mode=detection_mode)
 
     rsp.text = json.dumps(data)
     rsp.content_type = "application/json"
     rsp.status = falcon.HTTP_200
 
 
+def handle_alert_config_error(ex, req, rsp, params):  # pylint: disable=unused-argument
+    logging.error(ex.message)
+    rsp.text = "Alerting configuration is not valid. Check the logs for more details!"
+    rsp.status = 500
+
+
+def handle_alert_sending_error(ex, req, rsp, params):  # pylint: disable=unused-argument
+    logging.error(ex.message)
+    rsp.text = "Alert could not be sent. Check the logs for more details!"
+    rsp.status = 500
+
+
 APP = falcon.App()
-config = Config()
+conf = Config()
 
 APP.add_route("/health", Health())
 APP.add_route("/ready", Ready())
-APP.add_route("/mutate", Mutate(config))
+APP.add_route("/mutate", Mutate(conf))
 
-APP.add_error_handler(Exception, handle_exception)
+APP.add_error_handler(Exception, handle_base_exception)
+APP.add_error_handler(AlertSendingError, handle_alert_sending_error)
+APP.add_error_handler(ConfigurationError, handle_alert_config_error)
