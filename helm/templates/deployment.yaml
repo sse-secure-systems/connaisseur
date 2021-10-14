@@ -65,6 +65,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-env
+            - secretRef:
+                name: {{ .Chart.Name }}-env-secrets
           env:
             - name: POD_NAME
               valueFrom:

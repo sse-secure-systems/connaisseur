@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import re
 import subprocess  # nosec
 from connaisseur.validators.interface import ValidatorInterface
@@ -122,27 +123,39 @@ class CosignValidator(ValidatorInterface):
         returns the returncode, stdout and stderr. Will raise an exception if Cosign times out.
         """
 
-        key = load_key(pubkey)  # raises if invalid
-        home = f"/app/connaisseur-config/{self.name}"
+        env = os.environ
+        # Extend the OS env vars only for passing to the subprocess below
+        env["DOCKER_CONFIG"] = f"/app/connaisseur-config/{self.name}/.docker/"
+
+        try:
+            key = load_key(pubkey).to_pem()  # raises if invalid
+        except ValueError as err:
+            if re.match(r"^\w{2,20}\:\/\/[\w:\/-]{3,255}$", pubkey) is None:
+                msg = (
+                    "Public key (or reference in case of KMS) '{key}' does not match "
+                    "expected pattern."
+                )
+                raise InvalidFormatException(message=msg, key=pubkey) from err
+            key = b""
         cmd = [
             "/app/cosign/cosign",
             "verify",
             "-output",
             "text",
             "-key",
-            "/dev/stdin",
+            "/dev/stdin" if key else pubkey,
             image,
         ]
 
         with subprocess.Popen(  # nosec
             cmd,
-            env={"HOME": home},
+            env=env,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ) as process:
             try:
-                stdout, stderr = process.communicate(key.to_pem(), timeout=60)
+                stdout, stderr = process.communicate(key, timeout=60)
             except subprocess.TimeoutExpired as err:
                 process.kill()
                 msg = "Cosign timed out."

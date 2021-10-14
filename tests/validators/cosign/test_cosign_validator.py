@@ -232,7 +232,7 @@ def test_get_cosign_validated_digests(
 
 
 @pytest.mark.parametrize(
-    "image, process_input",
+    "image, process_input, input_type",
     [
         (
             "testimage:v1",
@@ -242,10 +242,12 @@ def test_get_cosign_validated_digests(
                 "NBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n"
                 "-----END PUBLIC KEY-----\n"
             ),
-        )
+            "key",
+        ),
+        ("testimage:v1", "k8s://connaisseur/test_key", "ref"),
     ],
 )
-def test_invoke_cosign(fake_process, image, process_input):
+def test_invoke_cosign(fake_process, image, process_input, input_type):
     def stdin_function(input):
         return {"stderr": input.decode(), "stdout": input}
 
@@ -254,37 +256,32 @@ def test_invoke_cosign(fake_process, image, process_input):
     # https://pytest-subprocess.readthedocs.io/en/latest/usage.html#passing-input
     # It seems there is a bug that, when appending the input to a data stream (e.g. stderr),
     # eats the other data stream (stdout in that case). Thus, simply appending to both.
+    fake_process_calls = [
+        "/app/cosign/cosign",
+        "verify",
+        "-output",
+        "text",
+        "-key",
+        "/dev/stdin" if input_type == "key" else process_input,
+        image,
+    ]
     fake_process.register_subprocess(
-        [
-            "/app/cosign/cosign",
-            "verify",
-            "-output",
-            "text",
-            "-key",
-            "/dev/stdin",
-            image,
-        ],
+        fake_process_calls,
         stderr=cosign_stderr_at_success,
         stdout=bytes(cosign_payload, "utf-8"),
         stdin_callable=stdin_function,
     )
     val = co.CosignValidator(**static_cosigns[0])
     returncode, stdout, stderr = val._CosignValidator__invoke_cosign(
-        "testimage:v1", example_pubkey
+        "testimage:v1", process_input
     )
-    assert [
-        "/app/cosign/cosign",
-        "verify",
-        "-output",
-        "text",
-        "-key",
-        "/dev/stdin",
-        image,
-    ] in fake_process.calls
+    assert fake_process_calls in fake_process.calls
     assert (returncode, stdout, stderr) == (
         0,
-        "{}{}".format(cosign_payload, process_input),
-        "{}{}".format(cosign_stderr_at_success, process_input),
+        "{}{}".format(cosign_payload, process_input if input_type == "key" else ""),
+        "{}{}".format(
+            cosign_stderr_at_success, process_input if input_type == "key" else ""
+        ),
     )
 
 
