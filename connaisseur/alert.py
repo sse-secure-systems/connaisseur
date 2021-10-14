@@ -33,11 +33,7 @@ class AlertingConfiguration:
                 InvalidConfigurationFormatError,
             )
         except FileNotFoundError:
-            logging.info(
-                "No alerting configuration file found."
-                "To use the alerting feature you need to run `make upgrade`"
-                "in a freshly pulled Connaisseur repository."
-            )
+            logging.debug("No alerting configuration file found.")
             self.config = {}
         except InvalidConfigurationFormatError as err:
             raise ConfigurationError(err.message) from err
