@@ -425,6 +425,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kms-support" class="md-nav__link">
+    KMS Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#verification-against-transparency-log" class="md-nav__link">
     Verification against transparency log
   </a>
@@ -935,6 +942,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kms-support" class="md-nav__link">
+    KMS Support
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#verification-against-transparency-log" class="md-nav__link">
     Verification against transparency log
   </a>
@@ -973,8 +987,8 @@ You can read more about it <a href="https://blog.sigstore.dev/">here</a>.</p>
 <p>Connaisseur currently supports the elementary function of verifying Cosign-generated signatures based on the following types of keys:</p>
 <ul>
 <li><a href="https://github.com/sigstore/cosign#generate-a-keypair">Locally-generated key pair</a></li>
-<li><a href="https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms">KMS</a> (export the public key)</li>
-<li><a href="https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms">Hardware-based token</a> (export the public key)</li>
+<li><a href="https://github.com/sigstore/cosign#kms-support">KMS</a> (via <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">reference URI</a> or <a href="https://github.com/sigstore/cosign#kms-support">export of the public key</a>)</li>
+<li><a href="https://github.com/sigstore/cosign#hardware-based-tokens">Hardware-based token</a> (<a href="https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms">export the public key</a>)</li>
 </ul>
 <p>We plan to expose further features of Cosign and sigstore in upcoming releases, so stay tuned!</p>
 <h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
@@ -1054,7 +1068,7 @@ In case you just use the default values for the validator and image policy given
 <td><code>trust_roots[*].key</code></td>
 <td></td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>See <a href="../../basics/#validators">basics</a>. ECDSA public key from <code>cosign.pub</code> file.</td>
+<td>See <a href="../../basics/#validators">basics</a>. ECDSA public key from <code>cosign.pub</code> file or <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">KMS URI</a>. See additional notes <a href="#kms-support">below</a>.</td>
 </tr>
 <tr>
 <td><code>host</code></td>
@@ -1105,11 +1119,68 @@ The secret can for example be created directly from your local <code>config.json
 </code></pre></div>
 <p>In the above case, the secret name in Connaisseur configuration would be <code>secret_name: my-secret</code>.
 It is possible to provide one Kubernetes secret with a <code>config.json</code> for authentication to multiple private registries and referencing this in multiple validators.</p>
+<h3 id="kms-support">KMS Support<a class="headerlink" href="#kms-support" title="Permanent link">⚓︎</a></h3>
+<blockquote>
+<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
+</blockquote>
+<p>Connaisseur supports Cosign's URI-based <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">KMS integration</a> to manage the signing and verification keys.
+Simply configure the trust root key value as the respective URI.
+In case of a <a href="https://github.com/sigstore/cosign/blob/main/KMS.md#kubernetes-secret">Kubernetes secret</a>, this would take the following form:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosign</span>
+  <span class="nt">trust_roots</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">k8s://connaisseur/cosignkeys</span>
+</code></pre></div>
+<p>For that specific case of a Kubernetes secret, make sure to place it in a suitable namespace and grant Connaisseur access to it<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
+<p>Most other KMS will require credentials for authentication that must be provided via environment variables.
+Such environment variables can be injected into Connaisseur via <code>deployment.envs</code> in <code>helm/values.yaml</code>, e.g.:</p>
+<div class="highlight"><pre><span></span><code>  <span class="nt">envs</span><span class="p">:</span> 
+    <span class="nt">VAULT_ADDR</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvault.com</span>
+    <span class="nt">VAULT_TOKEN</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">secrettoken</span>
+</code></pre></div>
 <h3 id="verification-against-transparency-log">Verification against transparency log<a class="headerlink" href="#verification-against-transparency-log" title="Permanent link">⚓︎</a></h3>
 <p>Connaisseur already verifies signatures against the transparency log.
 However, optional enforcement of transparency log is only planned in upcoming releases.</p>
 <h3 id="keyless-signatures">Keyless signatures<a class="headerlink" href="#keyless-signatures" title="Permanent link">⚓︎</a></h3>
 <p>Keyless signatures have not yet been implemented but are planned in upcoming releases.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>The corresponding role and rolebinding should look similar to the following:
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Role</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-role</span>
+  <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur</span>  <span class="c1"># namespace of respective k8s secret, might have to change that</span>
+  <span class="nt">labels</span><span class="p">:</span>
+    <span class="nt">app.kubernetes.io/name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">apiGroups</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;*&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">resources</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;secrets&quot;</span><span class="p p-Indicator">]</span>
+  <span class="nt">verbs</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RoleBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-rolebinding</span>
+  <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur</span>  <span class="c1"># namespace of respective k8s secret, might have to change that</span>
+  <span class="nt">labels</span><span class="p">:</span>
+    <span class="nt">app.kubernetes.io/name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur</span>
+<span class="nt">subjects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur-serviceaccount</span>
+  <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur</span>  <span class="c1"># Connaisseur&#39;s namespace, might have to change that</span>
+<span class="nt">roleRef</span><span class="p">:</span>
+  <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Role</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-role</span>
+  <span class="nt">apiGroup</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+</code></pre></div>
+Make sure to adjust it as needed.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
                 
               
               
