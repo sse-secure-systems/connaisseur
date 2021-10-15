@@ -204,7 +204,8 @@ jobs:
           'integration-test.sh',
           'preconfig-integration-test.sh',
           'cosign-integration-test.sh',
-          'deployment-integration-test.sh'
+          'deployment-integration-test.sh',
+          'load-test.sh'
         ]
     services:
       alerting-endpoint:

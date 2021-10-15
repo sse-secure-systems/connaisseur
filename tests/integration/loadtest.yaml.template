@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-${index}
+  labels:
+    test: loadtest
+spec:
+  selector:
+    matchLabels:
+      test: loadtest
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        test: loadtest
+    spec:
+      containers:
+      - name: redis
+        image: redis
