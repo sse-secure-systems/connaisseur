@@ -135,11 +135,25 @@ kubectl run hello-world --image=docker.io/hello-world
 
 ### Upgrade
 
-A running Connaisseur instance can be updated (i.e. its configuration via `helm/values.yaml` including the Connaisseur image itself) by a Helm upgrade of the current release:
+A running Connaisseur instance can be updated by a Helm upgrade of the current release:
 
-```bash
-helm upgrade connaisseur helm -n connaisseur --wait
-```
+=== "Cloned via Git"
+
+    Adjust configuration in `helm/values.yaml` as required and upgrade via:
+
+    ```bash
+    helm upgrade connaisseur helm -n connaisseur --wait
+    ```
+
+=== "Added via Helm"
+
+    Adjust your local configuration file (e.g. `values.yaml`) as required and upgrade via:
+
+    ```bash
+    helm upgrade connaisseur connaisseur/connaisseur -n connaisseur --wait -f values.yaml
+    ```
+
+
 
 ### Delete
 
