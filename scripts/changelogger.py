@@ -2,7 +2,9 @@ import re
 import requests
 import json
 import subprocess
-from enum import Enum
+import time
+import argparse
+import base64
 
 sep = "@@__CHGLOG__@@"
 delim = "@@__CHGLOG_DELIMITER__@@"
@@ -21,30 +23,30 @@ class Commit:
     subject_: str
     categories_: list
     pr_: str = ""
+    token: str
 
-    def __init__(self, hash_: str, sub_cat_: str):
+    def __init__(self, hash_: str, sub_cat_: str, token: str = None):
         self.hash_ = hash_.strip()
         cat_sub_split = sub_cat_.split(":", 1)
         self.subject_ = cat_sub_split[1].strip()
         self.categories_ = cat_sub_split[0].split("/")
+        self.token = token
         self.pr_ = self.get_pr_link()
 
     def get_pr_link(self):
-        regex = r"\(\#\\d*\)"
-        if not re.search(regex, self.subject_):
-            response = requests.get(
-                f"https://api.github.com/search/issues?q={self.hash_}"
-            )
-            for item in response.json().get("items", []):
-                if item.get("state", "open") == "closed":
-                    return item.get("pull_request", {}).get("html_url")
-        return
+        header = None
+        if self.token:
+            auth = base64.b64encode(bytearray(self.token, "utf-8")).decode("utf-8")
+            header = {"Authorization": f"Basic {auth}"}
+        response = requests.get(
+            f"https://api.github.com/search/issues?q={self.hash_}", headers=header
+        )
+        for item in response.json().get("items", []):
+            if item.get("state", "open") == "closed":
+                return item.get("pull_request", {}).get("html_url")
 
     def __str__(self):
-        if self.pr_:
-            pr_nr = self.pr_.split("/")[-1]
-            self.pr_ = f" ([#{pr_nr}]({self.pr_}))"
-        return f"{self.subject_}{self.pr_}"
+        return f"{self.subject_} {self.pr_}"
 
 
 def git_log(ref1, ref2):
@@ -74,17 +76,45 @@ def create_changelog(version, change_dict):
 
 
 if __name__ == "__main__":
-    ref1 = "v1.4.5"
-    ref2 = "v1.4.6"
-    log_hist = git_log(ref1, ref2)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--ref1",
+        metavar="ref1",
+        type=str,
+        required=True,
+        help="source version from which to create the changelog",
+    )
+    parser.add_argument(
+        "--ref2",
+        metavar="ref2",
+        type=str,
+        required=True,
+        help="target version to which to create the changelog",
+    )
+    parser.add_argument(
+        "--token",
+        metavar="token",
+        type=str,
+        help="API token in the form of `<username>:<personal-access-token>`",
+    )
+    args = parser.parse_args()
+
+    log_hist = git_log(args.ref1, args.ref2)
     change_log = {}
+    token = args.token
 
     commits = log_hist.split(sep)
-    for commit_input in commits:
+    for index, commit_input in enumerate(commits):
         if commit_input:
             splits = commit_input.split(delim)
-            commit = Commit(splits[0], splits[1])
+            commit = Commit(splits[0], splits[1], token)
             for category in commit.categories_:
                 change_log.setdefault(category, []).append(str(commit))
-
-    print(create_changelog(ref2, change_log))
+        print(f"{index+1}/{len(commits)} done.", end="\r")
+        if len(commits) > 9:
+            if args.token:
+                time.sleep(2)
+            else:
+                time.sleep(7)
+    print("", end="\r")
+    print(create_changelog(args.ref2, change_log))
