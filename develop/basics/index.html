@@ -1318,8 +1318,12 @@ However, other ways to implement such trust pinning exist and as a consequence w
 <h3 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">⚓︎</a></h3>
 <p>The configuration of Connaisseur is completely done in the <code>helm/values.yaml</code>.
 The upper <code>deployment</code> section offers some general Kubernetes typical configurations like image version or resources.
-Specifically, the <code>deployment.failurePolicy</code> allows configuration whether the mutating admission webhook should fail closed (<code>Fail</code>, <em>default</em>) or open (<code>Ignore</code>) should the Connaisseur service become unavailable.
-While Connaisseur is configured to be secure by default, setting the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> to <code>Ignore</code> allows to prioritize cluster access<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
+Noteworthy configurations are:</p>
+<ul>
+<li><code>deployment.failurePolicy</code>: Failure policy allows configuration whether the mutating admission webhook should fail closed (<code>Fail</code>, <em>default</em>) or open (<code>Ignore</code>) should the Connaisseur service become unavailable. While Connaisseur is configured to be secure by default, setting the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> to <code>Ignore</code> allows to prioritize cluster access<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</li>
+<li><code>deployment.securityContext</code>: Connaisseur ships with secure defaults. However, some keys are not supported by all versions or flavors of Kubernetes and might need adjustment<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. This is mentioned in the comments to the best of our knowledge.</li>
+<li><code>deployment.podSecurityPolicy</code>: Some clusters require a PSP. A secure default PSP for Connaisseur is available.</li>
+</ul>
 <p>The actual configuration consists of the <code>validators</code> and image <code>policy</code> sections.
 These are described in detail <a href="#detailed-configuration">below</a> and for initials steps it is instructive to follow the <a href="../getting_started/">getting started guide</a>.
 Other features are described on the <a href="../features/">respective pages</a>.</p>
@@ -1824,6 +1828,9 @@ However, explicit is better than implicit.</p>
 <ol>
 <li id="fn:1">
 <p>This is not to be confused with the <a href="../features/detection_mode/">detection mode</a> feature: In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>In those cases, consider using security annotations via <code>deployment.annotations</code> or pod security policies <code>deployment.podSecurityPolicy</code> if available.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
