@@ -48,6 +48,10 @@ jobs:
         run: |
           DOCKER_CONTENT_TRUST=1 docker pull $(yq e '.deployment.image' helm/values.yaml)
         shell: bash
+      - name: Remove Pull Policy Update
+        run: |
+          yq eval -i 'del(.deployment)' tests/integration/update.yaml
+          yq eval -i 'del(.deployment)' tests/integration/namespaced-update.yaml
       - uses: ./.github/actions/integration-test
         with:
           integration-test-script: ${{ matrix.integration-test-script }}
