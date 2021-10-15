@@ -335,8 +335,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get-the-code" class="md-nav__link">
-    Get the code
+  <a href="#get-the-codechart" class="md-nav__link">
+    Get the code/chart
   </a>
   
 </li>
@@ -1077,8 +1077,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get-the-code" class="md-nav__link">
-    Get the code
+  <a href="#get-the-codechart" class="md-nav__link">
+    Get the code/chart
   </a>
   
 </li>
@@ -1310,11 +1310,20 @@ However, other ways to implement such trust pinning exist and as a consequence w
 <h2 id="using-connaisseur">Using Connaisseur<a class="headerlink" href="#using-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>Some general administration tasks like deployment or uninstallation when using Connaisseur are described in this section.</p>
 <h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h3>
-<p>Using Connaisseur requires <a href="https://git-scm.com/">Git</a>, some <a href="https://kubernetes.io/">Kubernetes</a> cluster, <a href="https://helm.sh/">Helm</a> and <a href="https://www.docker.com/">Docker</a> (only for local setups) to be installed and set up.</p>
-<h3 id="get-the-code">Get the code<a class="headerlink" href="#get-the-code" title="Permanent link">⚓︎</a></h3>
+<p>Using Connaisseur requires a <a href="https://kubernetes.io/">Kubernetes</a> cluster, <a href="https://helm.sh/">Helm</a> and, if installing from source, <a href="https://git-scm.com/">Git</a> to be installed and set up.</p>
+<h3 id="get-the-codechart">Get the code/chart<a class="headerlink" href="#get-the-codechart" title="Permanent link">⚓︎</a></h3>
+<p>Download the Connaisseur resources required for installation either by cloning the source code via Git or directly add the chart repository via Helm.</p>
+<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Clone via Git</label><div class="tabbed-content">
 <p>The Connaisseur source code can be cloned directly from GitHub and includes the application and Helm charts in a single repository:</p>
 <div class="highlight"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
 </code></pre></div>
+</div>
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Add via Helm</label><div class="tabbed-content">
+<p>The Helm chart can be added by:</p>
+<div class="highlight"><pre><span></span><code>helm repo add connaisseur https://sse-secure-systems.github.io/connaisseur/charts
+</code></pre></div>
+</div>
+</div>
 <h3 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">⚓︎</a></h3>
 <p>The configuration of Connaisseur is completely done in the <code>helm/values.yaml</code>.
 The upper <code>deployment</code> section offers some general Kubernetes typical configurations like image version or resources.
@@ -1330,12 +1339,24 @@ Other features are described on the <a href="../features/">respective pages</a>.
 <p>Connaisseur ships with a pre-configuration that does not need any adjustments for testing.
 However, validating your own images requires additional configuration.</p>
 <h3 id="deploy">Deploy<a class="headerlink" href="#deploy" title="Permanent link">⚓︎</a></h3>
-<p>Install Connaisseur by using Helm:</p>
+<p>Install Connaisseur via Helm:</p>
+<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Cloned via Git</label><div class="tabbed-content">
+<p>Install Connaisseur by using the Helm template definition files in the <code>helm</code> directory:</p>
 <div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
 </code></pre></div>
-<p>This will install Connaisseur in its own namespace called <code>connaisseur</code>.
-The installation itself may take a moment, as the installation order of the Connaisseur components is critical.
-Only when the Connaisseur pods are up and running, the admission webhook can be applied for intercepting requests.</p>
+</div>
+<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Added via Helm</label><div class="tabbed-content">
+<p>Install Connaisseur using the default configuration from the chart repository:</p>
+<div class="highlight"><pre><span></span><code>helm install connaisseur connaisseur/connaisseur --atomic --create-namespace --namespace connaisseur
+</code></pre></div>
+<p>To customize Connaisseur, craft a <code>values.yaml</code> according to your needs and apply:</p>
+<div class="highlight"><pre><span></span><code>helm install connaisseur connaisseur/connaisseur --atomic --create-namespace --namespace connaisseur -f values.yaml
+</code></pre></div>
+</div>
+</div>
+<p>This deploys Connaisseur to its own namespace called <code>connaisseur</code>.
+The installation itself may take a moment, as the installation order of the Connaisseur components is critical:
+The admission webhook for intercepting requests can only be applied when the Connaisseur pods are up and ready to receive admission requests.</p>
 <h3 id="check">Check<a class="headerlink" href="#check" title="Permanent link">⚓︎</a></h3>
 <p>Once everything is installed, you can check whether all the pods are up by running <code>kubectl get all -n connaisseur</code>:</p>
 <div class="highlight"><pre><span></span><code>kubectl get all -n connaisseur
@@ -1919,6 +1940,12 @@ However, explicit is better than implicit.</p>
       
       <a href="https://hub.docker.com/r/securesystemsengineering/connaisseur" target="_blank" rel="noopener" title="Connaisseur images on Docker Hub" class="md-footer-social__link">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+      </a>
+    
+      
+      
+      <a href="https://artifacthub.io/packages/helm/connaisseur/connaisseur" target="_blank" rel="noopener" title="Connaisseur helm chart on Artifact Hub" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M425.7 256c-16.9 0-32.8-9-41.4-23.4L320 126l-64.2 106.6c-8.7 14.5-24.6 23.5-41.5 23.5-4.5 0-9-.6-13.3-1.9L64 215v178c0 14.7 10 27.5 24.2 31l216.2 54.1c10.2 2.5 20.9 2.5 31 0L551.8 424c14.2-3.6 24.2-16.4 24.2-31V215l-137 39.1c-4.3 1.3-8.8 1.9-13.3 1.9zm212.6-112.2L586.8 41c-3.1-6.2-9.8-9.8-16.7-8.9L320 64l91.7 152.1c3.8 6.3 11.4 9.3 18.5 7.3l197.9-56.5c9.9-2.9 14.7-13.9 10.2-23.1zM53.2 41 1.7 143.8c-4.6 9.2.3 20.2 10.1 23l197.9 56.5c7.1 2 14.7-1 18.5-7.3L320 64 69.8 32.1c-6.9-.8-13.5 2.7-16.6 8.9z"/></svg>
       </a>
     
       

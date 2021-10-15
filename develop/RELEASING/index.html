@@ -972,7 +972,7 @@
 <li>See that all tests are running smoothly.</li>
 <li>Check that documentation changes show up correctly <a href="https://sse-secure-systems.github.io/connaisseur/develop/">here</a>.</li>
 <li>Make sure the Connaisseur version is incremented correctly according to the changes.</li>
-<li>Make sure Connaisseur version <code>helm/values.yaml</code> is matched to <code>helm/Chart.yaml</code>.</li>
+<li>Make sure Connaisseur version in <code>helm/values.yaml</code> is matched to the appVersion in <code>helm/Chart.yaml</code> and the (chart) version in <code>helm/Chart.yaml</code> is increased according to semantic versioning if Helm templates have been touched.</li>
 <li>See if the docs announcements should be adjusted <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html">here</a>.</li>
 <li>Consider making a <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions <em>announcement</em></a>.</li>
 </ul>
@@ -1082,6 +1082,12 @@
       
       <a href="https://hub.docker.com/r/securesystemsengineering/connaisseur" target="_blank" rel="noopener" title="Connaisseur images on Docker Hub" class="md-footer-social__link">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+      </a>
+    
+      
+      
+      <a href="https://artifacthub.io/packages/helm/connaisseur/connaisseur" target="_blank" rel="noopener" title="Connaisseur helm chart on Artifact Hub" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M425.7 256c-16.9 0-32.8-9-41.4-23.4L320 126l-64.2 106.6c-8.7 14.5-24.6 23.5-41.5 23.5-4.5 0-9-.6-13.3-1.9L64 215v178c0 14.7 10 27.5 24.2 31l216.2 54.1c10.2 2.5 20.9 2.5 31 0L551.8 424c14.2-3.6 24.2-16.4 24.2-31V215l-137 39.1c-4.3 1.3-8.8 1.9-13.3 1.9zm212.6-112.2L586.8 41c-3.1-6.2-9.8-9.8-16.7-8.9L320 64l91.7 152.1c3.8 6.3 11.4 9.3 18.5 7.3l197.9-56.5c9.9-2.9 14.7-13.9 10.2-23.1zM53.2 41 1.7 143.8c-4.6 9.2.3 20.2 10.1 23l197.9 56.5c7.1 2 14.7-1 18.5-7.3L320 64 69.8 32.1c-6.9-.8-13.5 2.7-16.6 8.9z"/></svg>
       </a>
     
       
