@@ -69,23 +69,31 @@ class Alert:
     def __init__(
         self, alert_message, receiver_config, admission_request: AdmissionRequest
     ):
-        try:
-            images = str(
-                [
-                    str(image)
-                    for image in admission_request.wl_object.containers.values()
-                ]
-            )
-        except InvalidImageFormatError:
-            images = "Error retrieving images."
+        if admission_request is None:
+            images = "Invalid admission request."
+            namespace = "Invalid admission request."
+            request_id = "Invalid admission request."
+        else:
+            namespace = admission_request.namespace
+            request_id = admission_request.uid
+            try:
+                images = str(
+                    [
+                        str(image)
+                        for image in admission_request.wl_object.containers.values()
+                    ]
+                )
+            except InvalidImageFormatError:
+                images = "Error retrieving images."
+
         self.context = {
             "alert_message": alert_message,
             "priority": str(receiver_config.get("priority", 3)),
             "connaisseur_pod_id": os.getenv("POD_NAME"),
             "cluster": os.getenv("CLUSTER_NAME"),
-            "namespace": admission_request.namespace,
+            "namespace": namespace,
             "timestamp": datetime.now(),
-            "request_id": admission_request.uid or "No given UID",
+            "request_id": request_id or "No given UID",
             "images": images,
         }
         self.receiver_url = receiver_config["receiver_url"]

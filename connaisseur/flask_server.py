@@ -45,6 +45,7 @@ def mutate():
     Handles the '/mutate' path and accepts CREATE and UPDATE requests.
     Sends its response back, which either denies or allows the request.
     """
+    admission_request = None
     try:
         logging.debug(request.json)
         admission_request = AdmissionRequest(request.json)
@@ -58,14 +59,16 @@ def mutate():
             msg = "unknown error. please check the logs."
         send_alerts(admission_request, False, msg)
         logging.error(err_log)
+        uid = admission_request.uid if admission_request else ""
         return jsonify(
             get_admission_review(
-                admission_request.uid,
+                uid,
                 False,
                 msg=msg,
                 detection_mode=DETECTION_MODE,
             )
         )
+
     send_alerts(admission_request, True)
     return jsonify(response)
 

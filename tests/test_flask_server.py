@@ -2,10 +2,11 @@ import re
 import pytest
 from aioresponses import aioresponses
 from . import conftest as fix
-import connaisseur.exceptions as exc
+import connaisseur.alert as alert
 import connaisseur.config as co
-from connaisseur.image import Image
+import connaisseur.exceptions as exc
 from connaisseur.admission_request import AdmissionRequest
+from connaisseur.image import Image
 from connaisseur.validators.static.static_validator import StaticValidator
 
 
@@ -89,6 +90,29 @@ def test_mutate(
         assert response.is_json
         assert admission_response["allowed"] == allowed
         assert admission_response["status"]["code"] == status_code
+
+
+def test_mutate_calls_send_alert_for_invalid_admission_request(
+    monkeypatch,
+    adm_req_samples,
+    m_request,
+    m_trust_data,
+    m_alerting_without_send,
+):
+    with aioresponses() as aio:
+        aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+        monkeypatch.setenv("DETECTION_MODE", "0")
+        client = pytest.fs.APP.test_client()
+        response = client.post("/mutate", json=adm_req_samples[7])
+        admission_response = response.get_json()["response"]
+
+        assert response.status_code == 200
+        assert response.is_json
+        assert admission_response["allowed"] == False
+        assert admission_response["status"]["code"] == 403
+        assert (
+            alert.Alert.send_alert.call_count == 2
+        )  # Alerting config has two configured templates
 
 
 def test_healthz():
