@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/basics/">
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.3">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.5143246d.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -370,6 +370,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#delete" class="md-nav__link">
     Delete
   </a>
@@ -710,6 +717,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/automatic_child_approval/" class="md-nav__link">
+        Automatic Child Approval
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -937,6 +958,34 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
+        ADR 5: No More Bootstrap Pods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-6_dynamic-config/" class="md-nav__link">
+        ADR 6: Dynamic Configuration
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1058,6 +1107,13 @@
           <li class="md-nav__item">
   <a href="#use" class="md-nav__link">
     Use
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade" class="md-nav__link">
+    Upgrade
   </a>
   
 </li>
@@ -1240,8 +1296,11 @@
 <p>In the following, we aim to lay the foundation on Connaisseur's core concepts, how to configure and administer it.</p>
 <h2 id="admission-control-validators-and-image-policy">Admission control, validators and image policy<a class="headerlink" href="#admission-control-validators-and-image-policy" title="Permanent link">⚓︎</a></h2>
 <p>Connaisseur works as a <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">mutating admission controller</a>.
-It intercepts all <em>CREATE</em> and <em>UPDATE</em> resource requests for <em>Pods</em>, <em>Deployments</em>, <em>ReplicationControllers</em>, <em>ReplicaSets</em>, <em>DaemonSets</em>, <em>StatefulSets</em>, <em>Jobs</em>, and <em>CronJobs</em> and extracts all image references for validation.
-Validation relies on two core concepts: image policy and validators.
+It intercepts all <em>CREATE</em> and <em>UPDATE</em> resource requests for <em>Pods</em>, <em>Deployments</em>, <em>ReplicationControllers</em>, <em>ReplicaSets</em>, <em>DaemonSets</em>, <em>StatefulSets</em>, <em>Jobs</em>, and <em>CronJobs</em> and extracts all image references for validation.</p>
+<p>Per default, Connaisseur uses <em>automatic child approval</em> by which the child of a Kubernetes resource is automatically admitted without re-verification of the signature in order to avoid duplicate validation and handle inconsistencies with the image policy.
+Essentially, this is done since an image that is deployed as part of an already deployed object (e.g. a Pod deployed as a child of a Deployment) has already been validated and potentially mutated during admission of the parent.
+More information and configuration options can be found in the <a href="../features/automatic_child_approval/">feature documentation for automatic child approval</a>.</p>
+<p>Validation itself relies on two core concepts: image policy and validators.
 A validator is a set of configuration options required for validation like the type of signature, public key to use for verification, path to signature data, or authentication.
 The image policy defines a set of rules which maps different images to those validators.
 This is done via glob matching of the image name which for example allows to use different validators for different registries, repositories, images or even tags.
@@ -1259,8 +1318,12 @@ However, other ways to implement such trust pinning exist and as a consequence w
 <h3 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">⚓︎</a></h3>
 <p>The configuration of Connaisseur is completely done in the <code>helm/values.yaml</code>.
 The upper <code>deployment</code> section offers some general Kubernetes typical configurations like image version or resources.
-Specifically, the <code>deployment.failurePolicy</code> allows configuration whether the mutating admission webhook should fail closed (<code>Fail</code>, <em>default</em>) or open (<code>Ignore</code>) should the Connaisseur service become unavailable.
-While Connaisseur is configured to be secure by default, setting the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> to <code>Ignore</code> allows to prioritize cluster access<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
+Noteworthy configurations are:</p>
+<ul>
+<li><code>deployment.failurePolicy</code>: Failure policy allows configuration whether the mutating admission webhook should fail closed (<code>Fail</code>, <em>default</em>) or open (<code>Ignore</code>) should the Connaisseur service become unavailable. While Connaisseur is configured to be secure by default, setting the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> to <code>Ignore</code> allows to prioritize cluster access<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</li>
+<li><code>deployment.securityContext</code>: Connaisseur ships with secure defaults. However, some keys are not supported by all versions or flavors of Kubernetes and might need adjustment<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. This is mentioned in the comments to the best of our knowledge.</li>
+<li><code>deployment.podSecurityPolicy</code>: Some clusters require a PSP. A secure default PSP for Connaisseur is available.</li>
+</ul>
 <p>The actual configuration consists of the <code>validators</code> and image <code>policy</code> sections.
 These are described in detail <a href="#detailed-configuration">below</a> and for initials steps it is instructive to follow the <a href="../getting_started/">getting started guide</a>.
 Other features are described on the <a href="../features/">respective pages</a>.</p>
@@ -1299,6 +1362,10 @@ In case you use the pre-configuration, you could for example run the following c
 kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
 &gt; pod/hello-world created
 </code></pre></div>
+<h3 id="upgrade">Upgrade<a class="headerlink" href="#upgrade" title="Permanent link">⚓︎</a></h3>
+<p>A running Connaisseur instance can be updated (i.e. its configuration via <code>helm/values.yaml</code> including the Connaisseur image itself) by a Helm upgrade of the current release:</p>
+<div class="highlight"><pre><span></span><code>helm upgrade connaisseur helm -n connaisseur --wait
+</code></pre></div>
 <h3 id="delete">Delete<a class="headerlink" href="#delete" title="Permanent link">⚓︎</a></h3>
 <p>Just like for installation, Helm can also be used to delete Connaisseur from your cluster:</p>
 <div class="highlight"><pre><span></span><code>helm uninstall connaisseur -n connaisseur
@@ -1312,10 +1379,11 @@ In case of major releases, the configuration structure might change which can ca
 <h3 id="makefile">Makefile<a class="headerlink" href="#makefile" title="Permanent link">⚓︎</a></h3>
 <p>Alternatively to using Helm, you can also run the Makefile for installing, deleting and more. Here the available commands:</p>
 <ul>
-<li><code>make install</code> -- Runs the <code>helm install</code> command.</li>
-<li><code>make uninstall</code> -- Switches the namespace to <code>connaisseur</code>, uses the <code>helm uninstall</code> command and deletes the <code>connaisseur</code> namespace.</li>
-<li><code>make annihilate</code> -- Deletes all resources labeled with <code>app.kubernetes.io/instance=connaisseur</code> as well as the <code>connaisseur</code> namespace. This command is usually helpful, should the normal <code>make uninstall</code> not work.</li>
-<li><code>make docker</code> -- Builds the <em>connaisseur</em> and <em>connaisseur:helm-hook</em> (relevant for installing Connaisseur) container images.</li>
+<li><code>make install</code> -- Install Connaisseur.</li>
+<li><code>make upgrade</code> -- Upgrade Connaisseur.</li>
+<li><code>make uninstall</code> -- Uninstall Connaisseur and delete the namespace.</li>
+<li><code>make annihilate</code> -- Remove all Connaisseur Kubernetes resources including its namespace. This command is usually helpful, should the normal <code>make uninstall</code> not work.</li>
+<li><code>make docker</code> -- Builds the <em>connaisseur</em> container image.</li>
 </ul>
 <h2 id="detailed-configuration">Detailed configuration<a class="headerlink" href="#detailed-configuration" title="Permanent link">⚓︎</a></h2>
 <p>All configuration is done in the <code>helm/values.yaml</code>.
@@ -1761,6 +1829,9 @@ However, explicit is better than implicit.</p>
 <li id="fn:1">
 <p>This is not to be confused with the <a href="../features/detection_mode/">detection mode</a> feature: In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
+<li id="fn:2">
+<p>In those cases, consider using security annotations via <code>deployment.annotations</code> or pod security policies <code>deployment.podSecurityPolicy</code> if available.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
 </ol>
 </div>
                 
@@ -1896,10 +1967,10 @@ However, explicit is better than implicit.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.8397ff9e.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../assets/javascripts/bundle.f89c2efe.min.js"></script>
       
     
   </body>

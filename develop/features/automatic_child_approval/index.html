@@ -11,14 +11,14 @@
       
       
       
-        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/validators/notaryv2/">
+        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/features/automatic_child_approval/">
       
       <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.3">
     
     
       
-        <title>Notary V2 - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>Automatic Child Approval - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#notary-v2" class="md-skip">
+        <a href="#automatic-child-approval" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Notary V2
+              Automatic Child Approval
             
           </span>
         </div>
@@ -292,14 +292,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
       
       
       
@@ -313,6 +311,97 @@
         <label class="md-nav__title" for="__nav_3_2">
           <span class="md-nav__icon md-icon"></span>
           Validators
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validators/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validators/notaryv1/" class="md-nav__link">
+        Notary (V1) / DCT
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validators/sigstore_cosign/" class="md-nav__link">
+        sigstore / Cosign
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validators/notaryv2/" class="md-nav__link">
+        Notary V2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          Features
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Features" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Features
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -336,8 +425,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../notaryv1/" class="md-nav__link">
-        Notary (V1) / DCT
+      <a href="../detection_mode/" class="md-nav__link">
+        Detection Mode
       </a>
     </li>
   
@@ -350,8 +439,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../sigstore_cosign/" class="md-nav__link">
-        sigstore / Cosign
+      <a href="../namespaced_validation/" class="md-nav__link">
+        Namespaced Validation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alerting/" class="md-nav__link">
+        Alerting
       </a>
     </li>
   
@@ -373,113 +476,67 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Automatic Child Approval
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
-        Notary V2
+        Automatic Child Approval
       </a>
       
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
   
     
-    <li class="md-nav__item md-nav__item--nested">
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
       
+        <li class="md-nav__item">
+  <a href="#additional-notes" class="md-nav__link">
+    Additional notes
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caching-ttl" class="md-nav__link">
+    Caching TTL
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
+    </ul>
+  
+</nav>
       
-      
-        <label class="md-nav__link" for="__nav_3_3">
-          Features
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Features" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_3">
-          <span class="md-nav__icon md-icon"></span>
-          Features
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/" class="md-nav__link">
-        Overview
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/detection_mode/" class="md-nav__link">
-        Detection Mode
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/namespaced_validation/" class="md-nav__link">
-        Namespaced Validation
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/alerting/" class="md-nav__link">
-        Alerting
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/automatic_child_approval/" class="md-nav__link">
-        Automatic Child Approval
-      </a>
     </li>
   
 
@@ -802,6 +859,48 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-notes" class="md-nav__link">
+    Additional notes
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caching-ttl" class="md-nav__link">
+    Caching TTL
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -813,8 +912,60 @@
               
                 
                 
-                <h1 id="notary-v2">Notary V2<a class="headerlink" href="#notary-v2" title="Permanent link">⚓︎</a></h1>
-<p>TBD - Notary V2 has not yet been integrated with Connaisseur.</p>
+                <h1 id="automatic-child-approval">Automatic Child Approval<a class="headerlink" href="#automatic-child-approval" title="Permanent link">⚓︎</a></h1>
+<blockquote>
+<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
+</blockquote>
+<p>Per default, Connaisseur uses <em>automatic child approval</em> by which the child of a Kubernetes resource is automatically admitted without re-verification of the signature in order to avoid duplicate validation and handle inconsistencies with the image policy.
+This behavior can be configured or even disabled.</p>
+<p>When automatic child approval is enabled, images that are deployed as part of already deployed objects (e.g. a Pod deployed as a child of a Deployment) are already validated and potentially mutated during admission of the parent.
+In consequence, the images of child resources are directly admitted without re-verification of the signature.
+This is done as the parent (and thus the child) has already been validated and might have been mutated, which would lead to duplicate validation and could cause image policy pattern mismatch.
+For example, given a Deployment which contains Pods with <code>image:tag</code> that gets mutated to contain Pods with <code>image@sha256:digest</code>.
+Then a) the Pod would not need another validation as the image was validated during the admittance of the Deployment and b) if there exists a specific rule with pattern <code>image:tag</code> and another less specific rule with <code>image*</code>, then after mutating the Deployment, the Pod would be falsely validated against <code>image*</code> instead of <code>image:tag</code>.
+To ensure the child resource is legit in this case, the parent resource is requested via the Kubernetes API and only those images it lists are accepted.</p>
+<p>When automatic child approval is disabled, Connaisseur only validates and potentially mutates Pod resources.</p>
+<p>There is trade-offs between the two behaviors:
+With automatic child approval, Connaisseur only verifies that the image reference in a child resource is the same as in the parent.
+This means that resources deployed prior to Connaisseur will never be validated until they are re-deployed even if a corresponding Pod is restarted.
+Consequently, a restarting Pod with an expired signature would still be admitted.
+However, this avoids unexpected failures when restarting Pods, avoids inconsistencies with the image policy and reduces the number of validations and thus the load.
+Furthermore, disabling automatic child approval also means that deployments with invalid images will be successful even though the Pods are denied.</p>
+<p>The extension of the feature (disabling, caching) is currently under development to improve security without compromising on usability.</p>
+<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
+<p><code>automaticChildApproval</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>true</td>
+<td></td>
+<td><code>true</code> or <code>false</code>; when <code>false</code>, Connaisseur will disable automatic child approval</td>
+</tr>
+<tr>
+<td><code>ttl</code></td>
+<td>?</td>
+<td></td>
+<td>Not yet implemented. See <a href="#caching-ttl">below</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
+<p>In <code>helm/values.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code>automaticChildApproval:
+  enabled: true
+</code></pre></div>
+<h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
+<h3 id="caching-ttl">Caching TTL<a class="headerlink" href="#caching-ttl" title="Permanent link">⚓︎</a></h3>
+<p>It is planned to implement a caching by which Connaisseur might perform automatic child approval only for a limited time after creation of the parent resource.</p>
                 
               
               
@@ -839,7 +990,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../sigstore_cosign/" class="md-footer__link md-footer__link--prev" aria-label="Previous: sigstore / Cosign" rel="prev">
+        <a href="../alerting/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Alerting" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -848,20 +999,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              sigstore / Cosign
+              Alerting
             </div>
           </div>
         </a>
       
       
         
-        <a href="../../features/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview" rel="next">
+        <a href="../../threat_model/" class="md-footer__link md-footer__link--next" aria-label="Next: Threat Model" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Overview
+              Threat Model
             </div>
           </div>
           <div class="md-footer__button md-icon">

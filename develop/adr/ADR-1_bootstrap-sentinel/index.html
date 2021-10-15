@@ -14,7 +14,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-1_bootstrap-sentinel/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.3.0">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.3">
     
     
       
@@ -22,7 +22,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8b42a75e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.5143246d.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
@@ -457,6 +457,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/automatic_child_approval/" class="md-nav__link">
+        Automatic Child Approval
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -796,6 +810,34 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ADR-5_no-more-bootstrap/" class="md-nav__link">
+        ADR 5: No More Bootstrap Pods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ADR-6_dynamic-config/" class="md-nav__link">
+        ADR 6: Dynamic Configuration
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -954,7 +996,8 @@
                 
                 <h1 id="adr-1-bootstrap-sentinel">ADR 1: Bootstrap Sentinel<a class="headerlink" href="#adr-1-bootstrap-sentinel" title="Permanent link">⚓︎</a></h1>
 <h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">⚓︎</a></h2>
-<p>Amended in <a href="../ADR-3_multi_notary_config/">ADR-3</a>.</p>
+<p>Amended in <a href="../ADR-3_multi_notary_config/">ADR-3</a>.
+Deprecated as of <a href="../ADR-5_no-more-bootstrap/">ADR-5</a>.</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">⚓︎</a></h2>
 <p>Connaisseur's main components are a MutatingWebhookConfiguration and the Connaisseur Pods. The MutatingWebhookConfiguration intercepts requests to create or update Kubernetes resources and forwards them to the Connaisseur Pods tasked, on a high level, with verifying trust data. The order of deploying both components matters, since a blocking MutatingWebhookConfiguration without the Connaisseur Pods to answer its requests would also block the deployment of said Pods.</p>
 <p>In <a href="https://github.com/sse-secure-systems/connaisseur/issues/3">#3</a> it was noted that prior to version 1.1.5 of Connaisseur when looking at the <code>Ready</code> status of Connaisseur Pods, they could report <code>Ready</code> while being non-functional due to the MutatingWebhookConfiguration missing. However, as stated above the MutatingWebhookConfiguration can only be deployed <em>after</em> the Connaisseur Pods, which was solved by checking the <code>Ready</code> state of said Pods. If one were to add a dependency to this <code>Ready</code> state, such that it only shows <code>Ready</code> when the MutatingWebhookConfiguration exists, we run into a deadlock, where the MutatingWebhookConfiguration waits for the Pods and the Pods wait for the MutatingWebhookConfiguration.</p>
@@ -1104,10 +1147,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.f8263e09.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.8397ff9e.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4fc53ad4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.f89c2efe.min.js"></script>
       
     
   </body>

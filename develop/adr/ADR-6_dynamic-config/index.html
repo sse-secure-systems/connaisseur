@@ -11,14 +11,14 @@
       
       
       
-        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/validators/notaryv2/">
+        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-6_dynamic-config/">
       
       <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.3">
     
     
       
-        <title>Notary V2 - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>ADR 6: Dynamic Configuration - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#notary-v2" class="md-skip">
+        <a href="#adr-6-dynamic-configuration" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Notary V2
+              ADR 6: Dynamic Configuration
             
           </span>
         </div>
@@ -250,14 +250,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
       
       
       
@@ -292,14 +290,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
       
       
       
@@ -322,7 +318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../validators/" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -336,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../notaryv1/" class="md-nav__link">
+      <a href="../../validators/notaryv1/" class="md-nav__link">
         Notary (V1) / DCT
       </a>
     </li>
@@ -350,7 +346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../sigstore_cosign/" class="md-nav__link">
+      <a href="../../validators/sigstore_cosign/" class="md-nav__link">
         sigstore / Cosign
       </a>
     </li>
@@ -362,21 +358,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../validators/notaryv2/" class="md-nav__link">
         Notary V2
       </a>
-      
     </li>
   
 
@@ -566,12 +552,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
       
       
       
@@ -620,12 +608,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
       
       
       
@@ -648,7 +638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         Architecture Decision Records
       </a>
     </li>
@@ -662,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
+      <a href="../ADR-1_bootstrap-sentinel/" class="md-nav__link">
         ADR 1: Bootstrap Sentinel
       </a>
     </li>
@@ -676,7 +666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-2_release-management/" class="md-nav__link">
+      <a href="../ADR-2_release-management/" class="md-nav__link">
         ADR 2: Release Management
       </a>
     </li>
@@ -690,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-3_multi_notary_config/" class="md-nav__link">
+      <a href="../ADR-3_multi_notary_config/" class="md-nav__link">
         ADR 3: Multiple Notary Configuration
       </a>
     </li>
@@ -704,7 +694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
+      <a href="../ADR-4_modular/" class="md-nav__link">
         ADR 4: Modular Validation
       </a>
     </li>
@@ -718,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
+      <a href="../ADR-5_no-more-bootstrap/" class="md-nav__link">
         ADR 5: No More Bootstrap Pods
       </a>
     </li>
@@ -730,11 +720,126 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../adr/ADR-6_dynamic-config/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ADR 6: Dynamic Configuration
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         ADR 6: Dynamic Configuration
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problem-1-access-to-configuration" class="md-nav__link">
+    Problem 1 - Access to configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Problem 1 - Access to configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#solution-11-dynamic-access" class="md-nav__link">
+    Solution 1.1 - Dynamic access
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-12-restart-pods" class="md-nav__link">
+    Solution 1.2 - Restart pods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-outcome-1" class="md-nav__link">
+    Decision Outcome (1)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problem-2-how-many-configmaps-are-too-many" class="md-nav__link">
+    Problem 2 - How many configmaps are too many?
+  </a>
+  
+    <nav class="md-nav" aria-label="Problem 2 - How many configmaps are too many?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#solution-21-2-concerns-2-resources" class="md-nav__link">
+    Solution 2.1 - 2 concerns, 2 resources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-22-one-to-rule-them-all" class="md-nav__link">
+    Solution 2.2 - One to rule them all
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-outcome-2" class="md-nav__link">
+    Decision Outcome (2)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -802,6 +907,96 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problem-1-access-to-configuration" class="md-nav__link">
+    Problem 1 - Access to configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Problem 1 - Access to configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#solution-11-dynamic-access" class="md-nav__link">
+    Solution 1.1 - Dynamic access
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-12-restart-pods" class="md-nav__link">
+    Solution 1.2 - Restart pods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-outcome-1" class="md-nav__link">
+    Decision Outcome (1)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problem-2-how-many-configmaps-are-too-many" class="md-nav__link">
+    Problem 2 - How many configmaps are too many?
+  </a>
+  
+    <nav class="md-nav" aria-label="Problem 2 - How many configmaps are too many?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#solution-21-2-concerns-2-resources" class="md-nav__link">
+    Solution 2.1 - 2 concerns, 2 resources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solution-22-one-to-rule-them-all" class="md-nav__link">
+    Solution 2.2 - One to rule them all
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-outcome-2" class="md-nav__link">
+    Decision Outcome (2)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -813,8 +1008,31 @@
               
                 
                 
-                <h1 id="notary-v2">Notary V2<a class="headerlink" href="#notary-v2" title="Permanent link">⚓︎</a></h1>
-<p>TBD - Notary V2 has not yet been integrated with Connaisseur.</p>
+                <h1 id="adr-6-dynamic-configuration">ADR 6: Dynamic Configuration<a class="headerlink" href="#adr-6-dynamic-configuration" title="Permanent link">⚓︎</a></h1>
+<h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">⚓︎</a></h2>
+<p>Accepted</p>
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">⚓︎</a></h2>
+<p>The configuration of validators are mounted into Connaisseur as a configmap, as it is common practice in the Kubernetes ecosystem. When this configmap is upgraded, say with a <code>helm upgrade</code>, the resource itself in Kubernetes is updated accordingly, but that doesn't mean it's automatically updated inside the pods which mounted it. That only occurs once the pods are restarted and until they are the pods still have an old version of the configuration lingering around. This is a fairly unintuitive behavior and the reason why Connaisseur doesn't mount the image policy into its pods. Instead, the pods have access to the kube API and get the image policy dynamically from there. The same could be done for the validator configuration, but there is also another solution.</p>
+<h2 id="problem-1-access-to-configuration">Problem 1 - Access to configuration<a class="headerlink" href="#problem-1-access-to-configuration" title="Permanent link">⚓︎</a></h2>
+<p>How should Connaisseur get access to its configuration files?</p>
+<h3 id="solution-11-dynamic-access">Solution 1.1 - Dynamic access<a class="headerlink" href="#solution-11-dynamic-access" title="Permanent link">⚓︎</a></h3>
+<p>This is the same solution as currently employed for the image policy configuration. The validators will get their own CustomResourceDefinition and Connaisseur gets access to this resource via RBAC so it can use the kube API to read the configuration.</p>
+<p><strong>Pros:</strong> Pods don't need to be restarted and the configuration can be changed "on the fly", without using Helm.
+<strong>Cons:</strong> Not a very Kubernetes native approach and Connaisseur must always do some network requests to access its config.</p>
+<h3 id="solution-12-restart-pods">Solution 1.2 - Restart pods<a class="headerlink" href="#solution-12-restart-pods" title="Permanent link">⚓︎</a></h3>
+<p>The other solution would be to use ConfigMaps for validators and image policy and then restart the pods, once there were changes in the configurations. This can be achieved by setting the hash of the config files as annotations into the deployment. If there are changes in the configuration, the hash will change and thus a new deployment will be rolled out as it has a new annotation. This corresponds to the <a href="https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments">suggestion</a> made by Helm.</p>
+<p><strong>Pros:</strong> Kubernetes native and no more CustomResourceDefinitions!
+<strong>Cons:</strong> No more "on the fly" changes.</p>
+<h3 id="decision-outcome-1">Decision Outcome (1)<a class="headerlink" href="#decision-outcome-1" title="Permanent link">⚓︎</a></h3>
+<p>Solution 1.2 was chosen, going with the more Kubernetes native way.</p>
+<h2 id="problem-2-how-many-configmaps-are-too-many">Problem 2 - How many configmaps are too many?<a class="headerlink" href="#problem-2-how-many-configmaps-are-too-many" title="Permanent link">⚓︎</a></h2>
+<p>When both the image policy and validator configurations are either CustomResourceDefinitions or ConfigMaps, is there still a need to separate them or can they be merged into one file?</p>
+<h3 id="solution-21-2-concerns-2-resources">Solution 2.1 - 2 concerns, 2 resources<a class="headerlink" href="#solution-21-2-concerns-2-resources" title="Permanent link">⚓︎</a></h3>
+<p>There will be 2 resources, one for the image policy and one for the validators.</p>
+<h3 id="solution-22-one-to-rule-them-all">Solution 2.2 - One to rule them all<a class="headerlink" href="#solution-22-one-to-rule-them-all" title="Permanent link">⚓︎</a></h3>
+<p>One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.</p>
+<h3 id="decision-outcome-2">Decision Outcome (2)<a class="headerlink" href="#decision-outcome-2" title="Permanent link">⚓︎</a></h3>
+<p>Solution 2.2 was chosen as it is the more simpler of the two.</p>
                 
               
               
@@ -839,7 +1057,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../sigstore_cosign/" class="md-footer__link md-footer__link--prev" aria-label="Previous: sigstore / Cosign" rel="prev">
+        <a href="../ADR-5_no-more-bootstrap/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ADR 5: No More Bootstrap Pods" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -848,26 +1066,11 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              sigstore / Cosign
+              ADR 5: No More Bootstrap Pods
             </div>
           </div>
         </a>
       
-      
-        
-        <a href="../../features/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Overview
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
       
     </nav>
   
