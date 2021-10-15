@@ -1384,9 +1384,18 @@ kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
 &gt; pod/hello-world created
 </code></pre></div>
 <h3 id="upgrade">Upgrade<a class="headerlink" href="#upgrade" title="Permanent link">⚓︎</a></h3>
-<p>A running Connaisseur instance can be updated (i.e. its configuration via <code>helm/values.yaml</code> including the Connaisseur image itself) by a Helm upgrade of the current release:</p>
+<p>A running Connaisseur instance can be updated by a Helm upgrade of the current release:</p>
+<div class="tabbed-set" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Cloned via Git</label><div class="tabbed-content">
+<p>Adjust configuration in <code>helm/values.yaml</code> as required and upgrade via:</p>
 <div class="highlight"><pre><span></span><code>helm upgrade connaisseur helm -n connaisseur --wait
 </code></pre></div>
+</div>
+<input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">Added via Helm</label><div class="tabbed-content">
+<p>Adjust your local configuration file (e.g. <code>values.yaml</code>) as required and upgrade via:</p>
+<div class="highlight"><pre><span></span><code>helm upgrade connaisseur connaisseur/connaisseur -n connaisseur --wait -f values.yaml
+</code></pre></div>
+</div>
+</div>
 <h3 id="delete">Delete<a class="headerlink" href="#delete" title="Permanent link">⚓︎</a></h3>
 <p>Just like for installation, Helm can also be used to delete Connaisseur from your cluster:</p>
 <div class="highlight"><pre><span></span><code>helm uninstall connaisseur -n connaisseur
