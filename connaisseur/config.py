@@ -170,7 +170,8 @@ class Match:
     def __bool__(self):
         return bool(self.key)
 
-    def longest_common_prefix(self, strings: list):
+    @staticmethod
+    def longest_common_prefix(strings: list):
         """
         Returns the longest matching prefix among all given `strings`.
         """

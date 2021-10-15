@@ -102,10 +102,9 @@ class NotaryV1Validator(ValidatorInterface):
 
         Returns the signed image targets, which contain the digests.
 
-        Raises `NotFoundExceptions` should no required delegetions be present in
+        Raises `NotFoundExceptions` should no required delegations be present in
         the trust data, or no image targets be found.
         """
-        trust_data = {}
         key_store = KeyStore(pub_root_key)
 
         tuf_roles = ["root", "snapshot", "timestamp", "targets"]

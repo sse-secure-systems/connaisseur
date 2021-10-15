@@ -48,6 +48,9 @@ def get_admission_review(
     msg : str (optional)
         The error message, which will be displayed, should allowed be
         'False'.
+    detection_mode : bool (optional)
+        If set to True, Connaisseur will admit images even if they fail
+        validation, but will log a warning instead.
 
     Return
     ----------

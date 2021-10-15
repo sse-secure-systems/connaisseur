@@ -6,7 +6,7 @@ FROM base as builder
 RUN mkdir /install
 WORKDIR /install
 COPY requirements.txt /requirements.txt
-# Since we run inside an alpine based container, we cannot compile yarl and multidic
+# Since we run inside an alpine based container, we cannot compile yarl and multidict
 RUN YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install --no-cache-dir --prefix=/install -r /requirements.txt
 
 # Load and verify Cosign

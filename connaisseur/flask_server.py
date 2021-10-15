@@ -26,7 +26,7 @@ sends its response back.
 @APP.errorhandler(AlertSendingError)
 def handle_alert_sending_failure(err):
     logging.error(err.message)
-    return ("Alert could not be sent. Check the logs for more details!", 500)
+    return "Alert could not be sent. Check the logs for more details!", 500
 
 
 @APP.errorhandler(ConfigurationError)
@@ -77,13 +77,13 @@ def healthz():
     server. Sends back '200'.
     """
 
-    return ("", 200)
+    return "", 200
 
 
 # readiness probe
 @APP.route("/ready", methods=["GET", "POST"])
 def readyz():
-    return ("", 200)
+    return "", 200
 
 
 def __create_logging_msg(msg: str, **kwargs):

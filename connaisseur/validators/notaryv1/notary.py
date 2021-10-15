@@ -159,7 +159,7 @@ class Notary:
             "vapid",
         ]
         auth_type_re = re.compile(f'({"|".join(auth_types)}) realm')
-        params_re = re.compile(r'(\w+)="?([\w\.\/\:\-\_]+)"?')
+        params_re = re.compile(r'(\w+)="?([\w./:\-_]+)"?')
 
         auth_type = next(iter(auth_type_re.findall(header)), None)
         params_dict = dict(params_re.findall(header))

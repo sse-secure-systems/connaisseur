@@ -49,7 +49,7 @@ class Image:
         first_comp = image.removesuffix(name_tag).split("/")[0]
         self.registry = (
             first_comp
-            if re.search(r"[\.:]", first_comp)
+            if re.search(r"[.:]", first_comp)
             or first_comp == "localhost"
             or any(ele.isupper() for ele in first_comp)
             else "docker.io"
