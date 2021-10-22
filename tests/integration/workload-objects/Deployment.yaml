@@ -1,9 +1,10 @@
----
 # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 apiVersion: $APIVERSION
 kind: Deployment
 metadata:
   name: deployment-$TAG
+  labels:
+    use: integration-test
 spec:
   replicas: 1
   selector:

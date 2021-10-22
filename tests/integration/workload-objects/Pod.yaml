@@ -1,9 +1,10 @@
----
 # https://kubernetes.io/docs/concepts/workloads/pods/
 apiVersion: $APIVERSION
 kind: Pod
 metadata:
   name: pod-$TAG
+  labels:
+    use: integration-test
 spec:
   containers:
     - name: pod-container

@@ -4,6 +4,7 @@ metadata:
   name: i2u1-2-deployment
   labels:
     app: i2u1-2
+    use: integration-test
 spec:
   replicas: 3
   selector:
@@ -15,9 +16,9 @@ spec:
         app: i2u1-2
     spec:
       containers:
-      - name: cosigned
-        image: securesystemsengineering/testimage:co-signed
-        ports:
-        - containerPort: 80
-      - name: signed-testimg
-        image: securesystemsengineering/testimage:unsigned
+        - name: cosigned
+          image: securesystemsengineering/testimage:co-signed
+          ports:
+            - containerPort: 80
+        - name: signed-testimg
+          image: securesystemsengineering/testimage:unsigned

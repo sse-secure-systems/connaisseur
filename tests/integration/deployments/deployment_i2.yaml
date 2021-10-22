@@ -4,6 +4,7 @@ metadata:
   name: i2-deployment
   labels:
     app: i2
+    use: integration-test
 spec:
   replicas: 3
   selector:
@@ -15,9 +16,9 @@ spec:
         app: i2
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.14.2
-        ports:
-        - containerPort: 80
-      - name: signed-testimg
-        image: securesystemsengineering/testimage:co-signed
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80
+        - name: signed-testimg
+          image: securesystemsengineering/testimage:co-signed

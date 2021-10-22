@@ -1,9 +1,10 @@
----
 # https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/
 apiVersion: $APIVERSION
 kind: ReplicationController
 metadata:
   name: replicationcontroller-$TAG
+  labels:
+    use: integration-test
 spec:
   replicas: 3
   template:

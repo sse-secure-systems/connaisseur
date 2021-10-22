@@ -1,9 +1,10 @@
----
 # https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
 apiVersion: $APIVERSION
 kind: DaemonSet
 metadata:
   name: daemonset-$TAG
+  labels:
+    use: integration-test
 spec:
   selector:
     matchLabels:

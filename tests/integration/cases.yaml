@@ -1,0 +1,210 @@
+test_cases:
+  regular:
+  - id: ru
+    txt: Testing unsigned image...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
+    expected_result: INVALID
+  - id: rsdk
+    txt: Testing image signed under different key...
+    type: deploy
+    ref: library/redis
+    namespace: default
+    expected_msg: Failed to verify signature of trust data root.
+    expected_result: INVALID
+  - id: rs
+    txt: Testing signed image...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: default
+    expected_msg: pod/pod-rs created
+    expected_result: VALID
+  - id: rsds
+    txt: Testing signed image with designated signer...
+    type: deploy
+    ref: securesystemsengineering/testimage:special_sig
+    namespace: default
+    expected_msg: pod/pod-rsds created
+    expected_result: VALID
+  - id: rsmds
+    txt: Testing image with missing designated signer...
+    type: deploy
+    ref: securesystemsengineering/testimage:wrong_signer
+    namespace: default
+    expected_msg: Not all required delegations have trust data for image docker.io/securesystemsengineering/testimage:wrong_signer.
+    expected_result: INVALID
+  - id: rsdds
+    txt: Testing image with differing designated signers...
+    type: deploy
+    ref: securesystemsengineering/testimage:double_sig
+    namespace: default
+    expected_msg: Found multiple signed digests for image docker.io/securesystemsengineering/testimage:double_sig.
+    expected_result: INVALID
+  - id: rdvivs
+    txt: Testing deployment of valid init container along with a valid container...
+    type: apply
+    ref: tests/integration/deployments/valid_init_container.yaml
+    namespace: default
+    expected_msg: pod/connaisseur-integration-test-pod-valid-init created
+    expected_result: VALID
+  - id: rduivs
+    txt: Testing deployment of unsigned init container along with a valid container...
+    type: apply
+    ref: tests/integration/deployments/valid_container_with_unsigned_init_container_image.yml
+    namespace: default
+    expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
+    expected_result: INVALID
+  cosign:
+  - id: cu
+    txt: Testing unsigned cosign image...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-unsigned
+    namespace: default
+    expected_msg: No trust data for image "docker.io/securesystemsengineering/testimage:co-unsigned".
+    expected_result: null
+  - id: csdk
+    txt: Testing cosign image signed under different key...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-signed-alt
+    namespace: default
+    expected_msg: Failed to verify signature of trust data.
+    expected_result: null
+  - id: cs
+    txt: Testing signed cosign image...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-signed
+    namespace: default
+    expected_msg: pod/pod-cs created
+    expected_result: null
+  ignore-namespace-val:
+  - id: iuu
+    txt: Testing unsigned image in unlabelled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
+    expected_result: null
+  - id: isu
+    txt: Testing signed image in unlabelled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: default
+    expected_msg: pod/pod-isu created
+    expected_result: null
+  - id: iui
+    txt: Testing unsigned image in ignored namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: ignoredns
+    expected_msg: pod/pod-iui created
+    expected_result: null
+  validate-namespace-val:
+  - id: vue
+    txt: Testing unsigned image in enabled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: validatedns
+    expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
+    expected_result: null
+  - id: vse
+    txt: Testing signed image in enabled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: validatedns
+    expected_msg: pod/pod-vse created
+    expected_result: null
+  - id: vuu
+    txt: Testing unsigned image in unlabelled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: pod/pod-vuu created
+    expected_result: null
+  deployment:
+  - id: d1s
+    txt: Testing 1 signed image deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i1.yaml
+    namespace: default
+    expected_msg: deployment.apps/i1-deployment created
+    expected_result: null
+  - id: d1u
+    txt: Testing 1 unsigned image deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i1u1.yaml
+    namespace: default
+    expected_msg: "denied the request: Unable to find signed digest"
+    expected_result: null
+  - id: d1nc
+    txt: Testing 1 nonexistent image (cosign) deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i1n1.yaml
+    namespace: default
+    expected_msg: MANIFEST_UNKNOWN
+    expected_result: null
+  - id: d2s
+    txt: Testing 2 signed images deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i2.yaml
+    namespace: default
+    expected_msg: deployment.apps/i2-deployment created
+    expected_result: null
+  - id: d1sf1us
+    txt: Testing 1 signed image (first) and 1 unsigned (second) image deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i2u1-2.yaml
+    namespace: default
+    expected_msg: "denied the request: Unable to find signed digest"
+    expected_result: null
+  - id: d1ss1uf
+    txt: Testing 1 signed image (second) and 1 unsigned (first) image deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i2u1-1.yaml
+    namespace: default
+    expected_msg: "denied the request: No trust data"
+    expected_result: null
+  - id: d2u
+    txt: Testing 2 unsigned images deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i2u2.yaml
+    namespace: default
+    expected_msg: "denied the request:"
+    expected_result: null
+  - id: d2s1si
+    txt: Testing 2 signed images and 1 signed init container deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i2i.yaml
+    namespace: default
+    expected_msg: deployment.apps/i2i-deployment created
+    expected_result: null
+  - id: d2s1ui
+    txt: Testing 2 signed images and 1 unsigned init container deployment...
+    type: apply
+    ref: tests/integration/deployments/deployment_i2ui.yaml
+    namespace: default
+    expected_msg: "denied the request: Unable to find signed digest for image"
+    expected_result: null
+  pre-config:
+  - id: pnv1u
+    txt: Testing nv1 unsigned image...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
+    expected_result: null
+  - id: pnv1s
+    txt: Testing nv1 signed image...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: default
+    expected_msg: pod/pod-pnv1s created
+    expected_result: null
+  - id: poff
+    txt: Testing signed official docker image...
+    type: deploy
+    ref: docker.io/library/hello-world
+    namespace: default
+    expected_msg: pod/pod-poff created
+    expected_result: null

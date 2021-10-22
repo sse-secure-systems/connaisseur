@@ -1,9 +1,10 @@
----
 # https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
 apiVersion: $APIVERSION
 kind: CronJob
 metadata:
   name: cronjob-$TAG
+  labels:
+    use: integration-test
 spec:
   schedule: "*/1 * * * *"
   jobTemplate:

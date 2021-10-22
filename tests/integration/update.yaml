@@ -1,41 +1,74 @@
+# configure Connaisseur deployment
 deployment:
   imagePullPolicy: Never
 validators:
-  - name: dockerhub
-    type: notaryv1
-    host: notary.docker.io
-    trust_roots:
-      - name: sse
-        key: |
-          -----BEGIN PUBLIC KEY-----
-          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-          d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-          -----END PUBLIC KEY-----
-  - name: allow
-    type: static
-    approve: true
+- name: allow
+  type: static
+  approve: true
+- name: deny
+  type: static
+  approve: false
+- name: default
+  type: notaryv1
+  host: notary.docker.io
+  trust_roots: []
+- name: dockerhub-basics
+  type: notaryv1
+  host: notary.docker.io
+  trust_roots:
+  - name: docker-official
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+      QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+      -----END PUBLIC KEY-----
+  - name: securesystemsengineering-official
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+      d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+      -----END PUBLIC KEY-----
+- name: cosign
+  type: cosign
+  trust_roots:
+  - name: default
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+      -----END PUBLIC KEY-----
 policy:
-  - pattern: "*:*"
-    validator: dockerhub
-    with:
-      trust_root: sse
-  - pattern: "k8s.gcr.io/*:*"
-    validator: allow
-  - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
-    validator: dockerhub
-    with:
-      trust_root: sse
-      delegations: ["starkteetje"]
-  - pattern: "docker.io/securesystemsengineering/testimage:wrong_signer"
-    validator: dockerhub
-    with:
-      trust_root: sse
-      delegations: ["belitzphilipp"]
-  - pattern: "docker.io/securesystemsengineering/testimage:double_sig"
-    validator: dockerhub
-    with:
-      trust_root: sse
-      delegations: ["belitzphilipp", "starkteetje"]
+- pattern: "*:*"
+  validator: dockerhub-basics
+  with:
+    trust_root: securesystemsengineering-official
+- pattern: "k8s.gcr.io/*:*"
+  validator: allow
+- pattern: docker.io/securesystemsengineering/connaisseur:*
+  validator: allow
+- pattern: docker.io/securesystemsengineering/testimage:co-*
+  validator: cosign
+- pattern: "docker.io/securesystemsengineering/testimage:special_sig"
+  validator: dockerhub-basics
+  with:
+    trust_root: securesystemsengineering-official
+    delegations: ["starkteetje"]
+- pattern: "docker.io/securesystemsengineering/testimage:wrong_signer"
+  validator: dockerhub-basics
+  with:
+    trust_root: securesystemsengineering-official
+    delegations: ["belitzphilipp"]
+- pattern: "docker.io/securesystemsengineering/testimage:double_sig"
+  validator: dockerhub-basics
+  with:
+    trust_root: securesystemsengineering-official
+    delegations: ["belitzphilipp", "starkteetje"]
+detectionMode: false
+namespacedValidation:
+  enabled: false
+  mode: ignore
+automaticChildApproval:
+  enabled: true
 alerting:
   config_dir_path: "/app/config"
   cluster_name: "minikube"

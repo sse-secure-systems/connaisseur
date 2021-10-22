@@ -1,9 +1,10 @@
----
 # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
 apiVersion: $APIVERSION
 kind: StatefulSet
 metadata:
   name: statefulset-$TAG
+  labels:
+    use: integration-test
 spec:
   replicas: 3
   selector:

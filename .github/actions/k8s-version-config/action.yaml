@@ -18,7 +18,10 @@ runs:
         k3s-channel: ${{ inputs.k8s-version }}
     - name: Adjust Configuration
       run: |
-        bash tests/integration/${{ inputs.k8s-version }}/stable.sh
+        if [[ $(echo "${{ inputs.k8s-version }}" | tail -c 3) -lt "19" ]]; then
+          yq e 'del(.deployment.securityContext.seccompProfile)' -i helm/values.yaml
+          yq e '.deployment.annotations."seccomp.security.alpha.kubernetes.io/pod" = "runtime/default"' -i helm/values.yaml
+        fi
       shell: bash
     - name: Load Image
       run: |
