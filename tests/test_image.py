@@ -104,6 +104,15 @@ import connaisseur.exceptions as exc
             "docker.io",
             pytest.raises(exc.InvalidImageFormatError),
         ),
+        (
+            "docker.io/library/image:Tag",
+            "image",
+            "Tag",
+            None,
+            "library",
+            "docker.io",
+            fix.no_exc(),
+        ),
     ],
 )
 def test_image(

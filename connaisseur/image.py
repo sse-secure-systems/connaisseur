@@ -58,7 +58,7 @@ class Image:
             image.removesuffix(name_tag).removeprefix(self.registry)
         ).strip("/") or ("library" if self.registry == "docker.io" else "")
 
-        if (self.repository + name_tag).lower() != self.repository + name_tag:
+        if (self.repository + self.name).lower() != self.repository + self.name:
             msg = "{image} is not a valid image reference."
             raise InvalidImageFormatError(message=msg, image=image)
 
