@@ -13,11 +13,9 @@ runs:
         sudo apt update
         sudo apt install bash -y
       shell: bash
-    - uses: jupyterhub/action-k3s-helm@v1
+    - uses: ./.github/actions/k3s-cluster
       with:
         k3s-channel: ${{ inputs.k8s-version }}
-        traefik-enabled: false
-        metrics-enabled: false
     - name: Adjust Configuration
       run: |
         bash tests/integration/${{ inputs.k8s-version }}/stable.sh
