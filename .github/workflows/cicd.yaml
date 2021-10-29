@@ -263,8 +263,12 @@ jobs:
           yq e '.policy +={"pattern": "docker.io/securesystemsengineering/connaisseur:v*"} | .policy[4].pattern style="double"' -i helm/values.yaml
           yq e '.policy[4].validator = "allow"' -i helm/values.yaml
           yq e '.deployment.replicasCount = "1"' -i helm/values.yaml
-      - name: Run actual integration test
+      - name: Run preconfig integration test
         run: |
           bash tests/integration/preconfig-integration-test.sh
+        shell: bash
+      - name: Run workload objects integration test
+        run: |
+          bash tests/integration/workload-objects-integration-test.sh
         shell: bash
 

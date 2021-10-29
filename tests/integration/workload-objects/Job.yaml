@@ -1,0 +1,13 @@
+---
+# https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
+apiVersion: $APIVERSION
+kind: Job
+metadata:
+  name: job-$TAG
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: job-container
+          image: docker.io/securesystemsengineering/testimage:$TAG
