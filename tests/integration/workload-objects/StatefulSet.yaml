@@ -1,0 +1,33 @@
+---
+# https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+apiVersion: $APIVERSION
+kind: StatefulSet
+metadata:
+  name: statefulset-$TAG
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: statefulset-test
+  serviceName: "statefulset-test"
+  template:
+    metadata:
+      labels:
+        app: statefulset-test
+    spec:
+      terminationGracePeriodSeconds: 1
+      containers:
+        - name: cronjob-container
+          image: docker.io/securesystemsengineering/testimage:$TAG
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+  volumeClaimTemplates:
+    - metadata:
+        name: tmp
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Mi
+        storageClassName: "my-storage-class"
