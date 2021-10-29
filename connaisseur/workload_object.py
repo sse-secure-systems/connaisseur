@@ -11,7 +11,7 @@ SUPPORTED_API_VERSIONS = {
     "DaemonSet": ["apps/v1", "apps/v1beta1", "apps/v1beta2"],
     "StatefulSet": ["apps/v1", "apps/v1beta1", "apps/v1beta2"],
     "Job": ["batch/v1"],
-    "CronJob": ["batch/v1beta1", "batch/v2alpha1"],
+    "CronJob": ["batch/v1", "batch/v1beta1", "batch/v2alpha1"],
 }
 
 
