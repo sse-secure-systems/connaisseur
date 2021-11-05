@@ -40,16 +40,16 @@ class CosignValidator(ValidatorInterface):
     async def validate(
         self, image: Image, trust_root: str = None, **kwargs
     ):  # pylint: disable=arguments-differ
-        pub_key = self.__get_key(trust_root)
-        return self.__get_cosign_validated_digests(str(image), pub_key).pop()
+        key = self.__get_key(trust_root)
+        return self.__get_cosign_validated_digests(str(image), key).pop()
 
-    def __get_cosign_validated_digests(self, image: str, pubkey: str):
+    def __get_cosign_validated_digests(self, image: str, key: str):
         """
-        Gets and processes Cosign validation output for a given `image` and `pubkey`
+        Gets and processes Cosign validation output for a given `image` and `key`
         and either returns a list of valid digests or raises a suitable exception
         in case no valid signature is found or Cosign fails.
         """
-        returncode, stdout, stderr = self.__invoke_cosign(image, pubkey)
+        returncode, stdout, stderr = self.__invoke_cosign(image, key)
         logging.info(
             "COSIGN output for image: %s; RETURNCODE: %s; STDOUT: %s; STDERR: %s",
             image,
@@ -113,33 +113,25 @@ class CosignValidator(ValidatorInterface):
             raise UnexpectedCosignData(message=msg)
         return digests
 
-    def __invoke_cosign(self, image, pubkey):
+    def __invoke_cosign(self, image, key):
         """
-        Invokes the Cosign binary in a subprocess for a specific `image` given a `pubkey` and
+        Invokes the Cosign binary in a subprocess for a specific `image` given a `key` and
         returns the returncode, stdout and stderr. Will raise an exception if Cosign times out.
         """
+
+        pubkey_config, env_vars, pubkey = CosignValidator.__get_pubkey_config(key)
 
         env = os.environ
         # Extend the OS env vars only for passing to the subprocess below
         env["DOCKER_CONFIG"] = f"/app/connaisseur-config/{self.name}/.docker/"
+        env.update(env_vars)
 
-        try:
-            key = load_key(pubkey).to_pem()  # raises if invalid
-        except ValueError as err:
-            if re.match(r"^\w{2,20}\:\/\/[\w:\/-]{3,255}$", pubkey) is None:
-                msg = (
-                    "Public key (or reference in case of KMS) '{key}' does not match "
-                    "expected pattern."
-                )
-                raise InvalidFormatException(message=msg, key=pubkey) from err
-            key = b""
         cmd = [
             "/app/cosign/cosign",
             "verify",
             "--output",
             "text",
-            "--key",
-            "/dev/stdin" if key else pubkey,
+            *pubkey_config,
             image,
         ]
 
@@ -151,7 +143,7 @@ class CosignValidator(ValidatorInterface):
             stderr=subprocess.PIPE,
         ) as process:
             try:
-                stdout, stderr = process.communicate(key, timeout=60)
+                stdout, stderr = process.communicate(pubkey, timeout=60)
             except subprocess.TimeoutExpired as err:
                 process.kill()
                 msg = "Cosign timed out."
@@ -160,6 +152,31 @@ class CosignValidator(ValidatorInterface):
                 ) from err
 
         return process.returncode, stdout.decode("utf-8"), stderr.decode("utf-8")
+
+    @staticmethod
+    def __get_pubkey_config(key: str):
+        """
+        Returns a tuple of the used cosign verification command (flag-value list), a
+        dict of potentially required environment variables and public key in binary
+        pem format to be used as stdin to cosign based on the format of the input
+        key (reference).
+
+        Raises InvalidFormatException if none of the supported patterns is matched.
+        """
+
+        # key is ecdsa public key
+        try:
+            pkey = load_key(key).to_pem()  # raises if invalid
+            return ["--key", "/dev/stdin"], {}, pkey
+        except ValueError:
+            pass
+
+        # key is KMS reference
+        if re.match(r"^\w{2,20}\:\/\/[\w:\/-]{3,255}$", key):
+            return ["--key", key], {}, b""
+
+        msg = "Public key (reference) '{input_str}' does not match expected patterns."
+        raise InvalidFormatException(message=msg, input_str=key)
 
     @property
     def healthy(self):

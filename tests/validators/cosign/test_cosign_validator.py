@@ -323,3 +323,42 @@ def test_invoke_cosign_timeout_expired(
 
     mock_kill.assert_has_calls([mocker.call()])
     assert "Cosign timed out." in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "pubkey, output, exception",
+    [
+        (
+            (
+                "-----BEGIN PUBLIC KEY-----\n"
+                "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbz\n"
+                "NBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n"
+                "-----END PUBLIC KEY-----\n"
+            ),
+            (
+                ["--key", "/dev/stdin"],
+                {},
+                b"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbz\nNBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n-----END PUBLIC KEY-----\n",
+            ),
+            fix.no_exc(),
+        ),
+        (
+            "k8s://connaisseur/test_key",
+            (["--key", "k8s://connaisseur/test_key"], {}, b""),
+            fix.no_exc(),
+        ),
+        (
+            "123step123step",
+            ([], {}, b""),
+            pytest.raises(exc.InvalidFormatException, match=r".*Public key.*"),
+        ),
+    ],
+)
+def test_get_pubkey_config(pubkey, output, exception):
+    with exception:
+        assert (
+            co.CosignValidator(**static_cosigns[0])._CosignValidator__get_pubkey_config(
+                pubkey
+            )
+            == output
+        )
