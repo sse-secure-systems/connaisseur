@@ -260,9 +260,9 @@ def test_invoke_cosign(fake_process, image, process_input, input_type):
     fake_process_calls = [
         "/app/cosign/cosign",
         "verify",
-        "-output",
+        "--output",
         "text",
-        "-key",
+        "--key",
         "/dev/stdin" if input_type == "key" else process_input,
         image,
     ]
@@ -304,9 +304,9 @@ def test_invoke_cosign_timeout_expired(
         [
             "/app/cosign/cosign",
             "verify",
-            "-output",
+            "--output",
             "text",
-            "-key",
+            "--key",
             "/dev/stdin",
             image,
         ],

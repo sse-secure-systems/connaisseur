@@ -82,18 +82,14 @@ class CosignValidator(ValidatorInterface):
                 except json.JSONDecodeError:
                     logging.info("non-json signature data from Cosign: %s", sig)
                     pass
-        elif "error: no matching signatures:\nfailed to verify signature\n" in stderr:
+        elif "Error: no matching signatures:\nfailed to verify signature\n" in stderr:
             msg = "Failed to verify signature of trust data."
             raise ValidationError(
                 message=msg,
                 trust_data_type="dev.cosignproject.cosign/signature",
                 stderr=stderr,
             )
-        elif re.match(
-            r"^error: fetching signatures: getting signature manifest: "
-            r"GET https://[^ ]+ MANIFEST_UNKNOWN:.*",
-            stderr,
-        ):
+        elif "Error: no matching signatures:\n\nmain.go:" in stderr:
             msg = 'No trust data for image "{image}".'
             raise NotFoundException(
                 message=msg,
@@ -140,9 +136,9 @@ class CosignValidator(ValidatorInterface):
         cmd = [
             "/app/cosign/cosign",
             "verify",
-            "-output",
+            "--output",
             "text",
-            "-key",
+            "--key",
             "/dev/stdin" if key else pubkey,
             image,
         ]

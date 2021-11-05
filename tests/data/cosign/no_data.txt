@@ -1,1 +1,3 @@
-error: fetching signatures: getting signature manifest: GET https://index.docker.io/v2/securesystemsengineering/testimage/manifests/sha256-2d2c82da46687f6f390389c28f64ad00a21a077e6ded496e2e37e6a15b42682e.sig: MANIFEST_UNKNOWN: manifest unknown; map[Tag:sha256-2d2c82da46687f6f390389c28f64ad00a21a077e6ded496e2e37e6a15b42682e.sig]
+Error: no matching signatures:
+
+main.go:48: error during command execution: no matching signatures:
