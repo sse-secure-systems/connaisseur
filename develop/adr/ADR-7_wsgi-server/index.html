@@ -552,12 +552,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
       
       
       
@@ -606,12 +608,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
       
       
       
@@ -721,6 +725,197 @@
       <a href="../ADR-6_dynamic-config/" class="md-nav__link">
         ADR 6: Dynamic Configuration
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          ADR 7: WSGI Server
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        ADR 7: WSGI Server
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    Status
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#considered-options" class="md-nav__link">
+    Considered options
+  </a>
+  
+    <nav class="md-nav" aria-label="Considered options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choice-1-wsgi-server" class="md-nav__link">
+    Choice 1: WSGI server
+  </a>
+  
+    <nav class="md-nav" aria-label="Choice 1: WSGI server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-results" class="md-nav__link">
+    Test results
+  </a>
+  
+    <nav class="md-nav" aria-label="Test results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#integration-test" class="md-nav__link">
+    Integration test
+  </a>
+  
+    <nav class="md-nav" aria-label="Integration test">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#before-parallelization" class="md-nav__link">
+    Before parallelization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-simple-parallelization" class="md-nav__link">
+    With simple parallelization
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stress-tests" class="md-nav__link">
+    Stress tests
+  </a>
+  
+    <nav class="md-nav" aria-label="Stress tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#complex-requests" class="md-nav__link">
+    Complex requests
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#less-complex-requests-with-some-load" class="md-nav__link">
+    Less complex requests with some load
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load-test" class="md-nav__link">
+    Load test
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-11-flask" class="md-nav__link">
+    Option 1.1: Flask
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-12-cheroot" class="md-nav__link">
+    Option 1.2: Cheroot
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-12-uwsgi" class="md-nav__link">
+    Option 1.2: uWSGI
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    Decision
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1262,6 +1457,26 @@ connaisseur-deployment-d86fbfcd8-w46dz   298m         67Mi
       
         
 <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../ADR-6_dynamic-config/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ADR 6: Dynamic Configuration" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              ADR 6: Dynamic Configuration
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
