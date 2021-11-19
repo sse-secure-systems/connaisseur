@@ -35,8 +35,7 @@ deployment:
                     - connaisseur
             topologyKey: kubernetes.io/hostname
           weight: 100
-  #annotations:  # uncomment when using Kubernetes prior v1.19
-  #  seccomp.security.alpha.kubernetes.io/pod: runtime/default  # uncomment when using Kubernetes prior v1.19
+  annotations: {}  # use "seccomp.security.alpha.kubernetes.io/pod: runtime/default" to configure seccomp profile for Kubernetes prior v1.19
   securityContext:
     allowPrivilegeEscalation: false
     capabilities:
@@ -45,10 +44,10 @@ deployment:
     privileged: false
     readOnlyRootFilesystem: true
     runAsNonRoot: true
-    runAsUser: 10001  # remove when using openshift or OKD 4
-    runAsGroup: 20001  # remove when using openshift or OKD 4
-    seccompProfile:  # remove when using Kubernetes prior v1.19, openshift or OKD 4
-      type: RuntimeDefault  # remove when using Kubernetes prior v1.19, openshift or OKD 4
+    #runAsUser: 10001  # specify user ID when using in production (not compatible with openshift or OKD4)
+    #runAsGroup: 20001  # specify group ID when using in production (not compatible with openshift or OKD4)
+    #seccompProfile:  # set a seccomp profile (Kubernetes v1.19+)
+      #type: RuntimeDefault  # specify seccomp profile (Kubernetes v1.19+)
   # PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25
   podSecurityPolicy:
     enabled: false
