@@ -1,13 +1,14 @@
 import re
+
 from connaisseur.exceptions import InvalidFormatException
 
 
 class TUFRole:
     """
-    Represents a TUF role ('root', 'snapshot', 'timestamp', 'targets') and
-    makes sure, only a valid `role` can be used.
+    Represent a TUF role ('root', 'snapshot', 'timestamp', 'targets') and
+    make sure only a valid `role` can be used.
 
-    Raises an `InvalidFormatException` should an invalid `role` be given.
+    Raise an `InvalidFormatException` should an invalid `role` be given.
     """
 
     role: str

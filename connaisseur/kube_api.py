@@ -4,7 +4,7 @@ import requests
 
 def request_kube_api(path: str):
     """
-    Makes an API call to the underlying kubernetes cluster with the given
+    Make an API call to the underlying Kubernetes API server with the given
     `path`.
     """
 
@@ -26,7 +26,7 @@ def request_kube_api(path: str):
 
 def __get_token(path: str):
     """
-    Gets the API token from the containers file system.
+    Get the API token from the container's file system.
     """
     with open(path, "r", encoding="utf-8") as file:
         return file.read()

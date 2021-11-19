@@ -2,9 +2,10 @@ import json
 import logging
 import os
 from datetime import datetime
+from typing import Optional
 
 import requests
-from jinja2 import Template, StrictUndefined
+from jinja2 import StrictUndefined, Template
 
 from connaisseur.util import safe_json_open, validate_schema
 from connaisseur.exceptions import (
@@ -43,7 +44,7 @@ class AlertingConfiguration:
                 f"{str(err)}"
             ) from err
 
-    def alerting_required(self, event_category: str):
+    def alerting_required(self, event_category: str) -> bool:
         return bool(self.config.get(event_category))
 
 
@@ -51,14 +52,14 @@ class Alert:
     """
     Class to store image information about an alert as attributes and a sending
     functionality as method.
-    Alert Sending can, depending on the configuration, throw an AlertSendingError
-    causing Connaisseur responding with status code 500 to the request that was sent
+    Alert sending can, depending on the configuration, throw an AlertSendingError
+    causing Connaisseur to respond with status code 500 to the request that was sent
     for admission control, causing a Kubernetes Error event.
     """
 
     template: str
     receiver_url: str
-    payload: dict
+    payload: str
     headers: dict
 
     context: dict
@@ -67,7 +68,10 @@ class Alert:
     __TEMPLATE_PATH = "/app/config/templates"
 
     def __init__(
-        self, alert_message, receiver_config, admission_request: AdmissionRequest
+        self,
+        alert_message: str,
+        receiver_config: dict,
+        admission_request: AdmissionRequest,
     ):
         if admission_request is None:
             images = "Invalid admission request."
@@ -104,7 +108,7 @@ class Alert:
         self.payload = self.__construct_payload(receiver_config)
         self.headers = self.__get_headers(receiver_config)
 
-    def __construct_payload(self, receiver_config):
+    def __construct_payload(self, receiver_config: dict) -> str:
         try:
             template = safe_json_open(
                 self.__TEMPLATE_PATH, f"{self.__TEMPLATE_PATH}/{self.template}.json"
@@ -134,7 +138,8 @@ class Alert:
             )
         return template
 
-    def send_alert(self):
+    def send_alert(self) -> Optional[requests.Response]:
+        response = None
         try:
             response = requests.post(
                 self.receiver_url, data=self.payload, headers=self.headers
@@ -160,7 +165,7 @@ class Alert:
 
 def send_alerts(
     admission_request: AdmissionRequest, admit_event: bool, reason: str = None
-):
+) -> None:
     al_config = AlertingConfiguration()
     event_category = "admit_request" if admit_event else "reject_request"
     if al_config.alerting_required(event_category):

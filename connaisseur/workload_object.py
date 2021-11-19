@@ -1,6 +1,6 @@
 import connaisseur.kube_api as k_api
+from connaisseur.exceptions import ParentNotFoundError, UnknownAPIVersionError
 from connaisseur.image import Image
-from connaisseur.exceptions import UnknownAPIVersionError, ParentNotFoundError
 
 
 SUPPORTED_API_VERSIONS = {

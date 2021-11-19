@@ -1,25 +1,27 @@
 import base64
+import hashlib
 import json
 import re
-import hashlib
 from datetime import datetime
+
 import pytz
 from dateutil import parser
-from connaisseur.util import validate_schema
-from connaisseur.validators.notaryv1.key_store import KeyStore
+
 from connaisseur.crypto import verify_signature
 from connaisseur.exceptions import (
-    ValidationError,
-    NotFoundException,
     InvalidTrustDataFormatError,
     NoSuchClassError,
+    NotFoundException,
+    ValidationError,
 )
+from connaisseur.util import validate_schema
+from connaisseur.validators.notaryv1.key_store import KeyStore
 
 
 class TrustData:
     """
-    Base trust data class, that holds the `data` as two dicts. Depending on
-    the `role` another subclass will be created.
+    Base trust data class. Depending on the `role`
+    another subclass will be created.
     """
 
     kind: str
@@ -57,7 +59,7 @@ class TrustData:
 
     def validate(self, keystore: KeyStore):
         """
-        Validates the trust data's signature, expiry date and hash value, given
+        Validate the trust data's signature, expiry date and hash value, given
         a `keystore` containing keys and hashes.
         """
         self.validate_signature(keystore)
@@ -66,9 +68,9 @@ class TrustData:
 
     def validate_expiry(self):
         """
-        Validates the expiry date of the trust data.
+        Validate the expiry date of the trust data.
 
-        Raises a `ValidationError` should the date be expired.
+        Raise a `ValidationError` should the date be expired.
         """
         expire = parser.parse(self.signed.get("expires"))
         now = datetime.now(pytz.utc)
@@ -79,10 +81,10 @@ class TrustData:
 
     def validate_signature(self, keystore: KeyStore):
         """
-        Validates the signature of the trust data, using keys from a
+        Validate the signature of the trust data, using keys from a
         `keystore`.
 
-        Raises a `ValidationError` should the the signature be faulty.
+        Raise a `ValidationError` should the the signature be faulty.
         """
         msg = json.dumps(self.signed, separators=(",", ":"))
         for signature in self.signatures:
@@ -98,10 +100,10 @@ class TrustData:
 
     def validate_hash(self, keystore: KeyStore):
         """
-        Validates the given hash from a `keystore` corresponds to the trust
+        Validate the given hash from a `keystore` corresponds to the trust
         data's calculated hash.
 
-        Raises a `ValidationError` should the hashes not match.
+        Raise a `ValidationError` should the hashes not match.
         """
         data = {"signed": self.signed, "signatures": self.signatures}
         data_dump = bytearray(json.dumps(data, separators=(",", ":")), "utf-8")
@@ -117,15 +119,11 @@ class TrustData:
             raise ValidationError(message=msg, trust_data_kind=self.kind)
 
     def get_keys(self):
-        """
-        Returns all keys found in the trust data.
-        """
+        """Return all keys found in the trust data."""
         return {}
 
     def get_hashes(self):
-        """
-        Returns all hashes found in the trust data.
-        """
+        """Return all hashes found in the trust data."""
         return {}
 
 
@@ -133,9 +131,6 @@ class RootData(TrustData):  # pylint: disable=abstract-method
     _TrustData__SCHEMA_PATH: str = "connaisseur/res/root_schema.json"
 
     def get_keys(self):
-        """
-        Returns all keys found in the trust data.
-        """
         return self.signed["keys"]
 
 
@@ -143,9 +138,6 @@ class SnapshotData(TrustData):  # pylint: disable=abstract-method
     _TrustData__SCHEMA_PATH: str = "connaisseur/res/snapshot_schema.json"
 
     def get_hashes(self):
-        """
-        Returns all hashes found in the trust data.
-        """
         return self.signed["meta"]
 
 
@@ -156,19 +148,16 @@ class TimestampData(TrustData):  # pylint: disable=abstract-method
         pass
 
     def get_hashes(self):
-        """
-        Returns all hashes found in the trust data.
-        """
         return self.signed["meta"]
 
 
 class TargetsData(TrustData):  # pylint: disable=abstract-method
     _TrustData__SCHEMA_PATH: str = "connaisseur/res/targets_schema.json"
 
-    def has_delegations(self):
+    def has_delegations(self) -> bool:
         """
-        Returns `true` if the trust data provides keys and roles for delegation
-        and has no image targets. `False` otherwise.
+        Return `True` if the trust data provides keys and roles for delegation
+        and has no image targets, `False` otherwise.
         """
         return bool(
             self.signed["delegations"]["keys"] and self.signed["delegations"]["roles"]
@@ -188,9 +177,6 @@ class TargetsData(TrustData):  # pylint: disable=abstract-method
             raise NotFoundException(message=msg, tag=tag) from err
 
     def get_keys(self):
-        """
-        Returns all keys found in the trust data.
-        """
         if self.has_delegations():
             return self.signed["delegations"]["keys"]
         return {}

@@ -2,18 +2,21 @@ import json
 import os
 import re
 import ssl
+from typing import Optional
 from urllib.parse import quote, urlencode
-import requests
+
 import aiohttp
+import requests
+
+from connaisseur.exceptions import (
+    InvalidFormatException,
+    NotFoundException,
+    PathTraversalError,
+    UnknownTypeException,
+)
 from connaisseur.image import Image
 from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
-from connaisseur.exceptions import (
-    NotFoundException,
-    InvalidFormatException,
-    UnknownTypeException,
-    PathTraversalError,
-)
 
 
 class Notary:
@@ -23,7 +26,7 @@ class Notary:
     pub_root_keys: list
     is_acr: bool
     auth: dict
-    cert: str
+    cert: Optional[ssl.SSLContext]
 
     CERT_PATH = "/app/connaisseur/certs/{}.crt"
 
@@ -37,10 +40,6 @@ class Notary:
         cert: str = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
-        """
-        Creates a Notary object from a dictionary.
-        """
-
         self.name = name
         self.host = host
         self.pub_root_keys = trust_roots or []
@@ -50,7 +49,8 @@ class Notary:
         self.auth = {"login" if k == "username" else k: v for k, v in auth.items()}
         self.cert = self.__get_context(cert) if cert else None
 
-    def __get_context(self, cert: str):
+    @staticmethod
+    def __get_context(cert: str):
         try:
             return ssl.create_default_context(cadata=cert)
         except Exception:
@@ -58,13 +58,12 @@ class Notary:
 
     def get_key(self, key_name: str = None):
         """
-        Returns the public root key with name `key_name` in DER format, without any
-        whitespaces. If `key_name` is None, the top most element of the public root key
-        list is returned.
+        Return the public root key with name `key_name` in DER format, without any
+        whitespaces. If `key_name` is None, return the top most element of the
+        public root key list.
 
-        Raises `NotFoundException` if no top most element can be found.
+        Raise `NotFoundException` if no top most element can be found.
         """
-
         key_name = key_name or "default"
         try:
             key = next(
@@ -210,7 +209,7 @@ class Notary:
         Return the JWT from the given `url`, using user and password from
         environment variables.
 
-        Raises an exception if a HTTP error status code occurs.
+        Raise an exception if a HTTP error status code occurs.
         """
         async with aiohttp.ClientSession() as session:
             request_kwargs = {

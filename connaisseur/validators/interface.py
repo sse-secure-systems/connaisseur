@@ -3,16 +3,13 @@ from connaisseur.image import Image
 
 class ValidatorInterface:
     def __init__(self, name: str, **kwargs):  # pylint: disable=unused-argument
-        """
-        Initializes a validator based on the data from the configuration file.
-        """
         self.name = name
 
     async def validate(self, image: Image, **kwargs) -> str:
         """
-        Validates an admission request, using the extra arguments from the image policy.
+        Validate an admission request, using the extra arguments from the image policy.
 
-        Returns a list of trusted digests.
+        Return a list of trusted digests.
         """
         raise NotImplementedError
 

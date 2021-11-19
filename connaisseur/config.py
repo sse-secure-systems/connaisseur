@@ -1,21 +1,21 @@
-import os
 import collections
 import fnmatch
+import os
 import yaml
-from connaisseur.image import Image
-from connaisseur.util import validate_schema
+
 from connaisseur.exceptions import (
-    NotFoundException,
     InvalidConfigurationFormatError,
     NoMatchingPolicyRuleError,
+    NotFoundException,
 )
+from connaisseur.image import Image
+from connaisseur.util import safe_path_func, validate_schema
 from connaisseur.validators.validator import Validator
-from connaisseur.util import safe_path_func
 
 
 class Config:
     """
-    Config Object, that contains all notary configurations inside a list.
+    Config Object that contains all notary configurations.
     """
 
     __PATH = "/app/connaisseur-config/config.yaml"
@@ -27,13 +27,13 @@ class Config:
 
     def __init__(self):
         """
-        Creates a Config object, containing all validator configurations. It does so by
-        reading a config file, doing input validation and then creating Validator objects,
-        storing them in a list.
+        Create a Config object, containing all validator configurations.
+        Read a config file, validate its contents and then create Validator objects,
+        storing them.
 
-        Raises `NotFoundException` if the configuration file is not found.
+        Raise `NotFoundException` if the configuration file is not found.
 
-        Raises `InvalidFormatException` if the configuration file has an invalid format.
+        Raise `InvalidFormatException` if the configuration file has an invalid format.
         """
         with open(self.__PATH, "r", encoding="utf-8") as configfile:
             config_content = yaml.safe_load(configfile)
@@ -89,11 +89,11 @@ class Config:
 
     def get_validator(self, validator_name: str = None):
         """
-        Returns the validator configuration with the given `validator_name`. If
-        `validator_name` is None, the element with `name=default` is taken, or the only
+        Return the validator configuration with the given `validator_name`. If
+        `validator_name` is None, return the element with `name=default`, or the only
         existing element.
 
-        Raises `NotFoundException` if no matching or default element can be found.
+        Raise `NotFoundException` if no matching or default element can be found.
         """
         try:
             return list(
@@ -173,7 +173,7 @@ class Match:
     @staticmethod
     def longest_common_prefix(strings: list):
         """
-        Returns the longest matching prefix among all given `strings`.
+        Return the longest matching prefix among all given `strings`.
         """
         if not strings:
             return ""
@@ -191,7 +191,7 @@ class Match:
 
     def compare(self, match):
         """
-        Compares the match object with another `match`. Returns the more
+        Compare the match object with another `match`. Return the more
         specific one.
         """
         if self.component_count > match.component_count:
