@@ -1,4 +1,6 @@
 import re
+from typing import Optional
+
 from connaisseur.exceptions import InvalidImageFormatError
 
 
@@ -22,13 +24,13 @@ class Image:
     registry: str
     repository: str
     name: str
-    tag: str
-    digest: str
+    tag: Optional[str]
+    digest: Optional[str]
 
     def __init__(self, image: str):
-        seperator = r"[-._:@+]|--"
+        separator = r"[-._:@+]|--"
         alphanum = r"[A-Za-z0-9]+"
-        component = f"{alphanum}(?:(?:{seperator}){alphanum})*"
+        component = f"{alphanum}(?:(?:{separator}){alphanum})*"
         ref = f"^{component}(?:/{component})*$"
 
         # e.g. :v1, :3.7-alpine, @sha256:3e7a89...
@@ -64,14 +66,14 @@ class Image:
 
     def set_digest(self, digest):
         """
-        Sets the digest to the given `digest`.
+        Set the digest to the given `digest`.
         """
         self.digest = digest
         self.tag = None
 
-    def has_digest(self):
+    def has_digest(self) -> bool:
         """
-        Returns `true` if the image has a digest, `false` otherwise.
+        Return `True` if the image has a digest, `False` otherwise.
         """
         return self.digest is not None
 

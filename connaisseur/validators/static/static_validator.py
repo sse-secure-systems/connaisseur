@@ -1,6 +1,6 @@
-from connaisseur.validators.interface import ValidatorInterface
-from connaisseur.image import Image
 from connaisseur.exceptions import ValidationError
+from connaisseur.image import Image
+from connaisseur.validators.interface import ValidatorInterface
 
 
 class StaticValidator(ValidatorInterface):

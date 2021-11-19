@@ -1,17 +1,18 @@
-import base64
 import asyncio
+import base64
 import datetime as dt
 import logging
-from connaisseur.validators.interface import ValidatorInterface
-from connaisseur.image import Image
-from connaisseur.validators.notaryv1.notary import Notary
-from connaisseur.validators.notaryv1.tuf_role import TUFRole
-from connaisseur.validators.notaryv1.key_store import KeyStore
+
 from connaisseur.exceptions import (
-    NotFoundException,
     AmbiguousDigestError,
     InsufficientTrustDataError,
+    NotFoundException,
 )
+from connaisseur.image import Image
+from connaisseur.validators.interface import ValidatorInterface
+from connaisseur.validators.notaryv1.key_store import KeyStore
+from connaisseur.validators.notaryv1.notary import Notary
+from connaisseur.validators.notaryv1.tuf_role import TUFRole
 
 
 class NotaryV1Validator(ValidatorInterface):
@@ -94,15 +95,15 @@ class NotaryV1Validator(ValidatorInterface):
         self, image: Image, req_delegations: list, pub_root_key: str
     ):  # pylint: disable=too-many-branches
         """
-        Processes the whole chain of trust, provided by the notary
+        Process the whole chain of trust, provided by the notary
         server (`notary_config`)
-        for any given `image`. The 'root', 'snapshot', 'timestamp', 'targets' and
-        potentially 'targets/releases' are requested and validated.
-        Additionally, it is checked whether all required delegations are valid.
+        for any given `image`. Request and validate the 'root', 'snapshot',
+        'timestamp', 'targets' and potentially 'targets/releases'.
+        Additionally, check whether all required delegations are valid.
 
-        Returns the signed image targets, which contain the digests.
+        Return the signed image targets, which contain the digests.
 
-        Raises `NotFoundExceptions` should no required delegations be present in
+        Raise `NotFoundExceptions` should no required delegations be present in
         the trust data, or no image targets be found.
         """
         key_store = KeyStore(pub_root_key)
@@ -224,7 +225,7 @@ class NotaryV1Validator(ValidatorInterface):
     @staticmethod
     def __search_image_targets_for_digest(trust_data: dict, image: Image):
         """
-        Searches in the `trust_data` for a signed digest, given an `image` with
+        Search in the `trust_data` for a signed digest, given an `image` with
         digest.
         """
         image_digest = base64.b64encode(bytes.fromhex(image.digest)).decode("utf-8")
@@ -236,7 +237,7 @@ class NotaryV1Validator(ValidatorInterface):
     @staticmethod
     def __search_image_targets_for_tag(trust_data: dict, image: Image):
         """
-        Searches in the `trust_data` for a digest, given an `image` with tag.
+        Search in the `trust_data` for a digest, given an `image` with tag.
         """
         image_tag = image.tag
         if image_tag not in trust_data:

@@ -3,17 +3,18 @@ import logging
 import os
 import re
 import subprocess  # nosec
-from connaisseur.validators.interface import ValidatorInterface
-from connaisseur.image import Image
+
+from connaisseur.crypto import load_key
 from connaisseur.exceptions import (
     CosignError,
     CosignTimeout,
     NotFoundException,
-    ValidationError,
-    UnexpectedCosignData,
     InvalidFormatException,
+    UnexpectedCosignData,
+    ValidationError,
 )
-from connaisseur.crypto import load_key
+from connaisseur.image import Image
+from connaisseur.validators.interface import ValidatorInterface
 
 
 class CosignValidator(ValidatorInterface):
@@ -45,8 +46,8 @@ class CosignValidator(ValidatorInterface):
 
     def __get_cosign_validated_digests(self, image: str, key: str):
         """
-        Gets and processes Cosign validation output for a given `image` and `key`
-        and either returns a list of valid digests or raises a suitable exception
+        Get and process Cosign validation output for a given `image` and `key`
+        and either return a list of valid digests or raise a suitable exception
         in case no valid signature is found or Cosign fails.
         """
         returncode, stdout, stderr = self.__invoke_cosign(image, key)
@@ -115,10 +116,9 @@ class CosignValidator(ValidatorInterface):
 
     def __invoke_cosign(self, image, key):
         """
-        Invokes the Cosign binary in a subprocess for a specific `image` given a `key` and
-        returns the returncode, stdout and stderr. Will raise an exception if Cosign times out.
+        Invoke the Cosign binary in a subprocess for a specific `image` given a `key` and
+        return the returncode, stdout and stderr. Will raise an exception if Cosign times out.
         """
-
         pubkey_config, env_vars, pubkey = CosignValidator.__get_pubkey_config(key)
 
         env = os.environ
@@ -156,23 +156,22 @@ class CosignValidator(ValidatorInterface):
     @staticmethod
     def __get_pubkey_config(key: str):
         """
-        Returns a tuple of the used cosign verification command (flag-value list), a
+        Return a tuple of the used Cosign verification command (flag-value list), a
         dict of potentially required environment variables and public key in binary
-        pem format to be used as stdin to cosign based on the format of the input
+        PEM format to be used as stdin to Cosign based on the format of the input
         key (reference).
 
-        Raises InvalidFormatException if none of the supported patterns is matched.
+        Raise InvalidFormatException if none of the supported patterns is matched.
         """
-
-        # key is ecdsa public key
         try:
+            # key is ecdsa public key
             pkey = load_key(key).to_pem()  # raises if invalid
             return ["--key", "/dev/stdin"], {}, pkey
         except ValueError:
             pass
 
         # key is KMS reference
-        if re.match(r"^\w{2,20}\:\/\/[\w:\/-]{3,255}$", key):
+        if re.match(r"^\w{2,20}://[\w:/-]{3,255}$", key):
             return ["--key", key], {}, b""
 
         msg = "Public key (reference) '{input_str}' does not match expected patterns."

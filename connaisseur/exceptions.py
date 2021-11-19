@@ -1,11 +1,9 @@
-# pylint: disable=dangerous-default-value
 import os
 
 
 class BaseConnaisseurException(Exception):
     """
-    Base exception that can take an error message and context information as a
-    dict.
+    Base exception that can take an error message and context information.
     """
 
     message: str

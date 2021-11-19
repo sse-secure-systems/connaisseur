@@ -1,8 +1,8 @@
+from connaisseur.exceptions import NoSuchClassError
+from connaisseur.validators.cosign.cosign_validator import CosignValidator
 from connaisseur.validators.notaryv1.notaryv1_validator import NotaryV1Validator
 from connaisseur.validators.notaryv2.notaryv2_validator import NotaryV2Validator
-from connaisseur.validators.cosign.cosign_validator import CosignValidator
 from connaisseur.validators.static.static_validator import StaticValidator
-from connaisseur.exceptions import NoSuchClassError
 
 
 class Validator:

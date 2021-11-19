@@ -1,6 +1,6 @@
+from connaisseur.exceptions import InvalidFormatException
 from connaisseur.util import validate_schema
 from connaisseur.workload_object import WorkloadObject
-from connaisseur.exceptions import InvalidFormatException
 
 
 class AdmissionRequest:

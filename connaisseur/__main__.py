@@ -1,5 +1,5 @@
 """
-Main method for connaisseur. It starts the web server.
+Main method for Connaisseur. Start the web server.
 """
 import os
 from logging.config import dictConfig

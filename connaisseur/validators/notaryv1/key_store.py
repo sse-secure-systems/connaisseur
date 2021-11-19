@@ -1,11 +1,11 @@
-from connaisseur.exceptions import NotFoundException, InvalidKeyFormatError
 from connaisseur.crypto import load_key
+from connaisseur.exceptions import InvalidKeyFormatError, NotFoundException
 
 
 class KeyStore:
     """
-    Stores all public keys in `keys` and hashes in `hashes`, collected from
-    trust data. The public root keys is loaded from the container itself.
+    Store all public keys in `keys` and hashes in `hashes`, collected from
+    trust data. Load the public root keys from the container itself.
     """
 
     keys: dict
@@ -30,7 +30,7 @@ class KeyStore:
         """
         Return a public key, given its `key_id`.
 
-        Raises a `NotFoundException` should the `key_id` not exist.
+        Raise a `NotFoundException` should the `key_id` not exist.
         """
         try:
             return self.keys[key_id]
@@ -40,9 +40,9 @@ class KeyStore:
 
     def get_hash(self, role: str):
         """
-        Returns the hash of the given `role`'s trust data.
+        Return the hash of the given `role`'s trust data.
 
-        Raises a `NotFoundException` if the `role` is not found.
+        Raise a `NotFoundException` if the `role` is not found.
         """
         try:
             return self.hashes[role]
@@ -52,10 +52,9 @@ class KeyStore:
 
     def update(self, trust_data):
         """
-        Updates the `KeyStore` with all keys and hashes found in the given
+        Update the `KeyStore` with all keys and hashes found in the given
         `trust_data.`
         """
-
         keys = dict(trust_data.get_keys())
 
         # the root.json stores the public keys for all other JSONs in DER format, except

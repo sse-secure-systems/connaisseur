@@ -1,9 +1,12 @@
-import os
 import base64
-import re
 import json
+import os
+import re
+from typing import Optional
+
 import yaml
-from jsonschema import validate, ValidationError, FormatChecker
+from jsonschema import FormatChecker, validate, ValidationError
+
 from connaisseur.exceptions import PathTraversalError
 
 
@@ -27,8 +30,8 @@ def safe_yaml_open(base_dir: str, path: str):
 def get_admission_review(
     uid: str,
     allowed: bool,
-    patch: list = None,
-    msg: str = None,
+    patch: Optional[list] = None,
+    msg: Optional[str] = None,
     detection_mode: bool = False,
 ):
     """
@@ -117,7 +120,7 @@ def validate_schema(data: dict, schema_path: str, kind: str, exception):
 
 def get_kube_version():
     """
-    Returns the kubernetes version.
+    Return the kubernetes version.
 
      Return
     ----------

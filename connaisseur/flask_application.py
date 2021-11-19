@@ -1,27 +1,28 @@
 import asyncio
+import logging
 import os
 import traceback
-import logging
-from flask import Flask, request, jsonify
+
+from flask import Flask, jsonify, request
+
+from connaisseur.admission_request import AdmissionRequest
+from connaisseur.alert import send_alerts
+from connaisseur.config import Config
 from connaisseur.exceptions import (
-    BaseConnaisseurException,
     AlertSendingError,
+    BaseConnaisseurException,
     ConfigurationError,
 )
 from connaisseur.util import get_admission_review
-from connaisseur.alert import send_alerts
-from connaisseur.config import Config
-from connaisseur.admission_request import AdmissionRequest
 
-
-DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
 
 APP = Flask(__name__)
-CONFIG = Config()
 """
-Flask Server that admits the request send to the k8s cluster, validates it and
+Flask application that admits the request send to the k8s cluster, validates it and
 sends its response back.
 """
+CONFIG = Config()
+DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
 
 
 @APP.errorhandler(AlertSendingError)
@@ -42,8 +43,8 @@ def handle_alert_config_error(err):
 @APP.route("/mutate", methods=["POST"])
 def mutate():
     """
-    Handles the '/mutate' path and accepts CREATE and UPDATE requests.
-    Sends its response back, which either denies or allows the request.
+    Handle the '/mutate' path and accept CREATE and UPDATE requests.
+    Send a response back, which either denies or allows the request.
     """
     admission_request = None
     try:
@@ -77,8 +78,8 @@ def mutate():
 @APP.route("/health", methods=["GET", "POST"])
 def healthz():
     """
-    Handles the '/health' endpoint and checks the health status of the flask
-    server. Sends back '200'.
+    Handle the '/health' endpoint and check the health status of the web server.
+    Send back '200' status code.
     """
 
     return "", 200
@@ -96,7 +97,6 @@ def __create_logging_msg(msg: str, **kwargs):
 
 async def __admit(admission_request: AdmissionRequest):
     logging_context = dict(admission_request.context)
-    patches = []
 
     patches = asyncio.gather(
         *[
