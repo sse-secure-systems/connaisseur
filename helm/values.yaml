@@ -149,6 +149,12 @@ automaticChildApproval:
 
 # debug: true
 
+
+# The "logLevel" configuration option adds a partial redundancy to the `debug` setting.
+# Removing the `debug` setting is a breaking change though - we are going to remove the `debug` setting in the context of a larger refactoring to avoid multiple breaking releases.
+# Option to configure the log level. Either one of `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Defaults to `INFO`
+logLevel: INFO
+
 # alerting is implemented in form of simple POST requests with json payload
 # you can use and/or adapt the predefined Slack/OpsGenie/Keybase templates and the examples below
 # to channel alert notifications to Slack/OpsGenie/Keybase or create a custom template for a customized alert
