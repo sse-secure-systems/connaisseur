@@ -14,5 +14,6 @@ Fixes #
 - [ ] PR follows [Contributing Guide](../docs/CONTRIBUTING.md)
 - [ ] Added tests (if necessary)
 - [ ] Extended README/Documentation (if necessary)
+- [ ] Adjusted `helm/values.schema.json` according to new changes if `helm/values.yaml` has been touched
 - [ ] Adjusted versions of image and Helm chart in `values.yaml` and `Chart.yaml` (if necessary)
 

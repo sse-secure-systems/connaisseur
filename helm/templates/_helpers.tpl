@@ -184,3 +184,71 @@ Extract Kubernetes Minor Version.
   readOnly: true
 {{- end -}}
 {{- end -}}
+{{- define "checkForAlertTemplates" -}}
+  {{ $files := .Files }}
+  {{- if .Values.alerting }}
+    {{- if .Values.alerting.admit_request }}
+      {{- if .Values.alerting.admit_request.templates }}
+        {{- range .Values.alerting.admit_request.templates }}
+          {{- $filename := .template -}}
+          {{- $file := printf "alert_payload_templates/%s.json" $filename | $files.Get }}
+          {{- if $file }}
+          {{- else }}
+            {{- fail (printf "The value of the alert template must be chosen such that <template>.json matches one of the file names in the ./alert_payload_templates directory, but there is no %s.json file in that directory or the file is empty." $filename) }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.alerting.reject_request }}
+      {{- if .Values.alerting.reject_request.templates }}
+        {{- range .Values.alerting.reject_request.templates }}
+          {{- $filename := .template -}}
+          {{- $file := printf "alert_payload_templates/%s.json" $filename | $files.Get }}
+          {{- if $file }}
+          {{- else }}
+            {{- fail (printf "The value of the alert template must be chosen such that <template>.json matches one of the file names in the ./alert_payload_templates directory, but there is no %s.json file in that directory or the file is empty." $filename) }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end -}}
+
+{{- define "validatePolicy" -}}
+  {{- $validatornames := list }}
+  {{ range .Values.validators }}
+    {{- $validator := deepCopy . }}
+    {{ $validatornames = append $validatornames $validator.name }}
+  {{- end }}
+  {{- range .Values.policy }}
+    {{- $policy := deepCopy . -}}
+    {{- if $policy.validator }}
+      {{- if has $policy.validator $validatornames }}
+      {{- else }}
+        {{- fail (printf "Validator %s has not been defined and cannot be used in a policy." $policy.validator)}}
+      {{- end }}
+      {{- $validtrustroots := list }}
+      {{ range $.Values.validators }}
+        {{- $validator := deepCopy .}}
+        {{- if eq $validator.name $policy.validator}}
+          {{range $validator.trust_roots }}
+            {{ $trustroot := deepCopy .}}
+            {{- $validtrustroots = append $validtrustroots $trustroot.name }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- if $policy.with }}
+        {{- if has $policy.with.trust_root $validtrustroots }}
+        {{- else if eq $policy.with.trust_root "default" }}
+        {{- else }}
+          {{- fail (printf "Validator %s has no %s trust root defined." $policy.validator $policy.with.trust_root)}}
+        {{- end }}
+      {{- end}}
+    {{- else }}
+      {{- if has "default" $validatornames }}
+      {{- else }}
+        {{- fail (printf "Policy for images matching '%s' has no explicit validator defined such that the validator named 'default' is going to be used, but there is no validator named 'default' defined." $policy.pattern)}}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
