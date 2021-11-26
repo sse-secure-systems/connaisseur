@@ -206,6 +206,7 @@ jobs:
             "load",
             "regular",
             "cosign",
+            "multi-cosigned",
             "namespace-val",
             "deployment",
             "pre-config",

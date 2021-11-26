@@ -235,6 +235,11 @@ cosign_int_test() {
   multi_test "cosign"
 }
 
+### MULTI-COSIGNed TEST ####################################
+multi-cosigned_int_test() {
+  multi_test "multi-cosigned"
+}
+
 ### NAMESPACE VALIDATION TEST ####################################
 namespace_val_int_test() {
   echo -n "Creating namespaces..."
@@ -271,6 +276,11 @@ case $1 in
   update_via_env_vars
   make_install
   cosign_int_test
+  ;;
+"multi-cosigned")
+  update_via_env_vars
+  make_install
+  multi-cosigned_int_test
   ;;
 "namespace-val")
   update_via_env_vars

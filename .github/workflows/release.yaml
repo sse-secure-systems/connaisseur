@@ -27,7 +27,14 @@ jobs:
     needs: [version-match]
     strategy:
       matrix:
-        integration-test-arg: ["regular", "cosign", "deployment", "pre-config"]
+        integration-test-arg:
+          [
+            "regular",
+            "cosign",
+            "multi-cosigned",
+            "deployment",
+            "pre-config",
+          ]
     services:
       alerting-endpoint:
         image: securesystemsengineering/alerting-endpoint

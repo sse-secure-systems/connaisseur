@@ -25,5 +25,17 @@ jobs:
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:co-unsigned
       - name: Check Cosign test image signed with alternative key
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:co-signed-alt
+      - name: Check Cosign multisigner test image signed by alice
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:multi-cosigned-alice
+      - name: Check Cosign multisigner test image signed by bob
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:multi-cosigned-bob
+      - name: Check Cosign multisigner test image signed by charlie
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:multi-cosigned-charlie
+      - name: Check Cosign multisigner test image signed by bob and charlie
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:multi-cosigned-bob-charlie
+      - name: Check Cosign multisigner test image signed by charlie and alice
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:multi-cosigned-charlie-alice
+      - name: Check Cosign multisigner test image signed by alice, bob and charlie
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie
       - name: Check alerting endpoint image
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/alerting-endpoint

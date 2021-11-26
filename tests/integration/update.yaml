@@ -36,6 +36,27 @@ validators:
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
       qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
       -----END PUBLIC KEY-----
+- name: multicosigner
+  type: cosign
+  trust_roots:
+  - name: alice
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ
+      wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==
+      -----END PUBLIC KEY-----
+  - name: bob
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o
+      EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==
+      -----END PUBLIC KEY-----
+  - name: charlie
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4
+      ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==
+      -----END PUBLIC KEY-----
 policy:
 - pattern: "*:*"
   validator: dockerhub-basics
@@ -47,6 +68,20 @@ policy:
   validator: allow
 - pattern: docker.io/securesystemsengineering/testimage:co-*
   validator: cosign
+- pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-alice*"
+  validator: multicosigner
+  with:
+    trust_root: "*"
+- pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-bob*"
+  validator: multicosigner
+  with:
+    trust_root: "*"
+    threshold: 2
+- pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-charlie*"
+  validator: multicosigner
+  with:
+    trust_root: "*"
+    required: ["alice", "charlie"]
 - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
   validator: dockerhub-basics
   with:
