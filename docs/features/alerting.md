@@ -19,7 +19,7 @@ Currently, Connaisseur supports alerting on either admittance of images, denial 
 | Key                                                |  Accepted values                                      | Default           | Required           | Description                                                                                        |
 | -------------------------------------------------- | ----------------------------------------------------  | ----------------- | ------------------ | -------------------------------------------------------------------------------------------------- |
 | `alerting.cluster_identifier`                      | string                                                | `"not specified"` |                    | Cluster identifier used in alert payload to distinguish between alerts from different clusters.     |
-| `alerting.<category>.template`                     | `opsgenie`, `slack`, `keybase` or custom<sup>*</sup>  | -                 | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.           |
+| `alerting.<category>.template`                     | `opsgenie`, `slack`, `keybase`, `ecs-1-12-0` or custom<sup>*</sup>  | -                 | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.           |
 | `alerting.<category>.receiver_url`                 | string                                                | -                 | :heavy_check_mark: | URL of alert-receiving endpoint.                                                                    |
 | `alerting.<category>.priority`                     | int                                                   | `3`               |                    | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).            |
 | `alerting.<category>.custom_headers`               | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
@@ -32,9 +32,10 @@ _Notes_:
 
 - The value for `template` needs to match an existing file of the pattern
 `helm/alert_payload_templates/<template>.json`; so if you want to use a predefined
-one it needs to be one of `slack`, `keybase` or `opsgenie`.
+one it needs to be one of `slack`, `keybase`, `opsgenie` or `ecs-1-12-0`.
 - For Opsgenie you need to configure an additional
   `["Authorization: GenieKey <Your-Genie-Key>"]` header.
+- For [Elastic Common Schema 1.12.0](https://www.elastic.co/guide/en/ecs/1.12/index.html) output, the `receiver_url` has to be an HTTP/S log ingester, such as [Fluentd HTTP input](https://docs.fluentd.org/input/http) or [Logstash HTTP input](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-http.html). Also `custom_headers` needs to be set to `["Content-Type: application/json"]` for Fluentd HTTP endpoints.
 - `fail_if_alert_sending_fails` only comes into play for requests that Connaisseur would have admitted as other requests would have been denied in the first place. The setting can come handy if you want to run Connaisseur in detection mode but still make sure that you get notified about what is going on in your cluster. **However, this setting will significantly impact cluster interaction for everyone (i.e. block any cluster change associated to an image) if the alert sending fails permanently, e.g. accidental deletion of your Slack Webhook App, GenieKey expired...**
 
 
