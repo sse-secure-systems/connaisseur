@@ -27,7 +27,7 @@ spec:
       serviceAccountName: {{ .Chart.Name }}-serviceaccount
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.deployment.image }}"
+          image: "{{ .Values.deployment.image.repository  }}:{{ default .Chart.AppVersion .Values.deployment.image.tag  }}"
           imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
           livenessProbe:
             httpGet:

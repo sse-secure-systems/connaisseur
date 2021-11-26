@@ -16,7 +16,7 @@ jobs:
       - name: Save images
         run: |
           mkdir images
-          docker save $(yq e '.deployment.image' helm/values.yaml) -o images/${GITHUB_SHA}_image.tar
+          docker save $(yq e '.deployment.image.repository' helm/values.yaml):$(yq e '.appVersion' helm/Chart.yaml) -o images/${GITHUB_SHA}_image.tar
       - uses: actions/upload-artifact@v2
         with:
           name: images

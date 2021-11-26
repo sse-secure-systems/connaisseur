@@ -1,7 +1,9 @@
 # configure Connaisseur deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v2.2.2
+  image:
+    repository: securesystemsengineering/connaisseur  # Connaisseur image reposiory
+    tag: ""  # use to override the Connaisseur image default tag from chart appVersion
   imagePullPolicy: IfNotPresent
   failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
   resources:

@@ -13,7 +13,7 @@ jobs:
         run: sudo snap install yq
       - name: Ensure version equality
         run: |
-          IMAGE_TAG=$(yq e '.deployment.image' helm/values.yaml| cut -d ':' -f2)
+          IMAGE_TAG=$(yq e '.appVersion' helm/Chart.yaml)
           for COMMIT_TAG in $(git tag --points-at $(git rev-parse HEAD)); do
             if [[ "$IMAGE_TAG" == "$COMMIT_TAG" ]]; then
               exit 0
