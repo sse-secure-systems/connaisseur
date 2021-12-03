@@ -62,6 +62,7 @@ spec:
               subPath: config-secrets.yaml
               readOnly: true
             {{ include "external-secrets-mount" . | nindent 12}}
+            {{ include "cosignCertVolMount" . | nindent 12 }}
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-env
@@ -105,3 +106,4 @@ spec:
           secret:
             secretName: {{ .Chart.Name }}-config-secrets
         {{ include "external-secrets-vol" . | nindent 8}}
+        {{ include "cosignCertVol" . | nindent 8 }}

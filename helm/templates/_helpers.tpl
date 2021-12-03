@@ -6,6 +6,7 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -23,6 +24,7 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
 
 {{/*
 Create chart name and version as used by the chart label.
@@ -60,10 +62,14 @@ Extract Kubernetes Minor Version.
         {{- end -}}
     {{- else if eq $validator.type "notaryv2" -}}
     {{- else if eq $validator.type "cosign" -}}
+        {{- if $validator.cert -}}
+            {{- $_ := set $secret_dict $validator.name (dict "cert" $validator.cert) -}}
+        {{- end -}}
     {{- end -}}
 {{- end -}}
 {{ $secret_dict | toYaml | trim }}
 {{- end -}}
+
 
 {{- define "external-secrets-vol" -}}
 {{- $external_secret := dict -}}
@@ -119,12 +125,14 @@ Extract Kubernetes Minor Version.
 {{- end -}}
 {{- end -}}
 
+
 {{- define "getInstalledTLSCert" -}}
 {{- $data := (lookup "v1" "Secret" "connaisseur" (printf "%s-tls" .Chart.Name)).data -}}
 {{- if $data -}}
     {{ get $data "tls.crt" }}
 {{- end -}}
 {{- end -}}
+
 
 {{- define "getInstalledTLSKey" -}}
 {{- $data := (lookup "v1" "Secret" "connaisseur" (printf "%s-tls" .Chart.Name)).data -}}
@@ -133,9 +141,46 @@ Extract Kubernetes Minor Version.
 {{- end -}}
 {{- end -}}
 
+
 {{- define "getConfigFiles" -}}
 {{ include (print $.Template.BasePath "/config.yaml") . }}
 {{ include (print $.Template.BasePath "/config-secrets.yaml") . }}
 {{ include (print $.Template.BasePath "/env.yaml") . }}
 {{ include (print $.Template.BasePath "/alertconfig.yaml") . }}
+{{- end -}}
+
+
+{{- define "hasCosignCerts" -}}  
+{{- range .Values.validators     -}}
+    {{- if and (eq .type "cosign") (hasKey . "cert") -}}
+        1
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- define "getCosignCerts" -}}
+{{- range .Values.validators     -}}
+    {{- if and (eq .type "cosign") (hasKey . "cert") }}
+    {{ .name }}.crt: {{ .cert | b64enc -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- define  "cosignCertVol" -}}
+{{- if (include "hasCosignCerts" .) -}}
+- name: {{ .Chart.Name }}-cosign-certs
+  secret:
+    secretName: {{ .Chart.Name }}-cosign-certs
+{{- end -}}
+{{- end -}}
+
+
+{{- define  "cosignCertVolMount" -}}
+{{- if (include "hasCosignCerts" .) -}}
+- name: {{ .Chart.Name }}-cosign-certs
+  mountPath: /app/certs/cosign
+  readOnly: true
+{{- end -}}
 {{- end -}}

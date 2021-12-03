@@ -14,6 +14,7 @@ data:
         {{- $_ := unset $validator "auth" -}}
       {{- else if eq $validator.type "notaryv2" -}}
       {{- else if eq $validator.type "cosign" -}}
+        {{- $_ := unset $validator "cert" -}}
       {{- end }}
     - {{- $validator | toYaml | trim | nindent 6 -}}
     {{- end }}
