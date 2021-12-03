@@ -130,6 +130,10 @@
                                     },
                                     "minItems": 1,
                                     "uniqueItems": true
+                                },
+                                "cert": {
+                                    "type": "string",
+                                    "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\/\\s])*={0,4})\n(?:-+END\\sCERTIFICATE[-]+)"
                                 }
                             },
                             "required": [

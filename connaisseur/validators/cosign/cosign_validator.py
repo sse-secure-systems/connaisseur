@@ -14,6 +14,7 @@ from connaisseur.exceptions import (
     ValidationError,
 )
 from connaisseur.image import Image
+from connaisseur.util import safe_path_func  # nosec
 from connaisseur.validators.interface import ValidatorInterface
 
 
@@ -121,9 +122,13 @@ class CosignValidator(ValidatorInterface):
         """
         pubkey_config, env_vars, pubkey = CosignValidator.__get_pubkey_config(key)
 
-        env = os.environ
+        env = os.environ.copy()
         # Extend the OS env vars only for passing to the subprocess below
         env["DOCKER_CONFIG"] = f"/app/connaisseur-config/{self.name}/.docker/"
+        if safe_path_func(
+            os.path.exists, "/app/certs/cosign", f"/app/certs/cosign/{self.name}.crt"
+        ):
+            env["SSL_CERT_FILE"] = f"/app/certs/cosign/{self.name}.crt"
         env.update(env_vars)
 
         cmd = [

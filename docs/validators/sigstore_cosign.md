@@ -96,6 +96,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `host` | | | Not yet implemented. |
 | `auth.` | | | Authentication credentials for private registries. |
 | `auth.secret_name` | | | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#authentication). |
+| `cert` | | | A certificate in PEM format for private registries. |
 
 ### Example
 
