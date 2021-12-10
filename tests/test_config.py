@@ -36,6 +36,8 @@ static_config = {
         {"name": "deny", "type": static},
         {"name": "cosign-example", "type": cosign},
         {"name": "ext", "type": nv1},
+        {"name": "localhost", "type": nv1},
+        {"name": "localhost_port", "type": nv1},
     ],
     "policy": [
         {"pattern": "*:*", "with": {"delegations": ["phbelitz", "chamsen"]}},
@@ -105,6 +107,13 @@ match_image_digest = (
             "err5",
             pytest.raises(
                 exc.InvalidConfigurationFormatError, match=r".*invalid format.*"
+            ),
+        ),
+        (
+            "err6",
+            pytest.raises(
+                exc.InvalidConfigurationFormatError,
+                match=r".*Connaisseur configuration.*",
             ),
         ),
     ],

@@ -1,0 +1,7 @@
+validators:
+- name: wrong_host
+  type: notaryv1
+  host: 猫
+  trust_roots: []
+policy:
+- pattern: "*:*"

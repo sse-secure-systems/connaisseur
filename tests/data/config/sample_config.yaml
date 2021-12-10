@@ -71,6 +71,14 @@ validators:
         MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
         QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
         -----END PUBLIC KEY-----
+- name: localhost
+  type: notaryv1
+  host: localhost
+  trust_roots: []
+- name: localhost_port
+  type: notaryv1
+  host: localhost:4443
+  trust_roots: []
 policy:
 - pattern: "*:*"
   with:
