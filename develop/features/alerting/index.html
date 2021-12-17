@@ -974,7 +974,7 @@ alerts at the same time.</p>
 </tr>
 <tr>
 <td><code>alerting.&lt;category&gt;.template</code></td>
-<td><code>opsgenie</code>, <code>slack</code>, <code>keybase</code> or custom<sup>*</sup></td>
+<td><code>opsgenie</code>, <code>slack</code>, <code>keybase</code>, <code>ecs-1-12-0</code> or custom<sup>*</sup></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>File in <code>helm/alert_payload_templates/</code> to be used as alert payload template.</td>
@@ -1021,9 +1021,10 @@ alerts at the same time.</p>
 <ul>
 <li>The value for <code>template</code> needs to match an existing file of the pattern
 <code>helm/alert_payload_templates/&lt;template&gt;.json</code>; so if you want to use a predefined
-one it needs to be one of <code>slack</code>, <code>keybase</code> or <code>opsgenie</code>.</li>
+one it needs to be one of <code>slack</code>, <code>keybase</code>, <code>opsgenie</code> or <code>ecs-1-12-0</code>.</li>
 <li>For Opsgenie you need to configure an additional
   <code>["Authorization: GenieKey &lt;Your-Genie-Key&gt;"]</code> header.</li>
+<li>For <a href="https://www.elastic.co/guide/en/ecs/1.12/index.html">Elastic Common Schema 1.12.0</a> output, the <code>receiver_url</code> has to be an HTTP/S log ingester, such as <a href="https://docs.fluentd.org/input/http">Fluentd HTTP input</a> or <a href="https://www.elastic.co/guide/en/logstash/current/plugins-inputs-http.html">Logstash HTTP input</a>. Also <code>custom_headers</code> needs to be set to <code>["Content-Type: application/json"]</code> for Fluentd HTTP endpoints.</li>
 <li><code>fail_if_alert_sending_fails</code> only comes into play for requests that Connaisseur would have admitted as other requests would have been denied in the first place. The setting can come handy if you want to run Connaisseur in detection mode but still make sure that you get notified about what is going on in your cluster. <strong>However, this setting will significantly impact cluster interaction for everyone (i.e. block any cluster change associated to an image) if the alert sending fails permanently, e.g. accidental deletion of your Slack Webhook App, GenieKey expired...</strong></li>
 </ul>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
