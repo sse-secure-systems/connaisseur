@@ -2,8 +2,34 @@ apiVersion: v1
 entries:
   connaisseur:
   - apiVersion: v2
+    appVersion: 2.3.0
+    created: "2021-12-17T14:25:53.247612037Z"
+    description: Helm chart for Connaisseur - a Kubernetes admission controller to
+      integrate container image signature verification and trust pinning into a cluster.
+    digest: 3fe6474b7c384c99ac5420932dc980c6d20f7887ce5903168162ddecaba5c7dd
+    home: https://sse-secure-systems.github.io/connaisseur/latest
+    icon: https://raw.githubusercontent.com/sse-secure-systems/connaisseur/master/docs/assets/logo.svg
+    keywords:
+    - container image
+    - signature
+    - verification
+    maintainers:
+    - email: philipp.belitz@securesystems.de
+      name: Philipp Belitz
+    - email: christoph.hamsen@securesystems.de
+      name: Christoph Hamsen
+    - email: peter.thomassen@securesystems.de
+      name: Peter Thomassen
+    name: connaisseur
+    sources:
+    - https://github.com/sse-secure-systems/connaisseur
+    type: application
+    urls:
+    - https://sse-secure-systems.github.io/connaisseur/charts/connaisseur-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
     appVersion: 2.2.1
-    created: "2021-11-23T13:44:36.142568846Z"
+    created: "2021-12-17T14:25:53.246531817Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 9571292a2478241008fa3e22e95bc65b36bc1313d623a3537ce496c72edd4fa3
@@ -29,7 +55,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2021-11-23T13:44:36.140865178Z"
+    created: "2021-12-17T14:25:53.244351776Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 1e3f943e5569957d2c60d99f770c206cfe6297dd1f04c248f500c8156a9b2d23
@@ -53,4 +79,4 @@ entries:
     urls:
     - https://sse-secure-systems.github.io/connaisseur/charts/connaisseur-1.0.0.tgz
     version: 1.0.0
-generated: "2021-11-23T13:44:36.138455183Z"
+generated: "2021-12-17T14:25:53.242740246Z"
