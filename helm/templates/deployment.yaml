@@ -25,6 +25,10 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ .Chart.Name }}-serviceaccount
+    {{- with .Values.deployment.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.deployment.image }}"

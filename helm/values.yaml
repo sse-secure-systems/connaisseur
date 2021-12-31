@@ -3,6 +3,10 @@ deployment:
   replicasCount: 3
   image: securesystemsengineering/connaisseur:v2.3.0
   imagePullPolicy: IfNotPresent
+  # imagePullSecrets contains an optional list of Kubernetes Secrets, in connaisseur namespace,
+  # that are needed to access the registry containing connaisseur image.
+  # imagePullSecrets:
+  # - name: "my-container-secret"
   failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
   resources:
     limits:
