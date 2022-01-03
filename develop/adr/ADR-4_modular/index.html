@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-4_modular/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.2">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.4">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.f7951f6f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bb3983ee.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -1312,19 +1312,19 @@
 <h5 id="111-structure">1.1.1 Structure<a class="headerlink" href="#111-structure" title="Permanent link">⚓︎</a></h5>
 <h5 id="option-1111">Option 1.1.1.1<a class="headerlink" href="#option-1111" title="Permanent link">⚓︎</a></h5>
 <p>The previous <code>notaries</code> section in the <em>values.yaml</em> changes to <code>validators</code>, in which different validation methods (validators) can be defined. The least required fields a validator needs are a <code>name</code> for later referencing and a <code>type</code> for knowing its correct kind.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;dockerhub-nv2&quot;</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;notaryv2&quot;</span>
-  <span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;harbor-nv1&quot;</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;notaryv1&quot;</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="s">&quot;notary.harbor.io&quot;</span>
-  <span class="nt">root_keys</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-      <span class="nt">key</span><span class="p">:</span> <span class="s">&quot;...&quot;</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;cosign&quot;</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;cosign&quot;</span>
-  <span class="l l-Scalar l-Scalar-Plain">...</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dockerhub-nv2&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;notaryv2&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;harbor-nv1&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;notaryv1&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;notary.harbor.io&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">root_keys</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cosign&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cosign&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"></span>
 </code></pre></div>
 <p>Depending on the type, additional fields might be required, e.g. the notaryv1 type requires a <code>host</code> and <code>root_keys</code> field.</p>
 <p>NB: JSON schema validation works for the above and can easily handle various configurations based on type in there.</p>
@@ -1352,16 +1352,16 @@
 <p>For the image policy similar changes to the notary configuration have to be made.</p>
 <h5 id="proposition">Proposition<a class="headerlink" href="#proposition" title="Permanent link">⚓︎</a></h5>
 <p>The previous <code>notary</code> field in the image policy will be changed to <code>validator</code>, referencing a <code>name</code> field of one item in the validators list. Any additional fields, e.g. required delegation roles for a notaryv1 validator will be given in a <code>with</code> field. This will look similar to this:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.harbor.io/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="s">&quot;harbor-nv1&quot;</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">delegations</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">lou</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">max</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="s">&quot;dockerhub-nv2&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.harbor.io/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;harbor-nv1&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">delegations</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lou</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">max</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dockerhub-nv2&quot;</span><span class="w"></span>
 </code></pre></div>
 <h5 id="option-1211">Option 1.2.1.1<a class="headerlink" href="#option-1211" title="Permanent link">⚓︎</a></h5>
 <p>Besides the self configured validator, two additional validators will be available: <em>allow</em> and <em>deny</em>. The allow validator will allow any image and the deny validator will deny anything.</p>
@@ -1389,14 +1389,14 @@
 <p>Disadvantage: A bit obscure for users</p>
 <h4 id="option-1232">Option 1.2.3.2<a class="headerlink" href="#option-1232" title="Permanent link">⚓︎</a></h4>
 <p>The <em>allow</em> and <em>deny</em> validator will be added to the default configuration as <code>type: static</code> with an extra argument (name up for discussion) that specifies whether everything should be denied or allowed. E.g.:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"></span>
 </code></pre></div>
 <p>Advantages: No obscurity, if user don't need these they can delete them.</p>
 <p>Disadvantage: Bigger config file ...?</p>
@@ -1547,10 +1547,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.0bbba5b5.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.361d90f1.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.649a939e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.289a2a4b.min.js"></script>
       
     
   </body>

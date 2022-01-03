@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/basics/">
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.2">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.4">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.f7951f6f.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.bb3983ee.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
@@ -1503,29 +1503,29 @@ The special case of static validators used to simply allow or deny images withou
 </table>
 <p><em>Further configuration fields specific to the validator type are described in the <a href="../validators/">respective section</a>.</em></p>
 <h4 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
-      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-  <span class="nt">auth</span><span class="p">:</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">superuser</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">lookatmeimjumping</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosign</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIFXO1w6oj0oI2Fk9SiaNJRKTiO9d</span>
-      <span class="no">ksm6hFczQAq+FDdw0istEdCwcHO61O/0bV+LC8jqFoomA28cT+py6FcSYw==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span><span class="w"></span>
+<span class="w">      </span><span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">  </span><span class="nt">auth</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">superuser</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lookatmeimjumping</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIFXO1w6oj0oI2Fk9SiaNJRKTiO9d</span><span class="w"></span>
+<span class="w">      </span><span class="no">ksm6hFczQAq+FDdw0istEdCwcHO61O/0bV+LC8jqFoomA28cT+py6FcSYw==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
 </code></pre></div>
 <h4 id="static-validators">Static validators<a class="headerlink" href="#static-validators" title="Permanent link">⚓︎</a></h4>
 <p>Static validators are a special type of validator that does not validate any signatures.
@@ -1563,13 +1563,13 @@ This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.
 </tbody>
 </table>
 <h5 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">⚓︎</a></h5>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
 </code></pre></div>
 <h3 id="image-policy">Image policy<a class="headerlink" href="#image-policy" title="Permanent link">⚓︎</a></h3>
 <p>The image policy is defined in the <code>policy</code> field and acts as a list of rule objects to determine which image should be validated by which validator (and potentially some further configurations).</p>
@@ -1596,29 +1596,29 @@ The reference to validator and exact trust root is resolved in the following way
 </ol>
 <p>Let's review the pattern and validator matching at a minimal example.
 We consider the following validator and policy configuration (most fields have been omitted for clarity):</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>     <span class="c1"># validator 1</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>   <span class="c1"># key 1</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">...</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span> <span class="c1"># validator 2</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>   <span class="c1"># key 2</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">...</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>     <span class="c1"># key 3</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">...</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w">     </span><span class="c1"># validator 1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w">   </span><span class="c1"># key 1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">...</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"> </span><span class="c1"># validator 2</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w">   </span><span class="c1"># key 2</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">...</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span><span class="w">     </span><span class="c1"># key 3</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">...</span><span class="w"></span>
 
-<span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>                      <span class="c1"># rule 1</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>     <span class="c1"># rule 2</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/myimg:*&quot;</span> <span class="c1"># rule 3</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+<span class="nt">policy</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w">                      </span><span class="c1"># rule 1</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/*:*&quot;</span><span class="w">     </span><span class="c1"># rule 2</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/myimg:*&quot;</span><span class="w"> </span><span class="c1"># rule 3</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span><span class="w"></span>
 </code></pre></div>
 <p>Now deploying the following images we would get the matchings:</p>
 <ul>
@@ -1671,204 +1671,204 @@ There is two rules that should remain intact in some form in order to not brick 
 </tbody>
 </table>
 <h4 id="example_2">Example<a class="headerlink" href="#example_2" title="Permanent link">⚓︎</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/deniedimage:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/allowedimage:v*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/deniedimage:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/allowedimage:v*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
 </code></pre></div>
 <h3 id="common-examples">Common examples<a class="headerlink" href="#common-examples" title="Permanent link">⚓︎</a></h3>
 <p>Let's look at some useful examples for the <code>validators</code> and <code>policy</code> configuration.
 These can serve as a first template beyond the pre-configuration or might just be instructive to understand validators and policies.</p>
 <p>We assume your repository is <code>docker.io/myrepo</code> and a public key has been created.
 In case this repository is private, authentication would have to be added to the respective validator for example via:</p>
-<div class="highlight"><pre><span></span><code>  <span class="nt">auth</span><span class="p">:</span>
-    <span class="nt">secret_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">k8ssecret</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">auth</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">secret_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8ssecret</span><span class="w"></span>
 </code></pre></div>
 <p>The Kubernetes secret would have to be created separately according to the validator documentation.</p>
 <h4 id="case-only-validate-own-images-and-deny-all-others">Case: Only validate own images and deny all others<a class="headerlink" href="#case-only-validate-own-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>This is likely the most common case in simple settings by which only self-built images are used and validated against your own public key:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>  <span class="c1"># or e.g. &#39;cosign&#39;</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>  <span class="c1"># only required in case of notaryv1</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># your public key below</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
-      <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
-      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or e.g. &#39;cosign&#39;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w">  </span><span class="c1"># only required in case of notaryv1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># your public key below</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span><span class="w"></span>
+<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span><span class="w"></span>
+<span class="w">      </span><span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
 
-<span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+<span class="nt">policy</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span><span class="w"></span>
 </code></pre></div>
 <h4 id="case-only-validate-own-images-and-deny-all-others-faster">Case: Only validate own images and deny all others (faster)<a class="headerlink" href="#case-only-validate-own-images-and-deny-all-others-faster" title="Permanent link">⚓︎</a></h4>
 <p>This configuration achieves the same as the one above, but is faster as trust data only needs to be requested for images in your repository:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>  <span class="c1"># or e.g. &#39;cosign&#39;</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>  <span class="c1"># only required in case of notaryv1</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># your public key below</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
-      <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
-      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or e.g. &#39;cosign&#39;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w">  </span><span class="c1"># only required in case of notaryv1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># your public key below</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span><span class="w"></span>
+<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span><span class="w"></span>
+<span class="w">      </span><span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
 
-<span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+<span class="nt">policy</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/*:*&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span><span class="w"></span>
 </code></pre></div>
 <p>The <code>*:*</code> rule could also have been omitted as Connaisseur denies unmatched images.
 However, explicit is better than implicit.</p>
 <h4 id="case-only-validate-docker-hub-official-images-and-deny-all-others">Case: Only validate Docker Hub official images and deny all others<a class="headerlink" href="#case-only-validate-docker-hub-official-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>In case only validated Docker Hub official images should be admitted to the cluster:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f</span>
-      <span class="no">QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
-      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_official</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f</span><span class="w"></span>
+<span class="w">      </span><span class="no">QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span><span class="w"></span>
+<span class="w">      </span><span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
 
-<span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/library/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+<span class="nt">policy</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/library/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_official</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span><span class="w"></span>
 </code></pre></div>
 <h4 id="case-only-validate-docker-hub-official-images-and-allow-all-others">Case: Only validate Docker Hub official images and allow all others<a class="headerlink" href="#case-only-validate-docker-hub-official-images-and-allow-all-others" title="Permanent link">⚓︎</a></h4>
 <p>In case only Docker Hub official images should be validated while all others are simply admitted:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f</span>
-      <span class="no">QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span>
-      <span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_official</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f</span><span class="w"></span>
+<span class="w">      </span><span class="no">QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe</span><span class="w"></span>
+<span class="w">      </span><span class="no">d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
 
-<span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/library/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">docker_official</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
-  <span class="nt">with</span><span class="p">:</span>
-    <span class="nt">trust_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
+<span class="nt">policy</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/library/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_official</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span><span class="w"></span>
 </code></pre></div>
 <h4 id="case-directly-admit-own-images-and-deny-all-others">Case: Directly admit own images and deny all others<a class="headerlink" href="#case-directly-admit-own-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>As a matter of fact, Connaisseur can also be used to restrict the allowed registries and repositories without signature validation:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">static</span>
-  <span class="nt">approve</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span><span class="w"></span>
+<span class="w">  </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
 
-<span class="nt">policy</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">deny</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
-<span class="p p-Indicator">-</span> <span class="nt">pattern</span><span class="p">:</span> <span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
-  <span class="nt">validator</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="nt">policy</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
 </code></pre></div>
 <div class="footnote">
 <hr />
@@ -2013,10 +2013,10 @@ However, explicit is better than implicit.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.0bbba5b5.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.361d90f1.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.649a939e.min.js"></script>
+      <script src="../assets/javascripts/bundle.289a2a4b.min.js"></script>
       
     
   </body>

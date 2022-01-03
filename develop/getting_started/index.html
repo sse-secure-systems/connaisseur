@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/getting_started/">
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.2">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.4">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.f7951f6f.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.bb3983ee.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
@@ -1020,53 +1020,53 @@ To do so, go to the <code>.validators</code> and find the <code>default</code> v
 We need to uncomment the trust root with name <code>default</code> and add our previously created public key.
 The result should look similar to this:</p>
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Docker Content Trust</label><div class="tabbed-content">
-<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notaryv1</span>  <span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
-  <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span> <span class="c1"># configure the notary server to be used</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="c1"># the `default` key is used if no key is specified in image policy</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># enter your key below</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5</span>
-      <span class="no">YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-  <span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span>
-  <span class="c1">#  -----BEGIN CERTIFICATE-----</span>
-  <span class="c1">#  ...</span>
-  <span class="c1">#  -----END CERTIFICATE-----</span>
-  <span class="c1">#auth:  # credentials in case the trust data requires authentication</span>
-  <span class="c1">#  # either (preferred solution)</span>
-  <span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span>
-  <span class="c1">#  # or (only for notaryv1 validator)</span>
-  <span class="c1">#  username: myuser</span>
-  <span class="c1">#  password: mypass</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span><span class="w"></span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"> </span><span class="c1"># configure the notary server to be used</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># the `default` key is used if no key is specified in image policy</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># enter your key below</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5</span><span class="w"></span>
+<span class="w">      </span><span class="no">YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  -----BEGIN CERTIFICATE-----</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  ...</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  -----END CERTIFICATE-----</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#auth:  # credentials in case the trust data requires authentication</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  # either (preferred solution)</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  # or (only for notaryv1 validator)</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  username: myuser</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  password: mypass</span><span class="w"></span>
 </code></pre></div>
 </div>
 <input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Cosign</label><div class="tabbed-content">
 <p><em>In addition for Cosign, the <code>type</code> needs to be set to <code>cosign</code> and the <code>host</code> is not required.</em></p>
-<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cosign</span>  <span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
-  <span class="nt">trust_roots</span><span class="p">:</span>
-  <span class="c1"># the `default` key is used if no key is specified in image policy</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="p p-Indicator">|</span>  <span class="c1"># enter your key below</span>
-      <span class="no">-----BEGIN PUBLIC KEY-----</span>
-      <span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
-      <span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
-      <span class="no">-----END PUBLIC KEY-----</span>
-  <span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span>
-  <span class="c1">#  -----BEGIN CERTIFICATE-----</span>
-  <span class="c1">#  ...</span>
-  <span class="c1">#  -----END CERTIFICATE-----</span>
-  <span class="c1">#auth:  # credentials in case the trust data requires authentication</span>
-  <span class="c1">#  # either (preferred solution)</span>
-  <span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span>
-  <span class="c1">#  # or (only for notaryv1 validator)</span>
-  <span class="c1">#  username: myuser</span>
-  <span class="c1">#  password: mypass</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># the `default` key is used if no key is specified in image policy</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># enter your key below</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span><span class="w"></span>
+<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  -----BEGIN CERTIFICATE-----</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  ...</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  -----END CERTIFICATE-----</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#auth:  # credentials in case the trust data requires authentication</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  # either (preferred solution)</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  # or (only for notaryv1 validator)</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  username: myuser</span><span class="w"></span>
+<span class="w">  </span><span class="c1">#  password: mypass</span><span class="w"></span>
 </code></pre></div>
 </div>
 </div>
@@ -1284,10 +1284,10 @@ The trust data will then be pushed to the Docker Hub Notary server.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.0bbba5b5.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.361d90f1.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.649a939e.min.js"></script>
+      <script src="../assets/javascripts/bundle.289a2a4b.min.js"></script>
       
     
   </body>
