@@ -1,5 +1,5 @@
 aiohttp~=3.8.1
-cheroot~=8.5.2
+cheroot~=8.6.0
 ecdsa~=0.17
 Flask~=2.0.2
 Jinja2~=3.0.3
