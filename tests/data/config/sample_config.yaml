@@ -19,7 +19,7 @@ validators:
 - name: harbor
   type: notaryv1
   host: notary.harbor.domain
-  selfsigned_cert: |
+  cert: |
     -----BEGIN CERTIFICATE-----
     MIIDEzCCAfugAwIBAgIQEHy1Je1mbrt0RaLDjDajszANBgkqhkiG9w0BAQsFADAU
     MRIwEAYDVQQDEwloYXJib3ItY2EwHhcNMjEwMTI2MTQyNTE5WhcNMjIwMTI2MTQy

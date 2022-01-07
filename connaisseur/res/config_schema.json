@@ -71,17 +71,32 @@
                                 },
                                 "auth": {
                                     "type": "object",
-                                    "properties": {
-                                        "username": {
-                                            "type": "string"
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "password": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "username",
+                                                "password"
+                                            ]
                                         },
-                                        "password": {
-                                            "type": "string"
+                                        {
+                                            "properties": {
+                                                "secret_name": {
+                                                    "type": "string",
+                                                    "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"
+                                                }
+                                            },
+                                            "required": [
+                                                "secret_name"
+                                            ]
                                         }
-                                    },
-                                    "required": [
-                                        "username",
-                                        "password"
                                     ]
                                 }
                             },
@@ -131,9 +146,25 @@
                                     "minItems": 1,
                                     "uniqueItems": true
                                 },
+                                "auth": {
+                                    "type": "object",
+                                    "properties": {
+                                        "secret_name": {
+                                            "type": "string",
+                                            "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"
+                                        }
+                                    },
+                                    "required": [
+                                        "secret_name"
+                                    ]
+                                },
                                 "cert": {
                                     "type": "string",
                                     "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\/\\s])*={0,4})\n(?:-+END\\sCERTIFICATE[-]+)"
+                                },
+                                "host": {
+                                    "type": "string",
+                                    "pattern": "(([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6})|(localhost))(\\:\\d{2,5})?"
                                 }
                             },
                             "required": [
