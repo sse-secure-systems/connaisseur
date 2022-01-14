@@ -202,7 +202,8 @@ jobs:
       matrix:
         integration-test-arg:
           [
-            "stress-test",
+            "complexity",
+            "load",
             "regular",
             "cosign",
             "namespace-val",
@@ -241,10 +242,7 @@ jobs:
       - name: Configure Connaisseur
         run: |
           case ${{ matrix.integration-test-arg }} in
-          "pre-config")
-            yq e '.deployment.imagePullPolicy = "Never"' -i helm/values.yaml
-            ;;
-          "stress-test")
+          "pre-config" | "pre-and-workload" | "complexity" | "load")
             yq e '.deployment.imagePullPolicy = "Never"' -i helm/values.yaml
             ;;
           *)

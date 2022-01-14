@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
 # This script is expected to be called from the root folder of Connaisseur
@@ -30,6 +31,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
   else
     echo -e "${SUCCESS}"
   fi
+  rm output.log
 
   if [[ $7 != "null" ]]; then
     DEPLOYMENT_RES[$7]=$((${DEPLOYMENT_RES[$7]} + 1))
@@ -74,9 +76,8 @@ workload_test() { # WORKLOAD_KIND
   single_test "w_${KIND}_${APIVERSION}_${TAG}" "Testing ${KIND} using ${APIVERSION} and ${TAG} image..." "workload" "${KIND}" "deafult" " created" "null"
 }
 
-### STRESS TEST ####################################
-stress_test() { #
-  NUMBER_OF_INSTANCES=100
+### COMPLEXITY TEST ####################################
+complexity_test() { #
   echo -n 'Testing Connaisseur with complex requests...'
   kubectl apply -f tests/integration/deployments/stresstest.yaml >output.log 2>&1 || true
   if [[ ! ("$(cat output.log)" =~ 'deployment.apps/redis-with-many-instances created' && "$(cat output.log)" =~ 'pod/pod-with-many-containers created' && "$(cat output.log)" =~ 'pod/pod-with-many-containers-and-init-containers created' && "$(cat output.log)" =~ 'pod/pod-with-some-containers-and-init-containers created' && "$(cat output.log)" =~ 'pod/pod-with-coinciding-containers-and-init-containers created') ]]; then
@@ -88,11 +89,12 @@ stress_test() { #
   else
     echo -e "${SUCCESS}"
   fi
+  rm output.log
+}
 
-  echo -n 'Cleaning up before second test...'
-  kubectl delete all -ltest=stresstest >/dev/null
-  echo -e "${SUCCESS}"
-
+### LOAD TEST ####################################
+load_test() { #
+  NUMBER_OF_INSTANCES=100
   echo -n 'Testing Connaisseur with many requests...'
   parallel --jobs 20 ./tests/integration/cause_load.sh {1} :::: <(seq ${NUMBER_OF_INSTANCES}) >output.log 2>&1 || true
   NUMBER_CREATED=$(cat output.log | grep "deployment[.]apps/redis-[0-9]* created" | wc -l || echo "0")
@@ -106,6 +108,7 @@ stress_test() { #
   else
     echo -e "${SUCCESS}"
   fi
+  rm output.log
 }
 
 ### INSTALLING CONNAISSEUR ####################################
@@ -215,6 +218,7 @@ regular_int_test() {
   else
     echo -e "${SUCCESS}"
   fi
+  rm diff.log
 }
 
 ### COSIGN TEST ####################################
@@ -279,9 +283,13 @@ case $1 in
     workload_test "${wo}"
   done
   ;;
-"stress-test")
+"complexity")
   make_install
-  stress_test
+  complexity_test
+  ;;
+"load")
+  make_install
+  load_test
   ;;
 "all")
   make_install
@@ -300,17 +308,30 @@ case $1 in
   for wo in "${WOLIST[@]}"; do
     workload_test "${wo}"
   done
-  stress_test
+  complexity_test
+  echo -n 'Cleaning up before second stress test...'
+  kubectl delete all -ltest=stress-test >/dev/null
+  echo -e "${SUCCESS}"
+  load_test
   make_uninstall
   ;;
 *)
-  EXIT="1"
+  echo "Invalid test case. Exiting..."
+  exit 1
   ;;
 esac
 
-if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
-  exit $(($EXIT))
+if [[ "${EXIT}" != "0" ]]; then
+  echo -e "${FAILED} Failed integration test."
+else
+  echo -e "${SUCCESS} Passed integration test."
 fi
 
-make_uninstall || true
-kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets -luse="integration-test"
+if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
+  exit $((${EXIT}))
+fi
+
+echo 'Cleaning up installation and test resources...'
+make uninstall >/dev/null 2>&1 || true
+kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets -luse="integration-test" -A >/dev/null
+echo 'Finished cleanup.'
