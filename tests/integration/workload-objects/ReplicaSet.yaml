@@ -4,7 +4,7 @@ kind: ReplicaSet
 metadata:
   name: replicaset-$TAG
   labels:
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   replicas: 2
   selector:

@@ -4,7 +4,7 @@ kind: DaemonSet
 metadata:
   name: daemonset-$TAG
   labels:
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   selector:
     matchLabels:

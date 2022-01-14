@@ -15,7 +15,7 @@ WOLIST=("CronJob" "DaemonSet" "Deployment" "Job" "Pod" "ReplicaSet" "Replication
 single_test() { # ID TXT TYP REF NS MSG RES
   echo -n "[$1] $2"
   if [[ "$3" == "deploy" ]]; then
-    kubectl run pod-$1 --image="$4" --namespace="$5" -luse="integration-test" >output.log 2>&1 || true
+    kubectl run pod-$1 --image="$4" --namespace="$5" -luse="connaisseur-integration-test" >output.log 2>&1 || true
   elif [[ "$3" == "workload" ]]; then
     envsubst <tests/integration/workload-objects/$4.yaml | kubectl apply -f - >output.log 2>&1 || true
   else
@@ -323,5 +323,5 @@ fi
 
 echo 'Cleaning up installation and test resources...'
 make uninstall >/dev/null 2>&1 || true
-kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets -luse="integration-test" -A >/dev/null
+kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets -luse="connaisseur-integration-test" -A >/dev/null
 echo 'Finished cleanup.'

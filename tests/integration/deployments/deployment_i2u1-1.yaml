@@ -4,7 +4,7 @@ metadata:
   name: i2u1-1-deployment
   labels:
     app: i2u1-1
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   replicas: 3
   selector:

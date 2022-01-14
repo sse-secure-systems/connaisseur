@@ -4,7 +4,7 @@ kind: CronJob
 metadata:
   name: cronjob-$TAG
   labels:
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   schedule: "*/1 * * * *"
   jobTemplate:

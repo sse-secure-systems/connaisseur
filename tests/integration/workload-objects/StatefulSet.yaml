@@ -4,7 +4,7 @@ kind: StatefulSet
 metadata:
   name: statefulset-$TAG
   labels:
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   replicas: 3
   selector:

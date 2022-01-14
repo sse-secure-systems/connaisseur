@@ -4,7 +4,7 @@ metadata:
   name: i2-uinit-deployment
   labels:
     app: i2-uinit
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   replicas: 3
   selector:

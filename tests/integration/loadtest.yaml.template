@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: redis-${index}
   labels:
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   selector:
     matchLabels:
-      use: integration-test
+      use: connaisseur-integration-test
   replicas: 1
   template:
     metadata:
       labels:
-        use: integration-test
+        use: connaisseur-integration-test
     spec:
       containers:
       - name: redis

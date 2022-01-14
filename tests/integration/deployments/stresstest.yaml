@@ -3,19 +3,16 @@ kind: Deployment
 metadata:
   name: redis-with-many-instances
   labels:
-    test: stress-test
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   selector:
     matchLabels:
       app: redis
-      test: stress-test
   replicas: 1000
   template:
     metadata:
       labels:
         app: redis
-        test: stress-test
     spec:
       containers:
         - name: redis
@@ -26,8 +23,7 @@ kind: Pod
 metadata:
   name: pod-with-many-containers
   labels:
-    test: stress-test
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   containers:
     - name: container1
@@ -51,8 +47,7 @@ kind: Pod
 metadata:
   name: pod-with-many-containers-and-init-containers
   labels:
-    test: stress-test
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   containers:
     - name: container1
@@ -83,8 +78,7 @@ kind: Pod
 metadata:
   name: pod-with-some-containers-and-init-containers
   labels:
-    test: stress-test
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   containers:
     - name: container1
@@ -109,8 +103,7 @@ kind: Pod
 metadata:
   name: pod-with-coinciding-containers-and-init-containers
   labels:
-    test: stress-test
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   containers:
     - name: container1

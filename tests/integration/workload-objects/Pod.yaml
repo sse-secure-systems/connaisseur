@@ -4,7 +4,7 @@ kind: Pod
 metadata:
   name: pod-$TAG
   labels:
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   containers:
     - name: pod-container

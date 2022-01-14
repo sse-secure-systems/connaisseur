@@ -4,7 +4,7 @@ metadata:
   name: i2i-deployment
   labels:
     app: i2i
-    use: integration-test
+    use: connaisseur-integration-test
 spec:
   replicas: 3
   selector:
