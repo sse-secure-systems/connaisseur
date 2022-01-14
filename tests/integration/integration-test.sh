@@ -176,6 +176,12 @@ update_values() { # [EXPRESSION...]
   done
 }
 
+update_via_env_vars() {
+  envsubst < tests/integration/update.yaml > update
+  yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
+  rm update
+}
+
 debug_vaules() {
   echo "::group::values.yaml"
   cat helm/values.yaml
@@ -253,30 +259,36 @@ pre_config_int_test() {
 
 case $1 in
 "regular")
+  update_via_env_vars
   make_install
   regular_int_test
   make_uninstall
   ;;
 "cosign")
+  update_via_env_vars
   make_install
   cosign_int_test
   ;;
 "namespace-val")
+  update_via_env_vars
   update_values '.namespacedValidation.enabled=true'
   make_install
   namespace_val_int_test
   ;;
 "deployment")
+  update_via_env_vars
   update_values '.policy += {"pattern": "docker.io/library/*:*", "validator": "dockerhub-basics", "with": {"trust_root": "docker-official"}}'
   make_install
   deployment_int_test
   ;;
 "pre-config")
+  update_values '.deployment.imagePullPolicy="Never"'
   helm_install
   pre_config_int_test
   helm_uninstall
   ;;
 "pre-and-workload")
+  update_values '.deployment.imagePullPolicy="Never"'
   make_install
   pre_config_int_test
   for wo in "${WOLIST[@]}"; do
@@ -284,10 +296,12 @@ case $1 in
   done
   ;;
 "complexity")
+  update_values '.deployment.imagePullPolicy="Never"'
   make_install
   complexity_test
   ;;
 "load")
+  update_values '.deployment.imagePullPolicy="Never"'
   make_install
   load_test
   ;;

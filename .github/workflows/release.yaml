@@ -52,12 +52,10 @@ jobs:
           SEARCH_PATH=.[0].NetworkSettings.Networks.${CONTAINER_NETWORK}.IPAddress
           ALERTING_ENDPOINT_IP=$(docker container inspect ${CONTAINER_ID} | jq -r ${SEARCH_PATH})
           echo ALERTING_ENDPOINT_IP=${ALERTING_ENDPOINT_IP} >> $GITHUB_ENV
-      - name: Configure Connaisseur
+      - name: Configure Connaisseur and show configuration
         run: |
           if [[ ! (${{ matrix.integration-test-arg }} == 'pre-config') ]]; then
-            yq eval -i 'del(.deployment)' tests/integration/update.yaml
-            envsubst < tests/integration/update.yaml > update
-            yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
+            yq eval -i '.deployment.imagePullPolicy="IfNotPresent"' helm/values.yaml
           fi
           echo "::group::values.yaml"
           yq e '.' helm/values.yaml
