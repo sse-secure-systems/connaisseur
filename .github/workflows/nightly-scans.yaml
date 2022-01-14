@@ -1,14 +1,19 @@
 name: nightly-scans
 
 on:
+  pull_request:
+    branches:
+      - develop
   schedule:
     - cron: '30 1 * * *'
 
 jobs:
-  build:
+  build-master:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: master
       - name: Install yq
         run: sudo snap install yq
       - name: Build images
@@ -19,7 +24,27 @@ jobs:
           docker save $(yq e '.deployment.image' helm/values.yaml) -o images/${GITHUB_SHA}_image.tar
       - uses: actions/upload-artifact@v2
         with:
-          name: images
+          name: master-images
+          path: images
+          retention-days: 1
+
+  build-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: develop
+      - name: Install yq
+        run: sudo snap install yq
+      - name: Build images
+        run: make docker
+      - name: Save images
+        run: |
+          mkdir images
+          docker save $(yq e '.deployment.image' helm/values.yaml) -o images/${GITHUB_SHA}_image.tar
+      - uses: actions/upload-artifact@v2
+        with:
+          name: dev-images
           path: images
           retention-days: 1
 
@@ -43,12 +68,12 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker:stable
-    needs: [build]
+    needs: [build-master]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-          name: images
+          name: master-images
       - uses: ./.github/actions/trivy
       - name: Print reports
         if: ${{ success() || failure() }}
@@ -72,3 +97,41 @@ jobs:
           docker run --rm get-root-key -i securesystemsengineering/testimage > output
           cat output | grep "KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508"
           cat output | grep "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe"
+  
+  stress-test:
+    runs-on: ubuntu-latest
+    needs: [build-dev]
+    strategy:
+      fail-fast: false
+      matrix:
+        integration-test-arg:
+          [
+            "stress-test"
+          ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: actions/download-artifact@v2
+        with:
+          name: dev-images
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: v1.22
+      - name: Load Image
+        run: |
+          sudo k3s ctr images import ${GITHUB_SHA}_image.tar
+        shell: bash
+      - name: Configure Connaisseur
+        run: |
+          yq e '.deployment.imagePullPolicy = "Never"' -i helm/values.yaml
+          echo "::group::values.yaml"
+          yq e '.' helm/values.yaml
+          echo "::endgroup::"
+        shell: bash
+      - name: Run actual integration test
+        run: |
+          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+        shell: bash

@@ -202,7 +202,6 @@ jobs:
       matrix:
         integration-test-arg:
           [
-            "stress-test",
             "regular",
             "cosign",
             "namespace-val",
