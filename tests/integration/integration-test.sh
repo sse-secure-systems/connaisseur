@@ -291,30 +291,6 @@ case $1 in
   make_install
   load_test
   ;;
-"all")
-  make_install
-  regular_int_test
-  cosign_int_test
-  update_values '.namespacedValidation.enabled=true'
-  make_upgrade
-  namespace_val_int_test
-  update_values '.namespacedValidation.enabled=false' '.policy += {"pattern": "docker.io/library/*:*", "validator": "dockerhub-basics", "with": {"trust_root": "docker-official"}}'
-  make_upgrade
-  deployment_int_test
-  git checkout HEAD -- helm/values.yaml # reset values.yaml
-  update_values '.deployment.imagePullPolicy = "Never"'
-  make_upgrade
-  pre_config_int_test
-  for wo in "${WOLIST[@]}"; do
-    workload_test "${wo}"
-  done
-  complexity_test
-  echo -n 'Cleaning up before second stress test...'
-  kubectl delete all -ltest=stress-test >/dev/null
-  echo -e "${SUCCESS}"
-  load_test
-  make_uninstall
-  ;;
 *)
   echo "Invalid test case. Exiting..."
   exit 1
