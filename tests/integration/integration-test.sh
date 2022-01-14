@@ -236,9 +236,9 @@ cosign_int_test() {
 namespace_val_int_test() {
   echo -n "Creating namespaces..."
   kubectl create namespace ignoredns >/dev/null
-  kubectl label ns ignoredns securesystemsengineering.connaisseur/webhook=ignore >/dev/null
+  kubectl label ns ignoredns securesystemsengineering.connaisseur/webhook=ignore use=connaisseur-integration-test >/dev/null
   kubectl create namespace validatedns >/dev/null
-  kubectl label ns validatedns securesystemsengineering.connaisseur/webhook=validate >/dev/null
+  kubectl label ns validatedns securesystemsengineering.connaisseur/webhook=validate use=connaisseur-integration-test >/dev/null
   echo -e "${SUCCESS}"
 
   multi_test "ignore-namespace-val"
@@ -323,5 +323,5 @@ fi
 
 echo 'Cleaning up installation and test resources...'
 make uninstall >/dev/null 2>&1 || true
-kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets -luse="connaisseur-integration-test" -A >/dev/null
+kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets,namespaces -luse="connaisseur-integration-test" -A >/dev/null
 echo 'Finished cleanup.'
