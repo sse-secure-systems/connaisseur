@@ -1,5 +1,5 @@
 -r requirements.txt
-aioresponses~=0.7.2
+aioresponses~=0.7.3
 parsedatetime~=2.6
 pylint~=2.12.2
 pytest-asyncio~=0.16.0
