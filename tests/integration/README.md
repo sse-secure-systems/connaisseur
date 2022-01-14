@@ -35,7 +35,7 @@ export ALERTING_ENDPOINT_IP=$(docker container inspect alerting-endpoint | jq -r
 
 ### Actual test
 
-From the git repository folder run the `tests/integration/integration-test.sh` script.
+From the git repository folder run the `tests/integration/integration-test.sh` script with the name of the test you want to run, for example `regular`, `cosign`, `load` or `all` (see [the test script for all possible values](integration-test.sh)).
 
 To cleanup the mocked alerting interface container don't forget running
 
@@ -62,9 +62,14 @@ docker network connect ${KIND_NETWORK} alerting-endpoint
 export ALERTING_ENDPOINT_IP=$(docker container inspect alerting-endpoint | jq -r --arg kind_network ${KIND_NETWORK} '.[].NetworkSettings.Networks[$kind_network].IPAddress')
 ```
 
-From the git repository folder run the `connaisseur/tests/integration/integration-test.sh` script.
+From the git repository folder run the `tests/integration/integration-test.sh` script with the name of the test you want to run, for example `regular`, `cosign` or `load` (see [the test script for all possible values](integration-test.sh)).
 
 Obviously, we don't want to leave unused resources running, so stop and remove the alerting interface docker container as in the minikube case :-)
+
+```shell
+docker stop alerting-endpoint
+docker rm alerting-endpoint
+```
 
 ## Note
 
