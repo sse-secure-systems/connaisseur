@@ -67,6 +67,9 @@ spec:
               readOnly: true
             {{ include "external-secrets-mount" . | nindent 12}}
             {{ include "cosignCertVolMount" . | nindent 12 }}
+            {{- if .Values.deployment.extraVolumeMounts }}
+            {{ tpl (toYaml .Values.deployment.extraVolumeMounts) . | nindent 12}}
+            {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-env
@@ -81,6 +84,9 @@ spec:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
           securityContext:
             {{- toYaml .Values.deployment.securityContext | nindent 12 }}
+        {{- if .Values.deployment.extraContainers }}
+        {{ tpl (toYaml .Values.deployment.extraContainers) . | nindent 8}}
+        {{- end }}
       {{- with .Values.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -111,3 +117,6 @@ spec:
             secretName: {{ .Chart.Name }}-config-secrets
         {{ include "external-secrets-vol" . | nindent 8}}
         {{ include "cosignCertVol" . | nindent 8 }}
+        {{- if .Values.deployment.extraVolumes }}
+        {{ tpl (toYaml .Values.deployment.extraVolumes) . | nindent 8}}
+        {{- end }}

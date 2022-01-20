@@ -48,6 +48,10 @@ deployment:
     enabled: false
     name: ["connaisseur-psp"]  # list of PSPs to use, "connaisseur-psp" is the project-provided default
   envs: {} # dict of additional environment variables, which will be stored as a secret and injected into the Connaisseur pods
+  # Extra config
+  extraContainers: []
+  extraVolumes: []
+  extraVolumeMounts: []
 
 # configure Connaisseur service
 service:
