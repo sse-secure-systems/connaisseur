@@ -68,7 +68,7 @@ def mutate():
     try:
         logging.debug(request.json)
         admission_request = AdmissionRequest(request.json)
-        response = asyncio.run(__admit(admission_request))
+        response, is_pure_child = asyncio.run(__admit(admission_request))
     except Exception as err:
         if isinstance(err, BaseConnaisseurException):
             err_log = str(err)
@@ -87,8 +87,8 @@ def mutate():
                 detection_mode=DETECTION_MODE,
             )
         )
-
-    send_alerts(admission_request, True)
+    if not is_pure_child:
+        send_alerts(admission_request, True)
     return jsonify(response)
 
 
@@ -140,12 +140,15 @@ async def __admit(admission_request: AdmissionRequest):
     except BaseConnaisseurException as err:
         err.update_context(**logging_context)
         raise err
+    is_pure_child=False
+    if patches.result() and all([patch=="parent already admitted" for patch in patches.result() if patch]):
+        is_pure_child=True
 
     return get_admission_review(
         admission_request.uid,
         True,
-        patch=[patch for patch in patches.result() if patch],
-    )
+        patch=[patch for patch in patches.result() if patch and patch != "parent already admitted"],
+    ), is_pure_child
 
 
 async def __validate_image(type_index, image, admission_request):
@@ -166,7 +169,7 @@ async def __validate_image(type_index, image, admission_request):
     ):
         msg = f'automatic child approval for "{original_image}".'
         logging.info(__create_logging_msg(msg, **logging_context))
-        return
+        return "parent already admitted"
 
     try:
         policy_rule = CONFIG.get_policy_rule(image)
