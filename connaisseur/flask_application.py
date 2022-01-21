@@ -68,7 +68,7 @@ def mutate():
     try:
         logging.debug(request.json)
         admission_request = AdmissionRequest(request.json)
-        response, is_pure_child = asyncio.run(__admit(admission_request))
+        response, is_child = asyncio.run(__admit(admission_request))
     except Exception as err:
         if isinstance(err, BaseConnaisseurException):
             err_log = str(err)
@@ -87,8 +87,7 @@ def mutate():
                 detection_mode=DETECTION_MODE,
             )
         )
-    if not is_pure_child:
-        send_alerts(admission_request, True)
+    send_alerts(admission_request, True, is_child=is_child)
     return jsonify(response)
 
 
@@ -128,6 +127,11 @@ def __create_logging_msg(msg: str, **kwargs):
 async def __admit(admission_request: AdmissionRequest):
     logging_context = dict(admission_request.context)
 
+    is_child = all([
+             image in admission_request.wl_object.parent_containers.values()
+             for type_and_index, image in admission_request.wl_object.containers.items()
+        ])
+
     patches = asyncio.gather(
         *[
             __validate_image(type_and_index, image, admission_request)
@@ -140,15 +144,12 @@ async def __admit(admission_request: AdmissionRequest):
     except BaseConnaisseurException as err:
         err.update_context(**logging_context)
         raise err
-    is_pure_child=False
-    if patches.result() and all([patch=="parent already admitted" for patch in patches.result() if patch]):
-        is_pure_child=True
 
     return get_admission_review(
         admission_request.uid,
         True,
-        patch=[patch for patch in patches.result() if patch and patch != "parent already admitted"],
-    ), is_pure_child
+        patch=[patch for patch in patches.result() if patch],
+    ), is_child
 
 
 async def __validate_image(type_index, image, admission_request):
@@ -169,7 +170,7 @@ async def __validate_image(type_index, image, admission_request):
     ):
         msg = f'automatic child approval for "{original_image}".'
         logging.info(__create_logging_msg(msg, **logging_context))
-        return "parent already admitted"
+        return
 
     try:
         policy_rule = CONFIG.get_policy_rule(image)
