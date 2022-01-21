@@ -196,6 +196,7 @@ logLevel: INFO
 #      - template: slack #REQUIRED!
 #        receiver_url: https://hooks.slack.com/services/<Your-Slack-Hook-Path>
 #        priority: 1
+#        alert_on_child_resources: False #(defaults to True)
 #  reject_request:
 #    templates:
 #      - template: keybase  #REQUIRED!
