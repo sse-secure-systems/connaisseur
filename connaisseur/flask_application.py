@@ -127,10 +127,10 @@ def __create_logging_msg(msg: str, **kwargs):
 async def __admit(admission_request: AdmissionRequest):
     logging_context = dict(admission_request.context)
 
-    is_child = all([
-             image in admission_request.wl_object.parent_containers.values()
-             for type_and_index, image in admission_request.wl_object.containers.items()
-        ])
+    is_child = all(
+        image in admission_request.wl_object.parent_containers.values()
+        for (type_and_index, image) in admission_request.wl_object.containers.items()
+    )
 
     patches = asyncio.gather(
         *[
@@ -145,11 +145,14 @@ async def __admit(admission_request: AdmissionRequest):
         err.update_context(**logging_context)
         raise err
 
-    return get_admission_review(
-        admission_request.uid,
-        True,
-        patch=[patch for patch in patches.result() if patch],
-    ), is_child
+    return (
+        get_admission_review(
+            admission_request.uid,
+            True,
+            patch=[patch for patch in patches.result() if patch],
+        ),
+        is_child,
+    )
 
 
 async def __validate_image(type_index, image, admission_request):
