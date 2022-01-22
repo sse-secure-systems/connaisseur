@@ -54,9 +54,7 @@ jobs:
           echo ALERTING_ENDPOINT_IP=${ALERTING_ENDPOINT_IP} >> $GITHUB_ENV
       - name: Configure Connaisseur and show configuration
         run: |
-          if [[ ! (${{ matrix.integration-test-arg }} == 'pre-config') ]]; then
-            yq eval -i '.deployment.imagePullPolicy="IfNotPresent"' helm/values.yaml
-          fi
+          yq eval -i '.deployment.imagePullPolicy="IfNotPresent"' tests/integration/update.yaml
           echo "::group::values.yaml"
           yq e '.' helm/values.yaml
           echo "::endgroup::"

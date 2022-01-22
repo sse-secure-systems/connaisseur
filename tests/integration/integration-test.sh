@@ -282,7 +282,8 @@ case $1 in
   deployment_int_test
   ;;
 "pre-config")
-  update_values '.deployment.imagePullPolicy="Never"'
+  IPP=`yq e '.deployment.imagePullPolicy' tests/integration/update.yaml`
+  update_values '.deployment.imagePullPolicy=strenv(IPP)'
   helm_install
   pre_config_int_test
   helm_uninstall
