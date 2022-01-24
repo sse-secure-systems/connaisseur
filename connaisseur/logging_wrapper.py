@@ -31,7 +31,10 @@ class ConnaisseurLoggingWrapper:
         result = self.app(environ, custom_start_response)
         # the server can "change it's mind" before sending the first response if exc_info is provided
         # hence we need to use the last status code provided
-        self.logger.info(_format_log(status_codes[-1], environ))
+        if environ.get("REQUEST_URI") in ["/ready", "/health"]:
+            self.logger.debug(_format_log(status_codes[-1], environ))
+        else:
+            self.logger.info(_format_log(status_codes[-1], environ))
         return result
 
 
