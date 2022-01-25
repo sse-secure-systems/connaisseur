@@ -1,6 +1,6 @@
 NAMESPACE = connaisseur
 IMAGE := $(shell yq e '.deployment.image' helm/values.yaml)
-COSIGN_VERSION = 1.4.1
+COSIGN_VERSION = 1.5.0
 
 .PHONY: all docker install unistall upgrade annihilate
 
