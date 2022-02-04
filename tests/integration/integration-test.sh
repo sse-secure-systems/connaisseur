@@ -79,7 +79,7 @@ workload_test() { # WORKLOAD_KIND
 ### COMPLEXITY TEST ####################################
 complexity_test() { #
   echo -n 'Testing Connaisseur with complex requests...'
-  kubectl apply -f tests/integration/deployments/stresstest.yaml >output.log 2>&1 || true
+  kubectl apply -f tests/integration/deployments/complexity.yaml >output.log 2>&1 || true
   if [[ ! ("$(cat output.log)" =~ 'deployment.apps/redis-with-many-instances created' && "$(cat output.log)" =~ 'pod/pod-with-many-containers created' && "$(cat output.log)" =~ 'pod/pod-with-many-containers-and-init-containers created' && "$(cat output.log)" =~ 'pod/pod-with-some-containers-and-init-containers created' && "$(cat output.log)" =~ 'pod/pod-with-coinciding-containers-and-init-containers created') ]]; then
     echo -e ${FAILED}
     echo "::group::Output"
