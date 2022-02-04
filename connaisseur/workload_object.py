@@ -58,8 +58,13 @@ class WorkloadObject:
             name = owner["name"]
             uid = owner["uid"]
 
+            if api_version == "v1":
+                rest_path = "api"
+            else:
+                rest_path = "apis"
+
             parent = k_api.request_kube_api(
-                f"apis/{api_version}/namespaces/{self.namespace}/{kind}/{name}"
+                f"{rest_path}/{api_version}/namespaces/{self.namespace}/{kind}/{name}"
             )
 
             if parent["metadata"]["uid"] != uid:
