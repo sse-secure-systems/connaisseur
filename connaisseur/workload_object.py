@@ -58,6 +58,8 @@ class WorkloadObject:
             name = owner["name"]
             uid = owner["uid"]
 
+            # k8s API has core at /api/v1 and names groups at /apis/$GROUP_NAME/$VERSION
+            # see https://kubernetes.io/docs/reference/using-api/#api-groups
             if api_version == "v1":
                 rest_path = "api"
             else:
