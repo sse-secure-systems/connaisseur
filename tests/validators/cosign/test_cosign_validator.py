@@ -84,7 +84,7 @@ def mock_add_kill_fake_process(monkeypatch):
     def mock_kill(self):
         return
 
-    pytest_subprocess.core.FakePopen.kill = mock_kill
+    pytest_subprocess.fake_popen.FakePopen.kill = mock_kill
 
 
 @pytest.mark.parametrize("index", [0, 1, 2])
@@ -313,7 +313,7 @@ def test_invoke_cosign_timeout_expired(
         stdin_callable=callback_function,
     )
 
-    mock_kill = mocker.patch("pytest_subprocess.core.FakePopen.kill")
+    mock_kill = mocker.patch("pytest_subprocess.fake_popen.FakePopen.kill")
 
     with pytest.raises(exc.CosignTimeout) as err:
 
