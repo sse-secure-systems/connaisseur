@@ -33,6 +33,7 @@ metadata:
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
     failurePolicy: Ignore
+    reinvocationPolicy: {{ .Values.deployment.reinvocationPolicy | default "Never" }}
     clientConfig:
       service:
         name: {{ .Chart.Name }}-svc
@@ -61,11 +62,8 @@ metadata:
     "helm.sh/hook": post-install, post-upgrade, post-rollback
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
-    {{- if .Values.deployment.failurePolicy }}
-    failurePolicy: {{ .Values.deployment.failurePolicy }}
-    {{- else }}
-    failurePolicy: Fail
-    {{- end }}
+    failurePolicy: {{ .Values.deployment.failurePolicy | default "Fail" }}
+    reinvocationPolicy: {{ .Values.deployment.reinvocationPolicy | default "Never" }}
     clientConfig:
       service:
         name: {{ .Chart.Name }}-svc
