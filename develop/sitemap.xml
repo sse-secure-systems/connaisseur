@@ -101,6 +101,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/metrics/</loc>
+         <lastmod>2022-02-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/namespaced_validation/</loc>
          <lastmod>2022-02-08</lastmod>
          <changefreq>daily</changefreq>
