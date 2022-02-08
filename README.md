@@ -28,9 +28,10 @@ It is built to be extendable and currently aims to support the following signing
 
 It provides several additional features:
 
+- [Metrics](docs/features/metrics.md): *get prometheus metrics at `/metrics`*
+- [Alerting](docs/features/alerting.md): *send alerts based on verification result*
 - [Detection Mode](docs/features/detection_mode.md): *warn but do not block invalid images*
 - [Namespaced Validation](docs/features/namespaced_validation.md): *restrict validation to dedicated namespaces*
-- [Alerting](docs/features/alerting.md): *send alerts based on verification result*
 - [Automatic Child Approval](docs/features/automatic_child_approval.md): *configure approval of Kubernetes child resources*
 
 

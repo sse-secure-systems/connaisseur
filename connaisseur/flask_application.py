@@ -4,6 +4,7 @@ import os
 import traceback
 
 from flask import Flask, jsonify, request
+from prometheus_flask_exporter import PrometheusMetrics, NO_PREFIX
 
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.alert import send_alerts
@@ -24,6 +25,15 @@ sends its response back.
 CONFIG = Config()
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
 
+metrics = PrometheusMetrics(
+    APP,
+    defaults_prefix=NO_PREFIX,
+    buckets=(0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 10.0, 15.0, 20, 30.0, float("inf")),
+)
+"""
+Provides metrics for the Flask application
+"""
+
 
 @APP.errorhandler(AlertSendingError)
 def handle_alert_sending_failure(err):
@@ -41,6 +51,14 @@ def handle_alert_config_error(err):
 
 
 @APP.route("/mutate", methods=["POST"])
+@metrics.counter(
+    "mutate_requests_total",
+    "Total number of mutate requests",
+    labels={
+        "allowed": lambda r: metrics_label(r, "allowed"),
+        "status_code": lambda r: metrics_label(r, "status_code"),
+    },
+)
 def mutate():
     """
     Handle the '/mutate' path and accept CREATE and UPDATE requests.
@@ -74,8 +92,19 @@ def mutate():
     return jsonify(response)
 
 
+def metrics_label(response, label):
+    json_response = response.get_json(silent=True)
+    if json_response:
+        if label == "allowed":
+            return json_response["response"]["allowed"]
+        elif label == "status_code":
+            return json_response["response"]["status"]["code"]
+    return json_response
+
+
 # health probe
 @APP.route("/health", methods=["GET", "POST"])
+@metrics.do_not_track()
 def healthz():
     """
     Handle the '/health' endpoint and check the health status of the web server.
@@ -87,6 +116,7 @@ def healthz():
 
 # readiness probe
 @APP.route("/ready", methods=["GET", "POST"])
+@metrics.do_not_track()
 def readyz():
     return "", 200
 

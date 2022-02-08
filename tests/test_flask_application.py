@@ -116,11 +116,13 @@ def test_mutate_calls_send_alert_for_invalid_admission_request(
 
 
 def test_healthz():
-    assert pytest.fa.healthz() == ("", 200)
+    with pytest.fa.APP.test_request_context():
+        assert pytest.fa.healthz() == ("", 200)
 
 
 def test_readyz():
-    assert pytest.fa.readyz() == ("", 200)
+    with pytest.fa.APP.test_request_context():
+        assert pytest.fa.readyz() == ("", 200)
 
 
 @pytest.mark.parametrize(
@@ -231,8 +233,9 @@ def test_error_handler(
 
     mocker.patch("connaisseur.flask_application.__admit", return_value=True)
     mock_function = mocker.patch(**function)
-    client = pytest.fa.APP.test_client()
-    mock_request_data = fix.get_admreq("deployments")
-    response = client.post("/mutate", json=mock_request_data)
-    assert response.status_code == 500
-    assert response.get_data().decode() == err
+    with pytest.fa.APP.test_request_context():
+        client = pytest.fa.APP.test_client()
+        mock_request_data = fix.get_admreq("deployments")
+        response = client.post("/mutate", json=mock_request_data)
+        assert response.status_code == 500
+        assert response.get_data().decode() == err
