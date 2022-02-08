@@ -1,10 +1,9 @@
-import re
 import requests
-import json
 import subprocess
 import time
 import argparse
 import base64
+import logging
 
 sep = "@@__CHGLOG__@@"
 delim = "@@__CHGLOG_DELIMITER__@@"
@@ -28,8 +27,13 @@ class Commit:
     def __init__(self, hash_: str, sub_cat_: str, token: str = None):
         self.hash_ = hash_.strip()
         cat_sub_split = sub_cat_.split(":", 1)
-        self.subject_ = cat_sub_split[1].strip()
-        self.categories_ = cat_sub_split[0].split("/")
+        try:
+            self.subject_ = ":".join(cat_sub_split[1:]).strip()
+            self.categories_ = cat_sub_split[0].split("/")
+        except IndexError:
+            logging.warn("Non semantic commit")
+            self.subject_ = cat_sub_split[0]
+            self.categories_ = ["none"]
         self.token = token
         self.pr_ = self.get_pr_link()
 
