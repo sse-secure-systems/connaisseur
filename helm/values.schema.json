@@ -306,7 +306,8 @@
             "enum": [
               "Always",
               "IfNotPresent",
-              "Never"
+              "Never",
+              ""
             ],
             "title": "The imagePullPolicy schema",
             "description": "The Image Pull Policy of Connaisseur container. (https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy)",
