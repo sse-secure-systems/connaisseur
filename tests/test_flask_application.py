@@ -145,7 +145,7 @@ def test_create_logging_msg(msg, kwargs, out):
     [
         (
             0,
-            {
+            ({
                 "apiVersion": "admission.k8s.io/v1",
                 "kind": "AdmissionReview",
                 "response": {
@@ -162,12 +162,12 @@ def test_create_logging_msg(msg, kwargs, out):
                         "zIwMWJmMzQxMzEzODhiODUxZThjZTk5MmE2NTIifV0="
                     ),
                 },
-            },
+            }, False),
             fix.no_exc(),
         ),
         (
             1,
-            {
+            ({
                 "apiVersion": "admission.k8s.io/v1",
                 "kind": "AdmissionReview",
                 "response": {
@@ -175,13 +175,13 @@ def test_create_logging_msg(msg, kwargs, out):
                     "allowed": True,
                     "status": {"code": 202},
                 },
-            },
+            }, False),
             fix.no_exc(),
         ),
         (5, {}, pytest.raises(exc.BaseConnaisseurException)),
         (
             6,
-            {
+            ({
                 "apiVersion": "admission.k8s.io/v1",
                 "kind": "AdmissionReview",
                 "response": {
@@ -189,7 +189,20 @@ def test_create_logging_msg(msg, kwargs, out):
                     "allowed": True,
                     "status": {"code": 202},
                 },
-            },
+            }, False),
+            fix.no_exc(),
+        ),
+        (
+            7,
+            ({
+                "apiVersion": "admission.k8s.io/v1",
+                "kind": "AdmissionReview",
+                "response": {
+                    "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
+                    "allowed": True,
+                    "status": {"code": 202},
+                },
+            }, True),
             fix.no_exc(),
         ),
     ],
