@@ -145,51 +145,60 @@ def test_create_logging_msg(msg, kwargs, out):
     [
         (
             0,
-            ({
-                "apiVersion": "admission.k8s.io/v1",
-                "kind": "AdmissionReview",
-                "response": {
-                    "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
-                    "allowed": True,
-                    "status": {"code": 202},
-                    "patchType": "JSONPatch",
-                    "patch": (
-                        "W3sib3AiOiAicmVwbGFjZSIsICJwYXRoIjogI"
-                        "i9zcGVjL3RlbXBsYXRlL3NwZWMvY29udGFpbmVycy8wL2lt"
-                        "YWdlIiwgInZhbHVlIjogImRvY2tlci5pby9zZWN1cmVzeXN"
-                        "0ZW1zZW5naW5lZXJpbmcvYWxpY2UtaW1hZ2VAc2hhMjU2Om"
-                        "FjOTA0YzliMTkxZDE0ZmFmNTRiNzk1MmYyNjUwYTRiYjIxY"
-                        "zIwMWJmMzQxMzEzODhiODUxZThjZTk5MmE2NTIifV0="
-                    ),
+            (
+                {
+                    "apiVersion": "admission.k8s.io/v1",
+                    "kind": "AdmissionReview",
+                    "response": {
+                        "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
+                        "allowed": True,
+                        "status": {"code": 202},
+                        "patchType": "JSONPatch",
+                        "patch": (
+                            "W3sib3AiOiAicmVwbGFjZSIsICJwYXRoIjogI"
+                            "i9zcGVjL3RlbXBsYXRlL3NwZWMvY29udGFpbmVycy8wL2lt"
+                            "YWdlIiwgInZhbHVlIjogImRvY2tlci5pby9zZWN1cmVzeXN"
+                            "0ZW1zZW5naW5lZXJpbmcvYWxpY2UtaW1hZ2VAc2hhMjU2Om"
+                            "FjOTA0YzliMTkxZDE0ZmFmNTRiNzk1MmYyNjUwYTRiYjIxY"
+                            "zIwMWJmMzQxMzEzODhiODUxZThjZTk5MmE2NTIifV0="
+                        ),
+                    },
                 },
-            }, False),
+                False,
+            ),
             fix.no_exc(),
         ),
         (
             1,
-            ({
-                "apiVersion": "admission.k8s.io/v1",
-                "kind": "AdmissionReview",
-                "response": {
-                    "uid": "0c3331b6-1812-11ea-b3fc-02897404852e",
-                    "allowed": True,
-                    "status": {"code": 202},
+            (
+                {
+                    "apiVersion": "admission.k8s.io/v1",
+                    "kind": "AdmissionReview",
+                    "response": {
+                        "uid": "0c3331b6-1812-11ea-b3fc-02897404852e",
+                        "allowed": True,
+                        "status": {"code": 202},
+                    },
                 },
-            }, False),
+                False,
+            ),
             fix.no_exc(),
         ),
         (5, {}, pytest.raises(exc.BaseConnaisseurException)),
         (
             6,
-            ({
-                "apiVersion": "admission.k8s.io/v1",
-                "kind": "AdmissionReview",
-                "response": {
-                    "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
-                    "allowed": True,
-                    "status": {"code": 202},
+            (
+                {
+                    "apiVersion": "admission.k8s.io/v1",
+                    "kind": "AdmissionReview",
+                    "response": {
+                        "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
+                        "allowed": True,
+                        "status": {"code": 202},
+                    },
                 },
-            }, True),
+                True,
+            ),
             fix.no_exc(),
         ),
     ],
