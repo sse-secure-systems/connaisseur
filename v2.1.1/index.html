@@ -76,19 +76,36 @@
     </div>
     <div data-md-component="announce">
       
-        <aside class="md-banner md-announce">
-          <div class="md-banner__inner md-announce__inner md-grid md-typeset">
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
             
   <!-- Add your announcement here, including arbitrary HTML -->
    <header style="font-size:17px">
-        <center>ℹ️ <strong> You are viewing the docs for a previous version of Connaisseur,  <a href="https://sse-secure-systems.github.io/connaisseur/latest/">click here to go to the latest version.</a></strong> ℹ️ </center>
+        <center>&#11088; <strong> If you like Connaisseur, give it a star on <a href="https://github.com/sse-secure-systems/connaisseur">GitHub</a> or share your <a href="https://github.com/sse-secure-systems/connaisseur/discussions">feedback</a>!</strong> &#11088;</center>
 
           </div>
         </aside>
       
     </div>
     
-      <header class="md-header" data-md-component="header">
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+            <div class="md-banner__inner md-grid md-typeset">
+              
+You're not viewing the docs of the latest version.
+<a href="..//connaisseur/v2.4.1"><strong>Click here to go to the latest version.</strong></a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+          
+        </aside>
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
