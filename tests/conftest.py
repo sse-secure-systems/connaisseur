@@ -8,6 +8,7 @@ import connaisseur.kube_api
 import connaisseur.config as co
 import connaisseur.admission_request as admreq
 import connaisseur.alert as alert
+from connaisseur.trust_root import TrustRoot
 import connaisseur.validators.notaryv1.trust_data as td
 import connaisseur.validators.notaryv1.key_store as ks
 import connaisseur.validators.notaryv1.notary as no
@@ -269,7 +270,7 @@ def m_expiry(monkeypatch):
 
 @pytest.fixture
 def sample_key_store(m_trust_data):
-    sample_key = (
+    sample_key = TrustRoot(
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"
         "7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1w4pMWlz9AHQthDG"
         "l+W2k3elHkPbR+gNkK2PCA=="
@@ -282,7 +283,7 @@ def sample_key_store(m_trust_data):
 
 @pytest.fixture
 def alice_key_store(m_trust_data):
-    sample_key = (
+    sample_key = TrustRoot(
         "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrD"
         "K22SyCu7WMF8tCjVgeORAS2PWacRcBN/VQdVK4PVk1"
         "w4pMWlz9AHQthDGl+W2k3elHkPbR+gNkK2PCA=="

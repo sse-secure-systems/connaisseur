@@ -7,7 +7,6 @@ import subprocess  # nosec
 
 from concurrent.futures import ThreadPoolExecutor
 
-from connaisseur.crypto import load_key
 from connaisseur.exceptions import (
     CosignError,
     CosignTimeout,
@@ -15,8 +14,10 @@ from connaisseur.exceptions import (
     InvalidFormatException,
     UnexpectedCosignData,
     ValidationError,
+    WrongKeyError,
 )
 from connaisseur.image import Image
+from connaisseur.trust_root import KMSKey, TrustRoot, ECDSAKey
 from connaisseur.util import safe_path_func  # nosec
 from connaisseur.validators.interface import ValidatorInterface
 
@@ -41,8 +42,9 @@ class CosignValidator(ValidatorInterface):
             "threshold",
             1 if trust_root != "*" or any(required) else len(self.trust_roots),
         )
-        # vals is a validations dict for each required trust root containing validated digests and errors
-        vals = self.__get_pinned_keys(trust_root, required, threshold)
+        # vals is a validations dict for each required trust root containing validated
+        # digests and errors
+        vals = self.__get_pinned_trust_roots(trust_root, required, threshold)
 
         # use concurrent.futures for now
         # tasks = [self.__validation_task(k, str(image)) for k in self.vals.keys()]
@@ -52,7 +54,8 @@ class CosignValidator(ValidatorInterface):
         num_workers = len(vals)
         executor = ThreadPoolExecutor(num_workers)
         # prepare tasks
-        # a copy of vals dictionaries is passed to concurrent validation to ensure thread-safe execution
+        # a copy of vals dictionaries is passed to concurrent validation to ensure
+        # thread-safe execution
         arguments = [(k, v.copy(), str(image)) for k, v in vals.items()]
         futures = [executor.submit(self.__validation_task, *arg) for arg in arguments]
         # await results (output dropped as `vals` is updated within function)
@@ -63,45 +66,46 @@ class CosignValidator(ValidatorInterface):
             vals=vals, threshold=threshold, required=required
         )
 
-    def __get_pinned_keys(self, key_name: str, required: list, threshold: int):
+    def __get_pinned_trust_roots(self, tr_name: str, required: list, threshold: int):
         """
-        Extract the pinned key(s) selected for validation from the list of trust roots.
+        Extract the pinned trust root(s) selected for validation from the list of trust
+        roots.
         """
-        key_name = key_name or "default"
-        available_keys = list(map(lambda k: k["name"], self.trust_roots))
+        tr_name = tr_name or "default"
+        available_trs = list(map(lambda t: t["name"], self.trust_roots))
 
-        # generate list of pinned keys
-        if key_name == "*":
+        # generate list of pinned trust roots
+        if tr_name == "*":
             if len(required) >= threshold:
-                pinned_keys = required
+                pinned_trs = required
             else:
-                pinned_keys = available_keys
+                pinned_trs = available_trs
         else:
-            pinned_keys = [key_name]
+            pinned_trs = [tr_name]
 
-        # check if pinned keys exist in available trust roots
-        missing_keys = set(pinned_keys) - set(available_keys)
-        if missing_keys:
-            msg = 'Trust roots "{key_names}" not configured for validator "{validator_name}".'
+        # check if pinned trust roots exist in available trust roots
+        missing_trs = set(pinned_trs) - set(available_trs)
+        if missing_trs:
+            msg = 'Trust roots "{tr_names}" not configured for validator "{validator_name}".'
             raise NotFoundException(
                 message=msg,
-                key_names=", ".join(missing_keys),
+                tr_names=", ".join(missing_trs),
                 validator_name=self.name,
             )
 
         # construct key validation dictionary for pinned keys
-        keys = {
-            k["name"]: {
-                "name": k["name"],
-                "key": "".join(k["key"]),
+        trust_roots = {
+            t["name"]: {
+                "name": t["name"],
+                "trust_root": TrustRoot("".join(t["key"])),
                 "digest": None,
                 "error": None,
             }
-            for k in self.trust_roots
-            if k["name"] in pinned_keys
+            for t in self.trust_roots
+            if t["name"] in pinned_trs
         }
 
-        return keys
+        return trust_roots
 
     # async def __validation_task(self, trust_root: str, image: str):
     def __validation_task(self, trust_root: str, val: dict, image: str):
@@ -121,13 +125,13 @@ class CosignValidator(ValidatorInterface):
     # async def __get_cosign_validated_digests(self, image: str, trust_root: dict):
     def __get_cosign_validated_digests(self, image: str, trust_root: dict):
         """
-        Get and process Cosign validation output for a given `image` and `key`
+        Get and process Cosign validation output for a given `image` and `trust_root`
         and either return a list of valid digests or raise a suitable exception
         in case no valid signature is found or Cosign fails.
         """
-        # returncode, stdout, stderr = await self.__invoke_cosign(image, trust_root["key"])
-        returncode, stdout, stderr = self.__invoke_cosign(image, trust_root["key"])
-
+        returncode, stdout, stderr = self.__validate_using_trust_root(
+            image, trust_root["trust_root"]
+        )
         logging.info(
             "COSIGN output of trust root '%s' for image'%s': RETURNCODE: %s; STDOUT: %s; STDERR: %s",
             trust_root["name"],
@@ -217,35 +221,71 @@ class CosignValidator(ValidatorInterface):
             )
         return digests.pop()
 
-    # async def __invoke_cosign(self, image: str, key: str):
-    def __invoke_cosign(self, image: str, key: str):
+    def __validate_using_trust_root(self, image: str, trust_root: TrustRoot):
         """
-        Invoke the Cosign binary in a subprocess for a specific `image` given a `key` and
-        return the returncode, stdout and stderr. Will raise an exception if Cosign times out.
+        Call the `CosignValidator.__invoke_cosign` method, using a specific trust root.
         """
-        pubkey_config, env_vars, pubkey = CosignValidator.__get_pubkey_config(key)
+        # reminder when implementing RSA validation:
+        # ["--key", "/dev/stdin", self.value.save_pkcs1()]
 
+        # reminder when implementing Keyless validation:
+        # ["--cert-email", self.value, b""]
+
+        if isinstance(trust_root, ECDSAKey):
+            return self.__invoke_cosign(
+                image,
+                {
+                    "option_kword": "--key",
+                    "inline_tr": "/dev/stdin",
+                    "trust_root": trust_root.value.to_pem(),
+                },
+            )
+        elif isinstance(trust_root, KMSKey):
+            return self.__invoke_cosign(
+                image,
+                {
+                    "option_kword": "--key",
+                    "inline_tr": trust_root.value,
+                },
+            )
+        msg = (
+            "The trust_root type {tr_type} is unsupported for a validator of type"
+            "{val_type}."
+        )
+        raise WrongKeyError(message=msg, tr_type=type(trust_root), val_type="cosign")
+
+    def __invoke_cosign(self, image: str, tr_args: dict):
+        """
+        Invoke the Cosign binary in a subprocess for a specific `image` given trust root
+        argument dict (`tr_args`) and return the returncode, stdout and stderr. The trust
+        root argument dict includes a Cosign option keyword and the trust root itself,
+        either as inline argument or pipeable input with an inline reference. The
+        composition of the dict is dependant on the type of trust root.
+
+        Raises an exception if Cosign times out.
+        """
         cmd = [
             "/app/cosign/cosign",
             "verify",
             "--output",
             "text",
-            *pubkey_config,
+            tr_args["option_kword"],
+            tr_args["inline_tr"],
             *(["--k8s-keychain"] if self.k8s_keychain else []),
             image,
         ]
-        env = self.__get_envs()
-        env.update(env_vars)
 
         with subprocess.Popen(  # nosec
             cmd,
-            env=env,
+            env=self.__get_envs(),
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ) as process:
             try:
-                stdout, stderr = process.communicate(pubkey, timeout=60)
+                stdout, stderr = process.communicate(
+                    input=tr_args.get("trust_root", None), timeout=60
+                )
             except subprocess.TimeoutExpired as err:
                 process.kill()
                 msg = "Cosign timed out."
@@ -255,33 +295,9 @@ class CosignValidator(ValidatorInterface):
 
         return process.returncode, stdout.decode("utf-8"), stderr.decode("utf-8")
 
-    @staticmethod
-    def __get_pubkey_config(key: str):
-        """
-        Return a tuple of the used Cosign verification command (flag-value list), a
-        dict of potentially required environment variables and public key in binary
-        PEM format to be used as stdin to Cosign based on the format of the input
-        key (reference).
-
-        Raise InvalidFormatException if none of the supported patterns is matched.
-        """
-        try:
-            # key is ecdsa public key
-            pkey = load_key(key).to_pem()  # raises if invalid
-            return ["--key", "/dev/stdin"], {}, pkey
-        except ValueError:
-            pass
-
-        # key is KMS reference
-        if re.match(r"^\w{2,20}://[\w:/-]{3,255}$", key):
-            return ["--key", key], {}, b""
-
-        msg = "Public key (reference) '{input_str}' does not match expected patterns."
-        raise InvalidFormatException(message=msg, input_str=key)
-
     def __get_envs(self):
         """
-        Sets up environment variables used by cosign.
+        Set up environment variables used by cosign.
         """
         env = os.environ.copy()
         # Extend the OS env vars only for passing to the subprocess below
@@ -295,7 +311,7 @@ class CosignValidator(ValidatorInterface):
     @staticmethod
     def __apply_policy(vals: dict, threshold: int, required: list):
         """
-        Validates the signature verification outcome against the policy for
+        Validate the signature verification outcome against the policy for
         threshold and required trust roots.
 
         Raises an exception if not compliant.

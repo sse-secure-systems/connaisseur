@@ -1,5 +1,5 @@
-from connaisseur.crypto import load_key
-from connaisseur.exceptions import InvalidKeyFormatError, NotFoundException
+from connaisseur.exceptions import NotFoundException
+from connaisseur.trust_root import TrustRoot
 
 
 class KeyStore:
@@ -11,20 +11,9 @@ class KeyStore:
     keys: dict
     hashes: dict
 
-    def __init__(self, root_pub_key: str = None):
+    def __init__(self, root_key: TrustRoot = None):
         self.hashes = {}
-
-        if root_pub_key:
-            try:
-                key = load_key(root_pub_key)
-            except ValueError as err:
-                msg = "The public root key has an invalid format."
-                raise InvalidKeyFormatError(
-                    message=msg, root_pub_key=root_pub_key
-                ) from err
-            self.keys = {"root": key}
-        else:
-            self.keys = {}
+        self.keys = {"root": root_key} if root_key else {}
 
     def get_key(self, key_id: str):
         """
@@ -66,17 +55,12 @@ class KeyStore:
         # root.json, as it is the only file that contains a key which was used to sign
         # itself.
         signature_keys = [sig.get("keyid") for sig in trust_data.signatures]
-        keys = {k: v for k, v in keys.items() if k not in signature_keys}
-
-        for key_id in keys:
-            try:
-                key = load_key(keys[key_id]["keyval"]["public"])
-            except ValueError as err:
-                msg = "Key {key_id} has an invalid format."
-                raise InvalidKeyFormatError(
-                    message=msg, key_id=key_id, key=keys[key_id]["keyval"]["public"]
-                ) from err
-            self.keys.setdefault(key_id, key)
+        keys = {
+            k: TrustRoot(v["keyval"]["public"])
+            for k, v in keys.items()
+            if k not in signature_keys
+        }
+        self.keys = dict(keys, **self.keys)
 
         # update hashes
         hashes = trust_data.get_hashes()

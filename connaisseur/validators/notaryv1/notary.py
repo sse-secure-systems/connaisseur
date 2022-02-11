@@ -23,7 +23,7 @@ class Notary:
 
     name: str
     host: str
-    pub_root_keys: list
+    root_keys: list
     is_acr: bool
     auth: dict
     cert: Optional[ssl.SSLContext]
@@ -42,7 +42,7 @@ class Notary:
     ):  # pylint: disable=unused-argument
         self.name = name
         self.host = host
-        self.pub_root_keys = trust_roots or []
+        self.root_keys = trust_roots or []
         self.is_acr = is_acr
         if auth is None:
             auth = {}
@@ -66,9 +66,7 @@ class Notary:
         """
         key_name = key_name or "default"
         try:
-            key = next(
-                key["key"] for key in self.pub_root_keys if key["name"] == key_name
-            )
+            key = next(key["key"] for key in self.root_keys if key["name"] == key_name)
         except StopIteration as err:
             msg = (
                 'Trust root "{key_name}" not configured for validator "{notary_name}".'

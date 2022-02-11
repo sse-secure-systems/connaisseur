@@ -7,13 +7,14 @@ from datetime import datetime
 import pytz
 from dateutil import parser
 
-from connaisseur.crypto import verify_signature
 from connaisseur.exceptions import (
     InvalidTrustDataFormatError,
     NoSuchClassError,
     NotFoundException,
     ValidationError,
+    WrongKeyError,
 )
+from connaisseur.trust_root import TrustRoot, ECDSAKey
 from connaisseur.util import validate_schema
 from connaisseur.validators.notaryv1.key_store import KeyStore
 
@@ -89,14 +90,31 @@ class TrustData:
         msg = json.dumps(self.signed, separators=(",", ":"))
         for signature in self.signatures:
             key_id = "root" if self.kind == "root" else signature["keyid"]
-            pub_key = keystore.get_key(key_id)
+            key = keystore.get_key(key_id)
             sig = signature["sig"]
 
             try:
-                verify_signature(pub_key, sig, msg)
+                TrustData.__validate_signature_with_key(sig, msg, key)
             except Exception as err:
                 msg = "Failed to verify signature of trust data {trust_data_kind}."
                 raise ValidationError(message=msg, trust_data_kind=self.kind) from err
+
+    @staticmethod
+    def __validate_signature_with_key(signature: str, payload: str, key: TrustRoot):
+        if isinstance(key, ECDSAKey):
+            return TrustData.__validate_signature_with_ecdsa(signature, payload, key)
+        msg = (
+            "The key type {key_type} is unsupported for a validator of type {val_type}."
+        )
+        raise WrongKeyError(message=msg, key_type=type(key), val_type="notaryv1")
+
+    @staticmethod
+    def __validate_signature_with_ecdsa(signature: str, payload: str, key: TrustRoot):
+        signature_decoded = base64.b64decode(signature)
+        payload_bytes = bytearray(payload, "utf-8")
+        return key.value.verify(
+            signature_decoded, payload_bytes, hashfunc=hashlib.sha256
+        )
 
     def validate_hash(self, keystore: KeyStore):
         """

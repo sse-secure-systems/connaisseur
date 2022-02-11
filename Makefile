@@ -19,6 +19,9 @@ install:
 	#
 	helm install connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE)
 
+dev-install:
+	helm install --set deployment.replicasCount=1,deployment.imagePullPolicy=Never connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE) 
+
 uninstall:
 	helm uninstall connaisseur -n $(NAMESPACE)
 	kubectl delete ns $(NAMESPACE)

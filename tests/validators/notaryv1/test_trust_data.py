@@ -4,9 +4,8 @@ import pytz
 import datetime as dt
 from ... import conftest as fix
 import connaisseur.validators.notaryv1.trust_data as td
-from connaisseur.validators.notaryv1.key_store import KeyStore
 import connaisseur.exceptions as exc
-from connaisseur.crypto import load_key
+from connaisseur.trust_root import TrustRoot
 
 pub_root_keys = {
     "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": {
@@ -277,6 +276,94 @@ def test_validate_signature(
     with exception:
         trust_data_ = td.TrustData(data, role)
         assert trust_data_.validate_signature(sample_key_store) is None
+
+
+@pytest.mark.parametrize(
+    "signature, payload, key, exception",
+    [
+        (
+            (
+                "hx/VtTJT2r1nmkHtPZacncvosKca4XnLbMxNmeuH0cw5sTsUsznRuZ"
+                "mgd4vKPaQUbnCA3RMQpNlaGRWz1TR8CQ=="
+            ),
+            "iliketurtles",
+            TrustRoot(
+                (
+                    "-----BEGIN PUBLIC KEY-----\n"
+                    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEi2WD/E/UXF4+yoE5e4cjpJMNgQw\n"
+                    "8PAVALRX+8f8I8B+XneAtnOHDTI8L6wBeFRTzl6G4OmgDyCRYTb5MV3hog==\n"
+                    "-----END PUBLIC KEY-----"
+                )
+            ),
+            fix.no_exc(),
+        ),
+        (
+            "",
+            "",
+            TrustRoot("mail@example.com"),
+            pytest.raises(exc.WrongKeyError),
+        ),
+    ],
+)
+def test_validate_signature_with_key(
+    signature: str, payload: str, key: TrustRoot, exception
+):
+    with exception:
+        assert (
+            td.TrustData._TrustData__validate_signature_with_key(
+                signature, payload, key
+            )
+            is True
+        )
+
+
+@pytest.mark.parametrize(
+    "signature, payload, key, exception",
+    [
+        (
+            (
+                "hx/VtTJT2r1nmkHtPZacncvosKca4XnLbMxNmeuH0cw5sTsUsznRuZ"
+                "mgd4vKPaQUbnCA3RMQpNlaGRWz1TR8CQ=="
+            ),
+            "iliketurtles",
+            TrustRoot(
+                (
+                    "-----BEGIN PUBLIC KEY-----\n"
+                    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEi2WD/E/UXF4+yoE5e4cjpJMNgQw\n"
+                    "8PAVALRX+8f8I8B+XneAtnOHDTI8L6wBeFRTzl6G4OmgDyCRYTb5MV3hog==\n"
+                    "-----END PUBLIC KEY-----"
+                )
+            ),
+            fix.no_exc(),
+        ),
+        (
+            (
+                "hx/VtTJT2r1nmkHtPZacncvosKca4XnLbMxNmeuH0cw5sTsUsznRuZ"
+                "mgd4vKPaQUbnCA3RMQpNlaGRWz1TR8CM=="
+            ),
+            "iliketurtles",
+            TrustRoot(
+                (
+                    "-----BEGIN PUBLIC KEY-----\n"
+                    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEi2WD/E/UXF4+yoE5e4cjpJMNgQw\n"
+                    "8PAVALRX+8f8I8B+XneAtnOHDTI8L6wBeFRTzl6G4OmgDyCRYTb5MV3hog==\n"
+                    "-----END PUBLIC KEY-----"
+                )
+            ),
+            pytest.raises(Exception),
+        ),
+    ],
+)
+def test_validate_signature_with_ecdsa(
+    signature: str, payload: str, key: TrustRoot, exception
+):
+    with exception:
+        assert (
+            td.TrustData._TrustData__validate_signature_with_ecdsa(
+                signature, payload, key
+            )
+            is True
+        )
 
 
 @pytest.mark.parametrize(

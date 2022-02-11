@@ -76,7 +76,7 @@ def test_notary(sample_notaries, index, exception):
         no = notary.Notary(**sample_notaries[index])
         assert no.name == static_notaries[index]["name"]
         assert no.host == static_notaries[index]["host"]
-        assert no.pub_root_keys == static_notaries[index]["trust_roots"]
+        assert no.root_keys == static_notaries[index]["trust_roots"]
         assert no.is_acr == static_notaries[index].get("is_acr", False)
 
 

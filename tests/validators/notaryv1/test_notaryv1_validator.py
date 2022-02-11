@@ -1,5 +1,6 @@
 import os
 import re
+from connaisseur.trust_root import TrustRoot
 import pytest
 from aioresponses import aioresponses
 from ... import conftest as fix
@@ -316,7 +317,7 @@ async def test_process_chain_of_trust(
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
             signed_targets = (
                 await sample_nv1._NotaryV1Validator__process_chain_of_trust(
-                    Image(image), delegations, key
+                    Image(image), delegations, TrustRoot(key)
                 )
             )
 

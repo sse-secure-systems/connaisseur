@@ -91,6 +91,10 @@ class UnknownAPIVersionError(UnknownTypeException):
     pass
 
 
+class WrongKeyError(UnknownTypeException):
+    pass
+
+
 class AmbiguousDigestError(BaseConnaisseurException):
     pass
 
