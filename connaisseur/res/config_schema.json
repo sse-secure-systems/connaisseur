@@ -148,14 +148,28 @@
                                 },
                                 "auth": {
                                     "type": "object",
-                                    "properties": {
-                                        "secret_name": {
-                                            "type": "string",
-                                            "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                              "secret_name": {
+                                                  "type": "string",
+                                                  "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"
+                                              }
+                                            },
+                                            "required": [
+                                                "secret_name"
+                                            ]
+                                        },
+                                        {
+                                            "properties": {
+                                              "k8s_keychain": {
+                                                  "type": "boolean"
+                                              }
+                                            },
+                                            "required": [
+                                                "k8s_keychain"
+                                            ]
                                         }
-                                    },
-                                    "required": [
-                                        "secret_name"
                                     ]
                                 },
                                 "cert": {

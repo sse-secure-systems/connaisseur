@@ -94,8 +94,9 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `trust_roots[*].name` | | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `trust_roots[*].key` | | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public key from `cosign.pub` file or [KMS URI](https://github.com/sigstore/cosign/blob/main/KMS.md). See additional notes [below](#kms-support). |
 | `host` | | | Not yet implemented. |
-| `auth.` | | | Authentication credentials for private registries. |
-| `auth.secret_name` | | | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#authentication). |
+| `auth.` | | | Authentication credentials for private registries. See additional notes [below](#authentication). |
+| `auth.secret_name` | | | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#dockerconfigjson). |
+| `auth.k8s_keychain` | false | | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s_keychain). |
 | `cert` | | | A certificate in PEM format for private registries. |
 
 ### Example
@@ -123,8 +124,11 @@ policy:
 
 ### Authentication
 
-When using a private registry for images and signature data, the credentials need to be provided to Connaisseur.
-This is done by creating a [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) Kubernetes secret in the Connaisseur namespace and passing the secret name to Connaisseur as `auth.secret_name`.
+When using a private registry for images and signature data, the credentials need to be provided to Connaisseur. There are two ways to do this.
+
+#### dockerconfigjson
+
+Create a [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) Kubernetes secret in the Connaisseur namespace and pass the secret name to Connaisseur as `auth.secret_name`.
 The secret can for example be created directly from your local `config.json` (for docker this resides in `~/.docker/config.json`):
 
 ```bash
@@ -135,6 +139,30 @@ kubectl create secret generic my-secret \
 
 In the above case, the secret name in Connaisseur configuration would be `secret_name: my-secret`.
 It is possible to provide one Kubernetes secret with a `config.json` for authentication to multiple private registries and referencing this in multiple validators.
+
+#### k8s_keychain
+
+Specification of `auth.k8s_keychain: true` in the validator configuration passes the `--k8s-keychain` to `cosign` when performing image validation.
+Thus, [k8schain](https://pkg.go.dev/github.com/google/go-containerregistry/pkg/authn/k8schain) is used by `cosign` to pick up ambient registry credentials from the environment and for example use workload identities in case of common cloud providers.
+
+For example, when validating against an ECR private repository, the credentials of an IAM user allowed to perform actions
+`ecr:GetAuthorizationToken`, `ecr:BatchGetImage`, and `ecr:GetDownloadUrlForLayer` could be added to the secret `connaisseur-env-secrets`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: connaisseur-env-secrets
+  ...
+data:
+  AWS_ACCESS_KEY_ID: ***
+  AWS_SECRET_ACCESS_KEY: ***
+  ...
+```
+
+If `k8s_keychain` is set to `true` in the validator configuration, `cosign` will log into ECR at time of validation.
+See [this cosign pull request](https://github.com/sigstore/cosign/pull/972) for more details.
 
 ### KMS Support
 

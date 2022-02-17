@@ -31,6 +31,7 @@ static_cosigns = [
                 "key": "...",
             },
         ],
+        "auth": {"k8s_keychain": True},
     },
     {
         "name": "cosign1",
@@ -39,11 +40,13 @@ static_cosigns = [
             {"name": "megatest", "key": "..."},
             {"name": "test", "key": "..."},
         ],
+        "auth": {"k8s_keychain": False},
     },
     {
         "name": "cosign1",
         "type": "cosign",
         "trust_roots": [],
+        "auth": {"secret_name": "my-secret"},
     },
 ]
 
@@ -87,11 +90,14 @@ def mock_add_kill_fake_process(monkeypatch):
     pytest_subprocess.fake_popen.FakePopen.kill = mock_kill
 
 
-@pytest.mark.parametrize("index", [0, 1, 2])
-def test_init(index: int):
+@pytest.mark.parametrize(
+    "index, kchain", [(0, False), (1, True), (2, False), (3, False)]
+)
+def test_init(index: int, kchain: bool):
     val = co.CosignValidator(**static_cosigns[index])
     assert val.name == static_cosigns[index]["name"]
     assert val.trust_roots == static_cosigns[index]["trust_roots"]
+    assert val.k8s_keychain == kchain
 
 
 @pytest.mark.parametrize(
@@ -233,7 +239,7 @@ def test_get_cosign_validated_digests(
 
 
 @pytest.mark.parametrize(
-    "image, process_input, input_type",
+    "image, process_input, input_type, k8s_keychain",
     [
         (
             "testimage:v1",
@@ -244,11 +250,13 @@ def test_get_cosign_validated_digests(
                 "-----END PUBLIC KEY-----\n"
             ),
             "key",
+            {"secret_name": "thesecret"},
         ),
-        ("testimage:v1", "k8s://connaisseur/test_key", "ref"),
+        ("testimage:v1", "k8s://connaisseur/test_key", "ref", False),
+        ("testimage:v1", "k8s://connaisseur/test_key", "ref", True),
     ],
 )
-def test_invoke_cosign(fake_process, image, process_input, input_type):
+def test_invoke_cosign(fake_process, image, process_input, input_type, k8s_keychain):
     def stdin_function(input):
         return {"stderr": input.decode(), "stdout": input}
 
@@ -264,6 +272,7 @@ def test_invoke_cosign(fake_process, image, process_input, input_type):
         "text",
         "--key",
         "/dev/stdin" if input_type == "key" else process_input,
+        *(["--k8s-keychain"] if k8s_keychain else []),
         image,
     ]
     fake_process.register_subprocess(
@@ -272,7 +281,9 @@ def test_invoke_cosign(fake_process, image, process_input, input_type):
         stdout=bytes(cosign_payload, "utf-8"),
         stdin_callable=stdin_function,
     )
-    val = co.CosignValidator(**static_cosigns[0])
+    config = static_cosigns[0].copy()
+    config["auth"] = {"k8s_keychain": k8s_keychain}
+    val = co.CosignValidator(**config)
     returncode, stdout, stderr = val._CosignValidator__invoke_cosign(
         "testimage:v1", process_input
     )

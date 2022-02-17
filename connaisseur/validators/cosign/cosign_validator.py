@@ -21,10 +21,12 @@ from connaisseur.validators.interface import ValidatorInterface
 class CosignValidator(ValidatorInterface):
     name: str
     trust_roots: list
+    k8s_keychain: bool
 
-    def __init__(self, name: str, trust_roots: list, **kwargs):
+    def __init__(self, name: str, trust_roots: list, auth: dict = None, **kwargs):
         super().__init__(name, **kwargs)
         self.trust_roots = trust_roots
+        self.k8s_keychain = False if auth is None else auth.get("k8s_keychain", False)
 
     def __get_key(self, key_name: str = None):
         key_name = key_name or "default"
@@ -137,6 +139,7 @@ class CosignValidator(ValidatorInterface):
             "--output",
             "text",
             *pubkey_config,
+            *(["--k8s-keychain"] if self.k8s_keychain else []),
             image,
         ]
 
