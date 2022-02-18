@@ -249,6 +249,11 @@ jobs:
         run: |
           bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
         shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+        shell: bash
 
   k8s-versions:
     runs-on: ubuntu-latest
@@ -279,6 +284,11 @@ jobs:
       - name: Run pre-config and workload integration tests
         run: |
           bash tests/integration/integration-test.sh "pre-and-workload"
+        shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
         shell: bash
 
   upgrade-test:
@@ -319,6 +329,11 @@ jobs:
         run: |
           bash tests/integration/upgrade-integration-test.sh
         shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+        shell: bash
       - uses: actions/checkout@v2
       - name: Upgrade Connaisseur to current branch
         run: |
@@ -329,6 +344,11 @@ jobs:
       - name: Run integration tests (branch)
         run: |
           bash tests/integration/upgrade-integration-test.sh
+        shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
         shell: bash
       - name: Uninstall Connaisseur
         run: |

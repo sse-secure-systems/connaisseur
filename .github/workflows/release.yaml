@@ -63,6 +63,11 @@ jobs:
         run: |
           bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
         shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+        shell: bash
 
   publish_chart:
     runs-on: ubuntu-latest
