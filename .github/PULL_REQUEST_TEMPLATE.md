@@ -8,10 +8,10 @@ Fixes #
 <!--- Provide a short description of the PR: why? how? -->
 
 ## Checklist
-<!--- Feel free to reach out if help on any items in the checklist is needed -->
+<!--- Mark as done if a point is not necessary. Feel free to reach out if help on any items in the checklist is needed. -->
 
 - [ ] PR is rebased to/aimed at branch `develop`
-- [ ] PR follows [Contributing Guide](../docs/CONTRIBUTING.md)
+- [ ] PR follows [Contributing Guide](https://github.com/sse-secure-systems/connaisseur/blob/master/docs/CONTRIBUTING.md)
 - [ ] Added tests (if necessary)
 - [ ] Extended README/Documentation (if necessary)
 - [ ] Adjusted versions of image and Helm chart in `values.yaml` and `Chart.yaml` (if necessary)
