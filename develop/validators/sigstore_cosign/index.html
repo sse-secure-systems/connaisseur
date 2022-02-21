@@ -432,6 +432,26 @@ You're not viewing the docs of the latest version.
     Authentication
   </a>
   
+    <nav class="md-nav" aria-label="Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dockerconfigjson" class="md-nav__link">
+    dockerconfigjson
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k8s_keychain" class="md-nav__link">
+    k8s_keychain
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -978,6 +998,26 @@ You're not viewing the docs of the latest version.
     Authentication
   </a>
   
+    <nav class="md-nav" aria-label="Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dockerconfigjson" class="md-nav__link">
+    dockerconfigjson
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k8s_keychain" class="md-nav__link">
+    k8s_keychain
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -1120,13 +1160,19 @@ In case you just use the default values for the validator and image policy given
 <td><code>auth.</code></td>
 <td></td>
 <td></td>
-<td>Authentication credentials for private registries.</td>
+<td>Authentication credentials for private registries. See additional notes <a href="#authentication">below</a>.</td>
 </tr>
 <tr>
 <td><code>auth.secret_name</code></td>
 <td></td>
 <td></td>
-<td>Name of a Kubernetes secret in Connaisseur namespace that contains <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> for registry authentication. See additional notes <a href="#authentication">below</a>.</td>
+<td>Name of a Kubernetes secret in Connaisseur namespace that contains <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> for registry authentication. See additional notes <a href="#dockerconfigjson">below</a>.</td>
+</tr>
+<tr>
+<td><code>auth.k8s_keychain</code></td>
+<td>false</td>
+<td></td>
+<td>When true, pass <code>--k8s-keychain</code> argument to <code>cosign verify</code> in order to use workload identities for authentication. See additional notes <a href="#k8s_keychain">below</a>.</td>
 </tr>
 <tr>
 <td><code>cert</code></td>
@@ -1156,8 +1202,9 @@ In case you just use the default values for the validator and image policy given
 </code></pre></div>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">⚓︎</a></h3>
-<p>When using a private registry for images and signature data, the credentials need to be provided to Connaisseur.
-This is done by creating a <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> Kubernetes secret in the Connaisseur namespace and passing the secret name to Connaisseur as <code>auth.secret_name</code>.
+<p>When using a private registry for images and signature data, the credentials need to be provided to Connaisseur. There are two ways to do this.</p>
+<h4 id="dockerconfigjson">dockerconfigjson<a class="headerlink" href="#dockerconfigjson" title="Permanent link">⚓︎</a></h4>
+<p>Create a <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> Kubernetes secret in the Connaisseur namespace and pass the secret name to Connaisseur as <code>auth.secret_name</code>.
 The secret can for example be created directly from your local <code>config.json</code> (for docker this resides in <code>~/.docker/config.json</code>):</p>
 <div class="highlight"><pre><span></span><code>kubectl create secret generic my-secret <span class="se">\</span>
   --from-file<span class="o">=</span>.dockerconfigjson<span class="o">=</span>path/to/config.json <span class="se">\</span>
@@ -1165,6 +1212,24 @@ The secret can for example be created directly from your local <code>config.json
 </code></pre></div>
 <p>In the above case, the secret name in Connaisseur configuration would be <code>secret_name: my-secret</code>.
 It is possible to provide one Kubernetes secret with a <code>config.json</code> for authentication to multiple private registries and referencing this in multiple validators.</p>
+<h4 id="k8s_keychain">k8s_keychain<a class="headerlink" href="#k8s_keychain" title="Permanent link">⚓︎</a></h4>
+<p>Specification of <code>auth.k8s_keychain: true</code> in the validator configuration passes the <code>--k8s-keychain</code> to <code>cosign</code> when performing image validation.
+Thus, <a href="https://pkg.go.dev/github.com/google/go-containerregistry/pkg/authn/k8schain">k8schain</a> is used by <code>cosign</code> to pick up ambient registry credentials from the environment and for example use workload identities in case of common cloud providers.</p>
+<p>For example, when validating against an ECR private repository, the credentials of an IAM user allowed to perform actions
+<code>ecr:GetAuthorizationToken</code>, <code>ecr:BatchGetImage</code>, and <code>ecr:GetDownloadUrlForLayer</code> could be added to the secret <code>connaisseur-env-secrets</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span><span class="w"></span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-env-secrets</span><span class="w"></span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"></span>
+<span class="nt">data</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">AWS_ACCESS_KEY_ID</span><span class="p">:</span><span class="w"> </span><span class="err">***</span><span class="w"></span>
+<span class="w">  </span><span class="nt">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span><span class="w"> </span><span class="err">***</span><span class="w"></span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"></span>
+</code></pre></div>
+<p>If <code>k8s_keychain</code> is set to <code>true</code> in the validator configuration, <code>cosign</code> will log into ECR at time of validation.
+See <a href="https://github.com/sigstore/cosign/pull/972">this cosign pull request</a> for more details.</p>
 <h3 id="kms-support">KMS Support<a class="headerlink" href="#kms-support" title="Permanent link">⚓︎</a></h3>
 <blockquote>
 <p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
