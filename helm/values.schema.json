@@ -1067,6 +1067,13 @@
                     "type": "string",
                     "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\\/\\s])*={0,2})\n(?:-+END\\sCERTIFICATE[-]+)"
                   },
+                  "host": {
+                    "$id": "#/properties/validators/items/anyOf/2/properties/host",
+                    "title": "The host schema",
+                    "description": "Not yet implemented.",
+                    "type": "string",
+                    "pattern": "(([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6})|(localhost))(\\:\\d{2,5})?"
+                  },
                   "auth": {
                     "type": "object",
                     "$id": "#/properties/validators/items/anyOf/2/properties/auth",
