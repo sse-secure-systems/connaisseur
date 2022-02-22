@@ -1370,7 +1370,8 @@ The upper <code>deployment</code> section offers some general Kubernetes typical
 Noteworthy configurations are:</p>
 <ul>
 <li><code>deployment.failurePolicy</code>: Failure policy allows configuration whether the mutating admission webhook should fail closed (<code>Fail</code>, <em>default</em>) or open (<code>Ignore</code>) should the Connaisseur service become unavailable. While Connaisseur is configured to be secure by default, setting the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> to <code>Ignore</code> allows to prioritize cluster access<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</li>
-<li><code>deployment.securityContext</code>: Connaisseur ships with secure defaults. However, some keys are not supported by all versions or flavors of Kubernetes and might need adjustment<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. This is mentioned in the comments to the best of our knowledge.</li>
+<li><code>deployment.reinvocationPolicy</code>: <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#reinvocation-policy">Reinvocation Policy</a> defines whether Connaisseur is called again as part of the admission evaluation if the object being admitted is modified by other admission plugins after the initial webhook call (<code>IfNeeded</code>) or not (<code>Never</code>, <em>default</em>). Note that if Connaisseur is invoked a second time, the policy to be applied might change in between<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. Make sure, your Connaisseur policies are set up to handle multiple mutations of the image originally specified in the manifest, e.g. <code>my.private.registry/image:1.0.0</code> and <code>my.private.registry/image@sha256:&lt;hash-of-1.0.0-image&gt;</code>.</li>
+<li><code>deployment.securityContext</code>: Connaisseur ships with secure defaults. However, some keys are not supported by all versions or flavors of Kubernetes and might need adjustment<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>. This is mentioned in the comments to the best of our knowledge.</li>
 <li><code>deployment.podSecurityPolicy</code>: Some clusters require a PSP. A secure default PSP for Connaisseur is available.</li>
 </ul>
 <p>The actual configuration consists of the <code>validators</code> and image <code>policy</code> sections.
@@ -1900,7 +1901,10 @@ However, explicit is better than implicit.</p>
 <p>This is not to be confused with the <a href="../features/detection_mode/">detection mode</a> feature: In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>In those cases, consider using security annotations via <code>deployment.annotations</code> or pod security policies <code>deployment.podSecurityPolicy</code> if available.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>During the first mutation, Connaisseur converts the image tag to its digests. Read more in the <a href="https://sse-secure-systems.github.io/connaisseur/v2.4.1/#trusted-digests">overview of Connaisseur</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>In those cases, consider using security annotations via <code>deployment.annotations</code> or pod security policies <code>deployment.podSecurityPolicy</code> if available.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
