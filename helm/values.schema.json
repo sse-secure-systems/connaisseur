@@ -366,6 +366,20 @@
               "Fail"
             ]
           },
+          "reinvocationPolicy": {
+            "$id": "#/properties/deployment/properties/reinvocationPolicy",
+            "type": "string",
+            "enum": [
+              "IfNeeded",
+              "Never"
+            ],
+            "title": "The reinvocationPolicy schema",
+            "description": "The reincovation policy of Connaisseur webhook. (https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#reinvocation-policy)",
+            "default": "Never",
+            "examples": [
+              "IfNeeded"
+            ]
+          },
           "resources": {
             "$id": "#/properties/deployment/properties/resources",
             "type": "object",
@@ -1054,23 +1068,47 @@
                     "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\\/\\s])*={0,2})\n(?:-+END\\sCERTIFICATE[-]+)"
                   },
                   "auth": {
-                    "$id": "#/properties/validators/items/anyOf/2/properties/auth",
                     "type": "object",
-                    "title": "Authentication credentials if using a private registry instance.",
-                    "properties": {
-                      "secret": {
-                        "$id": "#/properties/validators/items/anyOf/2/properties/auth/properties/secret",
-                        "type": "string",
-                        "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*",
-                        "title": "The auth secret schema",
-                        "description": "Name of a Kubernetes secret containing authentication credentials.",
-                        "examples": [
-                          "my-cosign-auth-creds"
+                    "$id": "#/properties/validators/items/anyOf/2/properties/auth",
+                    "title": "The auth schema",
+                    "description": "Authentication credentials if using a private registry instance.",
+                    "oneOf": [
+                      {
+                        "$id": "#/properties/validators/items/anyOf/2/properties/auth/OneOf/0",
+                        "type": "object",
+                        "title": "The first OneOf schema",
+                        "properties": {
+                          "secret": {
+                            "$id": "#/properties/validators/items/anyOf/2/properties/auth/properties/secret",
+                            "type": "string",
+                            "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*",
+                            "title": "The auth secret schema",
+                            "description": "Name of a Kubernetes secret containing authentication credentials.",
+                            "examples": [
+                              "my-cosign-auth-creds"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "secret_name"
+                        ]
+                      },
+                      {
+                        "$id": "#/properties/validators/items/anyOf/2/properties/auth/OneOf/1",
+                        "type": "object",
+                        "title": "The second OneOf schema",
+                        "properties": {
+                          "k8s_keychain": {
+                            "$id": "#/properties/validators/items/anyOf/2/properties/auth/properties/k8s_keychain",
+                            "type": "boolean",
+                            "title": "The auth k8s_keychain schema",
+                            "description": "Indicates whether to pass a k8schain to cosign to authenticate to a registry."
+                          }
+                        },
+                        "required": [
+                          "k8s_keychain"
                         ]
                       }
-                    },
-                    "required": [
-                      "secret"
                     ]
                   }
                 }
