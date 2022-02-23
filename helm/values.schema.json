@@ -1049,7 +1049,7 @@
                               "$id": "#/properties/validators/items/anyOf/2/properties/trust_roots/anyOf/0/properties/key",
                               "type": "string",
                               "title": "The trust root's key schema.",
-                              "pattern": "(?:-+BEGIN\\sPUBLIC\\sKEY[-]+)\n(?:(?:[A-Za-z0-9+\\/\\s])*={0,2})\n(?:-+END\\sPUBLIC\\sKEY[-]+)",
+                              "pattern": "(?:-+BEGIN\\sPUBLIC\\sKEY[-]+)\n(?:(?:[A-Za-z0-9+\\/\\s])*={0,2})\n(?:-+END\\sPUBLIC\\sKEY[-]+)|[-a-zA-Z0-9@:%._\\+~#=]{1,256}://[-a-zA-Z0-9@:%._\\+~#/=]{1,256}",
                               "description": "Public key used for verification of signatures on container images whose policy matches this trust root.",
                               "examples": [
                                 "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni\nqiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==\n-----END PUBLIC KEY-----\n"
