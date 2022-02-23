@@ -1109,7 +1109,7 @@
                             "$id": "#/properties/validators/items/anyOf/2/properties/auth/properties/k8s_keychain",
                             "type": "boolean",
                             "title": "The auth k8s_keychain schema",
-                            "description": "Indicates whether to pass a k8schain to cosign to authenticate to a registry."
+                            "description": "Indicates whether to pass a `--k8s-keychain` flag to cosign to use ambient registry credentials such as workload identities for authentication."
                           }
                         },
                         "required": [
