@@ -268,22 +268,14 @@
           }
         ],
         "required": [
-          "replicasCount",
-          "image",
-          "imagePullPolicy",
-          "resources",
-          "nodeSelector",
-          "tolerations",
-          "affinity",
-          "securityContext",
-          "podSecurityPolicy",
-          "envs"
+          "image"
         ],
         "properties": {
           "replicasCount": {
             "$id": "#/properties/deployment/properties/replicasCount",
             "type": ["integer", "string"],
             "pattern": "([0-9]*)",
+            "default": 1,
             "title": "The replicasCount schema",
             "description": "The number of replicas of Connaisseur deployment. (https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment)",
             "examples": [
@@ -318,6 +310,7 @@
           "imagePullSecrets": {
             "$id": "#/properties/deployment/properties/imagePullSecrets",
             "type": "array",
+            "default": "IfNotPresent",
             "title": "The imagePullSecrets schema",
             "description": "The list of ImagePullSecrets of Connaisseur if pulling from a private registry. (https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)",
             "examples": [
@@ -383,6 +376,7 @@
           "resources": {
             "$id": "#/properties/deployment/properties/resources",
             "type": "object",
+            "default": {},
             "title": "The resources schema",
             "description": "Resource management of Connaisseur container. (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)",
             "examples": [
@@ -484,6 +478,20 @@
           "tolerations": {
             "$id": "#/properties/deployment/properties/tolerations",
             "type": "array",
+            "default": [
+              {
+                  "effect": "NoExecute",
+                  "key": "node.kubernetes.io/not-ready",
+                  "operator": "Exists",
+                  "tolerationSeconds": 300
+              },
+              {
+                  "effect": "NoExecute",
+                  "key": "node.kubernetes.io/unreachable",
+                  "operator": "Exists",
+                  "tolerationSeconds": 300
+              }
+          ],
             "title": "The tolerations schema",
             "description": "Tolerations for Connaisseur pod. (https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)",
             "examples": [
@@ -539,6 +547,7 @@
           "securityContext": {
             "$id": "#/properties/deployment/properties/securityContext",
             "type": "object",
+            "default": {},
             "title": "The securityContext schema",
             "description": "SecurityContext of Connaisseur container. (https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)",
             "examples": [
@@ -801,7 +810,7 @@
             "name",
             "type"
           ],
-          "anyOf": [
+          "allOf": [
             {
               "$id": "#/properties/validators/items/anyOf/0",
               "type": "object",
@@ -1108,6 +1117,7 @@
                           "k8s_keychain": {
                             "$id": "#/properties/validators/items/anyOf/2/properties/auth/properties/k8s_keychain",
                             "type": "boolean",
+                            "default": false,
                             "title": "The auth k8s_keychain schema",
                             "description": "Indicates whether to pass a k8schain to cosign to authenticate to a registry."
                           }
