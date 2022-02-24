@@ -16,15 +16,24 @@ alerts at the same time.
 
 Currently, Connaisseur supports alerting on either admittance of images, denial of images or both. These event categories can be configured independently of each other under the relevant category (i.e. `admit_request` or `reject_request`):
 
-| Key                                                |  Accepted values                                      | Default           | Required           | Description                                                                                        |
-| -------------------------------------------------- | ----------------------------------------------------  | ----------------- | ------------------ | -------------------------------------------------------------------------------------------------- |
-| `alerting.cluster_identifier`                      | string                                                | `"not specified"` |                    | Cluster identifier used in alert payload to distinguish between alerts from different clusters.     |
-| `alerting.<category>.template`                     | `opsgenie`, `slack`, `keybase`, `ecs-1-12-0` or custom<sup>*</sup>  | -                 | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.           |
-| `alerting.<category>.receiver_url`                 | string                                                | -                 | :heavy_check_mark: | URL of alert-receiving endpoint.                                                                    |
-| `alerting.<category>.priority`                     | int                                                   | `3`               |                    | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).            |
-| `alerting.<category>.custom_headers`               | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
-| `alerting.<category>.payload_fields`               | subyaml                                               | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`). |
-| `alerting.<category>.fail_if_alert_sending_fails`  | bool                                                  | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.    |
+| Key                                                 |  Accepted values                                      | Default           | Required           | Description                                                                                         |
+| --------------------------------------------------- | ----------------------------------------------------- | ----------------- | ------------------ | --------------------------------------------------------------------------------------------------- |
+| `alerting.cluster_identifier`                       | string                                                | `"not specified"` |                    | Cluster identifier used in alert payload to distinguish between alerts from different clusters.     |
+| `alerting.<category>.template`                      | `opsgenie`, `slack`, `keybase`, `ecs-1-12-0` or custom<sup>*</sup>  | -   | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.                       |
+| `alerting.<category>.receiver_url`                  | string                                                | -                 | :heavy_check_mark: | URL of alert-receiving endpoint.                                                                    |
+| `alerting.<category>.priority`                      | int                                                   | `3`               |                    | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).            |
+| `alerting.<category>.custom_headers`                | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
+| `alerting.<category>.payload_fields`                | subyaml                                               | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`).                    |
+| `alerting.<category>.fail_if_alert_sending_fails`   | bool                                                  | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.     |
+| `alerting.<category>.receiver_authentication_type`  | string enum `basic`, `bearer`, `none`                 | `none`            |                    | Authentication type of the alert-receiving webhook endpoint .                                       |
+| `alerting.<category>.receiver_authentication_basic`               | object              | -                 | only when `receiver_authentication_type` is `basic`  | Authentication credentials for basic authentication.                                  |
+| `alerting.<category>.receiver_authentication_basic.username_env`  | string              | -                 | only when `receiver_authentication_type` is `basic`  | Username Environmental variable for basic authentication.                             |
+| `alerting.<category>.receiver_authentication_basic.password_env`  | string              | -                 | only when `receiver_authentication_type` is `basic`  | Password Environmental variable for basic authentication.                             |
+| `alerting.<category>.receiver_authentication_basic.authorization_prefix`  | string      | `Basic`           |                                                      | Prefix for Authorization header for basic authentication.                             |
+| `alerting.<category>.receiver_authentication_bearer`              | object              | -                 | only when `receiver_authentication_type` is `bearer` | Authentication credentials for bearer authentication.                                 |
+| `alerting.<category>.receiver_authentication_bearer.token_env`    | string              | -                 | only when `receiver_authentication_type` is `bearer` | Token Environmental variable for bearer authentication (Exclusive with `token_file`). |
+| `alerting.<category>.receiver_authentication_bearer.token_file`   | string              | -                 | only when `receiver_authentication_type` is `bearer` | Token file for bearer authentication (Exclusive with `token_env`).                    |
+| `alerting.<category>.receiver_authentication_bearer.authorization_prefix` | string      | `Bearer`          |                                                      | Prefix for Authorization header for bearer authentication.                            |
 
 <sup>*basename of the custom template file in `helm/alerting_payload_templates` without file extension </sup>
 
@@ -51,6 +60,54 @@ alerting:
       - template: keybase
         receiver_url: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
 ```
+
+## Example With Authentication
+
+For example, if you would like to receive notifications in your custom webhook authenticated with a bearer token taken from an environmental variable whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:
+
+```
+alerting:
+  admit_request:
+    templates:
+      - template: ecs-1-12-0 
+        receiver_url: https://your.custom.domain.com/webhook/admit
+        receiver_authentication_type: bearer
+        receiver_authentication_bearer: 
+          token_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_TOKEN
+```
+
+You then have to set the `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_TOKEN` environment variable referencing the bearer token secret you want to use into the connaisseur deployment.
+
+Or if you would like to use the service account token as the bearer token, you can use the following snippet:
+
+```
+alerting:
+  admit_request:
+    templates:
+      - template: ecs-1-12-0 
+        receiver_url: https://your.custom.domain.com/webhook/admit
+        receiver_authentication_type: bearer
+        receiver_authentication_bearer: 
+          token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+```
+
+Finally in case of basic authentication, you can use the following snippet:
+
+
+```
+alerting:
+  admit_request:
+    templates:
+      - template: ecs-1-12-0 
+        receiver_url: https://your.custom.domain.com/webhook/admit
+        receiver_authentication_type: basic
+        receiver_authentication_basic: 
+          username_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_USERNAME
+          password_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_PASSWORD
+```
+
+You then have to set the `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_USERNAME` and `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_PASSWORD` environment variables referencing the secret you want to use into the connaisseur deployment.
+
 
 ## Additional notes
 
