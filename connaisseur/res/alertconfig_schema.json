@@ -18,6 +18,50 @@
               "receiver_url": {
                 "type": "string"
               },
+              "receiver_authentication_type": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "basic",
+                  "bearer"
+                ]
+              },
+              "receiver_authentication_basic": {
+                "type": "object",
+                "properties": {
+                  "username_env": {
+                    "type": "string"
+                  },
+                  "password_env": {
+                    "type": "string"
+                  },
+                  "authorization_prefix": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username_env",
+                  "password_env"
+                ]
+              },
+              "receiver_authentication_bearer": {
+                "type": "object",
+                "oneOf": [
+                  {"required": ["token_file"]},
+                  {"required": ["token_env"]}
+                ],
+                "properties": {
+                  "authorization_prefix": {
+                    "type": "string"
+                  },
+                  "token_file": {
+                    "type": "string"
+                  },
+                  "token_env": {
+                    "type": "string"
+                  }
+                }
+              },
               "priority": {
                 "type": "integer"
               },
@@ -35,6 +79,35 @@
                 "type": "boolean"
               }
             },
+            "anyOf": [
+              {
+                "properties": {
+                  "receiver_authentication_type": {
+                    "const": "basic"
+                  }
+                },
+                "required": [
+                  "receiver_authentication_basic"
+                ]
+              },
+              {
+                "properties": {
+                  "receiver_authentication_type": {
+                    "const": "bearer"
+                  }
+                },
+                "required": [
+                  "receiver_authentication_bearer"
+                ]
+              },
+              {
+                "properties": {
+                  "receiver_authentication_type": {
+                    "const": "none"
+                  }
+                }
+              }
+            ],
             "required": [
               "template",
               "receiver_url"
@@ -60,6 +133,50 @@
               "receiver_url": {
                 "type": "string"
               },
+              "receiver_authentication_type": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "basic",
+                  "bearer"
+                ]
+              },
+              "receiver_authentication_basic": {
+                "type": "object",
+                "properties": {
+                  "username_env": {
+                    "type": "string"
+                  },
+                  "password_env": {
+                    "type": "string"
+                  },
+                  "authorization_prefix": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username_env",
+                  "password_env"
+                ]
+              },
+              "receiver_authentication_bearer": {
+                "type": "object",
+                "oneOf": [
+                  {"required": ["token_file"]},
+                  {"required": ["token_env"]}
+                ],
+                "properties": {
+                  "authorization_prefix": {
+                    "type": "string"
+                  },
+                  "token_file": {
+                    "type": "string"
+                  },
+                  "token_env": {
+                    "type": "string"
+                  }
+                }
+              },
               "priority": {
                 "type": "integer"
               },
@@ -77,6 +194,35 @@
                 "type": "boolean"
               }
             },
+            "anyOf": [
+              {
+                "properties": {
+                  "receiver_authentication_type": {
+                    "const": "basic"
+                  }
+                },
+                "required": [
+                  "receiver_authentication_basic"
+                ]
+              },
+              {
+                "properties": {
+                  "receiver_authentication_type": {
+                    "const": "bearer"
+                  }
+                },
+                "required": [
+                  "receiver_authentication_bearer"
+                ]
+              },
+              {
+                "properties": {
+                  "receiver_authentication_type": {
+                    "const": "none"
+                  }
+                }
+              }
+            ],
             "required": [
               "template",
               "receiver_url"
