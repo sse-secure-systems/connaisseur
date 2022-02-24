@@ -1,0 +1,13 @@
+{
+    "admit_request": {
+        "message": "CONNAISSEUR admitted a request",
+        "templates": [
+            {
+                "priority": 3,
+                "receiver_url": "https://hooks.slack.com/services/123",
+                "template": "slack",
+                "receiver_authentication_type": "basic"
+            }
+        ]
+    }
+}
