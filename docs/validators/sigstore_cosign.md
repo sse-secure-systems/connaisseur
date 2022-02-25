@@ -166,8 +166,6 @@ See [this cosign pull request](https://github.com/sigstore/cosign/pull/972) for 
 
 ### KMS Support
 
-> :warning: This is currently an experimental feature that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
-
 Connaisseur supports Cosign's URI-based [KMS integration](https://github.com/sigstore/cosign/blob/main/KMS.md) to manage the signing and verification keys.
 Simply configure the trust root key value as the respective URI.
 In case of a [Kubernetes secret](https://github.com/sigstore/cosign/blob/main/KMS.md#kubernetes-secret), this would take the following form:
