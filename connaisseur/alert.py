@@ -1,3 +1,4 @@
+from abc import abstractmethod
 import json
 import logging
 import os
@@ -53,31 +54,66 @@ class AlertReceiverAuthentication:
     Class to store authentication information for securely sending events to the alert receiver.
     """
 
-    class AlertReceiverBasicAuthentication:
+    authentication_config: dict = None
+    authentication_scheme: str = None
+
+    class AlertReceiverAuthenticationInterface:
+        def __init__(self, alert_receiver_config: dict, authentication_key: str):
+            self.authentication_config = alert_receiver_config.get(authentication_key)
+
+            if self.authentication_config is None:
+                raise ConfigurationError(
+                    f"No authentication configuration found ({authentication_key})."
+                )
+
+            self.authentication_scheme = self.authentication_config.get(
+                "authentication_scheme", self.authentication_scheme
+            )
+            self._validate_authentication_scheme()
+
+        def _validate_authentication_scheme(self) -> None:
+            if not self.authentication_scheme:
+                raise ConfigurationError(
+                    "The authentication scheme cannot be null or empty."
+                )
+
+            if " " in self.authentication_scheme:
+                raise ConfigurationError(
+                    "The authentication scheme cannot contain any space."
+                )
+
+        @abstractmethod
+        def get_header(self) -> dict:
+            pass
+
+    class AlertReceiverNoneAuthentication(AlertReceiverAuthenticationInterface):
+        """
+        Placeholder class for AlertReceiver without authentication.
+        """
+        def __init__(self, alert_receiver_config: dict):
+            pass
+
+        def get_header(self) -> dict:
+            return {}
+
+    class AlertReceiverBasicAuthentication(AlertReceiverAuthenticationInterface):
         """
         Class to store authentication information for basic authentication type with username and password.
         """
+
         username: str
         password: str
-        authentication_type: str
-        authorization_prefix: str = "Basic"
+        authentication_scheme: str = "Basic"
 
         def __init__(self, alert_receiver_config: dict):
-            basic_authentication_config = alert_receiver_config.get(
-                "receiver_authentication_basic", None
-            )
+            super().__init__(alert_receiver_config, "receiver_authentication_basic")
 
-            if (
-                basic_authentication_config is None
-            ):  # TODO maybe remove this check since it is included in the json validation?
-                raise ConfigurationError("No basic authentication configuration found.")
-
-            username_env = basic_authentication_config.get("username_env", None)
-            password_env = basic_authentication_config.get("password_env", None)
+            username_env = self.authentication_config.get("username_env")
+            password_env = self.authentication_config.get("password_env")
 
             if (
                 username_env is None or password_env is None
-            ):  # TODO maybe remove this check since it is included in the json validation?
+            ):  # This should not happen since it is included in the json validation
                 raise ConfigurationError(
                     "No username_env or password_env configuration found."
                 )
@@ -90,50 +126,37 @@ class AlertReceiverAuthentication:
                     f"No username or password found from environmental variables {username_env} and {password_env}."
                 )
 
-            self.authorization_prefix = basic_authentication_config.get(
-                "authorization_prefix", "Basic"
-            )
-            # TODO maybe validate authorization prefix
-
         def get_header(self) -> dict:
             return {
-                "Authorization": f"{self.authorization_prefix} {self.username}:{self.password}"
+                "Authorization": f"{self.authentication_scheme} {self.username}:{self.password}"
             }
 
-    class AlertReceiverBearerAuthentication:
+    class AlertReceiverBearerAuthentication(AlertReceiverAuthenticationInterface):
         """
         Class to store authentication information for bearer authentication type which uses a token.
         """
+
         token: str
-        authorization_prefix: str = "Bearer"  # default is bearer
+        authentication_scheme: str = "Bearer"  # default is bearer
 
         def __init__(self, alert_receiver_config: dict):
-            bearer_authentication_config = alert_receiver_config.get(
-                "receiver_authentication_bearer", None
-            )
-
-            if (
-                bearer_authentication_config is None
-            ):  # TODO maybe remove this check since it is included in the json validation?
-                raise ConfigurationError(
-                    "No bearer authentication configuration found."
-                )
-
-            token_env = bearer_authentication_config.get("token_env", None)
-            token_file = bearer_authentication_config.get("token_file", None)
+            super().__init__(alert_receiver_config, "receiver_authentication_bearer")
+        
+            token_env = self.authentication_config.get("token_env")
+            token_file = self.authentication_config.get("token_file")
 
             if (
                 token_env is None and token_file is None
-            ):  # TODO maybe remove this check since it is included in the json validation?
+            ):  # This should not happen since it is included in the json validation
                 raise ConfigurationError(
                     "No token_env and token_file configuration found."
                 )
 
             if (
                 token_env is not None and token_file is not None
-            ):  # TODO maybe remove this check since it is included in the json validation?
+            ):  # This should not happen since it is included in the json validation
                 raise ConfigurationError(
-                    "Both token_env and token_file configuration found. Only one is required."
+                    "Both token_env and token_file configuration found. Only one can be given."
                 )
 
             if token_env is not None:
@@ -154,58 +177,37 @@ class AlertReceiverAuthentication:
                         f"An error occurred while loading the token file {token_file}: {str(err)}"
                     )
 
-            self.authorization_prefix = bearer_authentication_config.get(
-                "authorization_prefix", "Bearer"
-            )
-            # TODO maybe validate authorization prefix
-
         def get_header(self) -> dict:
-            return {"Authorization": f"{self.authorization_prefix} {self.token}"}
+            return {"Authorization": f"{self.authentication_scheme} {self.token}"}
+
+    init_map = {
+        "basic": AlertReceiverBasicAuthentication,
+        "bearer": AlertReceiverBearerAuthentication,
+        "none": AlertReceiverNoneAuthentication,
+    }
+
+    _authentication_instance = None
 
     def __init__(self, alert_receiver_config: dict):
         self.authentication_type = alert_receiver_config.get(
             "receiver_authentication_type", "none"
         )
+        self.__init_authentication_instance(alert_receiver_config)
 
-        if self.is_basic():
-            self.__init_basic_authentication(alert_receiver_config)
-        elif self.is_bearer():
-            self.__init_bearer_authentication(alert_receiver_config)
+    def __init_authentication_instance(self, alert_receiver_config: dict):
+        authentication_class = self.__get_authentication_class()
+        self._authentication_instance = authentication_class(alert_receiver_config)
 
-    def is_basic(self):
-        return self.authentication_type == "basic"
+    def __get_authentication_class(self):
+        if self.authentication_type not in AlertReceiverAuthentication.init_map.keys():
+            raise ConfigurationError(
+                f"No authentication type found. Valid values are {list(AlertReceiverAuthentication.init_map.keys())}"
+            )  # hopefully this never happens
 
-    def is_bearer(self):
-        return self.authentication_type == "bearer"
-
-    def is_none(self):
-        return self.authentication_type == "none"
-
-    def __init_bearer_authentication(self, alert_receiver_config: dict):
-        self.bearer_authentication = (
-            AlertReceiverAuthentication.AlertReceiverBearerAuthentication(
-                alert_receiver_config
-            )
-        )
-
-    def __init_basic_authentication(self, alert_receiver_config: dict):
-        self.basic_authentication = (
-            AlertReceiverAuthentication.AlertReceiverBasicAuthentication(
-                alert_receiver_config
-            )
-        )
+        return self.init_map.get(self.authentication_type)
 
     def get_auth_header(self) -> dict:
-        if self.is_basic():
-            return self.basic_authentication.get_header()
-        elif self.is_bearer():
-            return self.bearer_authentication.get_header()
-        elif self.is_none():
-            return {}
-        else:
-            raise ConfigurationError(
-                "No authentication type found."
-            )  # hopefully this never happens
+        return self._authentication_instance.get_header()
 
 
 class Alert:
