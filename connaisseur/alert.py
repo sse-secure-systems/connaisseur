@@ -90,6 +90,7 @@ class AlertReceiverAuthentication:
         """
         Placeholder class for AlertReceiver without authentication.
         """
+
         def __init__(self, alert_receiver_config: dict):
             pass
 
@@ -141,7 +142,7 @@ class AlertReceiverAuthentication:
 
         def __init__(self, alert_receiver_config: dict):
             super().__init__(alert_receiver_config, "receiver_authentication_bearer")
-        
+
             token_env = self.authentication_config.get("token_env")
             token_file = self.authentication_config.get("token_file")
 
