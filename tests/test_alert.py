@@ -67,6 +67,16 @@ receiver_config_bearer_env = {
     "template": "slack",
 }
 
+receiver_config_bearer_env_invalid_scheme = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "bearer",
+    "receiver_authentication_bearer": {
+        "token_env": "CONNAISSEUR_ALERTING_TOKEN",
+        "authentication_scheme": "",
+    },
+    "template": "slack",
+}
+
 receiver_config_bearer_file = {
     "receiver_url": "this.is.a.testurl.conn",
     "receiver_authentication_type": "bearer",
@@ -76,12 +86,12 @@ receiver_config_bearer_file = {
     "template": "slack",
 }
 
-receiver_config_bearer_env_prefix = {
+receiver_config_bearer_env_scheme = {
     "receiver_url": "this.is.a.testurl.conn",
     "receiver_authentication_type": "bearer",
     "receiver_authentication_bearer": {
         "token_env": "CONNAISSEUR_ALERTING_TOKEN",
-        "authorization_prefix": "Newprefix",
+        "authentication_scheme": "Newscheme",
     },
     "template": "slack",
 }
@@ -96,13 +106,24 @@ receiver_config_basic = {
     "template": "slack",
 }
 
-receiver_config_basic_prefix = {
+receiver_config_basic_invalid_scheme = {
     "receiver_url": "this.is.a.testurl.conn",
     "receiver_authentication_type": "basic",
     "receiver_authentication_basic": {
         "username_env": "CONNAISSEUR_ALERTING_USERNAME",
         "password_env": "CONNAISSEUR_ALERTING_PASSWORD",
-        "authorization_prefix": "Newprefix",
+        "authentication_scheme": "Ba sic",
+    },
+    "template": "slack",
+}
+
+receiver_config_basic_scheme = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "basic",
+    "receiver_authentication_basic": {
+        "username_env": "CONNAISSEUR_ALERTING_USERNAME",
+        "password_env": "CONNAISSEUR_ALERTING_PASSWORD",
+        "authentication_scheme": "Newscheme",
     },
     "template": "slack",
 }
@@ -372,11 +393,11 @@ def test_alert_init(
             fix.no_exc(),
         ),
         (
-            receiver_config_bearer_env_prefix,
+            receiver_config_bearer_env_scheme,
             {"CONNAISSEUR_ALERTING_TOKEN": "AAABBBCCCDDD"},
             {},
             2,
-            {"Authorization": "Newprefix AAABBBCCCDDD"},
+            {"Authorization": "Newscheme AAABBBCCCDDD"},
             fix.no_exc(),
         ),
         (
@@ -399,6 +420,17 @@ def test_alert_init(
             ),
         ),
         (
+            receiver_config_bearer_env_invalid_scheme,
+            {},
+            {},
+            1,
+            {},
+            pytest.raises(
+                ConfigurationError,
+                match=r"The authentication scheme cannot be null or empty.",
+            ),
+        ),
+        (
             receiver_config_bearer_file,
             {},
             {},
@@ -418,14 +450,14 @@ def test_alert_init(
             fix.no_exc(),
         ),
         (
-            receiver_config_basic_prefix,
+            receiver_config_basic_scheme,
             {
                 "CONNAISSEUR_ALERTING_USERNAME": "user",
                 "CONNAISSEUR_ALERTING_PASSWORD": "password",
             },
             {},
             2,
-            {"Authorization": "Newprefix user:password"},
+            {"Authorization": "Newscheme user:password"},
             fix.no_exc(),
         ),
         (
@@ -437,6 +469,17 @@ def test_alert_init(
             pytest.raises(
                 ConfigurationError,
                 match=r"No username or password found from environmental variables.*",
+            ),
+        ),
+        (
+            receiver_config_basic_invalid_scheme,
+            {},
+            {},
+            1,
+            {},
+            pytest.raises(
+                ConfigurationError,
+                match=r"The authentication scheme cannot contain any space.",
             ),
         ),
     ],
