@@ -29,11 +29,11 @@ Currently, Connaisseur supports alerting on either admittance of images, denial 
 | `alerting.<category>.receiver_authentication_basic`               | object              | -                 | only when `receiver_authentication_type` is `basic`  | Authentication credentials for basic authentication.                                  |
 | `alerting.<category>.receiver_authentication_basic.username_env`  | string              | -                 | only when `receiver_authentication_type` is `basic`  | Username Environmental variable for basic authentication.                             |
 | `alerting.<category>.receiver_authentication_basic.password_env`  | string              | -                 | only when `receiver_authentication_type` is `basic`  | Password Environmental variable for basic authentication.                             |
-| `alerting.<category>.receiver_authentication_basic.authorization_prefix`  | string      | `Basic`           |                                                      | Prefix for Authorization header for basic authentication.                             |
+| `alerting.<category>.receiver_authentication_basic.authentication_scheme`  | string (without spaces) | `Basic`           |                                         | Prefix for Authorization header for basic authentication.                             |
 | `alerting.<category>.receiver_authentication_bearer`              | object              | -                 | only when `receiver_authentication_type` is `bearer` | Authentication credentials for bearer authentication.                                 |
 | `alerting.<category>.receiver_authentication_bearer.token_env`    | string              | -                 | only when `receiver_authentication_type` is `bearer` | Token Environmental variable for bearer authentication (Exclusive with `token_file`). |
 | `alerting.<category>.receiver_authentication_bearer.token_file`   | string              | -                 | only when `receiver_authentication_type` is `bearer` | Token file for bearer authentication (Exclusive with `token_env`).                    |
-| `alerting.<category>.receiver_authentication_bearer.authorization_prefix` | string      | `Bearer`          |                                                      | Prefix for Authorization header for bearer authentication.                            |
+| `alerting.<category>.receiver_authentication_bearer.authentication_scheme` | string (without spaces) | `Bearer`         |                                          | Prefix for Authorization header for bearer authentication.                            |
 
 <sup>*basename of the custom template file in `helm/alerting_payload_templates` without file extension </sup>
 
