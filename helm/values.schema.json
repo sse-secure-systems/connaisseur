@@ -1,0 +1,1866 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+      {
+        "deployment": {
+          "replicasCount": 3,
+          "image": "securesystemsengineering/connaisseur:v2.2.0",
+          "imagePullPolicy": "IfNotPresent",
+          "failurePolicy": "Fail",
+          "resources": {
+            "limits": {
+              "cpu": "1000m",
+              "memory": "512Mi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "memory": "128Mi"
+            }
+          },
+          "nodeSelector": {},
+          "tolerations": [],
+          "affinity": {
+            "podAntiAffinity": {
+              "preferredDuringSchedulingIgnoredDuringExecution": [
+                {
+                  "podAffinityTerm": {
+                    "labelSelector": {
+                      "matchExpressions": [
+                        {
+                          "key": "app.kubernetes.io/instance",
+                          "operator": "In",
+                          "values": [
+                            "connaisseur"
+                          ]
+                        }
+                      ]
+                    },
+                    "topologyKey": "kubernetes.io/hostname"
+                  },
+                  "weight": 100
+                }
+              ]
+            }
+          },
+          "securityContext": {
+            "allowPrivilegeEscalation": false,
+            "capabilities": {
+              "drop": [
+                "ALL"
+              ]
+            },
+            "privileged": false,
+            "readOnlyRootFilesystem": true,
+            "runAsNonRoot": true,
+            "runAsUser": 10001,
+            "runAsGroup": 20001,
+            "seccompProfile": {
+              "type": "RuntimeDefault"
+            }
+          },
+          "podSecurityPolicy": {
+            "enabled": false,
+            "name": [
+              "connaisseur-psp"
+            ]
+          },
+          "envs": {}
+        },
+        "service": {
+          "type": "ClusterIP",
+          "port": 443
+        },
+        "validators": [
+          {
+            "name": "allow",
+            "type": "static",
+            "approve": true
+          },
+          {
+            "name": "deny",
+            "type": "static",
+            "approve": false
+          },
+          {
+            "name": "default",
+            "type": "notaryv1",
+            "host": "notary.docker.io",
+            "trust_roots": null
+          },
+          {
+            "name": "dockerhub-basics",
+            "type": "notaryv1",
+            "host": "notary.docker.io",
+            "trust_roots": [
+              {
+                "name": "docker-official",
+                "key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f\nQQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==\n-----END PUBLIC KEY-----\n"
+              },
+              {
+                "name": "securesystemsengineering-official",
+                "key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe\nd0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==\n-----END PUBLIC KEY-----\n"
+              }
+            ]
+          }
+        ],
+        "policy": [
+          {
+            "pattern": "*:*"
+          },
+          {
+            "pattern": "docker.io/library/*:*",
+            "validator": "dockerhub-basics",
+            "with": {
+              "trust_root": "docker-official"
+            }
+          },
+          {
+            "pattern": "k8s.gcr.io/*:*",
+            "validator": "allow"
+          },
+          {
+            "pattern": "docker.io/securesystemsengineering/*:*",
+            "validator": "dockerhub-basics",
+            "with": {
+              "trust_root": "securesystemsengineering-official"
+            }
+          }
+        ],
+        "detectionMode": false,
+        "namespacedValidation": {
+          "enabled": false,
+          "mode": "ignore"
+        },
+        "automaticChildApproval": {
+          "enabled": true
+        },
+        "debug": true,
+        "alerting": {
+          "cluster_identifier": "example-cluster-staging-europe",
+          "admit_request": {
+            "templates": [
+              {
+                "template": "opsgenie",
+                "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                "priority": 4,
+                "custom_headers": [
+                  "Authorization: GenieKey <Your-Genie-Key>"
+                ],
+                "payload_fields": {
+                  "responders": [
+                    {
+                      "username": "testuser@testcompany.de",
+                      "type": "user"
+                    }
+                  ],
+                  "visibleTo": [
+                    {
+                      "username": "testuser@testcompany.de",
+                      "type": "user"
+                    }
+                  ],
+                  "tags": [
+                    "deployed_an_image"
+                  ]
+                },
+                "fail_if_alert_sending_fails": true
+              },
+              {
+                "template": "slack",
+                "receiver_url": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                "priority": 1
+              }
+            ]
+          },
+          "reject_request": {
+            "templates": [
+              {
+                "template": "keybase",
+                "receiver_url": "https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>",
+                "fail_if_alert_sending_fails": true
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "required": [
+      "deployment",
+      "service",
+      "validators",
+      "policy"
+    ],
+    "properties": {
+      "deployment": {
+        "$id": "#/properties/deployment",
+        "type": "object",
+        "title": "The deployment schema",
+        "description": "Configuration of the Connaisseur Kubernetes deployment.",
+        "examples": [
+          {
+            "replicasCount": 3,
+            "image": "securesystemsengineering/connaisseur:v2.2.0",
+            "imagePullPolicy": "IfNotPresent",
+            "failurePolicy": "Fail",
+            "resources": {
+              "limits": {
+                "cpu": "1000m",
+                "memory": "512Mi"
+              },
+              "requests": {
+                "cpu": "100m",
+                "memory": "128Mi"
+              }
+            },
+            "nodeSelector": {},
+            "tolerations": [],
+            "affinity": {
+              "podAntiAffinity": {
+                "preferredDuringSchedulingIgnoredDuringExecution": [
+                  {
+                    "podAffinityTerm": {
+                      "labelSelector": {
+                        "matchExpressions": [
+                          {
+                            "key": "app.kubernetes.io/instance",
+                            "operator": "In",
+                            "values": [
+                              "connaisseur"
+                            ]
+                          }
+                        ]
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    },
+                    "weight": 100
+                  }
+                ]
+              }
+            },
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "capabilities": {
+                "drop": [
+                  "ALL"
+                ]
+              },
+              "privileged": false,
+              "readOnlyRootFilesystem": true,
+              "runAsNonRoot": true,
+              "runAsUser": 10001,
+              "runAsGroup": 20001,
+              "seccompProfile": {
+                "type": "RuntimeDefault"
+              }
+            },
+            "podSecurityPolicy": {
+              "enabled": false,
+              "name": [
+                "connaisseur-psp"
+              ]
+            },
+            "envs": {}
+          }
+        ],
+        "required": [
+          "image"
+        ],
+        "properties": {
+          "replicasCount": {
+            "$id": "#/properties/deployment/properties/replicasCount",
+            "type": ["integer", "string"],
+            "pattern": "([0-9]*)",
+            "default": 1,
+            "title": "The replicasCount schema",
+            "description": "The number of replicas of Connaisseur deployment. (https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment)",
+            "examples": [
+              3
+            ]
+          },
+          "image": {
+            "$id": "#/properties/deployment/properties/image",
+            "type": "string",
+            "title": "The image schema",
+            "description": "The Connaisseur app image. (https://kubernetes.io/docs/concepts/containers/images/)",
+            "pattern": "(docker.io/)?securesystemsengineering/connaisseur:v[0-9]+.[0-9]+.[0-9]+$",
+            "examples": [
+              "securesystemsengineering/connaisseur:v2.2.0"
+            ]
+          },
+          "imagePullPolicy": {
+            "$id": "#/properties/deployment/properties/imagePullPolicy",
+            "type": "string",
+            "enum": [
+              "Always",
+              "IfNotPresent",
+              "Never",
+              ""
+            ],
+            "title": "The imagePullPolicy schema",
+            "description": "The Image Pull Policy of Connaisseur container. (https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy)",
+            "examples": [
+              "IfNotPresent"
+            ]
+          },
+          "imagePullSecrets": {
+            "$id": "#/properties/deployment/properties/imagePullSecrets",
+            "type": "array",
+            "default": "IfNotPresent",
+            "title": "The imagePullSecrets schema",
+            "description": "The list of ImagePullSecrets of Connaisseur if pulling from a private registry. (https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)",
+            "examples": [
+              [
+                {
+                  "name": "my-pull-secret"
+                }
+              ]
+            ],
+            "items": {
+              "$id": "#/properties/deployment/properties/imagePullSecrets/items",
+              "type": "object",
+              "title": "The ImagePullSecret schema",
+              "description": "An ImagePullSecret of Connaisseur if pulling from a private registry.",
+              "examples": [
+                {
+                  "name": "my-pull-secret"
+                }
+              ],
+              "properties": {
+                "name": {
+                  "$id": "#/properties/deployment/properties/imagePullSecrets/items/properties/name",
+                  "type": "string",
+                  "title": "The name schema",
+                  "description": "Name of Kubernetes Secret to use for authentication with private registry.",
+                  "examples": [
+                    {
+                      "name": "my-pull-secret"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "failurePolicy": {
+            "$id": "#/properties/deployment/properties/failurePolicy",
+            "type": "string",
+            "enum": [
+              "Ignore",
+              "Fail"
+            ],
+            "title": "The failurePolicy schema",
+            "description": "The failure policy of Connaisseur webhook. (https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy)",
+            "default": "Fail",
+            "examples": [
+              "Fail"
+            ]
+          },
+          "reinvocationPolicy": {
+            "$id": "#/properties/deployment/properties/reinvocationPolicy",
+            "type": "string",
+            "enum": [
+              "IfNeeded",
+              "Never"
+            ],
+            "title": "The reinvocationPolicy schema",
+            "description": "The reincovation policy of Connaisseur webhook. (https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#reinvocation-policy)",
+            "default": "Never",
+            "examples": [
+              "IfNeeded"
+            ]
+          },
+          "resources": {
+            "$id": "#/properties/deployment/properties/resources",
+            "type": "object",
+            "default": {},
+            "title": "The resources schema",
+            "description": "Resource management of Connaisseur container. (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)",
+            "examples": [
+              {
+                "limits": {
+                  "cpu": "1000m",
+                  "memory": "512Mi"
+                },
+                "requests": {
+                  "cpu": "100m",
+                  "memory": "128Mi"
+                }
+              }
+            ],
+            "properties": {
+              "limits": {
+                "$id": "#/properties/deployment/properties/resources/properties/limits",
+                "type": "object",
+                "title": "The limits schema",
+                "description": "Resource limits of Connaisseur container. (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-requests-are-scheduled)",
+                "examples": [
+                  {
+                    "cpu": "1000m",
+                    "memory": "512Mi"
+                  }
+                ],
+                "properties": {
+                  "cpu": {
+                    "$id": "#/properties/deployment/properties/resources/properties/limits/properties/cpu",
+                    "type": "string",
+                    "title": "The cpu schema",
+                    "description": "CPU limit of Connaisseur container. (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu)",
+                    "examples": [
+                      "1000m"
+                    ]
+                  },
+                  "memory": {
+                    "$id": "#/properties/deployment/properties/resources/properties/limits/properties/memory",
+                    "type": "string",
+                    "title": "The memory schema",
+                    "description": "Memory limit of Connaisseur container. (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory)",
+                    "examples": [
+                      "512Mi"
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              },
+              "requests": {
+                "$id": "#/properties/deployment/properties/resources/properties/requests",
+                "type": "object",
+                "title": "The requests schema",
+                "description": "Resource requests of Connaisseur container. (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-requests-are-scheduled)",
+                "examples": [
+                  {
+                    "cpu": "100m",
+                    "memory": "128Mi"
+                  }
+                ],
+                "properties": {
+                  "cpu": {
+                    "$id": "#/properties/deployment/properties/resources/properties/requests/properties/cpu",
+                    "type": "string",
+                    "title": "The cpu schema",
+                    "description": "CPU requests of Connaisseur container. (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu)",
+                    "default": "",
+                    "examples": [
+                      "100m"
+                    ]
+                  },
+                  "memory": {
+                    "$id": "#/properties/deployment/properties/resources/properties/requests/properties/memory",
+                    "type": "string",
+                    "title": "The memory schema",
+                    "description": "Memory requests of Connaisseur container. (https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory)",
+                    "default": "",
+                    "examples": [
+                      "128Mi"
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": true
+          },
+          "nodeSelector": {
+            "$id": "#/properties/deployment/properties/nodeSelector",
+            "type": "object",
+            "title": "The nodeSelector schema",
+            "description": "Node Selector for Connaisseur pod. (https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)",
+            "examples": [
+              {
+                "disktype": "ssd"
+              }
+            ],
+            "additionalProperties": true
+          },
+          "tolerations": {
+            "$id": "#/properties/deployment/properties/tolerations",
+            "type": "array",
+            "default": [
+              {
+                  "effect": "NoExecute",
+                  "key": "node.kubernetes.io/not-ready",
+                  "operator": "Exists",
+                  "tolerationSeconds": 300
+              },
+              {
+                  "effect": "NoExecute",
+                  "key": "node.kubernetes.io/unreachable",
+                  "operator": "Exists",
+                  "tolerationSeconds": 300
+              }
+          ],
+            "title": "The tolerations schema",
+            "description": "Tolerations for Connaisseur pod. (https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)",
+            "examples": [
+              [
+                {
+                  "key": "app.kubernetes.io/instance",
+                  "operator": "Equal",
+                  "value": "no-connaisseur",
+                  "effect": "NoSchedule"
+                }
+              ]
+            ],
+            "additionalItems": true,
+            "items": {
+              "$id": "#/properties/deployment/properties/tolerations/items"
+            }
+          },
+          "affinity": {
+            "$id": "#/properties/deployment/properties/affinity",
+            "type": "object",
+            "title": "The affinity schema",
+            "description": "Affinity for Connaisseur pod.",
+            "examples": [
+              {
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchExpressions": [
+                            {
+                              "key": "app.kubernetes.io/instance",
+                              "operator": "In",
+                              "values": [
+                                "connaisseur"
+                              ]
+                            }
+                          ]
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 100
+                    }
+                  ]
+                }
+              }
+            ],
+            "additionalItems": true,
+            "items": {
+              "$id": "#/properties/deployment/properties/tolerations/items"
+            }
+          },
+          "securityContext": {
+            "$id": "#/properties/deployment/properties/securityContext",
+            "type": "object",
+            "default": {},
+            "title": "The securityContext schema",
+            "description": "SecurityContext of Connaisseur container. (https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)",
+            "examples": [
+              {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                },
+                "privileged": false,
+                "readOnlyRootFilesystem": true,
+                "runAsNonRoot": true,
+                "runAsUser": 10001,
+                "runAsGroup": 20001,
+                "seccompProfile": {
+                  "type": "RuntimeDefault"
+                }
+              }
+            ],
+            "additionalProperties": true
+          },
+          "podSecurityPolicy": {
+            "$id": "#/properties/deployment/properties/podSecurityPolicy",
+            "type": "object",
+            "title": "The podSecurityPolicy schema",
+            "description": "PodSecurityPolicy",
+            "examples": [
+              {
+                "enabled": false,
+                "name": [
+                  "connaisseur-psp"
+                ]
+              }
+            ],
+            "properties": {
+              "enabled": {
+                "$id": "#/properties/deployment/properties/podSecurityPolicy/properties/enabled",
+                "type": "boolean",
+                "title": "The enabled schema",
+                "description": "Whether Connaisseur pod should be assigned a PSP.",
+                "default": false,
+                "examples": [
+                  false
+                ]
+              },
+              "name": {
+                "$id": "#/properties/deployment/properties/podSecurityPolicy/properties/name",
+                "type": "array",
+                "title": "The name schema",
+                "description": "List of names of the PSPs to be applied to Connaisseur pod.",
+                "examples": [
+                  [
+                    "connaisseur-psp"
+                  ]
+                ]
+              },
+              "additionalProperties": true
+            }
+          },
+          "envs": {
+            "$id": "#/properties/deployment/properties/envs",
+            "type": "object",
+            "title": "The envs schema",
+            "description": "Additional environment variables used for autentication to KMS providers with Cosign validator.",
+            "examples": [
+              {
+                "VAULT_ADDR": "myvault.com",
+                "VAULT_TOKEN": "secrettoken"
+              }
+            ],
+            "additionalProperties": true
+          },
+          "extraContainers": {
+            "$id": "#/properties/deployment/properties/extraContainers",
+            "type": "array",
+            "title": "The extraContainers schema",
+            "description": "Extra containers to be injected into the Connaisseur Pod to be used as sidecar.",
+            "examples": [
+              [
+                {
+                  "name": "exampleContainer",
+                  "image": "exampleImage:1.1.1",
+                  "volumeMounts": {
+                    "mountPath": "/exmaplepath/",
+                    "name": "example-vol"
+                  },
+                  "command": "examplecommand"
+                }
+              ]
+            ],
+            "additionalItems": true,
+            "items": {
+              "$id": "#/properties/deployment/properties/extraContainers/items",
+              "type": "object"
+            }
+          },
+          "extraVolumes": {
+            "$id": "#/properties/deployment/properties/extraVolumes",
+            "type": "array",
+            "title": "The extraVolumes schema",
+            "description": "Extra volumes to be added to the Connaisseur Pod.",
+            "examples": [
+              [
+                {
+                "name": "example-vol",
+                "emptyDir": {}
+                }
+              ]
+            ],
+            "additionalItems": true,
+            "items": {
+              "$id": "#/properties/deployment/properties/extraVolumes/items",
+              "type": "object"
+            }
+          },
+          "extraVolumeMounts": {
+            "$id": "#/properties/deployment/properties/extraVolumeMounts",
+            "type": "array",
+            "title": "The extraVolumeMounts schema",
+            "description": "Extra volume mounts of the Connaisseur Pod.",
+            "examples": [
+              [
+                {
+                  "mountPath": "/examplepath/",
+                  "name": "refresher-vol",
+                  "readOnly": "true"
+                }
+              ]
+            ],
+            "additionalItems": true,
+            "items": {
+              "$id": "#/properties/deployment/properties/extraVolumeMounts/items",
+              "type": "object"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "service": {
+        "$id": "#/properties/service",
+        "type": "object",
+        "title": "The service schema",
+        "description": "Configuration of the Connaisseur Kubernetes service resource.",
+        "examples": [
+          {
+            "type": "ClusterIP",
+            "port": 443
+          }
+        ],
+        "required": [
+          "type",
+          "port"
+        ],
+        "properties": {
+          "type": {
+            "$id": "#/properties/service/properties/type",
+            "type": "string",
+            "title": "The type schema",
+            "enum": [
+              "ClusterIP",
+              "NodePort",
+              "LoadBalancer",
+              "ExternalName"
+            ],
+            "description": "Service type of Connaisseur service. (https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types)",
+            "examples": [
+              "ClusterIP"
+            ]
+          },
+          "port": {
+            "$id": "#/properties/service/properties/port",
+            "type": "integer",
+            "title": "The port schema",
+            "description": "Service port of Connaisseur service. (https://kubernetes.io/docs/concepts/services-networking/service/)",
+            "examples": [
+              443
+            ]
+          }
+        },
+        "additionalProperties": true
+      },
+      "validators": {
+        "$id": "#/properties/validators",
+        "type": "array",
+        "title": "The validators schema",
+        "description": "The different methods how to validate a container image.",
+        "default": [],
+        "examples": [
+          [
+            {
+              "name": "allow",
+              "type": "static",
+              "approve": true
+            },
+            {
+              "name": "deny",
+              "type": "static",
+              "approve": false
+            },
+            {
+              "name": "dockerhub-basics",
+              "type": "notaryv1",
+              "host": "notary.docker.io",
+              "trust_roots": [
+                {
+                  "name": "securesystemsengineering-official",
+                  "key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe\nd0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==\n-----END PUBLIC KEY-----\n"
+                }
+              ]
+            },
+            {
+              "name": "myvalidator",
+              "type": "cosign",
+              "trust_roots": [
+                {
+                  "name": "mykey",
+                  "key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni\nqiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==\n-----END PUBLIC KEY-----\n"
+                }
+              ]
+            }
+          ]
+        ],
+        "additionalItems": true,
+        "items": {
+          "$id": "#/properties/validators/items",
+          "type": "object",
+          "title": "The validators schema",
+          "description": "The different methods how to validate a container image.",
+          "default": [],
+          "examples": [],
+          "properties": {
+            "name": {
+              "$id": "#/properties/validators/properties/name",
+              "type": "string",
+              "pattern": "^[^\\/\\\\]+$",
+              "title": "The name schema",
+              "description": "Name of the validator.",
+              "examples": [
+                "repository-team1-validator"
+              ]
+            },
+            "type": {
+              "$id": "#/properties/validators/properties/type",
+              "type": "string",
+              "enum": [
+                "notaryv1",
+                "notaryv2",
+                "cosign",
+                "static"
+              ],
+              "title": "The type schema",
+              "description": "Type of the validator. Currently supported types are notaryv1, cosign and static.",
+              "examples": [
+                "notaryv1"
+              ]
+            }
+          },
+          "required": [
+            "name",
+            "type"
+          ],
+          "allOf": [
+            {
+              "$id": "#/properties/validators/items/anyOf/0",
+              "type": "object",
+              "title": "The first anyOf schema",
+              "description": "A notary V1 validator instance.",
+              "examples": [
+                {
+                  "host": "notary.docker.io",
+                  "trust_roots": [
+                    {
+                      "name": "securesystemsengineering-official",
+                      "key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe\nd0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==\n-----END PUBLIC KEY-----\n"
+                    }
+                  ]
+                }
+              ],
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "notaryv1"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "host": {
+                    "$id": "#/properties/validators/items/anyOf/0/properties/host",
+                    "type": "string",
+                    "title": "The host schema",
+                    "description": "Host name of the notary instance.",
+                    "examples": [
+                      "notary.docker.io"
+                    ],
+                    "pattern": "(([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6})|(localhost))(\\:\\d{2,5})?"
+                  },
+                  "trust_roots": {
+                    "$id": "#/properties/validators/items/anyOf/0/properties/trust_roots",
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "title": "The trust_roots schema",
+                    "description": "The trust root of this validator. Currently, only public keys are supported as trust roots, but there may come other kinds of trust roots (e.g. mail addresses with OIDC flow).",
+                    "examples": [
+                      [
+                        {
+                          "name": "securesystemsengineering-official",
+                          "key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe\nd0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==\n-----END PUBLIC KEY-----\n"
+                        }
+                      ]
+                    ],
+                    "items": {
+                      "$id": "#/properties/validators/items/anyOf/0/properties/trust_roots",
+                      "anyOf": [
+                        {
+                          "$id": "#/properties/validators/items/anyOf/0/properties/trust_roots/anyOf/0",
+                          "type": "object",
+                          "title": "The first anyOf schema",
+                          "properties": {
+                            "name": {
+                              "$id": "#/properties/validators/items/anyOf/1/properties/trust_roots/anyOf/0/properties/name",
+                              "type": "string",
+                              "title": "The trust root's name schema",
+                              "description": "Name of the trust root",
+                              "examples": [
+                                "securesystemsengineering-official"
+                              ]
+                            },
+                            "key": {
+                              "$id": "#/properties/validators/items/anyOf/1/properties/trust_roots/anyOf/0/properties/key",
+                              "type": "string",
+                              "title": "The trust root's key schema.",
+                              "pattern": "(?:-+BEGIN\\sPUBLIC\\sKEY[-]+)\n(?:(?:[A-Za-z0-9+\\/\\s])*={0,2})\n(?:-+END\\sPUBLIC\\sKEY[-]+)",
+                              "description": "Public key used for verification of signatures on container images whose policy matches this trust root.",
+                              "examples": [
+                                "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe\nd0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==\n-----END PUBLIC KEY-----\n"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "key"
+                          ],
+                          "minItems": 0,
+                          "uniqueItems": true
+                        }
+                      ]
+                    }
+                  },
+                  "is_acr": {
+                    "$id": "#/properties/validators/items/anyOf/0/properties/is_acr",
+                    "title": "The is_acr schema",
+                    "description": "Indicates whether the notary V1 instance is attached to an ACR (Azure Container Registry) as this requires slight adaptions in communication with the notary instance.",
+                    "type": "boolean"
+                  },
+                  "cert": {
+                    "$id": "#/properties/validators/items/anyOf/0/properties/cert",
+                    "title": "The cert schema",
+                    "description": "TLS certificate if using a notary V1 instance requiring a self-signed certificate.",
+                    "type": "string",
+                    "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\\/\\s])*={0,2})\n(?:-+END\\sCERTIFICATE[-]+)"
+                  },
+                  "auth": {
+                    "type": "object",
+                    "$id": "#/properties/validators/items/anyOf/0/properties/auth",
+                    "title": "The auth schema",
+                    "description": "Authentication credentials if using a private notary V1 instance.",
+                    "oneOf": [
+                      {
+                        "$id": "#/properties/validators/items/anyOf/0/properties/auth/OneOf/0",
+                        "type": "object",
+                        "title": "The first OneOf schema",
+                        "properties": {
+                          "username": {
+                            "$id": "#/properties/validators/items/anyOf/0/properties/auth/OneOf/0/properties/username",
+                            "type": "string",
+                            "title": "The auth username schema",
+                            "description": "Username required for authentication with notary V1 instance.",
+                            "examples": [
+                              "johndoe"
+                            ]
+                          },
+                          "password": {
+                            "$id": "#/properties/validators/items/anyOf/0/properties/auth/OneOf/0/properties/password",
+                            "type": "string",
+                            "title": "The auth password schema",
+                            "description": "Password required for authentication with notary V1 instance.",
+                            "examples": [
+                              "johndoessupersecurepassword"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "username",
+                          "password"
+                        ]
+                      },
+                      {
+                        "$id": "#/properties/validators/items/anyOf/0/properties/auth/OneOf/1",
+                        "type": "object",
+                        "title": "The second OneOf schema",
+                        "properties": {
+                          "secret": {
+                            "$id": "#/properties/validators/items/anyOf/0/properties/auth/OneOf/1/properties/secret",
+                            "type": "string",
+                            "title": "The auth secret schema",
+                            "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*",
+                            "description": "Name of a Kubernetes secret containing authentication credentials.",
+                            "examples": [
+                              "my-notary-auth-creds"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "secret"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "host",
+                  "trust_roots"
+                ]
+              }
+            },
+            {
+              "$id": "#/properties/validators/items/anyOf/1",
+              "type": "object",
+              "title": "The second anyOf schema",
+              "description": "A notary V2 validator instance. This validator is not functional at this point of time and just reserved for future use.",
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "notaryv2"
+                  }
+                }
+              },
+              "then": {}
+            },
+            {
+              "$id": "#/properties/validators/items/anyOf/2",
+              "type": "object",
+              "title": "The third anyOf schema",
+              "description": "A cosign validator instance.",
+              "examples": [
+                {
+                  "trust_roots": [
+                    {
+                      "name": "mykey",
+                      "key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni\nqiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==\n-----END PUBLIC KEY-----\n"
+                    }
+                  ]
+                }
+              ],
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "cosign"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "trust_roots": {
+                    "$id": "#/properties/validators/items/anyOf/2/properties/trust_roots",
+                    "type": "array",
+                    "title": "The trust_roots schema for cosign validator",
+                    "description": "The trust root of the cosign validator. Currently, only public keys are supported as trust roots, but there may come other kinds of trust roots (e.g. mail addresses with OIDC flow).",
+                    "examples": [
+                      [
+                        {
+                          "name": "mykey",
+                          "key": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni\nqiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==\n-----END PUBLIC KEY-----\n"
+                        }
+                      ]
+                    ],
+                    "items": {
+                      "$id": "#/properties/validators/items/anyOf/2/properties/trust_roots",
+                      "anyOf": [
+                        {
+                          "$id": "#/properties/validators/items/anyOf/2/properties/trust_roots/anyOf/0",
+                          "type": "object",
+                          "title": "The first anyOf schema",
+                          "properties": {
+                            "name": {
+                              "$id": "#/properties/validators/items/anyOf/2/properties/trust_roots/anyOf/0/properties/name",
+                              "type": "string",
+                              "title": "The trust root's name schema",
+                              "description": "Name of the trust root",
+                              "examples": [
+                                "mykey"
+                              ]
+                            },
+                            "key": {
+                              "$id": "#/properties/validators/items/anyOf/2/properties/trust_roots/anyOf/0/properties/key",
+                              "type": "string",
+                              "title": "The trust root's key schema.",
+                              "pattern": "(?:-+BEGIN\\sPUBLIC\\sKEY[-]+)\n(?:(?:[A-Za-z0-9+\\/\\s])*={0,2})\n(?:-+END\\sPUBLIC\\sKEY[-]+)|[-a-zA-Z0-9@:%._\\+~#=]{1,256}://[-a-zA-Z0-9@:%._\\+~#/=]{1,256}",
+                              "description": "Public key used for verification of signatures on container images whose policy matches this trust root.",
+                              "examples": [
+                                "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni\nqiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==\n-----END PUBLIC KEY-----\n"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "key"
+                          ],
+                          "minItems": 1,
+                          "uniqueItems": true
+                        }
+                      ]
+                    },
+                    "required": [
+                      "trust_roots"
+                    ]
+                  },
+                  "cert": {
+                    "$id": "#/properties/validators/items/anyOf/2/properties/cert",
+                    "title": "The cert schema",
+                    "description": "TLS certificate if using a registry requiring a self-signed certificate.",
+                    "type": "string",
+                    "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\\/\\s])*={0,2})\n(?:-+END\\sCERTIFICATE[-]+)"
+                  },
+                  "host": {
+                    "$id": "#/properties/validators/items/anyOf/2/properties/host",
+                    "title": "The host schema",
+                    "description": "Not yet implemented.",
+                    "type": "string",
+                    "pattern": "(([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6})|(localhost))(\\:\\d{2,5})?"
+                  },
+                  "auth": {
+                    "type": "object",
+                    "$id": "#/properties/validators/items/anyOf/2/properties/auth",
+                    "title": "The auth schema",
+                    "description": "Authentication credentials if using a private registry instance.",
+                    "oneOf": [
+                      {
+                        "$id": "#/properties/validators/items/anyOf/2/properties/auth/OneOf/0",
+                        "type": "object",
+                        "title": "The first OneOf schema",
+                        "properties": {
+                          "secret": {
+                            "$id": "#/properties/validators/items/anyOf/2/properties/auth/properties/secret",
+                            "type": "string",
+                            "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*",
+                            "title": "The auth secret schema",
+                            "description": "Name of a Kubernetes secret containing authentication credentials.",
+                            "examples": [
+                              "my-cosign-auth-creds"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "secret_name"
+                        ]
+                      },
+                      {
+                        "$id": "#/properties/validators/items/anyOf/2/properties/auth/OneOf/1",
+                        "type": "object",
+                        "title": "The second OneOf schema",
+                        "properties": {
+                          "k8s_keychain": {
+                            "$id": "#/properties/validators/items/anyOf/2/properties/auth/properties/k8s_keychain",
+                            "type": "boolean",
+                            "default": false,
+                            "title": "The auth k8s_keychain schema",
+                            "description": "Indicates whether to pass a `--k8s-keychain` flag to cosign to use ambient registry credentials such as workload identities for authentication."
+                          }
+                        },
+                        "required": [
+                          "k8s_keychain"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "$id": "#/properties/validators/items/anyOf/3",
+              "type": "object",
+              "title": "The fourth anyOf schema",
+              "description": "A static validator instance either allowing or disallowing images regardless of any signature or content.",
+              "examples": [
+                {
+                  "approve": false
+                }
+              ],
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "static"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "approve": {
+                    "$id": "#/properties/validators/items/anyOf/3/properties/approve",
+                    "title": "The approve schema for static validator",
+                    "description": "Indicates whether the validator should allow or deny all container images matching this policy.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "approve"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "policy": {
+        "$id": "#/properties/policy",
+        "type": "array",
+        "title": "The policy schema",
+        "description": "Policy to configure mappings of previously configured validators to matching container images.",
+        "examples": [
+          [
+            {
+              "pattern": "*:*"
+            },
+            {
+              "pattern": "docker.io/library/*:*",
+              "validator": "dockerhub-basics",
+              "with": {
+                "trust_root": "docker-official"
+              }
+            }
+          ]
+        ],
+        "items": {
+          "$id": "#/properties/policy/items",
+          "anyOf": [
+            {
+              "$id": "#/properties/policy/items/anyOf/0",
+              "type": "object",
+              "title": "The first anyOf schema",
+              "description": "A policy instance.",
+              "examples": [
+                {
+                  "pattern": "*:*"
+                }
+              ],
+              "required": [
+                "pattern"
+              ],
+              "properties": {
+                "pattern": {
+                  "$id": "#/properties/policy/items/anyOf/0/properties/pattern",
+                  "type": "string",
+                  "pattern": "^((\\w+\\.[\\.\\w]*\\/)?([^\\s]+\\/)?)([^\\/\\:@]+)((@sha256:([a-f0-9]{64}))|(:(.+)))?$",
+                  "title": "The pattern schema",
+                  "description": "The image name of the admission request will be matched against this pattern using unix filename pattern matching.",
+                  "examples": [
+                    "*:*"
+                  ]
+                },
+                "validator": {
+                  "$id": "#/properties/policy/items/anyOf/1/properties/validator",
+                  "type": "string",
+                  "title": "The validator schema",
+                  "description": "Name of a previously defined validator. Must match the `name` key of the validator.",
+                  "default": "default",
+                  "examples": [
+                    "dockerhub-basics"
+                  ]
+                },
+                "with": {
+                  "$id": "#/properties/policy/items/anyOf/1/properties/with",
+                  "type": "object",
+                  "title": "The with schema",
+                  "description": "Specifies the exact validation technique. Currently, only trust_root objects are supported.",
+                  "examples": [
+                    {
+                      "trust_root": "docker-official"
+                    }
+                  ],
+                  "required": [
+                    "trust_root"
+                  ],
+                  "properties": {
+                    "trust_root": {
+                      "$id": "#/properties/policy/items/anyOf/1/properties/with/properties/trust_root",
+                      "type": "string",
+                      "title": "The trust_root schema",
+                      "description": "The trust root (key) to use. Must match the `name` key of an entry in the validator's `trust_roots` list.",
+                      "examples": [
+                        "docker-official"
+                      ]
+                    }
+                  },
+                  "additionalProperties": true,
+                  "uniqueItems": true
+                }
+              },
+              "additionalProperties": true
+            }
+          ]
+        }
+      },
+      "detectionMode": {
+        "$id": "#/properties/detectionMode",
+        "type": "boolean",
+        "title": "The detectionMode schema",
+        "description": "Enables turning on detection mode such that images are not actually denied, but instead only warnings are issued.",
+        "default": false
+      },
+      "namespacedValidation": {
+        "$id": "#/properties/namespacedValidation",
+        "type": "object",
+        "title": "The namespacedValidation schema",
+        "description": "Allows restricting Connaisseur to selected namespaces only (either by selecting or deselecting namespaces for Connaisseur).",
+        "default": {
+          "enabled": false
+        },
+        "examples": [
+          {
+            "enabled": true,
+            "mode": "ignore"
+          }
+        ],
+        "properties": {
+          "enabled": {
+            "$id": "#/properties/namespacedValidation/properties/enabled",
+            "type": "boolean",
+            "title": "The enabled schema",
+            "description": "Indicates whether namespaced validation is enabled or not.",
+            "default": false,
+            "examples": [
+              false
+            ]
+          },
+          "mode": {
+            "$id": "#/properties/namespacedValidation/properties/mode",
+            "type": "string",
+            "title": "The mode schema",
+            "description": "`ignore` mode will validate all namespaces NOT having the `securesystemsengineering.connaisseur/webhook=ignore` label while `validate` will validate all namespaces having the `securesystemsengineering.connaisseur/webhook=validate` label.",
+            "enum": [
+              "ignore",
+              "validate"
+            ],
+            "default": "ignore",
+            "examples": [
+              "validate"
+            ]
+          }
+        },
+        "additionalProperties": true
+      },
+      "automaticChildApproval": {
+        "$id": "#/properties/automaticChildApproval",
+        "type": "object",
+        "title": "The automaticChildApproval schema",
+        "description": "AutomaticChildApproval will allow all workload objects with coinciding images belonging to the same parent resource.",
+        "default": {},
+        "examples": [
+          {
+            "enabled": true
+          }
+        ],
+        "properties": {
+          "enabled": {
+            "$id": "#/properties/automaticChildApproval/properties/enabled",
+            "type": "boolean",
+            "title": "The enabled schema",
+            "description": "Whether automaticChildApproval is enabled or not.",
+            "default": true,
+            "examples": [
+              true
+            ]
+          }
+        },
+        "additionalProperties": true
+      },
+      "debug": {
+        "$id": "#/properties/debug",
+        "type": "boolean",
+        "title": "The debug schema",
+        "description": "Sets the log level to 'debug' which allows for more detailed information in the logs.",
+        "default": false,
+        "examples": [
+          true
+        ]
+      },
+      "logLevel": {
+        "$id": "#/properties/logLevel",
+        "type": "string",
+        "enum": [
+          "DEBUG",
+          "INFO",
+          "WARNING",
+          "ERROR",
+          "CRITICAL"
+        ],
+        "title": "The logLevel schema",
+        "description": "The logLevel option allows configuring the log level.",
+        "default": "INFO",
+        "examples": [
+          "ERROR"
+        ]
+      },
+      "alerting": {
+        "$id": "#/properties/alerting",
+        "type": "object",
+        "title": "The alerting schema",
+        "description": "The alerting subblock allows linkage to third party entities receiving JSON-formatted POST requests as Connaisseur alerts.",
+        "default": {},
+        "examples": [
+          {
+            "cluster_identifier": "example-cluster-staging-europe",
+            "admit_request": {
+              "templates": [
+                {
+                  "template": "opsgenie",
+                  "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                  "priority": 4,
+                  "custom_headers": [
+                    "Authorization: GenieKey <Your-Genie-Key>"
+                  ],
+                  "payload_fields": {
+                    "responders": [
+                      {
+                        "username": "testuser@testcompany.de",
+                        "type": "user"
+                      }
+                    ],
+                    "visibleTo": [
+                      {
+                        "username": "testuser@testcompany.de",
+                        "type": "user"
+                      }
+                    ],
+                    "tags": [
+                      "deployed_an_image"
+                    ]
+                  },
+                  "fail_if_alert_sending_fails": true
+                },
+                {
+                  "template": "slack",
+                  "receiver_url": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                  "priority": 1
+                }
+              ]
+            },
+            "reject_request": {
+              "templates": [
+                {
+                  "template": "keybase",
+                  "receiver_url": "https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>",
+                  "fail_if_alert_sending_fails": true
+                }
+              ]
+            }
+          }
+        ],
+        "properties": {
+          "cluster_identifier": {
+            "$id": "#/properties/alerting/properties/cluster_identifier",
+            "type": "string",
+            "title": "The cluster_identifier schema",
+            "description": "Name or identifier of the cluster such that the alert can be linked. If not specified, the alerts will show 'not specified' as cluster identifier.",
+            "examples": [
+              "example-cluster-staging-europe",
+              "production"
+            ]
+          },
+          "admit_request": {
+            "$id": "#/properties/alerting/properties/admit_request",
+            "type": "object",
+            "title": "The admit_request schema",
+            "description": "Configuration for alerts to be sent when an admission request has been admitted.",
+            "examples": [
+              {
+                "templates": [
+                  {
+                    "template": "opsgenie",
+                    "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                    "priority": 4,
+                    "custom_headers": [
+                      "Authorization: GenieKey <Your-Genie-Key>"
+                    ],
+                    "payload_fields": {
+                      "responders": [
+                        {
+                          "username": "testuser@testcompany.de",
+                          "type": "user"
+                        }
+                      ],
+                      "visibleTo": [
+                        {
+                          "username": "testuser@testcompany.de",
+                          "type": "user"
+                        }
+                      ],
+                      "tags": [
+                        "deployed_an_image"
+                      ]
+                    },
+                    "fail_if_alert_sending_fails": true
+                  },
+                  {
+                    "template": "slack",
+                    "receiver_url": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                    "priority": 1
+                  }
+                ]
+              }
+            ],
+            "required": [
+              "templates"
+            ],
+            "properties": {
+              "templates": {
+                "$id": "#/properties/alerting/properties/admit_request/properties/templates",
+                "type": "array",
+                "title": "The templates schema",
+                "description": "Specifies a list of alert templates to use in case of admitted images.",
+                "examples": [
+                  [
+                    {
+                      "template": "opsgenie",
+                      "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                      "priority": 4,
+                      "custom_headers": [
+                        "Authorization: GenieKey <Your-Genie-Key>"
+                      ],
+                      "payload_fields": {
+                        "responders": [
+                          {
+                            "username": "testuser@testcompany.de",
+                            "type": "user"
+                          }
+                        ],
+                        "visibleTo": [
+                          {
+                            "username": "testuser@testcompany.de",
+                            "type": "user"
+                          }
+                        ],
+                        "tags": [
+                          "deployed_an_image"
+                        ]
+                      },
+                      "fail_if_alert_sending_fails": true
+                    },
+                    {
+                      "template": "slack",
+                      "receiver_url": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                      "priority": 1
+                    }
+                  ]
+                ],
+                "items": {
+                  "$id": "#/properties/alerting/properties/admit_request/properties/templates/items",
+                  "anyOf": [
+                    {
+                      "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0",
+                      "type": "object",
+                      "title": "The first anyOf schema",
+                      "description": "Configuration of alert depending on the receiving entity.",
+                      "examples": [
+                        {
+                          "template": "opsgenie",
+                          "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                          "priority": 4,
+                          "custom_headers": [
+                            "Authorization: GenieKey <Your-Genie-Key>"
+                          ],
+                          "payload_fields": {
+                            "responders": [
+                              {
+                                "username": "testuser@testcompany.de",
+                                "type": "user"
+                              }
+                            ],
+                            "visibleTo": [
+                              {
+                                "username": "testuser@testcompany.de",
+                                "type": "user"
+                              }
+                            ],
+                            "tags": [
+                              "deployed_an_image"
+                            ]
+                          },
+                          "fail_if_alert_sending_fails": true
+                        },
+                        {
+                          "template": "slack",
+                          "receiver_url": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                          "priority": 1
+                        }
+                      ],
+                      "required": [
+                        "template",
+                        "receiver_url"
+                      ],
+                      "properties": {
+                        "template": {
+                          "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/template",
+                          "type": "string",
+                          "title": "The template schema",
+                          "description": "Template to render an alert specific to the receiving entity. Value must be chosen such that <template>.json matches one of the file names in the ./alert_payload_templates directory.",
+                          "examples": [
+                            "opsgenie",
+                            "slack",
+                            "keybase",
+                            "ecs-1-12-0"
+                          ]
+                        },
+                        "receiver_url": {
+                          "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/receiver_url",
+                          "type": "string",
+                          "title": "The receiver_url schema",
+                          "description": "The endpoint receiving the rendered JSON template as POST request.",
+                          "examples": [
+                            "https://api.eu.opsgenie.com/v2/alerts",
+                            "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                            "https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>"
+                          ]
+                        },
+                        "priority": {
+                          "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/priority",
+                          "type": "integer",
+                          "title": "The priority schema",
+                          "description": "Integer to indicate priority of the alert.",
+                          "examples": [
+                            4
+                          ]
+                        },
+                        "custom_headers": {
+                          "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/custom_headers",
+                          "type": "array",
+                          "title": "The custom_headers schema",
+                          "description": "Custom headers to be sent along with the JSON payload.",
+                          "examples": [
+                            [
+                              "Authorization: GenieKey <Your-Genie-Key>"
+                            ]
+                          ],
+                          "items": {
+                            "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/custom_headers/items",
+                            "anyOf": [
+                              {
+                                "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/custom_headers/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "Custom request headers specified as strings. OpsGenie requires the Authorization header containing the GenieKey.",
+                                "examples": [
+                                  "Authorization: GenieKey <Your-Genie-Key>"
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "payload_fields": {
+                          "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/payload_fields",
+                          "type": "object",
+                          "title": "The payload_fields schema",
+                          "description": "Object to be converted into JSON to amend the rendered Connaisseur alert JSON. Especially for OpsGenie alerts. (OpsGenie docs about available fields: https://docs.opsgenie.com/docs/alert-api#create-alert.)",
+                          "examples": [
+                            {
+                              "responders": [
+                                {
+                                  "username": "testuser@testcompany.de",
+                                  "type": "user"
+                                }
+                              ],
+                              "visibleTo": [
+                                {
+                                  "username": "testuser@testcompany.de",
+                                  "type": "user"
+                                }
+                              ],
+                              "tags": [
+                                "deployed_an_image"
+                              ]
+                            }
+                          ]
+                        },
+                        "fail_if_alert_sending_fails": {
+                          "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/fail_if_alert_sending_fails",
+                          "type": "boolean",
+                          "title": "The fail_if_alert_sending_fails schema",
+                          "description": "If set, throws an error if an alert cannot be sent.",
+                          "default": false,
+                          "examples": [
+                            true
+                          ]
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  ]
+                },
+                "minItems": 0
+              }
+            }
+          },
+          "reject_request": {
+            "$id": "#/properties/alerting/properties/reject_request",
+            "type": "object",
+            "title": "The reject_request schema",
+            "description": "Configuration for alerts to be sent when an admission request has been admitted.",
+            "examples": [
+              {
+                "templates": [
+                  {
+                    "template": "keybase",
+                    "receiver_url": "https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>",
+                    "fail_if_alert_sending_fails": true
+                  }
+                ]
+              }
+            ],
+            "required": [
+              "templates"
+            ],
+            "properties": {
+              "templates": {
+                "$id": "#/properties/alerting/properties/reject_request/properties/templates",
+                "type": "array",
+                "title": "The templates schema",
+                "description": "Specifies a list of alert templates to use in case of admitted images.",
+                "examples": [
+                  [
+                    {
+                      "template": "opsgenie",
+                      "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                      "priority": 4,
+                      "custom_headers": [
+                        "Authorization: GenieKey <Your-Genie-Key>"
+                      ],
+                      "payload_fields": {
+                        "responders": [
+                          {
+                            "username": "testuser@testcompany.de",
+                            "type": "user"
+                          }
+                        ],
+                        "visibleTo": [
+                          {
+                            "username": "testuser@testcompany.de",
+                            "type": "user"
+                          }
+                        ],
+                        "tags": [
+                          "deployed_an_image"
+                        ]
+                      },
+                      "fail_if_alert_sending_fails": true
+                    },
+                    {
+                      "template": "slack",
+                      "receiver_url": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                      "priority": 1
+                    }
+                  ]
+                ],
+                "items": {
+                  "$id": "#/properties/alerting/properties/reject_request/properties/templates/items",
+                  "anyOf": [
+                    {
+                      "$id": "#/properties/alerting/properties/reject_request/properties/templates/items/anyOf/0",
+                      "type": "object",
+                      "title": "The first anyOf schema",
+                      "description": "Configuration of alert depending on the receiving entity.",
+                      "examples": [
+                        {
+                          "template": "opsgenie",
+                          "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                          "priority": 4,
+                          "custom_headers": [
+                            "Authorization: GenieKey <Your-Genie-Key>"
+                          ],
+                          "payload_fields": {
+                            "responders": [
+                              {
+                                "username": "testuser@testcompany.de",
+                                "type": "user"
+                              }
+                            ],
+                            "visibleTo": [
+                              {
+                                "username": "testuser@testcompany.de",
+                                "type": "user"
+                              }
+                            ],
+                            "tags": [
+                              "deployed_an_image"
+                            ]
+                          },
+                          "fail_if_alert_sending_fails": true
+                        },
+                        {
+                          "template": "slack",
+                          "receiver_url": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                          "priority": 1
+                        }
+                      ],
+                      "required": [
+                        "template",
+                        "receiver_url"
+                      ],
+                      "properties": {
+                        "template": {
+                          "$id": "#/properties/alerting/properties/reject_request/properties/templates/items/anyOf/0/properties/template",
+                          "type": "string",
+                          "title": "The template schema",
+                          "description": "Template to render an alert specific to the receiving entity. Value must be chosen such that <template>.json matches one of the file names in the ./alert_payload_templates directory.",
+                          "examples": [
+                            "opsgenie",
+                            "slack",
+                            "keybase"
+                          ]
+                        },
+                        "receiver_url": {
+                          "$id": "#/properties/alerting/properties/reject_request/properties/templates/items/anyOf/0/properties/receiver_url",
+                          "type": "string",
+                          "title": "The receiver_url schema",
+                          "description": "The endpoint receiving the rendered JSON template as POST request.",
+                          "examples": [
+                            "https://api.eu.opsgenie.com/v2/alerts",
+                            "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                            "https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>"
+                          ]
+                        },
+                        "priority": {
+                          "$id": "#/properties/alerting/properties/reject_request/properties/templates/items/anyOf/0/properties/priority",
+                          "type": "integer",
+                          "title": "The priority schema",
+                          "description": "Integer to indicate priority of the alert.",
+                          "examples": [
+                            4
+                          ]
+                        },
+                        "custom_headers": {
+                          "$id": "#/properties/alerting/properties/reject_request/properties/templates/items/anyOf/0/properties/custom_headers",
+                          "type": "array",
+                          "title": "The custom_headers schema",
+                          "description": "Custom headers to be sent along with the JSON payload.",
+                          "examples": [
+                            [
+                              "Authorization: GenieKey <Your-Genie-Key>"
+                            ]
+                          ],
+                          "items": {
+                            "$id": "#/properties/alerting/properties/reject_request/properties/templates/items/anyOf/0/properties/custom_headers/items",
+                            "anyOf": [
+                              {
+                                "$id": "#/properties/alerting/properties/admit_request/properties/templates/items/anyOf/0/properties/custom_headers/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "Custom request headers specified as strings. OpsGenie requires the Authorization header containing the GenieKey.",
+                                "examples": [
+                                  "Authorization: GenieKey <Your-Genie-Key>"
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "payload_fields": {
+                          "$id": "#/properties/alerting/properties/reject_request/properties/templates/items/anyOf/0/properties/payload_fields",
+                          "type": "object",
+                          "title": "The payload_fields schema",
+                          "description": "Object to be converted into JSON to amend the rendered Connaisseur alert JSON. Especially for OpsGenie alerts. (OpsGenie docs about available fields: https://docs.opsgenie.com/docs/alert-api#create-alert.)",
+                          "examples": [
+                            {
+                              "responders": [
+                                {
+                                  "username": "testuser@testcompany.de",
+                                  "type": "user"
+                                }
+                              ],
+                              "visibleTo": [
+                                {
+                                  "username": "testuser@testcompany.de",
+                                  "type": "user"
+                                }
+                              ],
+                              "tags": [
+                                "deployed_an_image"
+                              ]
+                            }
+                          ]
+                        },
+                        "fail_if_alert_sending_fails": {
+                          "$id": "#/properties/alerting/properties/reject_request/properties/templates/items/anyOf/0/properties/fail_if_alert_sending_fails",
+                          "type": "boolean",
+                          "title": "The fail_if_alert_sending_fails schema",
+                          "description": "If set, throws an error if an alert cannot be sent.",
+                          "default": false,
+                          "examples": [
+                            true
+                          ]
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  ]
+                },
+                "minItems": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  }

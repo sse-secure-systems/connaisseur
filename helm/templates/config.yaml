@@ -1,3 +1,5 @@
+{{ include "validatePolicy" . }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
