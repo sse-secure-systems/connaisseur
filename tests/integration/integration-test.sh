@@ -11,6 +11,9 @@ FAILED="${RED}FAILED${NC}"
 EXIT="0"
 WOLIST=("CronJob" "DaemonSet" "Deployment" "Job" "Pod" "ReplicaSet" "ReplicationController" "StatefulSet")
 
+## Backup helm/values.yaml
+cp helm/values.yaml values.yaml.backup
+
 ### SINGLE TEST CASE ####################################
 single_test() { # ID TXT TYP REF NS MSG RES
   echo -n "[$1] $2"
@@ -325,4 +328,5 @@ fi
 echo 'Cleaning up installation and test resources...'
 make uninstall >/dev/null 2>&1 || true
 kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets,namespaces -luse="connaisseur-integration-test" -A >/dev/null
+mv values.yaml.backup helm/values.yaml
 echo 'Finished cleanup.'
