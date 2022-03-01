@@ -1,4 +1,3 @@
-from abc import abstractmethod
 import json
 import logging
 import os
@@ -58,33 +57,36 @@ class AlertReceiverAuthentication:
     authentication_scheme: str = None
 
     class AlertReceiverAuthenticationInterface:
-        def __init__(self, alert_receiver_config: dict, authentication_key: str):
-            self.authentication_config = alert_receiver_config.get(authentication_key)
-
-            if self.authentication_config is None:
-                raise ConfigurationError(
-                    f"No authentication configuration found ({authentication_key})."
+        def __init__(self, alert_receiver_config: dict, authentication_config_key: str):
+            if authentication_config_key is not None:
+                self.authentication_config = alert_receiver_config.get(
+                    authentication_config_key
                 )
 
-            self.authentication_scheme = self.authentication_config.get(
-                "authentication_scheme", self.authentication_scheme
-            )
-            self._validate_authentication_scheme()
+                if self.authentication_config is None:
+                    raise ConfigurationError(
+                        "No authentication configuration found for dictionary key:"
+                        f"{authentication_config_key}."
+                    )
+
+                self.authentication_scheme = self.authentication_config.get(
+                    "authentication_scheme", self.authentication_scheme
+                )
+                self._validate_authentication_scheme()
 
         def _validate_authentication_scheme(self) -> None:
             if not self.authentication_scheme:
                 raise ConfigurationError(
                     "The authentication scheme cannot be null or empty."
                 )
-
-            if " " in self.authentication_scheme:
+            # check if self.authentication_scheme contains only letters
+            if not self.authentication_scheme.isalpha():
                 raise ConfigurationError(
-                    "The authentication scheme cannot contain any space."
+                    "The authentication scheme must contain only letters."
                 )
 
-        @abstractmethod
         def get_header(self) -> dict:
-            pass
+            return {}
 
     class AlertReceiverNoneAuthentication(AlertReceiverAuthenticationInterface):
         """
@@ -92,14 +94,12 @@ class AlertReceiverAuthentication:
         """
 
         def __init__(self, alert_receiver_config: dict):
-            pass
-
-        def get_header(self) -> dict:
-            return {}
+            super().__init__(alert_receiver_config, None)
 
     class AlertReceiverBasicAuthentication(AlertReceiverAuthenticationInterface):
         """
-        Class to store authentication information for basic authentication type with username and password.
+        Class to store authentication information for basic authentication type
+        with username and password.
         """
 
         username: str
@@ -124,7 +124,8 @@ class AlertReceiverAuthentication:
 
             if self.username is None or self.password is None:
                 raise ConfigurationError(
-                    f"No username or password found from environmental variables {username_env} and {password_env}."
+                    "No username or password found from environmental variables "
+                    f"{username_env} and {password_env}."
                 )
 
         def get_header(self) -> dict:
@@ -169,14 +170,16 @@ class AlertReceiverAuthentication:
                     )
             else:
                 try:
-                    with open(token_file, "r") as token_file:
+                    with open(token_file, "r", encoding="utf-8") as token_file:
                         self.token = token_file.read()
-                except FileNotFoundError:
-                    raise ConfigurationError(f"No token file found at {token_file}.")
+                except FileNotFoundError as err:
+                    raise ConfigurationError(
+                        f"No token file found at {token_file}."
+                    ) from err
                 except Exception as err:
                     raise ConfigurationError(
                         f"An error occurred while loading the token file {token_file}: {str(err)}"
-                    )
+                    ) from err
 
         def get_header(self) -> dict:
             return {"Authorization": f"{self.authentication_scheme} {self.token}"}
@@ -196,16 +199,15 @@ class AlertReceiverAuthentication:
         self.__init_authentication_instance(alert_receiver_config)
 
     def __init_authentication_instance(self, alert_receiver_config: dict):
-        authentication_class = self.__get_authentication_class()
-        self._authentication_instance = authentication_class(alert_receiver_config)
-
-    def __get_authentication_class(self):
-        if self.authentication_type not in AlertReceiverAuthentication.init_map.keys():
+        try:
+            self._authentication_instance = self.init_map[self.authentication_type](
+                alert_receiver_config
+            )
+        except KeyError as err:
             raise ConfigurationError(
-                f"No authentication type found. Valid values are {list(AlertReceiverAuthentication.init_map.keys())}"
-            )  # hopefully this never happens
-
-        return self.init_map.get(self.authentication_type)
+                "No authentication type found. Valid values are "
+                f"{list(AlertReceiverAuthentication.init_map.keys())}"
+            ) from err  # hopefully this never happens
 
     def get_auth_header(self) -> dict:
         return self._authentication_instance.get_header()

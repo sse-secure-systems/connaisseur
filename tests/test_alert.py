@@ -479,7 +479,7 @@ def test_alert_init(
             {},
             pytest.raises(
                 ConfigurationError,
-                match=r"The authentication scheme cannot contain any space.",
+                match=r"The authentication scheme must contain only letters.",
             ),
         ),
     ],
