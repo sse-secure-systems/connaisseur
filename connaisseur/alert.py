@@ -59,15 +59,15 @@ class AlertReceiverAuthentication:
     class AlertReceiverAuthenticationInterface:
         def __init__(self, alert_receiver_config: dict, authentication_config_key: str):
             if authentication_config_key is not None:
-                self.authentication_config = alert_receiver_config.get(
-                    authentication_config_key
-                )
-
-                if self.authentication_config is None:
+                try:
+                    self.authentication_config = alert_receiver_config[
+                        authentication_config_key
+                    ]
+                except KeyError as err:
                     raise ConfigurationError(
                         "No authentication configuration found for dictionary key:"
                         f"{authentication_config_key}."
-                    )
+                    ) from err
 
                 self.authentication_scheme = self.authentication_config.get(
                     "authentication_scheme", self.authentication_scheme
@@ -109,24 +109,22 @@ class AlertReceiverAuthentication:
         def __init__(self, alert_receiver_config: dict):
             super().__init__(alert_receiver_config, "receiver_authentication_basic")
 
-            username_env = self.authentication_config.get("username_env")
-            password_env = self.authentication_config.get("password_env")
-
-            if (
-                username_env is None or password_env is None
-            ):  # This should not happen since it is included in the json validation
+            try:
+                username_env = self.authentication_config["username_env"]
+                password_env = self.authentication_config["password_env"]
+            except KeyError as err:
                 raise ConfigurationError(
                     "No username_env or password_env configuration found."
-                )
+                ) from err
 
-            self.username = os.environ.get(username_env, None)
-            self.password = os.environ.get(password_env, None)
-
-            if self.username is None or self.password is None:
+            try:
+                self.username = os.environ[username_env]
+                self.password = os.environ[password_env]
+            except KeyError as err:
                 raise ConfigurationError(
                     "No username or password found from environmental variables "
                     f"{username_env} and {password_env}."
-                )
+                ) from err
 
         def get_header(self) -> dict:
             return {
@@ -162,16 +160,16 @@ class AlertReceiverAuthentication:
                 )
 
             if token_env is not None:
-                self.token = os.environ.get(token_env, None)
-
-                if self.token is None:
+                try:
+                    self.token = os.environ[token_env]
+                except KeyError as err:
                     raise ConfigurationError(
                         f"No token found from environmental variable {token_env}."
-                    )
+                    ) from err
             else:
                 try:
-                    with open(token_file, "r", encoding="utf-8") as token_file:
-                        self.token = token_file.read()
+                    with open(token_file, "r", encoding="utf-8") as token_file_handler:
+                        self.token = token_file_handler.read()
                 except FileNotFoundError as err:
                     raise ConfigurationError(
                         f"No token file found at {token_file}."
