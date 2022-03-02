@@ -228,7 +228,7 @@ class Notary:
 
                 try:
                     token_key = "access_token" if self.is_acr else "token"
-                    token = (await response.json())[token_key]
+                    token = (await response.json(content_type=None))[token_key]
                 except KeyError as err:
                     msg = "Unable to retrieve authentication token from {auth_url} response."
                     raise NotFoundException(
