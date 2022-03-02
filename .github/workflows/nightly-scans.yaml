@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install yq
         run: sudo snap install yq
       - name: Build images
@@ -28,7 +28,7 @@ jobs:
     container:
       image: python:slim
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/safety
       - name: Print report
         if: ${{ success() || failure() }}
@@ -45,7 +45,7 @@ jobs:
       image: docker:stable
     needs: [build]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v2
         with:
           name: images
@@ -65,10 +65,74 @@ jobs:
     container:
       image: docker:stable
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Build and test get-root utility
         run: |
           docker build -t get-root-key -f docker/Dockerfile.getRoot .
           docker run --rm get-root-key -i securesystemsengineering/testimage > output
           cat output | grep "KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508"
           cat output | grep "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe"
+
+  version-match:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install yq
+        run: sudo snap install yq
+      - name: Ensure version equality
+        run: |
+          IMAGE_TAG=$(yq e '.deployment.image' helm/values.yaml| cut -d ':' -f2)
+          for COMMIT_TAG in $(git tag --points-at $(git rev-parse HEAD)); do
+            if [[ "$IMAGE_TAG" == "$COMMIT_TAG" ]]; then
+              exit 0
+            fi
+          done
+          echo "Tag '$IMAGE_TAG' is not within tags of commit: $(git tag --points-at $(git rev-parse HEAD))"
+          exit 1
+
+  integration-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        integration-test-arg: ["regular", "cosign", "deployment", "pre-config"]
+    services:
+      alerting-endpoint:
+        image: securesystemsengineering/alerting-endpoint
+        ports:
+          - 56243:56243
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install yq and Bash
+        run: |
+          sudo snap install yq
+          sudo apt update
+          sudo apt install bash -y
+      - uses: ./.github/actions/k3s-cluster
+        name: Setup K8s cluster
+        with:
+          k3s-channel: v1.22
+      - name: Set environment variables for alerting listener
+        run: |
+          CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
+          CONTAINER_ID=$(echo ${CONTAINER} | jq -r .ID)
+          CONTAINER_NETWORK=$(echo ${CONTAINER} | jq -r .Networks)
+          SEARCH_PATH=.[0].NetworkSettings.Networks.${CONTAINER_NETWORK}.IPAddress
+          ALERTING_ENDPOINT_IP=$(docker container inspect ${CONTAINER_ID} | jq -r ${SEARCH_PATH})
+          echo ALERTING_ENDPOINT_IP=${ALERTING_ENDPOINT_IP} >> $GITHUB_ENV
+      - name: Configure Connaisseur and show configuration
+        run: |
+          yq eval -i '.deployment.imagePullPolicy="IfNotPresent"' tests/integration/update.yaml
+          echo "::group::values.yaml"
+          yq e '.' helm/values.yaml
+          echo "::endgroup::"
+        shell: bash
+      - name: Run actual integration test
+        run: |
+          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+        shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+        shell: bash

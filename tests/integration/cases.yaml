@@ -78,6 +78,49 @@ test_cases:
     namespace: default
     expected_msg: pod/pod-cs created
     expected_result: null
+  multi-cosigned:
+  - id: mc-u
+    txt: Testing multi-cosigned image `threshold` => undefined, not reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-alice
+    namespace: default
+    expected_msg: Image not compliant with validation policy (threshold of '3' not reached).
+    expected_result: null
+  - id: mc-s
+    txt: Testing multi-cosigned image `threshold` => undefined, reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie
+    namespace: default
+    expected_msg: pod/pod-mc-s created
+    expected_result: null
+  - id: mct2-u
+    txt: Testing multi-cosigned image `threshold` => 2, not reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-bob
+    namespace: default
+    expected_msg: Image not compliant with validation policy (threshold of '2' not reached).
+    expected_result: null
+  - id: mct2-s
+    txt: Testing multi-cosigned image `threshold` => 2, reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-bob-charlie
+    namespace: default
+    expected_msg: pod/pod-mct2-s created
+    expected_result: null
+  - id: mcr-u
+    txt: Testing multi-cosigned image `required` signers => ['alice', 'charlie'], not reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-charlie
+    namespace: default
+    expected_msg: "Image not compliant with validation policy (missing signatures for required trust roots: alice)."
+    expected_result: null
+  - id: mcr-s
+    txt: Testing multi-cosigned image `required` signers => ['alice', 'charlie'], reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-charlie-alice
+    namespace: default
+    expected_msg: pod/pod-mcr-s created
+    expected_result: null
   ignore-namespace-val:
   - id: iuu
     txt: Testing unsigned image in unlabelled namespace...

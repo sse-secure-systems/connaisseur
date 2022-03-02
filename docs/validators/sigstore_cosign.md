@@ -99,6 +99,15 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `auth.k8s_keychain` | false | | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s_keychain). |
 | `cert` | | | A certificate in PEM format for private registries. |
 
+`.policy[*]` in `helm/values.yaml` supports the following additional keys and modifications for sigstore/Cosign (refer to [basics](../basics.md#image-policy) for more information on default keys):
+
+| Key | Default | Required | Description |
+| - | - | - | - |
+| `with.trust_root` | - | :heavy_check_mark: | Setting the name of trust root to `"*"` enables verification of multiple trust roots. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
+| `with.threshold` | - | - | Minimum number of signatures required in case `with.trust_root` is set to `"*"`. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
+| `with.required` | `[]` | - | Array of required trust roots referenced by name in case `with.trust_root` is set to `"*"`. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
+
+
 ### Example
 
 ```yaml
@@ -119,6 +128,7 @@ policy:
   with:
     key: mykey
 ```
+
 
 ## Additional notes
 
@@ -165,8 +175,6 @@ If `k8s_keychain` is set to `true` in the validator configuration, `cosign` will
 See [this cosign pull request](https://github.com/sigstore/cosign/pull/972) for more details.
 
 ### KMS Support
-
-> :warning: This is currently an experimental feature that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
 
 Connaisseur supports Cosign's URI-based [KMS integration](https://github.com/sigstore/cosign/blob/main/KMS.md) to manage the signing and verification keys.
 Simply configure the trust root key value as the respective URI.
@@ -222,6 +230,95 @@ Such environment variables can be injected into Connaisseur via `deployment.envs
     VAULT_ADDR: myvault.com
     VAULT_TOKEN: secrettoken
 ```
+
+### Multi-signature verification
+
+> :warning: This is currently an experimental feature that might be unstable over time.
+> As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
+
+Connaisseur can verify multiple signatures for a single image.
+It is possible to configure a threshold number and specific set of required valid signatures.
+This allows to implement several advanced use cases (and policies):
+
+* Five maintainers of a repository are able to sign a single derived image, however at least 3 signatures are required for the image to be valid.
+* In a CI pipeline, a container image is signed directly after pushing by the build job and at a later time by passing quality gates such as security scanners or integration tests, each with their own key (trust root). Validation requires all of these signatures for deployment to enforce integrity and quality gates.
+* A mixture of the above use cases whereby several specific trust roots are enforced (e.g. automation tools) and the overall number of signatures has to surpass a certain threshold (e.g. at least one of the testers admits).
+* Key rotation is possible by adding a new key as an additional key and require at least one valid signature.
+
+Multi-signature verification is scoped to the trust roots specified within a referenced validator.
+Consider the following validator configuration:
+
+```yaml
+validators:
+- name: multicosigner
+  type: cosign
+  trust_roots:
+  - name: alice
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ
+      wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==
+      -----END PUBLIC KEY-----
+  - name: bob
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o
+      EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==
+      -----END PUBLIC KEY-----
+  - name: charlie
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4
+      ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==
+      -----END PUBLIC KEY-----
+```
+
+The trust roots `alice`, `bob`, and `charlie` are all included for verification in case `.policy[*].with.trust_root` is set to `"*"` (note that this is a special flag, not a real wildcard):
+
+```yaml
+- pattern: "*:*"
+  validator: multicosigner
+  with:
+    trust_root: "*"
+```
+
+As neither `threshold` nor `required` are specified, Connaisseur will require signatures of all trust roots (`alice`, `bob`, and `charlie`) and deny an image otherwise.
+If either `threshold` or `required` is specified, it takes precedence.
+For example, it is possible to configure a threshold number of required signatures via the `threshold` key:
+
+```yaml
+- pattern: "*:*"
+  validator: multicosigner
+  with:
+    trust_root: "*"
+    threshold: 2
+```
+
+In this case, valid signatures of two or more out of the three trust roots are required for admittance.
+Using the `required` key, it is possible to enforce specific trusted roots:
+
+```yaml
+- pattern: "*:*"
+  validator: multicosigner
+  with:
+    trust_root: "*"
+    required: ["alice", "bob"]
+```
+
+Now, only images with valid signatures of trust roots `alice` and `bob` are admitted.
+It is possible to combine `threshold` and `required` keys:
+
+```yaml
+- pattern: "*:*"
+  validator: multicosigner
+  with:
+    trust_root: "*"
+    threshold: 3
+    required: ["alice", "bob"]
+```
+
+Thus, at least 3 valid signatures are required and `alice` and `bob` must be among those.
+
 
 ### Verification against transparency log
 

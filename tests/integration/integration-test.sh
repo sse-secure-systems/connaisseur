@@ -11,6 +11,9 @@ FAILED="${RED}FAILED${NC}"
 EXIT="0"
 WOLIST=("CronJob" "DaemonSet" "Deployment" "Job" "Pod" "ReplicaSet" "ReplicationController" "StatefulSet")
 
+## Backup helm/values.yaml
+cp helm/values.yaml values.yaml.backup
+
 ### SINGLE TEST CASE ####################################
 single_test() { # ID TXT TYP REF NS MSG RES
   echo -n "[$1] $2"
@@ -232,6 +235,11 @@ cosign_int_test() {
   multi_test "cosign"
 }
 
+### MULTI-COSIGNed TEST ####################################
+multi-cosigned_int_test() {
+  multi_test "multi-cosigned"
+}
+
 ### NAMESPACE VALIDATION TEST ####################################
 namespace_val_int_test() {
   echo -n "Creating namespaces..."
@@ -268,6 +276,11 @@ case $1 in
   update_via_env_vars
   make_install
   cosign_int_test
+  ;;
+"multi-cosigned")
+  update_via_env_vars
+  make_install
+  multi-cosigned_int_test
   ;;
 "namespace-val")
   update_via_env_vars
@@ -325,4 +338,5 @@ fi
 echo 'Cleaning up installation and test resources...'
 make uninstall >/dev/null 2>&1 || true
 kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets,namespaces -luse="connaisseur-integration-test" -A >/dev/null
+mv values.yaml.backup helm/values.yaml
 echo 'Finished cleanup.'

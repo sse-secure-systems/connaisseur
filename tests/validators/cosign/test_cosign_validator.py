@@ -10,6 +10,11 @@ example_key = (
     "ZhEfTYb4Mnb/LdrtXKTIIbzNBp8mwriocbaxXxzqu"
     "vbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ=="
 )
+example_key2 = (
+    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f"
+    "QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA=="
+)
+
 static_cosigns = [
     {
         "name": "cosign1",
@@ -48,7 +53,26 @@ static_cosigns = [
         "trust_roots": [],
         "auth": {"secret_name": "my-secret"},
     },
+    {
+        "name": "cosign1",
+        "type": "cosign",
+        "trust_roots": [
+            {
+                "name": "test1",
+                "key": example_key,
+            },
+            {"name": "test2", "key": example_key2},
+            {"name": "test3", "key": example_key2},
+        ],
+    },
 ]
+
+digest1 = "c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"
+
+
+class testerr:
+    message = "some error occurred"
+
 
 cosign_payload = '{"critical":{"identity":{"docker-reference":""},"image":{"docker-manifest-digest":"sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"},"Type":"cosign container signature"},"Optional":null}'
 cosign_multiline_payload = """
@@ -69,6 +93,30 @@ The following checks were performed on each of these signatures:
   - The signatures were verified against the specified public key
   - Any certificates were verified against the Fulcio roots.
 """
+
+
+def gen_vals(static_cosign, root_no: list = None, digest=None, error=None):
+    if root_no is None:
+        root_no = range(len(static_cosign["trust_roots"]))
+
+    if not isinstance(digest, list):
+        digest = [digest for k in static_cosign["trust_roots"]]
+
+    return {
+        static_cosign["trust_roots"][num]["name"]: {
+            "name": static_cosign["trust_roots"][num]["name"],
+            "key": "".join(static_cosign["trust_roots"][num]["key"]),
+            "digest": digest[num],
+            "error": error,
+        }
+        for num in root_no
+    }
+
+
+def str_vals(vals):
+    for k in vals.keys():
+        vals[k]["key"] = str(vals[k]["key"])
+    return vals
 
 
 @pytest.fixture()
@@ -98,55 +146,151 @@ def test_init(index: int, kchain: bool):
     assert val.name == static_cosigns[index]["name"]
     assert val.trust_roots == static_cosigns[index]["trust_roots"]
     assert val.k8s_keychain == kchain
+    assert val.vals == {}
 
 
 @pytest.mark.parametrize(
-    "index, key_name, key, exception",
+    "index, key_name, required, threshold, key, exception",
     [
-        (0, "test", "...", fix.no_exc()),
-        (0, None, example_key, fix.no_exc()),
+        (
+            0,
+            None,
+            [],
+            1,
+            gen_vals(static_cosigns[0], [0]),
+            fix.no_exc(),
+        ),
+        (
+            0,
+            "test",
+            [],
+            1,
+            gen_vals(static_cosigns[0], [1]),
+            fix.no_exc(),
+        ),
         (
             0,
             "non_existing",
+            [],
+            1,
             None,
-            pytest.raises(exc.NotFoundException, match=r'.*Trust root "non_existing.*'),
+            pytest.raises(
+                exc.NotFoundException, match=r'.*Trust roots "non_existing.*'
+            ),
         ),
         (
             2,
             None,
+            [],
+            1,
             None,
-            pytest.raises(exc.NotFoundException, match=r'.*Trust root "default".*'),
+            pytest.raises(exc.NotFoundException, match=r'.*Trust roots "default".*'),
+        ),
+        (
+            4,
+            "*",
+            [],
+            len(static_cosigns[4]["trust_roots"]),
+            gen_vals(static_cosigns[4], range(3)),
+            fix.no_exc(),
+        ),
+        (
+            4,
+            "*",
+            ["test1", "non_existent"],
+            1,
+            None,
+            pytest.raises(
+                exc.NotFoundException, match=r'.*Trust roots "non_existent".*'
+            ),
+        ),
+        (
+            4,
+            "*",
+            ["test1", "non_existent", "another_nonexistent"],
+            1,
+            None,
+            pytest.raises(
+                exc.NotFoundException,
+                match=r'.*Trust roots "(another_nonexistent, non_existent|non_existent, another_nonexistent)".*',
+            ),
         ),
     ],
 )
-def test_get_key(index: int, key_name: str, key: str, exception):
+def test_get_pinned_keys(
+    index: int, key_name: str, required: list, threshold: int, key: str, exception
+):
     with exception:
         val = co.CosignValidator(**static_cosigns[index])
-        assert val._CosignValidator__get_key(key_name) == key
+        assert str_vals(
+            val._CosignValidator__get_pinned_keys(key_name, required, threshold)
+        ) == str_vals(key)
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "status_code, stdout, stderr, image, digest",
+    "index, status_code, stdout, stderr, image, trust_root, digest, exception",
     [
         (
+            0,
             0,
             cosign_payload,
             cosign_stderr_at_success,
             "testimage:v1",
+            None,
             "c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7",
+            fix.no_exc(),
         ),
         (
+            0,
             0,
             cosign_multiline_payload,
             cosign_stderr_at_success,
             "",
+            None,
             "2f6d89c49ad745bfd5d997f9b2d253329323da4c500c7fe343e068c0382b8df4",
+            fix.no_exc(),
+        ),
+        (
+            4,
+            0,
+            cosign_payload,
+            cosign_stderr_at_success,
+            "testimage:v1",
+            "*",
+            "c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7",
+            fix.no_exc(),
+        ),
+        (
+            0,
+            1,
+            cosign_payload,
+            "raises unexpected cosign exception",
+            "testimage:v1",
+            None,
+            "2f6d89c49ad745bfd5d997f9b2d253329323da4c500c7fe343e068c0382b8df4",
+            pytest.raises(exc.CosignError),
         ),
     ],
 )
-async def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, digest):
-    assert await co.CosignValidator(**static_cosigns[0]).validate(image) == digest
+async def test_validate(
+    mock_invoke_cosign,
+    index,
+    status_code,
+    stdout,
+    stderr,
+    image,
+    trust_root,
+    digest,
+    exception,
+):
+    with exception:
+        assert (
+            await co.CosignValidator(**static_cosigns[index]).validate(
+                image, trust_root
+            )
+            == digest
+        )
 
 
 @pytest.mark.parametrize(
@@ -184,7 +328,7 @@ async def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, 
             "",
             fix.get_cosign_err_msg("wrong_key"),
             "testimage:v1",
-            "",
+            [],
             pytest.raises(exc.ValidationError),
         ),
         (
@@ -192,7 +336,7 @@ async def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, 
             cosign_payload_unexpected_json_format,
             cosign_stderr_at_success,
             "testimage:v1",
-            "",
+            [],
             pytest.raises(exc.UnexpectedCosignData, match=r".*KeyError.*"),
         ),
         (
@@ -200,7 +344,7 @@ async def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, 
             cosign_payload_unexpected_digest_pattern,
             cosign_stderr_at_success,
             "testimage:v1",
-            "",
+            [],
             pytest.raises(exc.UnexpectedCosignData, match=r".*Exception.*"),
         ),
         (
@@ -208,7 +352,7 @@ async def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, 
             cosign_nonjson_payload,
             cosign_stderr_at_success,
             "testimage:v1",
-            "",
+            [],
             pytest.raises(exc.UnexpectedCosignData, match=r".*extract.*"),
         ),
         (
@@ -216,7 +360,7 @@ async def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, 
             "",
             fix.get_cosign_err_msg("no_data"),
             "testimage:v1",
-            "",
+            [],
             pytest.raises(exc.NotFoundException),
         ),
         (
@@ -224,7 +368,7 @@ async def test_validate(mock_invoke_cosign, status_code, stdout, stderr, image, 
             "",
             "Hm. Something weird happened.",
             "testimage:v1",
-            "",
+            [],
             pytest.raises(exc.CosignError),
         ),
     ],
@@ -234,8 +378,10 @@ def test_get_cosign_validated_digests(
 ):
     with exception:
         val = co.CosignValidator(**static_cosigns[0])
-        digests = val._CosignValidator__get_cosign_validated_digests(image, "sth")
-        assert digests == output
+        digest = val._CosignValidator__get_cosign_validated_digests(
+            image, gen_vals(static_cosigns[0], [0])["default"]
+        )
+        assert digest == output.pop()
 
 
 @pytest.mark.parametrize(
@@ -285,7 +431,7 @@ def test_invoke_cosign(fake_process, image, process_input, input_type, k8s_keych
     config["auth"] = {"k8s_keychain": k8s_keychain}
     val = co.CosignValidator(**config)
     returncode, stdout, stderr = val._CosignValidator__invoke_cosign(
-        "testimage:v1", process_input
+        image, process_input
     )
     assert fake_process_calls in fake_process.calls
     assert (returncode, stdout, stderr) == (
@@ -327,7 +473,6 @@ def test_invoke_cosign_timeout_expired(
     mock_kill = mocker.patch("pytest_subprocess.fake_popen.FakePopen.kill")
 
     with pytest.raises(exc.CosignTimeout) as err:
-
         co.CosignValidator(**static_cosigns[0])._CosignValidator__invoke_cosign(
             image, example_pubkey
         )
@@ -373,3 +518,51 @@ def test_get_pubkey_config(pubkey, output, exception):
             )
             == output
         )
+
+
+def test_get_envs(monkeypatch):
+    env = co.CosignValidator(**static_cosigns[0])._CosignValidator__get_envs()
+    assert env["DOCKER_CONFIG"] == "/app/connaisseur-config/cosign1/.docker/"
+
+
+@pytest.mark.parametrize(
+    "index, digest, err, threshold, required, exception",
+    [
+        (0, [digest1] * 2, testerr(), 1, [], fix.no_exc()),
+        (4, [digest1] * 4, testerr(), 3, [], fix.no_exc()),
+        (
+            4,
+            None,
+            testerr(),
+            2,
+            [],
+            pytest.raises(
+                exc.ValidationError,
+                match=r".*Image not compliant with validation policy \(threshold of \'2\' not reached\).*",
+            ),
+        ),
+        (4, [digest1] * 3, testerr(), 2, ["test1", "test2"], fix.no_exc()),
+        (
+            4,
+            [digest1, None, digest1],
+            testerr(),
+            2,
+            ["test1", "test2"],
+            pytest.raises(
+                exc.ValidationError,
+                match=r".*Image not compliant with validation policy \(missing signatures for required trust roots: test2\).*",
+            ),
+        ),
+    ],
+)
+def test_apply_policy(index, digest, err, threshold, required, exception):
+    with exception:
+        vals = gen_vals(static_cosigns[index], None, digest, err)
+        assert (
+            co.CosignValidator._CosignValidator__apply_policy(vals, threshold, required)
+            == set(digest).pop()
+        )
+
+
+def test_healthy():
+    co.CosignValidator(**static_cosigns[0]).healthy == True
