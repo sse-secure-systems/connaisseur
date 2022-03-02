@@ -462,6 +462,13 @@ You're not viewing the docs of the latest version.
 </li>
         
           <li class="md-nav__item">
+  <a href="#multi-signature-verification" class="md-nav__link">
+    Multi-signature verification
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#verification-against-transparency-log" class="md-nav__link">
     Verification against transparency log
   </a>
@@ -1028,6 +1035,13 @@ You're not viewing the docs of the latest version.
 </li>
         
           <li class="md-nav__item">
+  <a href="#multi-signature-verification" class="md-nav__link">
+    Multi-signature verification
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#verification-against-transparency-log" class="md-nav__link">
     Verification against transparency log
   </a>
@@ -1182,6 +1196,37 @@ In case you just use the default values for the validator and image policy given
 </tr>
 </tbody>
 </table>
+<p><code>.policy[*]</code> in <code>helm/values.yaml</code> supports the following additional keys and modifications for sigstore/Cosign (refer to <a href="../../basics/#image-policy">basics</a> for more information on default keys):</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>with.trust_root</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>Setting the name of trust root to <code>"*"</code> enables verification of multiple trust roots. Refer to section on <a href="#multi-signature-verification">multi-signature verification</a> for more information.</td>
+</tr>
+<tr>
+<td><code>with.threshold</code></td>
+<td>-</td>
+<td>-</td>
+<td>Minimum number of signatures required in case <code>with.trust_root</code> is set to <code>"*"</code>. Refer to section on <a href="#multi-signature-verification">multi-signature verification</a> for more information.</td>
+</tr>
+<tr>
+<td><code>with.required</code></td>
+<td><code>[]</code></td>
+<td>-</td>
+<td>Array of required trust roots referenced by name in case <code>with.trust_root</code> is set to <code>"*"</code>. Refer to section on <a href="#multi-signature-verification">multi-signature verification</a> for more information.</td>
+</tr>
+</tbody>
+</table>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"></span>
@@ -1247,6 +1292,78 @@ Such environment variables can be injected into Connaisseur via <code>deployment
 <span class="w">    </span><span class="nt">VAULT_ADDR</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvault.com</span><span class="w"></span>
 <span class="w">    </span><span class="nt">VAULT_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secrettoken</span><span class="w"></span>
 </code></pre></div>
+<h3 id="multi-signature-verification">Multi-signature verification<a class="headerlink" href="#multi-signature-verification" title="Permanent link">⚓︎</a></h3>
+<blockquote>
+<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might be unstable over time.
+As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
+</blockquote>
+<p>Connaisseur can verify multiple signatures for a single image.
+It is possible to configure a threshold number and specific set of required valid signatures.
+This allows to implement several advanced use cases (and policies):</p>
+<ul>
+<li>Five maintainers of a repository are able to sign a single derived image, however at least 3 signatures are required for the image to be valid.</li>
+<li>In a CI pipeline, a container image is signed directly after pushing by the build job and at a later time by passing quality gates such as security scanners or integration tests, each with their own key (trust root). Validation requires all of these signatures for deployment to enforce integrity and quality gates.</li>
+<li>A mixture of the above use cases whereby several specific trust roots are enforced (e.g. automation tools) and the overall number of signatures has to surpass a certain threshold (e.g. at least one of the testers admits).</li>
+<li>Key rotation is possible by adding a new key as an additional key and require at least one valid signature.</li>
+</ul>
+<p>Multi-signature verification is scoped to the trust roots specified within a referenced validator.
+Consider the following validator configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w"></span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alice</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ</span><span class="w"></span>
+<span class="w">      </span><span class="no">wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bob</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o</span><span class="w"></span>
+<span class="w">      </span><span class="no">EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">charlie</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4</span><span class="w"></span>
+<span class="w">      </span><span class="no">ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==</span><span class="w"></span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+</code></pre></div>
+<p>The trust roots <code>alice</code>, <code>bob</code>, and <code>charlie</code> are all included for verification in case <code>.policy[*].with.trust_root</code> is set to <code>"*"</code> (note that this is a special flag, not a real wildcard):</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
+</code></pre></div>
+<p>As neither <code>threshold</code> nor <code>required</code> are specified, Connaisseur will require signatures of all trust roots (<code>alice</code>, <code>bob</code>, and <code>charlie</code>) and deny an image otherwise.
+If either <code>threshold</code> or <code>required</code> is specified, it takes precedence.
+For example, it is possible to configure a threshold number of required signatures via the <code>threshold</code> key:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
+</code></pre></div>
+<p>In this case, valid signatures of two or more out of the three trust roots are required for admittance.
+Using the <code>required</code> key, it is possible to enforce specific trusted roots:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+</code></pre></div>
+<p>Now, only images with valid signatures of trust roots <code>alice</code> and <code>bob</code> are admitted.
+It is possible to combine <code>threshold</code> and <code>required</code> keys:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
+<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+</code></pre></div>
+<p>Thus, at least 3 valid signatures are required and <code>alice</code> and <code>bob</code> must be among those.</p>
 <h3 id="verification-against-transparency-log">Verification against transparency log<a class="headerlink" href="#verification-against-transparency-log" title="Permanent link">⚓︎</a></h3>
 <p>Connaisseur already verifies signatures against the transparency log.
 However, optional enforcement of transparency log is only planned in upcoming releases.</p>
