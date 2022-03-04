@@ -1,0 +1,2 @@
+Error: entity not found in registry
+main.go:46: error during command execution: entity not found in registry

@@ -366,6 +366,14 @@ async def test_validate(
         (
             1,
             "",
+            fix.get_cosign_err_msg("does_not_exist"),
+            "testimage:v1",
+            [],
+            pytest.raises(exc.NotFoundException),
+        ),
+        (
+            1,
+            "",
             "Hm. Something weird happened.",
             "testimage:v1",
             [],

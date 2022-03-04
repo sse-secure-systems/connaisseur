@@ -185,7 +185,7 @@ test_cases:
     type: apply
     ref: tests/integration/deployments/deployment_i1n1.yaml
     namespace: default
-    expected_msg: MANIFEST_UNKNOWN
+    expected_msg: 'denied the request: Image "docker.io/securesystemsengineering/testimage:co-nonexistent" does not exist'
     expected_result: null
   - id: d2s
     txt: Testing 2 signed images deployment...

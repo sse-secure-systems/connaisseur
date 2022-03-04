@@ -186,6 +186,15 @@ class CosignValidator(ValidatorInterface):
                 image=str(image),
                 trust_root=trust_root["name"],
             )
+        elif "Error: entity not found in registry\nmain.go:" in stderr:
+            msg = 'Image "{image}" does not exist.'
+            raise NotFoundException(
+                message=msg,
+                trust_data_type="dev.cosignproject.cosign/signature",
+                stderr=stderr,
+                image=str(image),
+                trust_root=trust_root["name"],
+            )
         else:
             msg = 'Unexpected Cosign exception for image "{image}": {stderr}.'
             raise CosignError(
