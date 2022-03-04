@@ -73,29 +73,12 @@ jobs:
           cat output | grep "KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508"
           cat output | grep "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe"
 
-  version-match:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install yq
-        run: sudo snap install yq
-      - name: Ensure version equality
-        run: |
-          IMAGE_TAG=$(yq e '.deployment.image' helm/values.yaml| cut -d ':' -f2)
-          for COMMIT_TAG in $(git tag --points-at $(git rev-parse HEAD)); do
-            if [[ "$IMAGE_TAG" == "$COMMIT_TAG" ]]; then
-              exit 0
-            fi
-          done
-          echo "Tag '$IMAGE_TAG' is not within tags of commit: $(git tag --points-at $(git rev-parse HEAD))"
-          exit 1
-
   integration-test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        integration-test-arg: ["regular", "cosign", "deployment", "pre-config"]
+        integration-test-arg: ["regular", "cosign", "deployment", "pre-config", "helm-repo"]
     services:
       alerting-endpoint:
         image: securesystemsengineering/alerting-endpoint
@@ -130,6 +113,36 @@ jobs:
       - name: Run actual integration test
         run: |
           bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+        shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+        shell: bash
+
+  k8s-versions:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s-version:
+          ["v1.16", "v1.17", "v1.18", "v1.19", "v1.20", "v1.21", "v1.22", "v1.23"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+          load-local-image: false
+      - name: Configure Connaisseur
+        run: |
+          yq e '.deployment.replicasCount = "1"' -i helm/values.yaml
+      - name: Run pre-config and workload integration tests
+        run: |
+          bash tests/integration/integration-test.sh "nightly-pre-and-workload"
         shell: bash
       - name: Display k8s logs if integration test failed
         if: failure()

@@ -134,6 +134,18 @@ helm_install() {
   echo -e "${SUCCESS}"
 }
 
+helm-repo_install() {
+  # will install unconfigured Connaisseur
+  echo -n "Installing Connaisseur..."
+  helm repo add connaisseur https://sse-secure-systems.github.io/connaisseur/charts >/dev/null
+  helm install connaisseur connaisseur/connaisseur --atomic --create-namespace \
+    --namespace connaisseur >/dev/null || {
+    echo -e "${FAILED}"
+    exit 1
+  }
+  echo -e "${SUCCESS}"
+}
+
 ### UPGRADING CONNAISSEUR ####################################
 make_upgrade() {
   echo -n 'Upgrading Connaisseur...'
@@ -308,6 +320,17 @@ case $1 in
   for wo in "${WOLIST[@]}"; do
     workload_test "${wo}"
   done
+  ;;
+"nightly-pre-and-workload")
+  helm_install
+  pre_config_int_test
+  for wo in "${WOLIST[@]}"; do
+    workload_test "${wo}"
+  done
+  ;;
+"helm-repo")
+  helm-repo_install
+  pre_config_int_test
   ;;
 "complexity")
   update_values '.deployment.imagePullPolicy="Never"'

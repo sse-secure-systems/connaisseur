@@ -4,6 +4,10 @@ inputs:
   k8s-version:
     description: 'k8s version to be tested'
     required: true
+  load-local-image:
+    description: K3S channel (https://update.k3s.io/v1-release/channels)
+    required: false
+    default: true
 runs:
   using: "composite"
   steps:
@@ -25,5 +29,8 @@ runs:
       shell: bash
     - name: Load Image
       run: |
-        sudo k3s ctr images import ${GITHUB_SHA}_image.tar
+        if ${{ inputs.load-local-image }}
+        then
+          sudo k3s ctr images import ${GITHUB_SHA}_image.tar;
+        fi
       shell: bash
