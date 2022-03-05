@@ -25,15 +25,6 @@ Currently, Connaisseur supports alerting on either admittance of images, denial 
 | `alerting.<category>.custom_headers`                | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
 | `alerting.<category>.payload_fields`                | subyaml                                               | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`).                    |
 | `alerting.<category>.fail_if_alert_sending_fails`   | bool                                                  | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.     |
-| `alerting.<category>.receiver_authentication_type`  | string enum `basic`, `bearer`, `none`                 | `none`            |                    | Authentication type of the alert-receiving webhook endpoint .                                       |
-| `alerting.<category>.receiver_authentication_basic`               | object              | -                 | only when `receiver_authentication_type` is `basic`  | Authentication credentials for basic authentication.                                  |
-| `alerting.<category>.receiver_authentication_basic.username_env`  | string              | -                 | only when `receiver_authentication_type` is `basic`  | Username Environmental variable for basic authentication.                             |
-| `alerting.<category>.receiver_authentication_basic.password_env`  | string              | -                 | only when `receiver_authentication_type` is `basic`  | Password Environmental variable for basic authentication.                             |
-| `alerting.<category>.receiver_authentication_basic.authentication_scheme`  | string (without spaces) | `Basic`           |                                         | Prefix for Authorization header for basic authentication.                             |
-| `alerting.<category>.receiver_authentication_bearer`              | object              | -                 | only when `receiver_authentication_type` is `bearer` | Authentication credentials for bearer authentication.                                 |
-| `alerting.<category>.receiver_authentication_bearer.token_env`    | string              | -                 | only when `receiver_authentication_type` is `bearer` | Token Environmental variable for bearer authentication (Exclusive with `token_file`). |
-| `alerting.<category>.receiver_authentication_bearer.token_file`   | string              | -                 | only when `receiver_authentication_type` is `bearer` | Token file for bearer authentication (Exclusive with `token_env`).                    |
-| `alerting.<category>.receiver_authentication_bearer.authentication_scheme` | string (without spaces) | `Bearer`         |                                          | Prefix for Authorization header for bearer authentication.                            |
 
 <sup>*basename of the custom template file in `helm/alerting_payload_templates` without file extension </sup>
 
@@ -53,60 +44,13 @@ one it needs to be one of `slack`, `keybase`, `opsgenie` or `ecs-1-12-0`.
 For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:
 
 
-```
+```yaml
 alerting:
   admit_request:
     templates:
       - template: keybase
         receiver_url: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
 ```
-
-## Example With Authentication
-
-For example, if you would like to receive notifications in your custom webhook authenticated with a bearer token taken from an environmental variable whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:
-
-```
-alerting:
-  admit_request:
-    templates:
-      - template: ecs-1-12-0 
-        receiver_url: https://your.custom.domain.com/webhook/admit
-        receiver_authentication_type: bearer
-        receiver_authentication_bearer: 
-          token_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_TOKEN
-```
-
-You then have to set the `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_TOKEN` environment variable referencing the bearer token secret you want to use into the connaisseur deployment.
-
-Or if you would like to use the service account token as the bearer token, you can use the following snippet:
-
-```
-alerting:
-  admit_request:
-    templates:
-      - template: ecs-1-12-0 
-        receiver_url: https://your.custom.domain.com/webhook/admit
-        receiver_authentication_type: bearer
-        receiver_authentication_bearer: 
-          token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-```
-
-Finally in case of basic authentication, you can use the following snippet:
-
-
-```
-alerting:
-  admit_request:
-    templates:
-      - template: ecs-1-12-0 
-        receiver_url: https://your.custom.domain.com/webhook/admit
-        receiver_authentication_type: basic
-        receiver_authentication_basic: 
-          username_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_USERNAME
-          password_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_PASSWORD
-```
-
-You then have to set the `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_USERNAME` and `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_PASSWORD` environment variables referencing the secret you want to use into the connaisseur deployment.
 
 
 ## Additional notes
@@ -132,4 +76,92 @@ to JSON by Helm as is. If your REST endpoint requires particular headers, you ca
 specify them as described above in `custom_headers`.
 
 Feel free to make a PR to share with the community if you add new neat templates for other third parties :pray:
+
+
+### Webhook Authentication
+
+
+#### Configuration options
+
+Currently, Connaisseur supports alerting on either admittance of images, denial of images or both. These event categories can be configured independently of each other under the relevant category (i.e. `admit_request` or `reject_request`):
+
+| Key                                                 |  Accepted values                                      | Default           | Required           | Description                                                                                         |
+| --------------------------------------------------- | ----------------------------------------------------- | ----------------- | ------------------ | --------------------------------------------------------------------------------------------------- |
+| `alerting.<category>.receiver_authentication_type`  | string enum `basic`, `bearer`, `none`                 | `none`            |                    | Authentication type of the alert-receiving webhook endpoint .                                       |
+| `alerting.<category>.receiver_authentication_basic`               | object              | -                 | only when `receiver_authentication_type` is `basic`  | Authentication credentials for basic authentication.                                  |
+| `alerting.<category>.receiver_authentication_basic.username_env`  | string              | -                 | only when `receiver_authentication_type` is `basic`  | Username Environmental variable for basic authentication.                             |
+| `alerting.<category>.receiver_authentication_basic.password_env`  | string              | -                 | only when `receiver_authentication_type` is `basic`  | Password Environmental variable for basic authentication.                             |
+| `alerting.<category>.receiver_authentication_basic.authentication_scheme`  | string (without spaces) | `Basic`           |                                         | Prefix for Authorization header for basic authentication.                             |
+| `alerting.<category>.receiver_authentication_bearer`              | object              | -                 | only when `receiver_authentication_type` is `bearer` | Authentication credentials for bearer authentication.                                 |
+| `alerting.<category>.receiver_authentication_bearer.token_env`    | string              | -                 | only when `receiver_authentication_type` is `bearer` | Token Environmental variable for bearer authentication (Exclusive with `token_file`). |
+| `alerting.<category>.receiver_authentication_bearer.token_file`   | string              | -                 | only when `receiver_authentication_type` is `bearer` | Token file for bearer authentication (Exclusive with `token_env`).                    |
+| `alerting.<category>.receiver_authentication_bearer.authentication_scheme` | string (without spaces) | `Bearer`         |                                          | Prefix for Authorization header for bearer authentication.                            |
+
+
+#### Examples
+
+It is possible to provide credentials for authentication of webhook requests beyond a hard to guess URL.
+
+For example, if you would like to receive notifications in your custom webhook authenticated with a bearer token taken from an environmental variable whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:
+
+```yaml
+alerting:
+  admit_request:
+    templates:
+      - template: ecs-1-12-0 
+        receiver_url: https://your.custom.domain.com/webhook/admit
+        receiver_authentication_type: bearer
+        receiver_authentication_bearer: 
+          token_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_TOKEN
+```
+
+You then have to set the `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_TOKEN` environment variable referencing the bearer token secret you want to use into the connaisseur deployment.
+
+Or if you need to load the token from a file you can use the following snipped:
+
+```yaml
+alerting:
+  admit_request:
+    templates:
+      - template: ecs-1-12-0 
+        receiver_url: https://your.custom.domain.com/webhook/admit
+        receiver_authentication_type: bearer
+        receiver_authentication_bearer: 
+          token_file: /etc/webhook/your-token
+```
+
+Finally in case of basic authentication, you can use the following snippet:
+
+```yaml
+alerting:
+  admit_request:
+    templates:
+      - template: ecs-1-12-0 
+        receiver_url: https://your.custom.domain.com/webhook/admit
+        receiver_authentication_type: basic
+        receiver_authentication_basic: 
+          username_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_USERNAME
+          password_env: CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_PASSWORD
+```
+
+You then have to set the `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_USERNAME` and `CONNAISSEUR_ADMIT_REQUEST_WEBHOOK_AUTH_PASSWORD` environment variables referencing the secret you want to use into the connaisseur deployment.
+This is an example of values configuration for basic authentication:
+The referenced secret `connaisseur-webhook-user` should already exist.
+
+```yaml
+deployment:
+  # Add environmental variables to the pod in the deployment
+  # referencing secrets, configMaps, or fields.
+  envValueFrom:
+    - name: CONNAISSSEUR_WEBHOOK_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: connaisseur-webhook-user
+          key: username
+    - name: CONNAISSSEUR_WEBHOOK_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: connaisseur-webhook-user
+          key: password
+```
 

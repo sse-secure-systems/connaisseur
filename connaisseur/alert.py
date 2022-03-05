@@ -79,7 +79,7 @@ class AlertReceiverAuthentication:
                 raise ConfigurationError(
                     "The authentication scheme cannot be null or empty."
                 )
-            # check if self.authentication_scheme contains only letters
+
             if not self.authentication_scheme.isalpha():
                 raise ConfigurationError(
                     "The authentication scheme must contain only letters."
