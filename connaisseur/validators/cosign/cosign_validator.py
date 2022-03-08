@@ -226,10 +226,12 @@ class CosignValidator(ValidatorInterface):
             *(["--k8s-keychain"] if self.k8s_keychain else []),
             image,
         ]
+        env = self.__get_envs()
+        env.update(env_vars)
 
         with subprocess.Popen(  # nosec
             cmd,
-            env=self.__get_envs().update(env_vars),
+            env=env,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
