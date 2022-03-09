@@ -17,8 +17,8 @@ The image policy defines a set of rules which maps different images to those val
 This is done via glob matching of the image name which for example allows to use different validators for different registries, repositories, images or even tags.
 This is specifically useful when using public or external images from other entities like Docker's official images or different keys in a more complex development team.
 
-:octicons-light-bulb-16: **Note**: Typically, the public key of a known entity is used to validate the signature over an image's content in order to ensure integrity and provenance.
-However, other ways to implement such trust pinning exist and as a consequence we refer to all types of trust anchors in a generalized form as *trust roots*.
+> :octicons-light-bulb-16: **Note**: Typically, the public key of a known entity is used to validate the signature over an image's content in order to ensure integrity and provenance.
+> However, other ways to implement such trust pinning exist and as a consequence we refer to all types of trust anchors in a generalized form as *trust roots*.
 
 ## Using Connaisseur
 

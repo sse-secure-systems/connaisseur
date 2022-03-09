@@ -144,10 +144,22 @@ The secret can for example be created directly from your local `config.json` (fo
 ```bash
 kubectl create secret generic my-secret \
   --from-file=.dockerconfigjson=path/to/config.json \
-  --type=kubernetes.io/dockerconfigjson -n connaisseur
+  -n connaisseur
 ```
 
-In the above case, the secret name in Connaisseur configuration would be `secret_name: my-secret`.
+The secret can also be generated directly from supplied credentials (which may differ from your local `config.json`, using:
+
+```bash
+kubectl create secret docker-registry my-secret \
+  --docker-server=https://index.docker.io/v1/ \
+  --docker-username='<your username>' \
+  --docker-password='<your password>' \
+  -n connaisseur
+```
+
+> :octicons-light-bulb-16: **Note**: At present, it [seems to be necessary](https://github.com/sigstore/cosign/issues/587#issuecomment-1062510930) to suffix your registry server URL with `/v1/`. This may become unnecessary in the future.
+
+In the above cases, the secret name in Connaisseur configuration would be `secret_name: my-secret`.
 It is possible to provide one Kubernetes secret with a `config.json` for authentication to multiple private registries and referencing this in multiple validators.
 
 #### k8s_keychain
