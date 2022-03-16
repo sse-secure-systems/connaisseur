@@ -13,6 +13,8 @@ jobs:
         run: sudo snap install yq
       - name: Check main image
         run: DOCKER_CONTENT_TRUST=1 docker pull docker.io/$(yq e '.deployment.image' helm/values.yaml)
+      - name: Check all images
+        run: DOCKER_CONTENT_TRUST=1 docker pull docker.io/securesystemsengineering/connaisseur -a
       - name: Check signed test image
         run: DOCKER_CONTENT_TRUST=1 docker pull docker.io/securesystemsengineering/testimage:signed
       - name: Check other signed test image
