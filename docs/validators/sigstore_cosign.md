@@ -144,6 +144,7 @@ The secret can for example be created directly from your local `config.json` (fo
 ```bash
 kubectl create secret generic my-secret \
   --from-file=.dockerconfigjson=path/to/config.json \
+  --type=kubernetes.io/dockerconfigjson \
   -n connaisseur
 ```
 
