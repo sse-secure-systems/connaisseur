@@ -1254,6 +1254,7 @@ In case you just use the default values for the validator and image policy given
 The secret can for example be created directly from your local <code>config.json</code> (for docker this resides in <code>~/.docker/config.json</code>):</p>
 <div class="highlight"><pre><span></span><code>kubectl create secret generic my-secret <span class="se">\</span>
   --from-file<span class="o">=</span>.dockerconfigjson<span class="o">=</span>path/to/config.json <span class="se">\</span>
+  --type<span class="o">=</span>kubernetes.io/dockerconfigjson <span class="se">\</span>
   -n connaisseur
 </code></pre></div>
 <p>The secret can also be generated directly from supplied credentials (which may differ from your local <code>config.json</code>, using:</p>
