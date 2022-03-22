@@ -24,13 +24,11 @@ from connaisseur.validators.interface import ValidatorInterface
 class CosignValidator(ValidatorInterface):
     name: str
     trust_roots: list
-    vals: dict  # validations, a dict for each required trust root containing validated digests or errors
     k8s_keychain: bool
 
     def __init__(self, name: str, trust_roots: list, auth: dict = None, **kwargs):
         super().__init__(name, **kwargs)
         self.trust_roots = trust_roots
-        self.vals = {}
         self.k8s_keychain = False if auth is None else auth.get("k8s_keychain", False)
 
     async def validate(
@@ -43,25 +41,26 @@ class CosignValidator(ValidatorInterface):
             "threshold",
             1 if trust_root != "*" or any(required) else len(self.trust_roots),
         )
-
-        self.vals = self.__get_pinned_keys(trust_root, required, threshold)
+        # vals is a validations dict for each required trust root containing validated digests and errors
+        vals = self.__get_pinned_keys(trust_root, required, threshold)
 
         # use concurrent.futures for now
         # tasks = [self.__validation_task(k, str(image)) for k in self.vals.keys()]
         # await asyncio.gather(*tasks)
 
         # prepare executor
-        num_workers = len(self.vals)
+        num_workers = len(vals)
         executor = ThreadPoolExecutor(num_workers)
         # prepare tasks
-        arguments = [(k, str(image)) for k in self.vals.keys()]
+        # a copy of vals dictionaries is passed to concurrent validation to ensure thread-safe execution
+        arguments = [(k, v.copy(), str(image)) for k, v in vals.items()]
         futures = [executor.submit(self.__validation_task, *arg) for arg in arguments]
-        # await results (output dropped as `self.vals` is updated within function)
+        # await results (output dropped as `vals` is updated within function)
         for future in futures:
-            future.result()
+            vals.update(future.result())
 
         return CosignValidator.__apply_policy(
-            vals=self.vals, threshold=threshold, required=required
+            vals=vals, threshold=threshold, required=required
         )
 
     def __get_pinned_keys(self, key_name: str, required: list, threshold: int):
@@ -105,19 +104,19 @@ class CosignValidator(ValidatorInterface):
         return keys
 
     # async def __validation_task(self, trust_root: str, image: str):
-    def __validation_task(self, trust_root: str, image: str):
+    def __validation_task(self, trust_root: str, val: dict, image: str):
         """
         Async task for each validation to gather all required validations,
         execute concurrently and update results.
         """
         try:
             # self.vals[trust_root]["digest"] = await self.__get_cosign_validated_digests(
-            self.vals[trust_root]["digest"] = self.__get_cosign_validated_digests(
-                image, self.vals[trust_root]
-            )
+            val["digest"] = self.__get_cosign_validated_digests(image, val)
         except Exception as err:
-            self.vals[trust_root]["error"] = err
+            val["error"] = err
             logging.info(err)
+
+        return {trust_root: val}
 
     # async def __get_cosign_validated_digests(self, image: str, trust_root: dict):
     def __get_cosign_validated_digests(self, image: str, trust_root: dict):

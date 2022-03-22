@@ -146,7 +146,6 @@ def test_init(index: int, kchain: bool):
     assert val.name == static_cosigns[index]["name"]
     assert val.trust_roots == static_cosigns[index]["trust_roots"]
     assert val.k8s_keychain == kchain
-    assert val.vals == {}
 
 
 @pytest.mark.parametrize(
