@@ -51,6 +51,7 @@ def adm_req_sample_objects():
             "cronjob",
             "wrong_version",
             "deployments_multi_image",
+            "pods_unknownparent",
         )
     ]
 
@@ -107,6 +108,7 @@ def test_k8s_object_init(adm_req_sample_objects, index, exception):
         ),
         (2, {}, pytest.raises(exc.ParentNotFoundError)),
         (3, {}, fix.no_exc()),
+        (6, {}, fix.no_exc()),
     ],
 )
 def test_k8s_object_parent_containers(

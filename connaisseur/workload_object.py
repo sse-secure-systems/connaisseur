@@ -54,7 +54,8 @@ class WorkloadObject:
         parent_containers = {}
         for owner in self._owner:
             api_version = owner["apiVersion"]
-            kind = owner["kind"].lower() + "s"
+            kind = owner["kind"]
+            kinds = kind.lower() + "s"
             name = owner["name"]
             uid = owner["uid"]
 
@@ -65,8 +66,14 @@ class WorkloadObject:
             else:
                 rest_path = "apis"
 
+            if (
+                kind not in SUPPORTED_API_VERSIONS
+                or api_version not in SUPPORTED_API_VERSIONS[kind]
+            ):
+                return {}
+
             parent = k_api.request_kube_api(
-                f"{rest_path}/{api_version}/namespaces/{self.namespace}/{kind}/{name}"
+                f"{rest_path}/{api_version}/namespaces/{self.namespace}/{kinds}/{name}"
             )
 
             if parent["metadata"]["uid"] != uid:
@@ -75,7 +82,7 @@ class WorkloadObject:
                     " resource {parent_kind} {parent_name}."
                 )
                 raise ParentNotFoundError(
-                    message=msg, parent_kind=kind, parent_name=name, parent_uid=uid
+                    message=msg, parent_kind=kinds, parent_name=name, parent_uid=uid
                 )
 
             parent_containers.update(WorkloadObject(parent, self.namespace).containers)
