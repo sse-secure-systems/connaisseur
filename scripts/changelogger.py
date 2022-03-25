@@ -1,17 +1,15 @@
-import requests
-import subprocess
-import time
 import argparse
 import base64
-import logging
+import requests
+import subprocess
+import sys
+import time
 
 sep = "@@__CHGLOG__@@"
 delim = "@@__CHGLOG_DELIMITER__@@"
-# ha = "HASH:%H\t%h"
 ha = "%H"
 au = "AUTHOR:%an\t%ae\t%at"
 co = "COMMITER:%cn\t%ce\t%ct"
-# su = "SUBJECT:%s"
 su = "%s"
 bo = "BODY:%b"
 
@@ -31,7 +29,7 @@ class Commit:
             self.subject_ = ":".join(cat_sub_split[1:]).strip()
             self.categories_ = cat_sub_split[0].split("/")
         except IndexError:
-            logging.warn("Non semantic commit")
+            print_stderr("WARN: Non semantic commit")
             self.subject_ = cat_sub_split[0]
             self.categories_ = ["none"]
         self.token = token
@@ -50,7 +48,10 @@ class Commit:
                 return item.get("pull_request", {}).get("html_url")
 
     def __str__(self):
-        return f"{self.subject_} {self.pr_}"
+        if self.pr_:
+            return f"{self.subject_} {self.pr_}"
+        else:
+            return f"{self.subject_}"
 
 
 def git_log(ref1, ref2):
@@ -75,20 +76,38 @@ def git_latest_two_tags():
     tags = [tag for tag in out.split("\n") if tag]
     if len(tags) < 2:
         raise Exception("Needs at least two tags for changelog")
-    logging.warn(f"Generating changelog from {tags[-2]} to {tags[-1]}")
+    print_stderr(f"Generating changelog from {tags[-2]} to {tags[-1]}")
     return tags[-2:]
 
 
 def create_changelog(version, change_dict):
     body = ""
 
+    known_keys = ["feat", "fix", "refactor", "build", "ci", "test", "docs", "update"]
+
+    # order by importance
+    for key in known_keys:
+        if key in change_dict:
+            body += _format_category(key, change_dict[key])
+
     for key in change_dict:
-        body += "### " + key.capitalize() + "\n"
-        for item in change_dict[key]:
-            body += "- " + item + "\n"
-        body += "\n"
+        if key not in known_keys:
+            print_stderr(f"WARN: Unexpected category in commit: {key}")
+            body += _format_category(key, change_dict[key])
 
     return f"## {version}\n{body}"
+
+
+def _format_category(key, changes):
+    new = ""
+    new += "### " + key.capitalize() + "\n"
+    for item in changes:
+        new += "- " + item.capitalize() + "\n"
+    new += "\n"
+    return new
+
+def print_stderr(message):
+    print(message, file=sys.stderr)
 
 
 if __name__ == "__main__":
@@ -133,6 +152,7 @@ if __name__ == "__main__":
             splits = commit_input.split(delim)
             commit = Commit(splits[0], splits[1], token)
             for category in commit.categories_:
+                category = category.lower()
                 change_log.setdefault(category, []).append(str(commit))
         print(f"{index+1}/{len(commits)} done.", end="\r")
         if len(commits) > 9:
