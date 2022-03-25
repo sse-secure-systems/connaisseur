@@ -26,11 +26,11 @@ class Commit:
         self.hash_ = hash_.strip()
         cat_sub_split = sub_cat_.split(":", 1)
         try:
-            self.subject_ = ":".join(cat_sub_split[1:]).strip()
+            self.subject_ = cat_sub_split[1].strip()
             self.categories_ = cat_sub_split[0].split("/")
         except IndexError:
             print_stderr("WARN: Non semantic commit")
-            self.subject_ = cat_sub_split[0]
+            self.subject_ = cat_sub_split[0].strip()
             self.categories_ = ["none"]
         self.token = token
         self.pr_ = self.get_pr_link()
@@ -99,6 +99,8 @@ def create_changelog(version, change_dict):
 
 
 def _format_category(key, changes):
+    if not changes:
+        return ""
     new = ""
     new += "### " + key.capitalize() + "\n"
     for item in changes:
@@ -106,8 +108,9 @@ def _format_category(key, changes):
     new += "\n"
     return new
 
-def print_stderr(message):
-    print(message, file=sys.stderr)
+
+def print_stderr(message, end=None):
+    print(message, end=end, file=sys.stderr)
 
 
 if __name__ == "__main__":
@@ -148,17 +151,18 @@ if __name__ == "__main__":
 
     commits = log_hist.split(sep)
     for index, commit_input in enumerate(commits):
+        msg = f"Digesting commit {index+1}/{len(commits)}"
+        print_stderr(msg, end="\r")
         if commit_input:
             splits = commit_input.split(delim)
             commit = Commit(splits[0], splits[1], token)
             for category in commit.categories_:
                 category = category.lower()
                 change_log.setdefault(category, []).append(str(commit))
-        print(f"{index+1}/{len(commits)} done.", end="\r")
-        if len(commits) > 9:
-            if args.token:
-                time.sleep(2)
-            else:
-                time.sleep(7)
-    print("", end="\r")
-    print(create_changelog(headerVersion, change_log))
+            if len(commits) > 9 and index + 1 < len(commits):
+                if args.token:
+                    time.sleep(2)
+                else:
+                    time.sleep(7)
+    print_stderr(" " * len(msg), end="\r")  # clear output
+    print(create_changelog(headerVersion, change_log), flush=True)
