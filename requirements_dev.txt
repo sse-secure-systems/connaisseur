@@ -1,10 +1,10 @@
 -r requirements.txt
 aioresponses~=0.7.3
 parsedatetime~=2.6
-pylint~=2.12.2
+pylint~=2.13.0
 pytest-asyncio~=0.18.2
 pytest-cov~=3.0.0
 pytest-mock~=3.7.0
 pytest-subprocess~=1.4.1
 requests-mock~=1.9.3
-setuptools~=60.10.0
+setuptools~=61.0.0
