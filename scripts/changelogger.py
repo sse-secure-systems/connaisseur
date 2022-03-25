@@ -67,6 +67,18 @@ def git_log(ref1, ref2):
     return out
 
 
+def git_latest_two_tags():
+    out = subprocess.run(
+        ["git", "tag", "--sort=version:refname"],
+        stdout=subprocess.PIPE,
+    ).stdout.decode("UTF-8")
+    tags = [tag for tag in out.split("\n") if tag]
+    if len(tags) < 2:
+        raise Exception("Needs at least two tags for changelog")
+    logging.warn(f"Generating changelog from {tags[-2]} to {tags[-1]}")
+    return tags[-2:]
+
+
 def create_changelog(version, change_dict):
     body = ""
 
@@ -85,14 +97,12 @@ if __name__ == "__main__":
         "--ref1",
         metavar="ref1",
         type=str,
-        required=True,
         help="source version from which to create the changelog",
     )
     parser.add_argument(
         "--ref2",
         metavar="ref2",
         type=str,
-        required=True,
         help="target version to which to create the changelog",
     )
     parser.add_argument(
@@ -103,7 +113,17 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    log_hist = git_log(args.ref1, args.ref2)
+    if args.ref1 and args.ref2:
+        log_hist = git_log(args.ref1, args.ref2)
+        headerVersion = args.ref2
+    elif not args.ref1 and not args.ref2:
+        latest_tags = git_latest_two_tags()
+        log_hist = git_log(*latest_tags)
+        headerVersion = latest_tags[-1]
+    else:
+        raise Exception(
+            "Either provide both --ref1 and --ref2 or neither (defaulting to two commits tagged with the highest version numbers)"
+        )
     change_log = {}
     token = args.token
 
@@ -121,4 +141,4 @@ if __name__ == "__main__":
             else:
                 time.sleep(7)
     print("", end="\r")
-    print(create_changelog(args.ref2, change_log))
+    print(create_changelog(headerVersion, change_log))
