@@ -1,6 +1,6 @@
 # Namespaced Validation
 
-Namespaced validation allows restricting validation to specific namespaces.
+Namespaced validation allows restricting validation to specific namespaces, and can operate alongside [object validation](./object_validation.md).
 Connaisseur will only verify trust of images deployed to the configured namespaces.
 This can greatly support initial rollout by stepwise extending the validated namespaces or excluding specific namespaces for which signatures are unfeasible.
 

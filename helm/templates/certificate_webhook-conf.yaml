@@ -109,6 +109,26 @@ webhooks:
         operator: In
         values:
           - validate
-   {{- end }}
-   {{- end }}
-   {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.objectValidation }}
+    {{- if .Values.objectValidation.enabled }}
+    objectSelector:
+      matchExpressions:
+      - key: securesystemsengineering.connaisseur/webhook
+    {{- if not .Values.objectValidation.mode}}
+        operator: NotIn
+        values:
+          - ignore
+    {{- else if eq .Values.objectValidation.mode "ignore"}}
+        operator: NotIn
+        values:
+          - ignore
+    {{- else if eq .Values.objectValidation.mode "validate"}}
+        operator: In
+        values:
+          - validate
+    {{- end }}
+    {{- end }}
+    {{- end }}

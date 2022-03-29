@@ -96,6 +96,7 @@ nav:
       - features/alerting.md
       - features/detection_mode.md
       - features/namespaced_validation.md
+      - features/object_validation.md
       - features/automatic_child_approval.md
   - Security:
     - threat_model.md

@@ -152,6 +152,16 @@ namespacedValidation:
   enabled: false
   mode: ignore  # 'ignore' or 'validate'
 
+# object validation allows to restrict the individual objects that will be subject to Connaisseur verification.
+# when enabled, based on object validation mode ('ignore' or 'validate')
+# - either all objects with label "securesystemsengineering.connaisseur/webhook=ignore" are ignored
+# - or only objects with label "securesystemsengineering.connaisseur/webhook=validate" are validated.
+# warning: enabling object validation, allows roles with edit permission on an object to disable
+# validation for that object
+objectValidation:
+  enabled: false
+  mode: ignore  # 'ignore' or 'validate'
+
 # automatic child approval determines how admission of Kubernetes child resources is handled by Connaisseur.
 # per default, Connaisseur validates and mutates all resources, e.g. deployments, replicaSets, pods, and
 # automatically approves child resources of those to avoid duplicate validation and inconsistencies with the
