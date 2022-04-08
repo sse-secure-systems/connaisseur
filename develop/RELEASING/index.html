@@ -1018,9 +1018,14 @@ You're not viewing the docs of the latest version.
 <li>Consider making a <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions <em>announcement</em></a>.</li>
 </ul>
 <h2 id="add-new-tag">Add new tag<a class="headerlink" href="#add-new-tag" title="Permanent link">⚓︎</a></h2>
-<p>Before adding the new tag, make sure the Connaisseur version is updated in the <code>helm/values.yaml</code> and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version. Then add the tag (on <code>develop</code> branch) with <code>git tag v&lt;new-conny-version&gt;</code> (e.g. <code>git tag v1.4.6</code>).</p>
+<p>Before adding the new tag, make sure the Connaisseur version is updated in the <code>helm/values.yaml</code> and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version.
+Then add the tag (on <code>develop</code> branch) with <code>git tag v&lt;new-conny-version&gt;</code> (e.g. <code>git tag v1.4.6</code>).</p>
 <h2 id="create-changelog">Create changelog<a class="headerlink" href="#create-changelog" title="Permanent link">⚓︎</a></h2>
-<p>A changelog text, including all new commits from one to another version, can be automatically generated using the <code>scrips/changelogger.py</code> script. You have to update the two <code>ref1</code> and <code>ref2</code> variables in the main method with the the old and new Git tags. So if you e.g. want to release a new version from <code>v1.4.5</code> to <code>v1.4.6</code>, then you have to set <code>ref1 = "v1.4.5"</code> and <code>ref2 = "v1.4.6"</code>. Then simply run <code>python scripts/changelogger.py &gt; CHANGELOG.md</code>, storing the changelog in a new file <code>CHANGELOG.md</code> (we won't keep this file, it's just for convenient storing purpose). This file will include all new commits, categorized by their type (e.g. fix, feat, docs, etc.), but may include some mistakes so take a manual look if everything looks in order.</p>
+<p>A changelog text, including all new commits from one to another version, can be automatically generated using the <code>scrips/changelogger.py</code> script.
+Run <code>python scripts/changelogger.py &gt; CHANGELOG.md</code> to get the changelog between the two latest tags.
+If you want to have a diff between certain commits, you have to set the two <code>ref1</code> and <code>ref2</code> variables.
+If you e.g. want to get the changelog from <code>v1.4.5</code> to <code>09fd2379cf2374ba9fdc8a84e56d959a176f1569</code>, then you have to run <code>python scripts/changelogger.py --ref1="v1.4.5" --ref2="09fd2379cf2374ba9fdc8a84e56d959a176f1569"&gt; CHANGELOG.md</code>, storing the changelog in a new file <code>CHANGELOG.md</code> (we won't keep this file, it's just for convenient storing purpose).
+This file will include all new commits, categorized by their type (e.g. fix, feat, docs, etc.), but may include some mistakes so take a manual look if everything looks in order.</p>
 <p>Things to look out for:</p>
 <ul>
 <li>multiple headings for the same category</li>
@@ -1030,14 +1035,26 @@ You're not viewing the docs of the latest version.
 <h2 id="create-pr">Create PR<a class="headerlink" href="#create-pr" title="Permanent link">⚓︎</a></h2>
 <p>Create a PR from <code>develop</code> to <code>master</code>, putting the changelog text as description and wait for someone to approve it.</p>
 <h2 id="push-new-connaisseur-image">Push new Connaisseur image<a class="headerlink" href="#push-new-connaisseur-image" title="Permanent link">⚓︎</a></h2>
-<p>When the PR is approved and ready to be merged, first push the new Connaisseur image to Docker Hub, as it will be used in the release pipeline. Run <code>make docker</code> to build the new version of the docker image and then <code>DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:&lt;new-version&gt;</code> to push and sign it. You'll obviously need the right private key and passphrase for doing so. You also need to be in the list of valid signers for Connaisseur. If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:philipp.belitz@securesystems.de">Philipp Belitz</a>.</p>
+<p>When the PR is approved and ready to be merged, first push the new Connaisseur image to Docker Hub, as it will be used in the release pipeline.
+Run <code>make docker</code> to build the new version of the docker image and then <code>DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:&lt;new-version&gt;</code> to push and sign it.
+You'll obviously need the right private key and passphrase for doing so.
+You also need to be in the list of valid signers for Connaisseur.
+If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:philipp.belitz@securesystems.de">Philipp Belitz</a>.</p>
 <h2 id="merge-pr">Merge PR<a class="headerlink" href="#merge-pr" title="Permanent link">⚓︎</a></h2>
-<p>Run <code>git checkout master</code> to switch to the <code>master</code> branch and then run <code>git merge develop</code> to merge <code>develop</code> in. Then run <code>git push</code> and <code>git push --tags</code> to publish all changes and the new tag.</p>
+<p>Run <code>git checkout master</code> to switch to the <code>master</code> branch and then run <code>git merge develop</code> to merge <code>develop</code> in.
+Then run <code>git push</code> and <code>git push --tags</code> to publish all changes and the new tag.</p>
 <h2 id="create-release-page">Create release page<a class="headerlink" href="#create-release-page" title="Permanent link">⚓︎</a></h2>
-<p>Finally a release on GitHub should be created. Go to the <a href="https://github.com/sse-secure-systems/connaisseur/releases">Connaisseur releases page</a>, then click <em>Draft a new release</em>. There you have to enter the new tag version, a title (usually <code>Version &lt;new-version&gt;</code>) and the changelog text as description. Then click <em>Publish release</em> and you're done! (You can delete the CHANGELOG.md file now. Go and do it.)</p>
+<p>Finally a release on GitHub should be created.
+Go to the <a href="https://github.com/sse-secure-systems/connaisseur/releases">Connaisseur releases page</a>, then click <em>Draft a new release</em>.
+There you have to enter the new tag version, a title (usually <code>Version &lt;new-version&gt;</code>) and the changelog text as description.
+Then click <em>Publish release</em> and you're done!
+(You can delete the CHANGELOG.md file now. Go and do it.)</p>
 <p><img alt="gh_release_flow" src="../assets/gh_release.png" /></p>
 <h2 id="shoot-trouble">Shoot trouble<a class="headerlink" href="#shoot-trouble" title="Permanent link">⚓︎</a></h2>
-<p>Be aware that this <strong>isn't</strong> a completely fleshed out, highly available, hyper scalable and fully automated workflow, backed up by state-of-the-art blockchain technology and 24/7 incident response team coverage with global dominance! Not yet at least. For now things will probably break, so make sure that in the end everything looks to be in order and the new release can be seen on the GitHub page, tagged with <em>Latest release</em> and pointing to the correct version of Connaisseur. Good Luck!</p>
+<p>Be aware that this <strong>isn't</strong> a completely fleshed out, highly available, hyper scalable and fully automated workflow, backed up by state-of-the-art blockchain technology and 24/7 incident response team coverage with global dominance!
+Not yet at least.
+For now things will probably break, so make sure that in the end everything looks to be in order and the new release can be seen on the GitHub page, tagged with <em>Latest release</em> and pointing to the correct version of Connaisseur.
+Good Luck!</p>
 
               
             </article>
