@@ -1,5 +1,4 @@
 deployment:
-  imagePullPolicy: Never
   replicasCount: 1
 validators:
 - name: allow

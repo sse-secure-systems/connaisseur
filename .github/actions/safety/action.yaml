@@ -1,5 +1,5 @@
 name: safety
-description: 'action that runs safety '
+description: 'Run Safety on frozen dependencies'
 runs:
   using: "composite"
   steps:
@@ -14,6 +14,12 @@ runs:
     - name: Install safety
       run: pip3 install safety
       shell: sh
-    - name: Run safety
+    - name: Scan
       run: safety check -r ./actual_package_versions.txt --full-report -o screen --save-json safety-report.json
       shell: sh
+    - name: Upload
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: safety-report
+        path: safety-report.json

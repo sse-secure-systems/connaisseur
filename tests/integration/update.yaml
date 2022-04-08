@@ -1,5 +1,3 @@
-deployment:
-  imagePullPolicy: Never
 validators:
 - name: allow
   type: static

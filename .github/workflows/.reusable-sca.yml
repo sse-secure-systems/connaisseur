@@ -1,0 +1,45 @@
+name: sca
+
+on:
+  workflow_call:
+    inputs:
+      build_registry:
+        description: "Workflow build registry used for testing"
+        type: string
+      repo_owner:
+        description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
+        type: string
+      build_image:
+        description: "Workflow build image used for testing, i.e. registry + repository + tag"
+        type: string
+
+permissions: {}
+
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    container:
+      image: python:slim
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Run Safety
+        uses: ./.github/actions/safety
+
+  trivy-image-scan:
+    name: trivy image
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    container:
+      image: docker:stable
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Run Trivy
+        uses: ./.github/actions/trivy-image
+        with:
+          image: ${{ inputs.build_image }}
+          registry: ${{ inputs.build_registry }}
+          repo_owner: ${{ inputs.repo_owner }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}

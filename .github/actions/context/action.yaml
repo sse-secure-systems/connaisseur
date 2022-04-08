@@ -1,0 +1,146 @@
+name: context
+description: 'Get the current context'
+inputs:
+  build_registry:
+    description: "Build registry to be used"
+    required: false
+    default: "ghcr.io"
+  build_repo:
+    description: "Base build repository to be used (non-protected branches will push to '${build_repo}-test')"
+    required: false
+    default: "${{ github.repository }}"
+outputs:
+  cosign_version: 
+    description: "Cosign version used for building Connaisseur image"
+    value: ${{ steps.get_context.outputs.COSIGN_VERSION }}
+  chart_version: 
+    description: "Connaisseur Helm chart version"
+    value: ${{ steps.get_context.outputs.CHART_VERSION }}
+  original_registry:
+    description: "Public Connaisseur registry"
+    value: ${{ steps.get_context.outputs.ORIGINAL_REGISTRY }}
+  original_repo:
+    description: "Public Connaisseur repo"
+    value: ${{ steps.get_context.outputs.ORIGINAL_REPO }}
+  original_tag:
+    description: "Current Connaisseur tag, i.e. version"
+    value: ${{ steps.get_context.outputs.ORIGINAL_TAG }}
+  original_image:
+    description: "Full Connaisseur image reference, i.e. registry + repository + tag"
+    value: ${{ steps.get_context.outputs.ORIGINAL_IMAGE }}
+  build_registry:
+    description: "Workflow build registry used for testing"
+    value: ${{ steps.get_context.outputs.BUILD_REGISTRY }}
+  build_repo:
+    description: "Workflow build repository used for testing"
+    value: ${{ steps.get_context.outputs.BUILD_REPO }}
+  build_tag:
+    description: "Workflow build tag used for testing (unique for each run)"
+    value: ${{ steps.get_context.outputs.BUILD_TAG }}
+  branch_tag:
+    description: "Branch tag used for all builds on branch"
+    value: ${{ steps.show_context.outputs.BRANCH_TAG }}
+  build_image:
+    description: "Workflow build image used for testing, i.e. registry + repository + tag"
+    value: ${{ steps.get_context.outputs.BUILD_IMAGE }}
+  build_labels:
+    description: "Repository- and workflow-specific build labels"
+    value: ${{ steps.meta.outputs.labels }}
+runs:
+  using: "composite"
+  steps:
+    - name: Get chart version
+      id: get_chart_version
+      uses: mikefarah/yq@master
+      with:
+        cmd: yq '.version' helm/Chart.yaml
+    - name: Get original image
+      id: get_original_image
+      uses: mikefarah/yq@master
+      with:
+        cmd: yq '.deployment.image' helm/values.yaml
+    - name: Get context
+      id: get_context
+      run: |
+        CHART_VERSION=${{ steps.get_chart_version.outputs.result }}
+        COSIGN_VERSION=$(grep -Eo '^COSIGN_VERSION = .*' Makefile | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+        ORIGINAL_IMAGE=${{ steps.get_original_image.outputs.result }}
+        ORIGINAL_REGISTRY=$(echo "${ORIGINAL_IMAGE}" | cut -d "/" -f 1)
+        ORIGINAL_REPO=$(echo "${ORIGINAL_IMAGE}" | cut -d "/" -f 2- | cut -d ":" -f 1)
+        ORIGINAL_TAG=$(echo "${ORIGINAL_IMAGE}" | cut -d "/" -f 2- | cut -d ':' -f 2)
+        BUILD_REGISTRY=${{ inputs.build_registry }}
+        BUILD_REPO=${{ inputs.build_repo }}
+
+        if [ "${{ github.ref }}" = refs/heads/master || "${{ github.ref }}" = refs/tags/v* ]; then
+          BUILD_TAG="${ORIGINAL_TAG}"
+          if [ "${{ github.workflow }}" = "nightly" ]; then
+            BUILD_TAG=${BUILD_TAG}-nightly
+          fi
+        elif [ "${{ github.ref_name }}" = "refs/heads/develop" ]; then
+          BUILD_TAG="develop"
+        else
+          BUILD_REPO="${BUILD_REPO}-test"
+          BUILD_TAG=${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
+        fi
+
+        BUILD_IMAGE=${BUILD_REGISTRY}/${BUILD_REPO}:${BUILD_TAG}
+
+        echo COSIGN_VERSION=${COSIGN_VERSION} >> ${GITHUB_OUTPUT}
+        echo CHART_VERSION=${CHART_VERSION} >> ${GITHUB_OUTPUT}
+        echo ORIGINAL_REGISTRY=${ORIGINAL_REGISTRY} >> ${GITHUB_OUTPUT}
+        echo ORIGINAL_REPO=${ORIGINAL_REPO} >> ${GITHUB_OUTPUT}
+        echo ORIGINAL_TAG=${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
+        echo ORIGINAL_IMAGE=${ORIGINAL_IMAGE} >> ${GITHUB_OUTPUT}
+        echo BUILD_REGISTRY=${BUILD_REGISTRY} >> ${GITHUB_OUTPUT}
+        echo BUILD_REPO=${BUILD_REPO} >> ${GITHUB_OUTPUT}
+        echo BUILD_TAG=${BUILD_TAG} >> ${GITHUB_OUTPUT}
+        echo BUILD_IMAGE=${BUILD_IMAGE} >> ${GITHUB_OUTPUT}
+      shell: bash
+    - name: Generate metadata
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ steps.get_context.outputs.BUILD_REGISTRY }}/${{ steps.get_context.outputs.BUILD_REPO }}
+    - name: Show context
+      id: show_context
+      run: |
+        BRANCH_TAG=$(echo "${{ steps.meta.outputs.tags }}" | cut -d ':' -f 2)
+        echo BRANCH_TAG=${BRANCH_TAG} >> ${GITHUB_OUTPUT}
+        echo "# :clipboard: Context" >> ${GITHUB_STEP_SUMMARY}
+        echo "<table>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><th>Build Context</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Cosign version</td><td><code>${{ steps.get_context.outputs.COSIGN_VERSION }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Helm chart version</td><td><code>${{ steps.get_context.outputs.CHART_VERSION }}</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Original registry</td><td><code>${{ steps.get_context.outputs.ORIGINAL_REGISTRY }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Original repository</td><td><code>${{ steps.get_context.outputs.ORIGINAL_REPO }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Original tag</td><td><code>${{ steps.get_context.outputs.ORIGINAL_TAG }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Original image</td><td><code>${{ steps.get_context.outputs.ORIGINAL_IMAGE }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Build registry</td><td><code>${{ steps.get_context.outputs.BUILD_REGISTRY }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Build repository</td><td><code>${{ steps.get_context.outputs.BUILD_REPO }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Build tags</td><td><code>${{ steps.get_context.outputs.BUILD_TAG }}</code>, <code>${BRANCH_TAG}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Build image</td><td><code>${{ steps.get_context.outputs.BUILD_IMAGE }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Branch build image</td><td><code>${{ steps.meta.outputs.tags }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Build labels</td><td><code>${{ steps.meta.outputs.labels }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</table>" >> ${GITHUB_STEP_SUMMARY}
+        echo "" >> ${GITHUB_STEP_SUMMARY}
+        echo "<details><summary>:pushpin: Context Variables References</summary>" >> ${GITHUB_STEP_SUMMARY}
+        echo "(<context> job must run in workflow and <code>needs: [context]</code> mut be set for job)" >> ${GITHUB_STEP_SUMMARY}
+        echo "<ul>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Cosign version: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.cosign_version }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Helm chart version: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.chart_version }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Original registry: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.original_registry &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Original repository: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.original_repo &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Original tag: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.original_tag &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Original image: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.original_image &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Build registry: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_registry &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Build repository: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_repo &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Build tag (workflow): <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_tag &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Branch tag: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.branch_tag &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Build image: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_image &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Build labels: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_labels &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</ul>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</details>" >> ${GITHUB_STEP_SUMMARY}
+        echo "" >> ${GITHUB_STEP_SUMMARY}
+        echo "Let's start building :rocket:" >> ${GITHUB_STEP_SUMMARY}
+      shell: bash
+

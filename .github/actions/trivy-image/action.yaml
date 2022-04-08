@@ -1,0 +1,43 @@
+name: trivy-image
+description: 'Run Trivy on image'
+inputs:
+  image:
+    description: 'Image name'
+    required: true
+  registry:
+    description: 'Registry to login to pull image, leave empty if image is public'
+    required: false
+  repo_owner:
+    description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
+    required: false
+  repo_token:
+    description: 'Access token for repository owner, e.g. "secrets.GITHUB_TOKEN" for ghcr.io'
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Login with registry
+      if: ${{ inputs.registry }} != ""
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.repo_owner }}
+        password: ${{ inputs.repo_token }}
+    - name: Create reports folder
+      run: |
+        mkdir reports
+      shell: sh
+    - name: Run Trivy on image
+      uses: aquasecurity/trivy-action@8bd2f9fbda2109502356ff8a6a89da55b1ead252 # 0.9.1
+      with:
+        image-ref: ${{ inputs.image }}
+        scan-type: "image"
+        exit-code: 0
+        hide-progress: false
+        ignore-unfixed: false
+        format: 'sarif'
+        output: 'reports/trivy-vuln-results.sarif'
+    - name: Upload
+      uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+      with:
+        sarif_file: 'reports'

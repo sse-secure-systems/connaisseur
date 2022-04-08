@@ -1,0 +1,24 @@
+name: unit-test
+
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    container:
+      image: python:slim
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Install
+        run: |
+          pip3 install -r requirements_dev.txt && pip3 install .
+      - name: Test
+        run: pytest --cov=connaisseur --cov-report=xml tests/
+      - name: Upload
+        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70 # v3.1.1
+        with:
+          file: coverage.xml

@@ -5,26 +5,21 @@ on:
     branches:
       - develop
 
-# Needs write on repo contents as it pushes to gh-pages branch
-permissions:
-  contents: write
+permissions: {}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
       - name: Configure the git user
         run: |
           git config user.name "versioning_user"
           git config user.email "connaisseur@securesystems.dev"
-      - name: Set up Python
+      - name: Install dependencies
         run: |
           pip install -r docs/requirements_docs.txt
       - name: Deploy

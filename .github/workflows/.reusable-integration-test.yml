@@ -1,0 +1,252 @@
+name: integration-test
+
+on:
+  workflow_call:
+    inputs:
+      build_registry:
+        description: "Workflow build registry used for testing"
+        type: string
+      repo_owner:
+        description: 'Name of repository owner, e.g. "inputs.repo_owner" for ghcr.io'
+        type: string
+      build_image:
+        description: "Workflow build image used for testing, i.e. registry + repository + tag"
+        type: string
+      skip_integration_tests:
+        description: "Want to skip running certain integration tests 'none', 'non-required', 'all'?"
+        type: string
+
+permissions: {}
+
+env:
+  IMAGEPULLSECRET: dockerconfigjson-ghcr
+
+jobs:
+  integration-test:
+    name: integration test
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    env:
+      IMAGE: ${{ inputs.build_image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        integration-test-arg:
+          [
+            "complexity",
+            "load",
+            "regular",
+            "cosign",
+            "multi-cosigned",
+            "rekor-cosigned",
+            "namespace-val",
+            "deployment",
+            "pre-config",
+            "other-ns",
+            "configured-cert",
+          ]
+    services:
+      alerting-endpoint:
+        image: securesystemsengineering/alerting-endpoint
+        ports:
+          - 56243:56243
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Login with registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ inputs.build_registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: v1.25
+      - name: Get alerting endpoint IP
+        id: get_ip
+        uses: ./.github/actions/alerting-endpoint
+      - name: Run test
+        run: |
+          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+        env:
+          ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
+      - name: Display Connaisseur configuration
+        if: always()
+        run: |
+          echo "::group::values.yaml"
+          yq e '.' helm/values.yaml
+          echo "::endgroup::"
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+
+  k8s-versions:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    env:
+      IMAGE: ${{ inputs.build_image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s-version: [
+            "v1.20",
+            "v1.21",
+            "v1.22",
+            "v1.23",
+            "v1.24",
+            "v1.25",
+          ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Login with registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ inputs.build_registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+      - name: Run pre-config and workload integration tests
+        run: |
+          bash tests/integration/integration-test.sh "pre-and-workload"
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+
+  k8s-legacy-versions:
+    # k3s with older versions doesn't play with newer kernel, so we're running those on deprecated hosts, yay...
+    runs-on: ubuntu-18.04
+    if: inputs.skip_integration_tests != 'non-required'
+    permissions:
+      packages: read
+    env:
+      IMAGE: ${{ inputs.build_image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s-version: [
+            "v1.16",
+            "v1.17",
+            "v1.18",
+            "v1.19",
+          ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Login with registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ inputs.build_registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+      - name: Run pre-config and workload integration tests
+        run: |
+          bash tests/integration/integration-test.sh "pre-and-workload"
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+
+  upgrade-test:
+    runs-on: ubuntu-latest
+    if: inputs.skip_integration_tests != 'non-required'
+    permissions:
+      packages: read
+    env:
+      IMAGE: ${{ inputs.build_image }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Login with registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ inputs.build_registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install yq and bash
+        run: |
+          sudo snap install yq
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: v1.25
+      - name: Configure Cluster
+        run: |
+          kubectl create ns connaisseur
+          kubectl create secret generic ${IMAGEPULLSECRET} \
+            --from-file=.dockerconfigjson=$HOME/.docker/config.json \
+            --type=kubernetes.io/dockerconfigjson \
+            --namespace=connaisseur
+      - name: Checkout code (master)
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        with:
+          ref: "master"
+      - name: Checkout required current files
+        uses: Bhacaz/checkout-files@e3e34e7daef91a5f237485bb88a260aee4be29dd # v2
+        with:
+          files: tests/integration/ghcr-values.yaml
+          branch: ${{ github.head_ref || github.ref_name }}
+      - name: Configure Connaisseur (master)
+        run: |
+          envsubst < tests/integration/ghcr-values.yaml > update
+          yq '. *+ load("update")' -i helm/values.yaml
+          rm update
+          yq e '.' helm/values.yaml
+      - name: Install Connaisseur (master)
+        run: |
+          make install
+      - name: Get image name & version (master)
+        run: |
+          kubectl get pods -n connaisseur -o jsonpath="{.items[*].spec.containers[*].image}"
+      - name: Run integration tests (master)
+        run: |
+          bash tests/integration/upgrade-integration-test.sh
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Configure current version
+        run: |
+          envsubst < tests/integration/var-img.yaml > update
+          yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
+          yq e '.' helm/values.yaml
+          rm update
+      - name: Upgrade Connaisseur to current branch
+        run: |
+          make upgrade
+      - name: Get image name & version (branch)
+        run: |
+          kubectl get pods -n connaisseur -o jsonpath="{.items[*].spec.containers[*].image}"
+      - name: Run integration tests (branch)
+        run: |
+          bash tests/integration/upgrade-integration-test.sh
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+      - name: Uninstall Connaisseur
+        run: |
+          make uninstall

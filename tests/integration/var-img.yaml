@@ -1,0 +1,4 @@
+deployment:
+  image: ${IMAGE}
+  imagePullSecrets:
+  - name: ${IMAGEPULLSECRET}

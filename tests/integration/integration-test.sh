@@ -16,6 +16,15 @@ RETRY=3
 ## Backup helm/values.yaml
 cp helm/values.yaml values.yaml.backup
 
+## Join ghcr integration yaml
+if [[ -n "${IMAGE+x}" && -n "${IMAGEPULLSECRET+x}" ]]; then
+  yq '. *+ load("tests/integration/var-img.yaml")' tests/integration/ghcr-values.yaml > ghcr-tmp
+  envsubst < ghcr-tmp > ghcr-values
+  rm ghcr-tmp
+else
+  echo "" > ghcr-values
+fi
+
 ### SINGLE TEST CASE ####################################
 single_test() { # ID TXT TYP REF NS MSG RES
   echo -n "[$1] $2"
@@ -168,8 +177,33 @@ load_test() { #
   rm output.log
 }
 
+### CREATE IMAGEPULLSECRET ####################################
+create_imagepullsecret_in_ns() { # NAMESPACE # CREATE
+  local CREATE=${2:-true}
+  if $CREATE; then
+    echo -n "Creating Namespace '${1}'..."
+    kubectl create ns ${1} >/dev/null || {
+      echo -e "${FAILED}"
+      exit 1
+    }
+    echo -e "${SUCCESS}"
+  fi
+  if [[ -n "${IMAGEPULLSECRET+x}" ]]; then
+    echo -n "Creating imagePullSecret '${IMAGEPULLSECRET}'..."
+    kubectl create secret generic ${IMAGEPULLSECRET} \
+      --from-file=.dockerconfigjson=$HOME/.docker/config.json \
+      --type=kubernetes.io/dockerconfigjson \
+      --namespace=${1} >/dev/null || {
+      echo -e "${FAILED}"
+      exit 1
+    }
+    echo -e "${SUCCESS}"
+  fi
+}
+
 ### INSTALLING CONNAISSEUR ####################################
 make_install() {
+  create_imagepullsecret_in_ns "connaisseur"
   echo -n "Installing Connaisseur..."
   make install >/dev/null || {
     echo -e "${FAILED}"
@@ -180,6 +214,7 @@ make_install() {
 }
 
 helm_install_namespace() { # NAMESPACE
+  create_imagepullsecret_in_ns ${1}
   echo -n "Installing Connaisseur in namespace ${1}..."
   helm install connaisseur helm --atomic --create-namespace \
     --namespace ${1} >/dev/null || {
@@ -191,6 +226,7 @@ helm_install_namespace() { # NAMESPACE
 }
 
 helm_install_namespace_no_create() { # NAMESPACE
+  create_imagepullsecret_in_ns ${1} false
   echo -n "Installing Connaisseur in namespace ${1}..."
   helm install connaisseur helm --atomic \
     --namespace ${1} >/dev/null || {
@@ -263,14 +299,22 @@ update_values() { # [EXPRESSION...]
   done
 }
 
+update_values_minimal() {
+  yq '. *+ load("ghcr-values")' -i helm/values.yaml
+}
+
 update_via_env_vars() {
   envsubst < tests/integration/update.yaml > update
+  yq '. *+ load("ghcr-values")' -i update
   yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
   rm update
 }
 
 update_helm_for_workloads() {
-  yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/update-for-workloads.yaml 
+  envsubst < tests/integration/update-for-workloads.yaml > update
+  yq '. *+ load("ghcr-values")' -i update
+  yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
+  rm update
 }
 
 debug_vaules() {
@@ -440,8 +484,7 @@ case $1 in
   deployment_int_test
   ;;
 "pre-config")
-  export IPP=`yq e '.deployment.imagePullPolicy' tests/integration/update.yaml`
-  update_values '.deployment.imagePullPolicy=strenv(IPP)'
+  update_values_minimal
   helm_install
   pre_config_int_test
   helm_uninstall
@@ -454,32 +497,25 @@ case $1 in
     workload_test "${wo}"
   done
   ;;
-"nightly-pre-and-workload")
-  update_helm_for_workloads
-  helm_install
-  pre_config_int_test
-  for wo in "${WOLIST[@]}"; do
-    workload_test "${wo}"
-  done
-  ;;
 "helm-repo")
   helm_repo_install
   pre_config_int_test
   ;;
 "complexity")
-  update_values '.deployment.imagePullPolicy="Never"' '.deployment.replicasCount=3' '.deployment.resources= {"limits": {"cpu":"1000m", "memory":"512Mi"},"requests": {"cpu":"500m", "memory":"512Mi"}}'
+  update_values_minimal
+  update_values '.deployment.replicasCount=3' '.deployment.resources= {"limits": {"cpu":"1000m", "memory":"512Mi"},"requests": {"cpu":"500m", "memory":"512Mi"}}'
   make_install
   complexity_test
   ;;
 "load")
-  update_values '.deployment.imagePullPolicy="Never"'
+  update_values_minimal
   make_install
   load_test
   ;;
 "configured-cert")
   echo "Testing deployment of Connaisseur using a pre-configured TLS certificate. See issue https://github.com/sse-secure-systems/connaisseur/issues/225"
   update_via_env_vars
-  make install
+  make_install
   certificate_int_test
   # Clean up such that next test doesn't run into existing test pods
   kubectl delete pods -luse="connaisseur-integration-test" -A >/dev/null

@@ -1,0 +1,158 @@
+name: build
+description: 'Build connaisseur image'
+inputs:
+  image_registry:
+    description: 'Image registry to be used'
+    required: true
+  image_repo:
+    description: 'Image repository to be used'
+    required: true
+  image_tag:
+    description: 'Image tag to be used'
+    required: true
+  branch_tag:
+    description: 'Branch tag to be used'
+    required: true
+  image_labels:
+    description: 'Image labels to be used'
+    required: true
+  repo_owner:
+    description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
+    required: true
+  repo_token:
+    description: 'Access token for repository owner, e.g. "secrets.GITHUB_TOKEN" for ghcr.io'
+    required: true
+  cosign_version:
+    description: 'Cosign version to be used'
+    required: true
+  cosign_private_key:
+    description: 'Cosign private key'
+    required: true
+  cosign_password:
+    description: 'Cosign private key password'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@main
+    - name: Set up Docker buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Login with registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.image_registry }}
+        username: ${{ inputs.repo_owner }}
+        password: ${{ inputs.repo_token }}
+    - name: Build and push image
+      id: build
+      uses: docker/build-push-action@v4
+      with:
+        push: true
+        tags: ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}, ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.branch_tag }}
+        labels: ${{ inputs.image_labels }}
+        file: docker/Dockerfile
+        build-args: COSIGN_VERSION=${{ inputs.cosign_version }}
+        sbom: true
+        provenance: true
+    - name: Create SBOM
+      uses: anchore/sbom-action@v0
+      with:
+        image: ${{ inputs.image_registry }}/${{ inputs.image_repo }}@${{ steps.build.outputs.digest }}
+        format: cyclonedx-json
+        artifact-name: sbom.cdx
+        output-file: sbom.cdx
+    - name: Sign image
+      id: sign
+      run: |
+        cosign sign --key env://COSIGN_PRIVATE_KEY -a tag=${{ inputs.image_tag }} ${TAGS}
+        cosign attach sbom --sbom sbom.cdx --type cyclonedx ${TAGS}
+        cosign sign --key env://COSIGN_PRIVATE_KEY --attachment sbom ${TAGS}
+      env:
+        TAGS: ${{ inputs.image_registry }}/${{ inputs.image_repo }}@${{ steps.build.outputs.digest }}
+        COSIGN_PRIVATE_KEY: ${{ inputs.cosign_private_key }}
+        COSIGN_PASSWORD: ${{ inputs.cosign_password }}
+      shell: bash
+    - name: Verify build data
+      id: verify
+      run: |
+        mkdir build
+        cosign public-key --key env://COSIGN_PRIVATE_KEY > build/cosign.pub
+        PUBLIC_KEY="$(cat build/cosign.pub)"
+        cosign tree ${TAGS}
+        PUBLIC_KEY=${PUBLIC_KEY} cosign verify --key env://PUBLIC_KEY ${TAGS}
+        PUBLIC_KEY=${PUBLIC_KEY} cosign verify --key env://PUBLIC_KEY --attachment sbom ${TAGS}
+        SIGNATURE=$(cosign triangulate ${TAGS})
+        PUBLIC_KEY="${PUBLIC_KEY//$'\n'/'<br>'}"
+        SBOM="${SIGNATURE::-4}.sbom"
+        echo public-key="${PUBLIC_KEY}" >> ${GITHUB_OUTPUT}
+        echo signature=${SIGNATURE} >> ${GITHUB_OUTPUT}
+        echo sbom=${SBOM} >> ${GITHUB_OUTPUT}
+      env:
+        TAGS: ${{ inputs.image_registry }}/${{ inputs.image_repo }}@${{ steps.build.outputs.digest }}
+        COSIGN_PRIVATE_KEY: ${{ inputs.cosign_private_key }}
+        COSIGN_PASSWORD: ${{ inputs.cosign_password }}
+      shell: bash
+    - name: Upload public key
+      uses: actions/upload-artifact@v3
+      with:
+        name: cosign.pub
+        path: build/cosign.pub
+    - name: Show build and signature information
+      run: |
+        CONFIGURE="yq '. *+ load(\"tests/integration/var-img.yaml\")' tests/integration/ghcr-values.yaml > ghcr.yaml &&\n\t IMAGE=\"${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}\" IMAGEPULLSECRET=\"<ImagePullSecret name>\" envsubst < ghcr.yaml > update &&\n\t yq '. *+ load(\"update\")' -i helm/values.yaml &&\n\t rm ghcr.yaml update"
+        CONFIGURE=$(printf -- "${CONFIGURE}")
+        PUBLIC_KEY="${{ steps.verify.outputs.public-key }}"
+        PUBLIC_KEY="$(printf -- "${PUBLIC_KEY//'<br>'/'\n'}")"
+        echo "# :building_construction: Build Information" >> ${GITHUB_STEP_SUMMARY}
+        echo "<table>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><th>Build artifacts</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Registry</td><td><code>${{ inputs.image_registry }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Repository</td><td><code>${{ inputs.image_repo }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Tags</td><td><code>${{ inputs.image_tag }}</code>, <code>${{ inputs.branch_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Workflow image</td><td><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Branch image reference</td><td><code>${{ inputs.branch_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Digest</td><td><code>${{ steps.build.outputs.digest }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Signature</td><td><code>${{ steps.verify.outputs.signature }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Public key</td><td><code>${PUBLIC_KEY}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>SBOM (cyclonedx-json)</td><td><code>${{ steps.verify.outputs.sbom }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</table>" >> ${GITHUB_STEP_SUMMARY}
+        echo "" >> ${GITHUB_STEP_SUMMARY}
+        echo "<details><summary>:bookmark_tabs: Metadata</summary>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<pre><code>${{ steps.build.outputs.metadata }}</code></pre>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</details>" >> ${GITHUB_STEP_SUMMARY}
+        echo "" >> ${GITHUB_STEP_SUMMARY}
+        echo "<details><summary>:hammer_and_wrench: Use Build Artifacts</summary>" >> ${GITHUB_STEP_SUMMARY}
+        echo "(needs <a href='https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry'>docker login via PAT</a> with package:read permission)" >> ${GITHUB_STEP_SUMMARY}
+        echo "<ul>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li><b>Workflow image reference</b> by tag: <pre><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li><b>Branch image reference</b> by tag: <pre><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.branch_tag }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li><b>Image reference</b> by digest: <pre><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}@${{ steps.build.outputs.digest }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li><b>Cosign signature</b>: <pre><code>${{ steps.verify.outputs.signature }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li><b>Syft SBOM (cyclonedx-json)</b>: <pre><code>${{ steps.verify.outputs.sbom }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Pull via <b>Docker</b>: <pre lang="bash"><code>docker pull ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Use in <b>Helm chart</b> (needs <a href='https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/'>imagePullSecret via dockerconfigjson<a> of PAT with package:read permission): <pre lang="bash"><code>yq e '.deployment.image = \"${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}\"' -i helm/values.yaml</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Configure <b>Helm chart</b> for successful validation build image (RUN ONLY ONCE, insert name of <code>imagePullSecret</code> in connaisseur namespace): <pre lang="bash"><code>${CONFIGURE}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</ul>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</details>" >> ${GITHUB_STEP_SUMMARY}
+        echo "" >> ${GITHUB_STEP_SUMMARY}
+        echo "<details><summary>:mag: Verify Build</summary>" >> ${GITHUB_STEP_SUMMARY}
+        echo "(needs <a href='https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry'>Docker login via PAT</a> with package:read permission)" >> ${GITHUB_STEP_SUMMARY}
+        echo "<ul>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Show <b>BuildKit image details</b>: <pre><code>docker buildx imagetools inspect ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Extract <b>BuildKit SBOM</b> (can be consumed by e.g. <a href='https://github.com/anchore/syft'>syft</a> or <a href='https://github.com/anchore/grype'>grype</a>): <pre><code>docker buildx imagetools inspect ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }} --format \"{{ json .SBOM.SPDX }}\"</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Extract <b>BuildKit provenance (<a href='https://slsa.dev/provenance/v0.2'>SLSA</a>)</b> data: <pre><code>docker buildx imagetools inspect ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }} --format \"{{ json .Provenance.SLSA }}\"</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li><b>Cosign public key</b>: <pre><code>${PUBLIC_KEY}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Store <b>Cosign public key</b>: <pre lang="bash"><code>echo \"${PUBLIC_KEY}\" > cosign.pub </code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Verify <b>Cosign signature</b> using <code>cosign.pub</code> file: <pre lang="bash"><code>cosign verify --key cosign.pub ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }} </code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Verify <b>Cosign signature</b> : <pre lang="bash"><code>COSIGN_PUBLIC_KEY='${PUBLIC_KEY}' cosign verify --key env://COSIGN_PUBLIC_KEY ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }} </code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Display all <b>Cosign supply chain security artifacts</b>: <pre lang="bash"><code>cosign tree ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }} </code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Download <b>Cosign-attached SBOM</b> (syft-generated cyclonedx-json): <pre lang="bash"><code>
+        COSIGN_PUBLIC_KEY='${PUBLIC_KEY}' cosign verify --key env://COSIGN_PUBLIC_KEY --attachment sbom ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }} && # verify signature before download
+        cosign download sbom ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }} > sbom.cdx # perform actual download
+          </code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</ul>" >> ${GITHUB_STEP_SUMMARY}
+        echo "</details>" >> ${GITHUB_STEP_SUMMARY}
+        echo "" >> ${GITHUB_STEP_SUMMARY}
+        echo "Let's start testing :rocket:" >> ${GITHUB_STEP_SUMMARY}
+      shell: bash

@@ -1,0 +1,32 @@
+name: trivy-config
+description: 'Run Trivy on config'
+runs:
+  using: "composite"
+  steps:
+    - name: Create reports folder
+      run: |
+        mkdir reports
+      shell: bash
+    - name: Render Helm charts
+      run: |
+        mkdir deployment
+        helm template helm > deployment/deployment.yaml
+      shell: bash
+    - name: Scan deployment.yaml
+      uses: aquasecurity/trivy-action@8bd2f9fbda2109502356ff8a6a89da55b1ead252 # 0.9.1
+      with:
+        scan-type: "config"
+        scan-ref: "deployment"
+        format: 'sarif'
+        output: 'reports/trivy-k8s-results.sarif'
+    - name: Scan Dockerfiles
+      uses: aquasecurity/trivy-action@8bd2f9fbda2109502356ff8a6a89da55b1ead252 # 0.9.1
+      with:
+        scan-type: "config"
+        scan-ref: "docker"
+        format: 'sarif'
+        output: 'reports/trivy-docker-results.sarif'
+    - name: Upload
+      uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+      with:
+        sarif_file: 'reports'

@@ -1,0 +1,139 @@
+name: sast
+
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      pull-requests: read
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+      with:
+        languages: 'python'
+    - name: Analyze
+      uses: github/codeql-action/analyze@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Install packages
+        run: |
+          pip3 install setuptools wheel
+          pip3 install black
+      - name: Test formatting
+        run: |
+          python3 -m black . 2>&1 | grep -q "reformatted" && { echo 'Not properly formatted.'; exit 1; } || true
+
+  pylint:
+    runs-on: ubuntu-latest
+    container:
+      image: python:slim
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Install
+        run: |
+          pip3 install -r requirements_dev.txt
+      - name: Lint
+        run: pylint --ignore-patterns=tests,coverage connaisseur
+
+  bandit:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    container:
+      image: python:slim
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Install Bandit
+        run: pip3 install bandit bandit_sarif_formatter
+      - name: Run Bandit
+        run: bandit -r -f sarif -o bandit-results.sarif connaisseur/ --exit-zero
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+        with:
+          sarif_file: 'bandit-results.sarif'
+
+  hadolint:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Scan
+        uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          dockerfile: docker/Dockerfile
+          no-fail: true
+          format: sarif
+          output-file: hadolint-results.sarif
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+        with:
+          sarif_file: 'hadolint-results.sarif'
+
+  kubelinter:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Scan
+        uses: stackrox/kube-linter-action@ca0d55b925470deb5b04b556e6c4276ea94d03c3 # v1.0.4
+        with:
+          directory: helm
+          config: .kube-linter/config.yaml
+          format: sarif
+          output-file: kubelinter-results.sarif
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+        with:
+          sarif_file: 'kubelinter-results.sarif'
+
+  trivy-config-scan:
+    name: trivy config
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Run Trivy
+        uses: ./.github/actions/trivy-config
+
+  checkov:
+    permissions:
+      security-events: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Render Helm charts
+        run: |
+          rm -rf tests # remove 'tests' folder from scan
+          mkdir deployment
+          helm template helm > deployment/deployment.yaml
+        shell: bash
+      - name: Scan
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          soft_fail: true
+          output_format: cli,sarif
+          output_file_path: console,checkov-results.sarif
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+        with:
+          sarif_file: checkov-results.sarif

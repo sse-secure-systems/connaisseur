@@ -1,0 +1,89 @@
+name: build
+
+on:
+  workflow_call:
+    outputs:
+      cosign_version: 
+        description: "Cosign version used for building Connaisseur image"
+        value: ${{ jobs.context.outputs.cosign_version }}
+      chart_version: 
+        description: "Connaisseur Helm chart version"
+        value: ${{ jobs.context.outputs.chart_version }}
+      original_registry:
+        description: "Public Connaisseur registry"
+        value: ${{ jobs.context.outputs.original_registry }}
+      original_repo:
+        description: "Public Connaisseur repo"
+        value: ${{ jobs.context.outputs.original_repo }}
+      original_tag:
+        description: "Current Connaisseur tag, i.e. version"
+        value: ${{ jobs.context.outputs.original_tag }}
+      original_image:
+        description: "Full Connaisseur image reference, i.e. registry + repository + tag"
+        value: ${{ jobs.context.outputs.original_image }}
+      build_registry:
+        description: "Workflow build registry used for testing"
+        value: ${{ jobs.context.outputs.build_registry }}
+      build_repo:
+        description: "Workflow build repository used for testing"
+        value: ${{ jobs.context.outputs.build_repo }}
+      build_tag:
+        description: "Workflow build tag used for testing (unique for each run)"
+        value: ${{ jobs.context.outputs.build_tag }}
+      branch_tag:
+        description: "Branch tag used for all builds on branch"
+        value: ${{ jobs.context.outputs.branch_tag }}
+      build_image:
+        description: "Workflow build image used for testing, i.e. registry + repository + tag"
+        value: ${{ jobs.context.outputs.build_image }}
+      build_labels:
+        description: "Repository- and workflow-specific build labels"
+        value: ${{ jobs.context.outputs.build_labels }}
+
+permissions: {}
+
+jobs:
+  context:
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      cosign_version: ${{ steps.get_context.outputs.cosign_version }}
+      chart_version: ${{ steps.get_context.outputs.chart_version }}
+      original_registry: ${{ steps.get_context.outputs.original_registry }}
+      original_repo: ${{ steps.get_context.outputs.original_repo }}
+      original_tag: ${{ steps.get_context.outputs.original_tag }}
+      original_image: ${{ steps.get_context.outputs.original_image }}
+      build_registry: ${{ steps.get_context.outputs.build_registry }}
+      build_repo: ${{ steps.get_context.outputs.build_repo }}
+      build_tag: ${{ steps.get_context.outputs.build_tag }}
+      branch_tag: ${{ steps.get_context.outputs.branch_tag }}
+      build_image: ${{ steps.get_context.outputs.build_image }}
+      build_labels: ${{ steps.get_context.outputs.build_labels }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Get context
+        id: get_context
+        uses: ./.github/actions/context
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [context]
+    permissions:
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Build Connaisseur
+        uses: ./.github/actions/build
+        with:
+          image_registry: ${{ needs.context.outputs.build_registry }}
+          image_repo: ${{ needs.context.outputs.build_repo }}
+          image_tag: ${{ needs.context.outputs.build_tag }}
+          branch_tag: ${{ needs.context.outputs.branch_tag }}
+          image_labels: ${{ needs.context.outputs.build_labels }}
+          repo_owner: ${{ github.repository_owner }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          cosign_version: ${{ needs.context.outputs.cosign_version }}
+          cosign_private_key: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          cosign_password: ${{ secrets.COSIGN_PASSWORD }}
