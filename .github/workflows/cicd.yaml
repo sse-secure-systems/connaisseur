@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir images
           docker save $(yq e '.deployment.image' helm/values.yaml) -o images/${GITHUB_SHA}_image.tar
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: images
           path: images
@@ -103,7 +103,7 @@ jobs:
       - name: Print report
         if: ${{ success() || failure() }}
         run: cat bandit-report.txt
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: bandit-report
@@ -122,7 +122,7 @@ jobs:
       - name: Print report
         if: ${{ success() || failure() }}
         run: cat safety-report.txt
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: safety-report
@@ -188,7 +188,7 @@ jobs:
         if: ${{ success() || failure() }}
         run: |
           cat trivy-reports/image.txt
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: trivy-reports
