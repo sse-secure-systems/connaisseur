@@ -207,6 +207,7 @@ jobs:
             "regular",
             "cosign",
             "multi-cosigned",
+            "rekor-cosigned",
             "namespace-val",
             "deployment",
             "pre-config",

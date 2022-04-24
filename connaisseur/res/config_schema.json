@@ -126,6 +126,10 @@
                         },
                         "then": {
                             "properties": {
+                                "host": {
+                                    "type": "string",
+                                    "pattern": "(https?:\\/\\/)?(([a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5})|(localhost))(:[0-9]{1,5})?(\\/.*)?"
+                                },
                                 "trust_roots": {
                                     "type": "array",
                                     "items": {

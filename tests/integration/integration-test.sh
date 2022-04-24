@@ -252,6 +252,11 @@ multi-cosigned_int_test() {
   multi_test "multi-cosigned"
 }
 
+### REKOR-COSIGNed TEST ####################################
+rekor-cosigned_int_test() {
+  multi_test "rekor-cosigned"
+}
+
 ### NAMESPACE VALIDATION TEST ####################################
 namespace_val_int_test() {
   echo -n "Creating namespaces..."
@@ -293,6 +298,11 @@ case $1 in
   update_via_env_vars
   make_install
   multi-cosigned_int_test
+  ;;
+"rekor-cosigned")
+  update_via_env_vars
+  make_install
+  rekor-cosigned_int_test
   ;;
 "namespace-val")
   update_via_env_vars

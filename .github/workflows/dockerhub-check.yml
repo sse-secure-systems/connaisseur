@@ -39,5 +39,9 @@ jobs:
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:multi-cosigned-charlie-alice
       - name: Check Cosign multisigner test image signed by alice, bob and charlie
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie
+      - name: Check Cosign cosigned testimage not in rekor log
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:rekor-cosigned-notl
+      - name: Check Cosign cosigned testimage in rekor log
+        run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/testimage:rekor-cosigned-tl
       - name: Check alerting endpoint image
         run: DOCKER_CONTENT_TRUST=0 docker pull docker.io/securesystemsengineering/alerting-endpoint

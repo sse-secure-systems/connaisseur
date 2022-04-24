@@ -65,6 +65,9 @@ spec:
               mountPath: /app/connaisseur-config/config-secrets.yaml
               subPath: config-secrets.yaml
               readOnly: true
+            - name: {{ .Chart.Name }}-config-sigstore
+              mountPath: /app/.sigstore
+              readOnly: false
             {{ include "external-secrets-mount" . | nindent 12}}
             {{ include "cosignCertVolMount" . | nindent 12 }}
             {{- if .Values.deployment.extraVolumeMounts }}
@@ -115,6 +118,8 @@ spec:
         - name: {{ .Chart.Name }}-config-secrets
           secret:
             secretName: {{ .Chart.Name }}-config-secrets
+        - name: {{ .Chart.Name }}-config-sigstore
+          emptyDir: {}
         {{ include "external-secrets-vol" . | nindent 8}}
         {{ include "cosignCertVol" . | nindent 8 }}
         {{- if .Values.deployment.extraVolumes }}

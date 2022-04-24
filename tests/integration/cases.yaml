@@ -121,6 +121,28 @@ test_cases:
     namespace: default
     expected_msg: pod/pod-mcr-s created
     expected_result: null
+  rekor-cosigned:
+  - id: rcu
+    txt: Testing unsigned cosign image...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-unsigned
+    namespace: default
+    expected_msg: No trust data for image "docker.io/securesystemsengineering/testimage:co-unsigned".
+    expected_result: null
+  - id: rcs
+    txt: Testing signed cosign image WITHOUT transparency log entry...
+    type: deploy
+    ref: securesystemsengineering/testimage:rekor-cosigned-notl
+    namespace: default
+    expected_msg: Failed to find signature in transparency log.
+    expected_result: null
+  - id: rcstl
+    txt: Testing signed cosign image WITH transparency log entry...
+    type: deploy
+    ref: securesystemsengineering/testimage:rekor-cosigned-tl
+    namespace: default
+    expected_msg: pod/pod-rcstl created
+    expected_result: null
   ignore-namespace-val:
   - id: iuu
     txt: Testing unsigned image in unlabelled namespace...

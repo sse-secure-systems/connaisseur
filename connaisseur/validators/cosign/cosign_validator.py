@@ -26,11 +26,24 @@ class CosignValidator(ValidatorInterface):
     name: str
     trust_roots: list
     k8s_keychain: bool
+    rekor_url: str
 
-    def __init__(self, name: str, trust_roots: list, auth: dict = None, **kwargs):
+    def __init__(
+        self,
+        name: str,
+        host: str = None,
+        trust_roots: list = None,
+        auth: dict = None,
+        **kwargs,
+    ):
         super().__init__(name, **kwargs)
         self.trust_roots = trust_roots
         self.k8s_keychain = False if auth is None else auth.get("k8s_keychain", False)
+        self.rekor_url = (
+            host
+            if host is None or host.startswith(("https://", "http://"))
+            else f"https://{host}"
+        )
 
     async def validate(
         self, image: Image, trust_root: str = None, **kwargs
@@ -180,6 +193,18 @@ class CosignValidator(ValidatorInterface):
                 image=str(image),
                 trust_root=trust_root["name"],
             )
+        elif (
+            "Error: no matching signatures:\nsignature not found in transparency log\n"
+            in stderr
+        ):
+            msg = "Failed to find signature in transparency log."
+            raise ValidationError(
+                message=msg,
+                trust_data_type="dev.cosignproject.cosign/signature",
+                stderr=stderr,
+                image=str(image),
+                trust_root=trust_root["name"],
+            )
         elif "Error: no matching signatures:\n\nmain.go:" in stderr:
             msg = 'No trust data for image "{image}".'
             raise NotFoundException(
@@ -272,6 +297,7 @@ class CosignValidator(ValidatorInterface):
             tr_args["option_kword"],
             tr_args["inline_tr"],
             *(["--k8s-keychain"] if self.k8s_keychain else []),
+            *(["--rekor-url", self.rekor_url] if self.rekor_url else []),
             image,
         ]
 
@@ -306,6 +332,10 @@ class CosignValidator(ValidatorInterface):
             os.path.exists, "/app/certs/cosign", f"/app/certs/cosign/{self.name}.crt"
         ):
             env["SSL_CERT_FILE"] = f"/app/certs/cosign/{self.name}.crt"
+        # Rekor support requires setting of COSIGN_EXPERIMENTAL
+        if self.rekor_url is not None:
+            env.update({"COSIGN_EXPERIMENTAL": "1"})
+            env.update({"TUF_ROOT": "/app/.sigstore"})
         return env
 
     @staticmethod

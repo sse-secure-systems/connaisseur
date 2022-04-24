@@ -57,6 +57,16 @@ validators:
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4
       ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==
       -----END PUBLIC KEY-----
+- name: rekor-cosign
+  type: cosign
+  host: rekor.sigstore.dev
+  trust_roots:
+  - name: rekored-key
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqxgd/RqCdPnafQmlmX71eICGRBqu
+      USHEjAv3FZCROHLYts11xR6Peu8ZEvMXOR46L7+z84DRFK6gnTInbIGFmg==
+      -----END PUBLIC KEY-----
 policy:
 - pattern: "*:*"
   validator: dockerhub-basics
@@ -82,6 +92,10 @@ policy:
   with:
     trust_root: "*"
     required: ["alice", "charlie"]
+- pattern: docker.io/securesystemsengineering/testimage:rekor-*
+  validator: rekor-cosign
+  with:
+    trust_root: "rekored-key"
 - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
   validator: dockerhub-basics
   with:

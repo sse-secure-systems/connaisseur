@@ -39,6 +39,7 @@ static_cosigns = [
             },
         ],
         "auth": {"k8s_keychain": True},
+        "host": "https://rekor.instance.com",
     },
     {
         "name": "cosign1",
@@ -48,12 +49,14 @@ static_cosigns = [
             {"name": "test", "key": "..."},
         ],
         "auth": {"k8s_keychain": False},
+        "host": "http://foo.bar",
     },
     {
         "name": "cosign1",
         "type": "cosign",
         "trust_roots": [],
         "auth": {"secret_name": "my-secret"},
+        "host": "rekor.tlog.xyz",
     },
     {
         "name": "cosign1",
@@ -65,6 +68,17 @@ static_cosigns = [
             },
             {"name": "test2", "key": example_key2},
             {"name": "test3", "key": example_key2},
+        ],
+    },
+    {
+        "name": "cosign1",
+        "type": "cosign",
+        "host": "rekor.sigstore.dev",
+        "trust_roots": [
+            {
+                "name": "default",
+                "key": example_key,
+            }
         ],
     },
 ]
@@ -141,13 +155,20 @@ def mock_add_kill_fake_process(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "index, kchain", [(0, False), (1, True), (2, False), (3, False)]
+    "index, kchain, host",
+    [
+        (0, False, None),
+        (1, True, "https://rekor.instance.com"),
+        (2, False, "http://foo.bar"),
+        (3, False, "https://rekor.tlog.xyz"),
+    ],
 )
-def test_init(index: int, kchain: bool):
+def test_init(index: int, kchain: bool, host: str):
     val = co.CosignValidator(**static_cosigns[index])
     assert val.name == static_cosigns[index]["name"]
     assert val.trust_roots == static_cosigns[index]["trust_roots"]
     assert val.k8s_keychain == kchain
+    assert val.rekor_url == host
 
 
 @pytest.mark.parametrize(
@@ -330,7 +351,7 @@ async def test_validate(
             fix.get_cosign_err_msg("wrong_key"),
             "testimage:v1",
             [],
-            pytest.raises(exc.ValidationError),
+            pytest.raises(exc.ValidationError, match=r".*signature of trust data.*"),
         ),
         (
             0,
@@ -379,6 +400,14 @@ async def test_validate(
             "testimage:v1",
             [],
             pytest.raises(exc.CosignError),
+        ),
+        (
+            1,
+            "",
+            fix.get_cosign_err_msg("notfound_in_tl"),
+            "testimage:v1",
+            [],
+            pytest.raises(exc.ValidationError, match=r".*transparency log.*"),
         ),
     ],
 )
@@ -474,7 +503,7 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
 
 
 @pytest.mark.parametrize(
-    "image, process_input, k8s_keychain",
+    "image, process_input, k8s_keychain, host",
     [
         (
             "testimage:v1",
@@ -488,7 +517,8 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
                     b"-----END PUBLIC KEY-----\n"
                 ),
             },
-            {"secret_name": "thesecret"},
+            False,
+            None,
         ),
         (
             "testimage:v1",
@@ -497,10 +527,20 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
                 "inline_tr": "k8s://connaisseur/test_key",
             },
             False,
+            None,
+        ),
+        (
+            "testimage:v1",
+            {
+                "option_kword": "--key",
+                "inline_tr": "k8s://connaisseur/test_key",
+            },
+            False,
+            "https://rekor.sigstore.dev",
         ),
     ],
 )
-def test_invoke_cosign(fake_process, image, process_input, k8s_keychain):
+def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
     def stdin_function(input):
         return {"stderr": input.decode(), "stdout": input}
 
@@ -518,6 +558,7 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain):
         process_input["option_kword"],
         process_input["inline_tr"],
         *(["--k8s-keychain"] if k8s_keychain else []),
+        *(["--rekor-url", host] if host else []),
         str(im),
     ]
     fake_process.register_subprocess(
@@ -528,6 +569,8 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain):
     )
     config = static_cosigns[0].copy()
     config["auth"] = {"k8s_keychain": k8s_keychain}
+    if host:
+        config["host"] = host
     val = co.CosignValidator(**config)
     returncode, stdout, stderr = val._CosignValidator__invoke_cosign(im, process_input)
     assert fake_process_calls in fake_process.calls
@@ -583,9 +626,20 @@ def test_invoke_cosign_timeout_expired(
     assert "Cosign timed out." in str(err.value)
 
 
-def test_get_envs(monkeypatch):
-    env = co.CosignValidator(**static_cosigns[0])._CosignValidator__get_envs()
+@pytest.mark.parametrize(
+    "index, COSIGN_EXPERIMENTAL",
+    [
+        (0, 0),
+        (5, 1),
+    ],
+)
+def test_get_envs(monkeypatch, index, COSIGN_EXPERIMENTAL):
+    env = co.CosignValidator(**static_cosigns[index])._CosignValidator__get_envs()
     assert env["DOCKER_CONFIG"] == "/app/connaisseur-config/cosign1/.docker/"
+    if COSIGN_EXPERIMENTAL:
+        assert env["COSIGN_EXPERIMENTAL"] == f"{COSIGN_EXPERIMENTAL}"
+    else:
+        assert "COSIGN_EXPERIMENTAL" not in env.keys()
 
 
 @pytest.mark.parametrize(

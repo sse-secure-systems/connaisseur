@@ -1,0 +1,2 @@
+Error: no matching signatures:
+signature not found in transparency log
