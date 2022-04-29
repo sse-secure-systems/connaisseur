@@ -2,7 +2,7 @@ aiohttp~=3.8.1
 cheroot~=8.6.0
 ecdsa~=0.17
 Flask~=2.1.1
-Jinja2~=3.1.1
+Jinja2~=3.1.2
 jsonschema~=4.4.0
 parsedatetime~=2.6
 prometheus-flask-exporter==0.20.1
