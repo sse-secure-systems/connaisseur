@@ -80,14 +80,14 @@ workload_test() { # WORKLOAD_KIND
   echo "::group::${KIND}_${APIVERSION}_${TAG}.yaml"
   envsubst <tests/integration/workload-objects/${KIND}.yaml | cat
   echo "::endgroup::"
-  single_test "w_${KIND}_${APIVERSION}_${TAG}" "Testing ${KIND} using ${APIVERSION} and ${TAG} image..." "workload" "${KIND}" "deafult" "Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned." "null"
+  single_test "w_${KIND}_${APIVERSION}_${TAG}" "Testing ${KIND} using ${APIVERSION} and ${TAG} image..." "workload" "${KIND}" "default" "Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned." "null"
 
   # SIGNED
   export TAG=signed
   echo "::group::${KIND}_${APIVERSION}_${TAG}.yaml"
   envsubst <tests/integration/workload-objects/${KIND}.yaml | cat
   echo "::endgroup::"
-  single_test "w_${KIND}_${APIVERSION}_${TAG}" "Testing ${KIND} using ${APIVERSION} and ${TAG} image..." "workload" "${KIND}" "deafult" " created" "null"
+  single_test "w_${KIND}_${APIVERSION}_${TAG}" "Testing ${KIND} using ${APIVERSION} and ${TAG} image..." "workload" "${KIND}" "default" " created" "null"
 }
 
 ### COMPLEXITY TEST ####################################
