@@ -51,6 +51,9 @@ runs:
           | jq --raw-output ".assets[].browser_download_url" \
           | grep --fixed-strings "kube-linter-${OS}")"
         TARGET="kube-linter-${OS}-${RELEASE_NAME}.tar.gz"
+        echo $RELEASE_NAME
+        echo $LOCATION
+        echo $TARGET
         # Skip downloading release if downloaded already, e.g. when the action is used multiple times.
         if [[ ! -e "$TARGET" ]]; then
           curl --silent --show-error --fail --location --output "$TARGET" "$LOCATION"
