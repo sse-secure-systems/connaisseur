@@ -1,0 +1,69 @@
+name: 'kube-linter'
+description: 'Scan directory or file with kube-linter'
+branding:
+  icon: 'check-circle'
+  color: 'green'
+inputs:
+  directory:
+    description: 'Directory or file to scan'
+    required: true
+  config:
+    description: 'Path to config file'
+    required: false
+  format:
+    description: 'Output format. Allowed values: sarif, plain, json. Default: "plain"'
+    required: false
+    default: 'plain'
+  output-file:
+    description: 'Filename to store output. File will be overwritten if it exists. Default: "kubelinter.log"'
+    required: false
+    default: 'kubelinter.log'
+  version:
+    description: 'Version of kube-linter to use. E.g. "0.2.4". Default: "latest"'
+    required: false
+    default: 'latest'
+runs:
+  using: "composite"
+  steps:
+    - name: Download kube-linter
+      shell: bash
+      run: |
+        set -u
+        case "${{ runner.os }}" in
+          macOS)   OS=darwin ;;
+          Windows) OS=windows ;;
+          *)       OS=linux ;;
+        esac
+        RELEASE_URL='https://api.github.com/repos/stackrox/kube-linter/releases/latest'
+        if [[ "${{ inputs.version }}" != "latest" ]]; then
+          RELEASE_URL='https://api.github.com/repos/stackrox/kube-linter/releases/tags/${{ inputs.version }}'
+        fi
+        # Although releases endpoint is available without authentication, the current github.token is still passed
+        # in order to increase the limit of 60 requests per hour per IP address to a higher value that's also counted
+        # per GitHub account.
+        # Caching is disabled in order not to receive stale responses from Varnish cache fronting GitHub API.
+        RELEASE_INFO="$(curl --silent --show-error --fail \
+          --header 'authorization: Bearer ${{ github.token }}' \
+          --header 'Cache-Control: no-cache, must-revalidate' \
+          "${RELEASE_URL}")"
+        RELEASE_NAME="$(echo "${RELEASE_INFO}" | jq --raw-output ".name")"
+        LOCATION="$(echo "${RELEASE_INFO}" \
+          | jq --raw-output ".assets[].browser_download_url" \
+          | grep --fixed-strings "kube-linter-${OS}")"
+        TARGET="kube-linter-${OS}-${RELEASE_NAME}.tar.gz"
+        # Skip downloading release if downloaded already, e.g. when the action is used multiple times.
+        if [[ ! -e "$TARGET" ]]; then
+          curl --silent --show-error --fail --location --output "$TARGET" "$LOCATION"
+          tar -xf "$TARGET"
+        fi
+    - name: Lint files
+      shell: bash
+      run: |
+        set -u
+        if [[ -z "${{ inputs.config }}" ]]; then
+          CONFIG=""
+        else
+          CONFIG="--config ${{ inputs.config }}"
+        fi
+        ./kube-linter $CONFIG lint "${{ inputs.directory }}" --format "${{ inputs.format }}" | tee "${{ inputs.output-file }}"
+
