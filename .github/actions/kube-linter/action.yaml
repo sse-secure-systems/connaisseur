@@ -49,7 +49,7 @@ runs:
         RELEASE_NAME="$(echo "${RELEASE_INFO}" | jq --raw-output ".name")"
         LOCATION="$(echo "${RELEASE_INFO}" \
           | jq --raw-output ".assets[].browser_download_url" \
-          | grep --fixed-strings "kube-linter-${OS}")"
+          | grep --fixed-strings "kube-linter-${OS}.tar.gz")"
         TARGET="kube-linter-${OS}-${RELEASE_NAME}.tar.gz"
         echo $RELEASE_NAME
         echo $LOCATION
