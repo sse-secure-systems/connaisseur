@@ -51,6 +51,7 @@ jobs:
           directory: helm
           config: .kube-linter/config.yaml
           output-file: kube-linter.sarif
+        continue-on-error: true
 
   hadolint:
     runs-on: ubuntu-latest
