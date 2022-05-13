@@ -68,5 +68,5 @@ runs:
         else
           CONFIG="--config ${{ inputs.config }}"
         fi
-        ./kube-linter $CONFIG lint "${{ inputs.directory }}" --format "${{ inputs.format }}" | tee "${{ inputs.output-file }}"
+        ./kube-linter $CONFIG lint "${{ inputs.directory }}" --format "${{ inputs.format }}"
 
