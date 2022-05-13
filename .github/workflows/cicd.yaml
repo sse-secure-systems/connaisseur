@@ -49,7 +49,7 @@ jobs:
         run: mkdir -p ../results
       - name: Scan repo
         id: kube-lint-repo
-        uses: .github/actions/kube-linter
+        uses: ./.github/actions/kube-linter
         with:
           directory: helm
           config: .kube-linter/config.yaml
