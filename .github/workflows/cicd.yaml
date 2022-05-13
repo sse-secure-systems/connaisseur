@@ -44,6 +44,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      # This prepares directory where github/codeql-action/upload-sarif@v1 looks up report files by default.
+      - name: Create ../results directory for SARIF report files
+        shell: bash
+        run: mkdir -p ../results
       - name: Scan repo
         id: kube-lint-repo
         uses: stackrox/kube-linter-action@v1.0.4
@@ -55,7 +59,7 @@ jobs:
         # This allows the following upload-sarif action to still upload the results to your GitHub repo.
         continue-on-error: true
       - name: Upload SARIF report files to GitHub
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
       # Ensure the workflow eventually fails if files did not pass kube-linter checks.
       - name: Verify kube-linter-action succeeded
         shell: bash
