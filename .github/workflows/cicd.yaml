@@ -54,7 +54,7 @@ jobs:
         with:
           directory: helm
           config: .kube-linter/config.yaml
-          output-file: results/kube-linter.sarif
+          output-file: ../results/kube-linter.sarif
         # The following line prevents aborting the workflow immediately in case your files fail kube-linter checks.
         # This allows the following upload-sarif action to still upload the results to your GitHub repo.
         continue-on-error: true
