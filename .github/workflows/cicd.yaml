@@ -50,6 +50,7 @@ jobs:
         with:
           directory: helm
           config: .kube-linter/config.yaml
+          output-file: kube-linter.sarif
 
   hadolint:
     runs-on: ubuntu-latest
