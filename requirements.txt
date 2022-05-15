@@ -12,3 +12,4 @@ PyYAML~=6.0
 requests~=2.27.1
 rfc3339-validator~=0.1.4
 rsa~=4.8
+git+https://github.com/Razikus/cas_pip.git

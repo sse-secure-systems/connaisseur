@@ -2,6 +2,7 @@ FROM python:3-alpine as base
 
 # Build dependencies
 FROM base as builder
+RUN apk add git
 
 RUN mkdir /install
 WORKDIR /install
