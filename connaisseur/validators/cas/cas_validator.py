@@ -21,8 +21,8 @@ class CASValidator(ValidatorInterface):
         self, image: Image, **kwargs
     ):  # pylint: disable=arguments-differ
         if(image.has_digest()):
-            package_name, status = self.client.authenticateHash(image.digest)
-            if(status and status == ArtifactStatus.TRUSTED):
+            package_name, status = await self.client.authenticateHash(image.digest, image.name)
+            if(status and status.status == ArtifactStatus.TRUSTED):
                 return True
             raise ValidationError(message="Artifact is not trusted.")
         raise ValidationError(message="Deployment has no digest")
