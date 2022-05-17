@@ -7,4 +7,4 @@ pytest-cov~=3.0.0
 pytest-mock~=3.7.0
 pytest-subprocess~=1.4.1
 requests-mock~=1.9.3
-setuptools~=62.2.0
+setuptools~=62.3.0
