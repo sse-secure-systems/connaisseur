@@ -38,6 +38,7 @@ deployment:
   #annotations:  # uncomment when using Kubernetes prior v1.19
   #  seccomp.security.alpha.kubernetes.io/pod: runtime/default  # uncomment when using Kubernetes prior v1.19
   securityContext:
+    enabled: true # enable if you want to use it, disable this for OKD / OpenShift 4
     allowPrivilegeEscalation: false
     capabilities:
       drop:
@@ -45,10 +46,10 @@ deployment:
     privileged: false
     readOnlyRootFilesystem: true
     runAsNonRoot: true
-    runAsUser: 10001  # remove when using openshift or OKD 4
-    runAsGroup: 20001  # remove when using openshift or OKD 4
-    seccompProfile:  # remove when using Kubernetes prior v1.19, openshift or OKD 4
-      type: RuntimeDefault  # remove when using Kubernetes prior v1.19, openshift or OKD 4
+    runAsUser: 10001
+    runAsGroup: 20001
+    seccompProfile:  # remove when using Kubernetes prior v1.19
+      type: RuntimeDefault  # remove when using Kubernetes prior v1.19
   # PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25
   podSecurityPolicy:
     enabled: false
