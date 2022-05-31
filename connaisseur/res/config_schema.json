@@ -222,6 +222,9 @@
                             "properties": {
                                 "signerId": {
                                     "type": "string"
+                                },
+                                "serviceUrl": {
+                                    "type": "string"
                                 }
                             },
                             "required": [

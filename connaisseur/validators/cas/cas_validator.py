@@ -11,11 +11,13 @@ class CASValidator(ValidatorInterface):
         self,
         name: str,
         signerId: str = None,
+        serviceUrl: str = "cas.codenotary.com",
         **kwargs,
     ):
         super().__init__(name, **kwargs)
         self.signerId = signerId
-        self.client = CASClient(signerId=self.signerId)
+        self.serviceUrl = serviceUrl
+        self.client = CASClient(signerId=self.signerId, casUrl = self.serviceUrl)
 
     async def validate(
         self, image: Image, **kwargs
