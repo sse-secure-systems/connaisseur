@@ -241,15 +241,16 @@ jobs:
           SEARCH_PATH=.[0].NetworkSettings.Networks.${CONTAINER_NETWORK}.IPAddress
           ALERTING_ENDPOINT_IP=$(docker container inspect ${CONTAINER_ID} | jq -r ${SEARCH_PATH})
           echo ALERTING_ENDPOINT_IP=${ALERTING_ENDPOINT_IP} >> $GITHUB_ENV
+      - name: Run actual integration test
+        run: |
+          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+        shell: bash
       - name: Show Connaisseur configuration
+        if: always()
         run: |
           echo "::group::values.yaml"
           yq e '.' helm/values.yaml
           echo "::endgroup::"
-        shell: bash
-      - name: Run actual integration test
-        run: |
-          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
         shell: bash
       - name: Display k8s logs if integration test failed
         if: failure()
