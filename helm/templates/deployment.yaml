@@ -83,11 +83,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          {{- with .Values.deployment.resources }}
           resources:
-            {{- toYaml .Values.deployment.resources | nindent 12 }}
-          {{- if .Values.deployment.securityContext.enabled }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.deployment.securityContext }}
           securityContext:
-            {{- toYaml .Values.deployment.securityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
         {{- if .Values.deployment.extraContainers }}
         {{ tpl (toYaml .Values.deployment.extraContainers) . | nindent 8}}
