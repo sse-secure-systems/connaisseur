@@ -343,7 +343,7 @@ case $1 in
   pre_config_int_test
   ;;
 "complexity")
-  update_values '.deployment.imagePullPolicy="Never"'
+  update_values '.deployment.imagePullPolicy="Never"' '.deployment.replicasCount=3' '.deployment.resources= {"limits": {"cpu":"1000m", "memory":"512Mi"},"requests": {"cpu":"500m", "memory":"512Mi"}}'
   make_install
   complexity_test
   ;;
