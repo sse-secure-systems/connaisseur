@@ -30,7 +30,7 @@ validators:
 - name: distroless-official
   type: cosign
   trust_roots:
-  - name: default
+  - name: distroless
     key: |
       -----BEGIN PUBLIC KEY-----
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWZzVzkb8A+DbgDpaJId/bOmV8n7Q
@@ -85,6 +85,8 @@ policy:
   validator: allow
 - pattern: "gcr.io/distroless/*:*"
   validator: distroless-official
+  with:
+    trust_root: distroless
 - pattern: docker.io/securesystemsengineering/connaisseur:*
   validator: allow
 - pattern: docker.io/securesystemsengineering/testimage:co-*
