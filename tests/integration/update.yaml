@@ -87,6 +87,10 @@ policy:
   validator: distroless-official
   with:
     trust_root: distroless
+- pattern: "docker.io/library/*:*"
+  validator: dockerhub-basics
+  with:
+    trust_root: docker-official
 - pattern: docker.io/securesystemsengineering/connaisseur:*
   validator: allow
 - pattern: docker.io/securesystemsengineering/testimage:co-*
