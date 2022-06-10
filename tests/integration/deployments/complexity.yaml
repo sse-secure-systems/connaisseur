@@ -32,9 +32,9 @@ spec:
     - name: container2
       image: redis
     - name: container3
-      image: mongo
+      image: gcr.io/distroless/java11-debian11
     - name: container4
-      image: nginx
+      image: gcr.io/distroless/static-debian11
     - name: container5
       image: rabbitmq
     - name: container6
@@ -60,11 +60,11 @@ spec:
     - name: container4
       image: nginx
     - name: container5
-      image: rabbitmq
+      image: gcr.io/distroless/static-debian11
     - name: container6
-      image: elasticsearch
+      image: gcr.io/distroless/java11-debian11
     - name: container7
-      image: sonarqube
+      image: gcr.io/distroless/nodejs:14
   initContainers:
     - name: init2
       image: maven
@@ -85,7 +85,7 @@ spec:
       image: busybox
       command: ['sh', '-c', 'sleep 3600']
     - name: container2
-      image: redis
+      image: gcr.io/distroless/nodejs:14
     - name: container3
       image: mongo
     - name: container4
@@ -112,12 +112,12 @@ spec:
     - name: container2
       image: redis
     - name: container3
-      image: mongo
+      image: gcr.io/distroless/nodejs:14
   initContainers:
     - name: init1
       image: busybox
       command: ['sh', '-c', 'sleep 3600']
     - name: init2
-      image: redis
+      image: gcr.io/distroless/java11-debian11
     - name: init3
       image: mongo

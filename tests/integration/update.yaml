@@ -27,6 +27,15 @@ validators:
       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
       d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
       -----END PUBLIC KEY-----
+- name: distroless-official
+  type: cosign
+  trust_roots:
+  - name: default
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWZzVzkb8A+DbgDpaJId/bOmV8n7Q
+      OqxYbK0Iro6GzSmOzxkn+N2AKawLyXi84WSwJQBK//psATakCgAQKkNTAA==
+      -----END PUBLIC KEY-----
 - name: cosign
   type: cosign
   trust_roots:
@@ -74,6 +83,8 @@ policy:
     trust_root: securesystemsengineering-official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
+- pattern: "gcr.io/distroless/*:*"
+  validator: distroless-official
 - pattern: docker.io/securesystemsengineering/connaisseur:*
   validator: allow
 - pattern: docker.io/securesystemsengineering/testimage:co-*
