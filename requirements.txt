@@ -9,6 +9,6 @@ prometheus-flask-exporter==0.20.2
 python-dateutil~=2.8.2
 pytz~=2022.1
 PyYAML~=6.0
-requests~=2.27.1
+requests~=2.28.0
 rfc3339-validator~=0.1.4
 rsa~=4.8
