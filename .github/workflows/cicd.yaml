@@ -202,8 +202,6 @@ jobs:
       matrix:
         integration-test-arg:
           [
-            "complexity",
-            "load",
             "regular",
             "cosign",
             "multi-cosigned",
@@ -294,9 +292,66 @@ jobs:
           kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
         shell: bash
 
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: [integration-test]
+    strategy:
+      fail-fast: false
+      matrix:
+        integration-test-arg:
+          [
+            "complexity",
+            "load",
+          ]
+    services:
+      alerting-endpoint:
+        image: securesystemsengineering/alerting-endpoint
+        ports:
+          - 56243:56243
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: actions/download-artifact@v3
+        with:
+          name: images
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: v1.22
+      - name: Load Image
+        run: |
+          sudo k3s ctr images import ${GITHUB_SHA}_image.tar
+        shell: bash
+      - name: Set environment variables for alerting listener
+        run: |
+          CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
+          CONTAINER_ID=$(echo ${CONTAINER} | jq -r .ID)
+          CONTAINER_NETWORK=$(echo ${CONTAINER} | jq -r .Networks)
+          SEARCH_PATH=.[0].NetworkSettings.Networks.${CONTAINER_NETWORK}.IPAddress
+          ALERTING_ENDPOINT_IP=$(docker container inspect ${CONTAINER_ID} | jq -r ${SEARCH_PATH})
+          echo ALERTING_ENDPOINT_IP=${ALERTING_ENDPOINT_IP} >> $GITHUB_ENV
+      - name: Run actual integration test
+        run: |
+          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+        shell: bash
+      - name: Show Connaisseur configuration
+        if: always()
+        run: |
+          echo "::group::values.yaml"
+          yq e '.' helm/values.yaml
+          echo "::endgroup::"
+        shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+        shell: bash
+
   upgrade-test:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [integration-test]
     steps:
       - uses: actions/checkout@v3
       - name: Install yq and bash
