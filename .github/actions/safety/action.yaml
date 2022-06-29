@@ -13,5 +13,5 @@ runs:
       run: pip3 install safety
       shell: sh
     - name: Run safety
-      run: safety check -r ./actual_package_versions.txt --full-report -o safety-report.txt
+      run: safety check -r ./actual_package_versions.txt --full-report -o screen --save-json safety-report.json
       shell: sh

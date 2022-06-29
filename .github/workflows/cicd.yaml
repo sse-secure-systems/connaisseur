@@ -112,7 +112,7 @@ jobs:
   safety:
     runs-on: ubuntu-latest
     container:
-      image: python:alpine
+      image: python:slim
     env:
       YARL_NO_EXTENSIONS: 1
       MULTIDICT_NO_EXTENSIONS: 1
@@ -121,12 +121,12 @@ jobs:
       - uses: ./.github/actions/safety
       - name: Print report
         if: ${{ success() || failure() }}
-        run: cat safety-report.txt
+        run: cat safety-report.json
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: safety-report
-          path: safety-report.txt
+          path: safety-report.json
 
   trivy-config-scanner:
     name: trivy config scan
