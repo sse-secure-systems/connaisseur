@@ -39,7 +39,28 @@ jobs:
           name: safety-report
           path: safety-report.txt
 
+  trivy-dockerhub-image-scan:
+    name: trivy scan (latest public image)
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - name: Get latest public image
+        run:
+          echo "LATEST-IMAGE=docker.io/$(yq e '.deployment.image' helm/values.yaml)" >> $GITHUB_ENV
+      - name: Run Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.LATEST-IMAGE }}
+          hide-progress: false
+          format: "table"
+          exit-code: "1"
+
   trivy:
+    name: trivy scan (current build)
     runs-on: ubuntu-latest
     container:
       image: docker:stable
