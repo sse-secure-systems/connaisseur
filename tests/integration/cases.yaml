@@ -280,7 +280,8 @@ test_cases:
   - id: poff
     txt: Testing signed official docker image...
     type: deploy
-    ref: docker.io/library/hello-world
+    # choose official image that doesn't exit, so we can check ready status
+    ref: docker.io/library/nginx
     namespace: default
     expected_msg: pod/pod-poff created
     expected_result: null

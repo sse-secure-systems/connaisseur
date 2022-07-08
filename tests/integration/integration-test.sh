@@ -88,6 +88,49 @@ workload_test() { # WORKLOAD_KIND
   envsubst <tests/integration/workload-objects/${KIND}.yaml | cat
   echo "::endgroup::"
   single_test "w_${KIND}_${APIVERSION}_${TAG}" "Testing ${KIND} using ${APIVERSION} and ${TAG} image..." "workload" "${KIND}" "default" " created" "null"
+
+  if [[ "${GITHUB_BASE_REF}" == "master" ]]; then
+    # Check that the workload object is actually ready, see #516
+    echo -n "Checking readiness of deployed resources..."
+    if [[ "${KIND}" == "StatefulSet" ]]; then
+      sleep 30 # StatefulSet provisions a PVC, which needs more time. A lot more sometimes...
+    fi
+    sleep 5
+
+    # Output of different objects differs considerably, in particular in JSON representation
+    # To have less to differentiate, we parse the visual representation
+    if [[ "${KIND}" == "Pod" || "${KIND}" == "Deployment" || "${KIND}" == "StatefulSet" ]]; then
+      # NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+      # coredns                  2/2     2            2           177d
+      STATUSES=$(kubectl get ${KIND})
+      NUMBER_UNREADY=$(( $(echo "${STATUSES}" | awk '{print $2}' | awk -F "/" '$1!=$2 { print $0 }' | wc -l) - 1)) # Preserving header row for better readability
+    elif [[ "${KIND}" == "ReplicaSet" || "${KIND}" == "DaemonSet" || "${KIND}" == "ReplicationController" ]]; then
+      # NAME                 DESIRED   CURRENT   READY   AGE
+      # coredns-558bd4d5db   2         2         2       177d
+      STATUSES=$(kubectl get ${KIND} | awk '$2!=$4 {print $0}')
+      NUMBER_UNREADY=$(( $(echo "${STATUSES}" | wc -l) - 1 )) # Preserving header row for better readability
+    elif [[ "${KIND}" == "Job" || "${KIND}" == "CronJob" ]]; then
+      # NAME                        COMPLETIONS   DURATION   AGE
+      # cronjob-signed-1674474300   0/1           30s        30s
+      # job-signed                  0/1           10s        10s
+      NUMBER_UNREADY=0
+      # Logic doesn't really work for Jobs
+    else
+      echo -e ${FAILED}
+      echo "New workload object of type ${KIND} encountered. Add logic to parse whether it is ready."
+      EXIT="1"
+    fi
+
+    if [[ ${NUMBER_UNREADY} -ne 0 ]]; then
+      echo -e ${FAILED}
+      echo "There are ${NUMBER_UNREADY} ${KIND} objects that aren't in a ready state:"
+      echo "${STATUSES}"
+      kubectl describe ${KIND} # Get us some debug information
+      EXIT="1"
+    else
+      echo -e ${SUCCESS}
+    fi
+  fi
 }
 
 ### COMPLEXITY TEST ####################################
@@ -224,6 +267,10 @@ update_via_env_vars() {
   envsubst < tests/integration/update.yaml > update
   yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
   rm update
+}
+
+update_helm_for_workloads() {
+  yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/update-for-workloads.yaml 
 }
 
 debug_vaules() {
@@ -400,7 +447,7 @@ case $1 in
   helm_uninstall
   ;;
 "pre-and-workload")
-  update_values '.deployment.imagePullPolicy="Never"'
+  update_helm_for_workloads
   make_install
   pre_config_int_test
   for wo in "${WOLIST[@]}"; do
@@ -408,6 +455,7 @@ case $1 in
   done
   ;;
 "nightly-pre-and-workload")
+  update_helm_for_workloads
   helm_install
   pre_config_int_test
   for wo in "${WOLIST[@]}"; do
@@ -435,7 +483,7 @@ case $1 in
   certificate_int_test
   # Clean up such that next test doesn't run into existing test pods
   kubectl delete pods -luse="connaisseur-integration-test" -A >/dev/null
-  yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/update_cert.yaml
+  yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/update-cert.yaml
   make_upgrade
   certificate_check
   certificate_int_test

@@ -168,9 +168,6 @@ jobs:
         with:
           k8s-version: ${{ matrix.k8s-version }}
           load-local-image: false
-      - name: Configure Connaisseur
-        run: |
-          yq e '.deployment.replicasCount = "1"' -i helm/values.yaml
       - name: Run pre-config and workload integration tests
         run: |
           bash tests/integration/integration-test.sh "nightly-pre-and-workload"
@@ -204,9 +201,6 @@ jobs:
         with:
           k8s-version: ${{ matrix.k8s-version }}
           load-local-image: false
-      - name: Configure Connaisseur
-        run: |
-          yq e '.deployment.replicasCount = "1"' -i helm/values.yaml
       - name: Run pre-config and workload integration tests
         run: |
           bash tests/integration/integration-test.sh "nightly-pre-and-workload"

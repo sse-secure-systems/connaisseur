@@ -290,12 +290,6 @@ jobs:
         name: Setup k8s cluster
         with:
           k8s-version: ${{ matrix.k8s-version }}
-      - name: Configure Connaisseur
-        run: |
-          yq e '.deployment.imagePullPolicy = "Never"' -i helm/values.yaml
-          yq e '.policy +={"pattern": "docker.io/securesystemsengineering/connaisseur:v*"} | .policy[4].pattern style="double"' -i helm/values.yaml
-          yq e '.policy[4].validator = "allow"' -i helm/values.yaml
-          yq e '.deployment.replicasCount = "1"' -i helm/values.yaml
       - name: Run pre-config and workload integration tests
         run: |
           bash tests/integration/integration-test.sh "pre-and-workload"
@@ -331,12 +325,6 @@ jobs:
         name: Setup k8s cluster
         with:
           k8s-version: ${{ matrix.k8s-version }}
-      - name: Configure Connaisseur
-        run: |
-          yq e '.deployment.imagePullPolicy = "Never"' -i helm/values.yaml
-          yq e '.policy +={"pattern": "docker.io/securesystemsengineering/connaisseur:v*"} | .policy[4].pattern style="double"' -i helm/values.yaml
-          yq e '.policy[4].validator = "allow"' -i helm/values.yaml
-          yq e '.deployment.replicasCount = "1"' -i helm/values.yaml
       - name: Run pre-config and workload integration tests
         run: |
           bash tests/integration/integration-test.sh "pre-and-workload"
