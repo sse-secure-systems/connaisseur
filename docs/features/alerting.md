@@ -25,6 +25,7 @@ Currently, Connaisseur supports alerting on either admittance of images, denial 
 | `alerting.<category>.custom_headers`               | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
 | `alerting.<category>.payload_fields`               | subyaml                                               | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`). |
 | `alerting.<category>.fail_if_alert_sending_fails`  | bool                                                  | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.    |
+| `alerting.admit_request.alert_on_child_resources`  | bool                                                  | `True`            |                    | Whether to alert on admittance of resources with parent resources covering their set of images (see also [Automatic Child Approval](automatic_child_approval.md) )   |
 
 <sup>*basename of the custom template file in `helm/alerting_payload_templates` without file extension </sup>
 

@@ -164,7 +164,10 @@ class Alert:
 
 
 def send_alerts(
-    admission_request: AdmissionRequest, admit_event: bool, reason: str = None
+    admission_request: AdmissionRequest,
+    admit_event: bool,
+    reason: str = None,
+    is_child: bool = None,
 ) -> None:
     al_config = AlertingConfiguration()
     event_category = "admit_request" if admit_event else "reject_request"
@@ -175,4 +178,12 @@ def send_alerts(
                 if admit_event
                 else f"CONNAISSEUR rejected a request: {reason}"
             )
-            Alert(message, receiver, admission_request).send_alert()
+            if event_category == "admit_request":
+                if not (
+                    is_child is True
+                    and receiver.get("alert_on_child_resources", True) is False
+                ):
+                    Alert(message, receiver, admission_request).send_alert()
+
+            else:
+                Alert(message, receiver, admission_request).send_alert()

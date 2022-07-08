@@ -68,7 +68,7 @@ def mutate():
     try:
         logging.debug(request.json)
         admission_request = AdmissionRequest(request.json)
-        response = asyncio.run(__admit(admission_request))
+        response, is_child = asyncio.run(__admit(admission_request))
     except Exception as err:
         if isinstance(err, BaseConnaisseurException):
             err_log = str(err)
@@ -87,8 +87,7 @@ def mutate():
                 detection_mode=DETECTION_MODE,
             )
         )
-
-    send_alerts(admission_request, True)
+    send_alerts(admission_request, True, is_child=is_child)
     return jsonify(response)
 
 
@@ -128,6 +127,11 @@ def __create_logging_msg(msg: str, **kwargs):
 async def __admit(admission_request: AdmissionRequest):
     logging_context = dict(admission_request.context)
 
+    is_child = all(
+        image in admission_request.wl_object.parent_containers.values()
+        for (type_and_index, image) in admission_request.wl_object.containers.items()
+    )
+
     patches = asyncio.gather(
         *[
             __validate_image(type_and_index, image, admission_request)
@@ -141,10 +145,13 @@ async def __admit(admission_request: AdmissionRequest):
         err.update_context(**logging_context)
         raise err
 
-    return get_admission_review(
-        admission_request.uid,
-        True,
-        patch=[patch for patch in patches.result() if patch],
+    return (
+        get_admission_review(
+            admission_request.uid,
+            True,
+            patch=[patch for patch in patches.result() if patch],
+        ),
+        is_child,
     )
 
 
