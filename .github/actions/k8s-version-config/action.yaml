@@ -17,7 +17,7 @@ runs:
         sudo apt update
         sudo apt install bash -y
       shell: bash
-    - uses: ./.github/actions/k3s-cluster
+    - uses: jupyterhub/action-k3s-helm@v2
       with:
         k3s-channel: ${{ inputs.k8s-version }}
     - name: Adjust Configuration
