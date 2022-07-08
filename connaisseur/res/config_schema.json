@@ -16,7 +16,8 @@
                             "notaryv1",
                             "notaryv2",
                             "cosign",
-                            "static"
+                            "static",
+                            "cas"
                         ]
                     }
                 },
@@ -206,6 +207,28 @@
                             },
                             "required": [
                                 "approve"
+                            ]
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "type": {
+                                    "const": "cas"
+                                }
+                            }
+                        },
+                        "then": {
+                            "properties": {
+                                "signerId": {
+                                    "type": "string"
+                                },
+                                "serviceUrl": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "signerId"
                             ]
                         }
                     }
