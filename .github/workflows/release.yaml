@@ -42,15 +42,11 @@ jobs:
           - 56243:56243
     steps:
       - uses: actions/checkout@v3
-      - name: Install yq and Bash
-        run: |
-          sudo snap install yq
-          sudo apt update
-          sudo apt install bash -y
-      - uses: ./.github/actions/k3s-cluster
-        name: Setup K8s cluster
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
         with:
-          k3s-channel: v1.22
+          k8s-version: v1.22
+          load-local-image: false
       - name: Set environment variables for alerting listener
         run: |
           CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
