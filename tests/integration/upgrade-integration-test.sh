@@ -5,9 +5,17 @@ set -euo pipefail
 
 # Creating a random index to label the pods and avoid name collision for repeated runs
 RAND=$(head -c 5 /dev/urandom | hexdump -ve '1/1 "%.2x"')
+RETRY=3
 
 echo 'Testing nv1 unsigned image...'
-kubectl run pod-${RAND} --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
+i=0
+# should the webhook not be callable, retry twice
+while : ; do
+  i=$((i+1))
+  kubectl run pod-${RAND} --image=securesystemsengineering/testimage:unsigned >output.log 2>&1 || true
+  [[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt $RETRY ]] || break
+done
+RETRY=$((RETRY-1))
 
 if [[ ! "$(cat output.log)" =~ 'Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.' ]]; then
   echo 'Failed to deny unsigned image or failed with unexpected error. Output:'
@@ -20,7 +28,13 @@ else
 fi
 
 echo 'Testing nv1 signed image...'
-kubectl run npod-${RAND} --image=securesystemsengineering/testimage:signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
+i=0
+# should the webhook not be callable, retry once
+while : ; do
+  i=$((i+1))
+  kubectl run npod-${RAND} --image=securesystemsengineering/testimage:signed -lapp.kubernetes.io/instance=connaisseur >output.log 2>&1 || true
+  [[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt $RETRY ]] || break
+done
 
 if [[ "$(cat output.log)" != "pod/npod-${RAND} created" ]]; then
   echo 'Failed to allow signed image. Output:'

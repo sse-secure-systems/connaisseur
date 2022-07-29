@@ -10,6 +10,8 @@ SUCCESS="${GREEN}SUCCESS${NC}"
 FAILED="${RED}FAILED${NC}"
 EXIT="0"
 WOLIST=("CronJob" "DaemonSet" "Deployment" "Job" "Pod" "ReplicaSet" "ReplicationController" "StatefulSet")
+TIMEOUT=30
+RETRY=3
 
 ## Backup helm/values.yaml
 cp helm/values.yaml values.yaml.backup
@@ -17,13 +19,19 @@ cp helm/values.yaml values.yaml.backup
 ### SINGLE TEST CASE ####################################
 single_test() { # ID TXT TYP REF NS MSG RES
   echo -n "[$1] $2"
-  if [[ "$3" == "deploy" ]]; then
-    kubectl run pod-$1 --image="$4" --namespace="$5" -luse="connaisseur-integration-test" >output.log 2>&1 || true
-  elif [[ "$3" == "workload" ]]; then
-    envsubst <tests/integration/workload-objects/$4.yaml | kubectl apply -f - >output.log 2>&1 || true
-  else
-    kubectl apply -f $4 >output.log 2>&1 || true
-  fi
+  i=0 # intialize iterator
+  while : ; do
+    i=$((i+1))
+    if [[ "$3" == "deploy" ]]; then
+      kubectl run pod-$1 --image="$4" --namespace="$5" -luse="connaisseur-integration-test" >output.log 2>&1 || true
+    elif [[ "$3" == "workload" ]]; then
+      envsubst <tests/integration/workload-objects/$4.yaml | kubectl apply -f - >output.log 2>&1 || true
+    else
+      kubectl apply -f $4 >output.log 2>&1 || true
+    fi
+    # if the webhook couldn't be called, try again.
+    [[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt $RETRY ]] || break
+  done
   if [[ ! "$(cat output.log)" =~ "$6" ]]; then
     echo -e ${FAILED}
     echo "::group::Output"
@@ -39,6 +47,9 @@ single_test() { # ID TXT TYP REF NS MSG RES
   if [[ $7 != "null" ]]; then
     DEPLOYMENT_RES[$7]=$((${DEPLOYMENT_RES[$7]} + 1))
   fi
+
+  # 3 tries on first test, 2 tries on second, 1 try for all subsequential
+  RETRY=$((RETRY-1))
 }
 
 ### MULTI TEST CASE FROM FILE ####################################
@@ -122,6 +133,7 @@ make_install() {
     exit 1
   }
   echo -e "${SUCCESS}"
+  sleep ${TIMEOUT}
 }
 
 helm_install() {
@@ -132,6 +144,7 @@ helm_install() {
     exit 1
   }
   echo -e "${SUCCESS}"
+  sleep ${TIMEOUT}
 }
 
 helm-repo_install() {
@@ -144,6 +157,7 @@ helm-repo_install() {
     exit 1
   }
   echo -e "${SUCCESS}"
+  sleep ${TIMEOUT}
 }
 
 ### UPGRADING CONNAISSEUR ####################################
