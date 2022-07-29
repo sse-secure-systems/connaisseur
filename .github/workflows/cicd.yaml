@@ -211,6 +211,7 @@ jobs:
             "namespace-val",
             "deployment",
             "pre-config",
+            "other-ns",
           ]
     services:
       alerting-endpoint:

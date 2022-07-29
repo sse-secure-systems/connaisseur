@@ -136,10 +136,10 @@ make_install() {
   sleep ${TIMEOUT}
 }
 
-helm_install() {
-  echo -n "Installing Connaisseur..."
+helm_install_namespace() { # NAMESPACE
+  echo -n "Installing Connaisseur in namespace ${1}..."
   helm install connaisseur helm --atomic --create-namespace \
-    --namespace connaisseur >/dev/null || {
+    --namespace ${1} >/dev/null || {
     echo -e "${FAILED}"
     exit 1
   }
@@ -147,7 +147,22 @@ helm_install() {
   sleep ${TIMEOUT}
 }
 
-helm-repo_install() {
+helm_install_namespace_no_create() { # NAMESPACE
+  echo -n "Installing Connaisseur in namespace ${1}..."
+  helm install connaisseur helm --atomic \
+    --namespace ${1} >/dev/null || {
+    echo -e "${FAILED}"
+    exit 1
+  }
+  echo -e "${SUCCESS}"
+  sleep ${TIMEOUT}
+}
+
+helm_install() {
+  helm_install_namespace "connaisseur"
+}
+
+helm_repo_install() {
   # will install unconfigured Connaisseur
   echo -n "Installing Connaisseur..."
   helm repo add connaisseur https://sse-secure-systems.github.io/connaisseur/charts >/dev/null
@@ -170,9 +185,9 @@ make_upgrade() {
   echo -e "${SUCCESS}"
 }
 
-helm_upgrade() {
+helm_upgrade_namespace() { # NS
   echo -n 'Upgrading Connaisseur...'
-  helm upgrade connaisseur helm -n connaisseur --wait >/dev/null || {
+  helm upgrade connaisseur helm -n ${1} --wait >/dev/null || {
     echo -e ${FAILED}
     exit 1
   }
@@ -324,6 +339,29 @@ case $1 in
   make_install
   namespace_val_int_test
   ;;
+"other-ns")
+  echo "Testing deployment of Connaisseur in a different namespace than the default. See e.g. https://github.com/sse-secure-systems/connaisseur/issues/724"
+  update_via_env_vars
+  CLUSTER_NAME=$(kubectl config get-contexts $(kubectl config current-context) --no-headers | awk '{print $3}')
+  CTX=deployconnaisseur
+  NAME=securityadmin
+  NS=security
+
+  kubectl create ns ${NS}
+  # Create service account with all permission on one namespace and some other, but non on other namespaces
+  kubectl create serviceaccount ${NAME} --namespace=${NS}
+  kubectl create rolebinding ${NAME} --clusterrole=cluster-admin --serviceaccount=${NS}:${NAME} --namespace=${NS}
+  kubectl create clusterrole auxillary --verb='*' --resource=clusterrole,clusterrolebinding,mutatingwebhookconfigurations
+  kubectl create clusterrolebinding ${NAME} --clusterrole=auxillary --serviceaccount=${NS}:${NAME}
+
+  # Use that service account's config to run the Connaisseur deployment to see no other namespace is touched
+  TOKEN=$(kubectl describe secrets -n ${NS} "$(kubectl describe serviceaccount ${NAME} -n ${NS} | grep Tokens | awk '{print $2}')" | grep token: | awk '{print $2}')
+  kubectl config set-credentials ${CTX} --token=${TOKEN}
+  kubectl config set-context ${CTX} --cluster=${CLUSTER_NAME} --user=${CTX}
+  kubectl config use-context ${CTX}
+  helm_install_namespace_no_create ${NS}
+  single_test "on" "Testing unsigned image..." "deploy" "securesystemsengineering/testimage:unsigned" "${NS}" "Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned." "INVALID"
+  ;;
 "deployment")
   update_via_env_vars
   update_values '.policy += {"pattern": "docker.io/library/*:*", "validator": "dockerhub-basics", "with": {"trust_root": "docker-official"}}'
@@ -353,7 +391,7 @@ case $1 in
   done
   ;;
 "helm-repo")
-  helm-repo_install
+  helm_repo_install
   pre_config_int_test
   ;;
 "complexity")

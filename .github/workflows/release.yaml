@@ -34,6 +34,7 @@ jobs:
             "multi-cosigned",
             "deployment",
             "pre-config",
+            "other-ns",
           ]
     services:
       alerting-endpoint:
