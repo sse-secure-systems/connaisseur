@@ -184,7 +184,10 @@ class CosignValidator(ValidatorInterface):
                 except json.JSONDecodeError:
                     logging.info("non-json signature data from Cosign: %s", sig)
                     pass
-        elif "Error: no matching signatures:\nfailed to verify signature\n" in stderr:
+        elif (
+            "Error: no matching signatures:\ninvalid signature when validating ASN.1 encoded signature\n"
+            in stderr
+        ):
             msg = "Failed to verify signature of trust data."
             raise ValidationError(
                 message=msg,

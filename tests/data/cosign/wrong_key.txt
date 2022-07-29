@@ -1,2 +1,2 @@
 Error: no matching signatures:
-failed to verify signature
+invalid signature when validating ASN.1 encoded signature
