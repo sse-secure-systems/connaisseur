@@ -127,7 +127,7 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "getInstalledTLSCert" -}}
-{{- $data := (lookup "v1" "Secret" "connaisseur" (printf "%s-tls" .Chart.Name)).data -}}
+{{- $data := (lookup "v1" "Secret" .Release.Namespace (printf "%s-tls" .Chart.Name)).data -}}
 {{- if $data -}}
     {{ get $data "tls.crt" }}
 {{- end -}}
@@ -135,7 +135,7 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "getInstalledTLSKey" -}}
-{{- $data := (lookup "v1" "Secret" "connaisseur" (printf "%s-tls" .Chart.Name)).data -}}
+{{- $data := (lookup "v1" "Secret" .Release.Namespace (printf "%s-tls" .Chart.Name)).data -}}
 {{- if $data -}}
     {{ get $data "tls.key" }}
 {{- end -}}
