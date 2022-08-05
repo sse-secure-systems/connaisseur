@@ -452,8 +452,8 @@ def test_get_cosign_validated_digests(
         (
             "testimage:v1",
             "mail@example.com",
-            {"option_kword": "", "inline_tr": ""},
-            pytest.raises(exc.WrongKeyError),
+            {"option_kword": "--certificate-email", "inline_tr": "mail@example.com"},
+            fix.no_exc(),
         ),
     ],
 )
