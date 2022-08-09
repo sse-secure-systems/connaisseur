@@ -1,7 +1,7 @@
 aiohttp~=3.8.1
 cheroot~=8.6.0
 ecdsa~=0.18
-Flask~=2.2.1
+Flask~=2.2.2
 Jinja2~=3.1.2
 jsonschema~=4.9.1
 parsedatetime~=2.6
