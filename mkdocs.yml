@@ -95,6 +95,7 @@ nav:
       - features/metrics.md
       - features/alerting.md
       - features/detection_mode.md
+      - features/validation_mode.md
       - features/namespaced_validation.md
       - features/automatic_child_approval.md
   - Security:

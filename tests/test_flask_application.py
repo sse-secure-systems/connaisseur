@@ -65,7 +65,7 @@ def m_config(monkeypatch, sample_nv1):
 
 @pytest.mark.parametrize(
     "index, allowed, status_code, detection_mode",
-    [(0, True, 202, 0), (5, False, 403, 0)],
+    [(0, True, 202, False), (5, False, 403, False), (5, True, 202, True)],
 )
 def test_mutate(
     monkeypatch,
@@ -81,7 +81,7 @@ def test_mutate(
 ):
     with aioresponses() as aio:
         aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-        monkeypatch.setenv("DETECTION_MODE", str(detection_mode))
+        pytest.fa.DETECTION_MODE = detection_mode
         client = pytest.fa.APP.test_client()
         response = client.post("/mutate", json=adm_req_samples[index])
         admission_response = response.get_json()["response"]
@@ -90,6 +90,7 @@ def test_mutate(
         assert response.is_json
         assert admission_response["allowed"] == allowed
         assert admission_response["status"]["code"] == status_code
+    pytest.fa.DETECTION_MODE = False
 
 
 def test_mutate_calls_send_alert_for_invalid_admission_request(
@@ -101,7 +102,6 @@ def test_mutate_calls_send_alert_for_invalid_admission_request(
 ):
     with aioresponses() as aio:
         aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-        monkeypatch.setenv("DETECTION_MODE", "0")
         client = pytest.fa.APP.test_client()
         response = client.post("/mutate", json=adm_req_samples[7])
         admission_response = response.get_json()["response"]
@@ -141,7 +141,7 @@ def test_create_logging_msg(msg, kwargs, out):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "index, out, exception",
+    "index, out, mutate, exception",
     [
         (
             0,
@@ -163,6 +163,7 @@ def test_create_logging_msg(msg, kwargs, out):
                     ),
                 },
             },
+            True,
             fix.no_exc(),
         ),
         (
@@ -176,9 +177,10 @@ def test_create_logging_msg(msg, kwargs, out):
                     "status": {"code": 202},
                 },
             },
+            True,
             fix.no_exc(),
         ),
-        (5, {}, pytest.raises(exc.BaseConnaisseurException)),
+        (5, {}, None, pytest.raises(exc.BaseConnaisseurException)),
         (
             6,
             {
@@ -190,18 +192,66 @@ def test_create_logging_msg(msg, kwargs, out):
                     "status": {"code": 202},
                 },
             },
+            True,
+            fix.no_exc(),
+        ),
+        (
+            0,
+            {
+                "apiVersion": "admission.k8s.io/v1",
+                "kind": "AdmissionReview",
+                "response": {
+                    "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
+                    "allowed": True,
+                    "status": {"code": 202},
+                    "patchType": "JSONPatch",
+                    "patch": (
+                        "W3sib3AiOiAicmVwbGFjZSIsICJwYXRoIjogI"
+                        "i9zcGVjL3RlbXBsYXRlL3NwZWMvY29udGFpbmVycy8wL2lt"
+                        "YWdlIiwgInZhbHVlIjogImRvY2tlci5pby9zZWN1cmVzeXN"
+                        "0ZW1zZW5naW5lZXJpbmcvYWxpY2UtaW1hZ2VAc2hhMjU2Om"
+                        "FjOTA0YzliMTkxZDE0ZmFmNTRiNzk1MmYyNjUwYTRiYjIxY"
+                        "zIwMWJmMzQxMzEzODhiODUxZThjZTk5MmE2NTIifV0="
+                    ),
+                },
+            },
+            True,
+            fix.no_exc(),
+        ),
+        (
+            0,
+            {
+                "apiVersion": "admission.k8s.io/v1",
+                "kind": "AdmissionReview",
+                "response": {
+                    "uid": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
+                    "allowed": True,
+                    "status": {"code": 202},
+                },
+            },
+            False,
             fix.no_exc(),
         ),
     ],
 )
 async def test_admit(
-    adm_req_samples, index, m_request, m_expiry, m_trust_data, out, exception
+    monkeypatch,
+    adm_req_samples,
+    index,
+    m_request,
+    m_expiry,
+    m_trust_data,
+    out,
+    mutate,
+    exception,
 ):
     with exception:
         with aioresponses() as aio:
+            pytest.fa.VALIDATION_MODE_MUTATE = mutate
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
             response = await pytest.fa.__admit(AdmissionRequest(adm_req_samples[index]))
             assert response == out
+    pytest.fa.VALIDATION_MODE_MUTATE = True
 
 
 @pytest.mark.parametrize(
