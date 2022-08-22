@@ -154,12 +154,12 @@ def test_create_logging_msg(msg, kwargs, out):
                     "status": {"code": 202},
                     "patchType": "JSONPatch",
                     "patch": (
-                        "W3sib3AiOiAicmVwbGFjZSIsICJwYXRoIjogI"
-                        "i9zcGVjL3RlbXBsYXRlL3NwZWMvY29udGFpbmVycy8wL2lt"
-                        "YWdlIiwgInZhbHVlIjogImRvY2tlci5pby9zZWN1cmVzeXN"
-                        "0ZW1zZW5naW5lZXJpbmcvYWxpY2UtaW1hZ2VAc2hhMjU2Om"
-                        "FjOTA0YzliMTkxZDE0ZmFmNTRiNzk1MmYyNjUwYTRiYjIxY"
-                        "zIwMWJmMzQxMzEzODhiODUxZThjZTk5MmE2NTIifV0="
+                        "W3sib3AiOiAicmVwbGFjZSIsICJwYXRoIjogIi9zcGVjL3RlbXBs"
+                        "YXRlL3NwZWMvY29udGFpbmVycy8wL2ltYWdlIiwgInZhbHVlIjog"
+                        "ImRvY2tlci5pby9zZWN1cmVzeXN0ZW1zZW5naW5lZXJpbmcvYWxp"
+                        "Y2UtaW1hZ2U6dGVzdEBzaGEyNTY6YWM5MDRjOWIxOTFkMTRmYWY1"
+                        "NGI3OTUyZjI2NTBhNGJiMjFjMjAxYmYzNDEzMTM4OGI4NTFlOGNl"
+                        "OTkyYTY1MiJ9XQ=="
                     ),
                 },
             },

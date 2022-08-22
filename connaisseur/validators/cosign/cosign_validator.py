@@ -7,6 +7,7 @@ import subprocess  # nosec
 
 from concurrent.futures import ThreadPoolExecutor
 
+import connaisseur.constants as const
 from connaisseur.exceptions import (
     CosignError,
     CosignTimeout,
@@ -162,7 +163,7 @@ class CosignValidator(ValidatorInterface):
                         digest = sig_data["critical"]["image"].get(
                             "docker-manifest-digest", ""
                         )
-                        if re.match(r"sha256:[0-9A-Fa-f]{64}", digest) is None:
+                        if re.match(rf"{const.SHA256}:[0-9A-Fa-f]{{64}}", digest) is None:
                             msg = "Digest '{digest}' does not match expected digest pattern."
                             raise InvalidFormatException(message=msg, digest=digest)
                     except Exception as err:
@@ -180,7 +181,7 @@ class CosignValidator(ValidatorInterface):
                             trust_root=trust_root["name"],
                         ) from err
                     # remove prefix 'sha256'
-                    digests.append(digest.removeprefix("sha256:"))
+                    digests.append(digest.removeprefix(f"{const.SHA256}:"))
                 except json.JSONDecodeError:
                     logging.info("non-json signature data from Cosign: %s", sig)
                     pass

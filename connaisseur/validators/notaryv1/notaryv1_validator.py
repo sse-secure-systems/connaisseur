@@ -3,10 +3,12 @@ import base64
 import datetime as dt
 import logging
 
+import connaisseur.constants as const
 from connaisseur.exceptions import (
     AmbiguousDigestError,
     InsufficientTrustDataError,
     NotFoundException,
+    ValidationError,
 )
 from connaisseur.image import Image
 from connaisseur.trust_root import TrustRoot
@@ -47,15 +49,12 @@ class NotaryV1Validator(ValidatorInterface):
             image, req_delegations, root_key
         )
 
-        # search for digests or tag, depending on given image
-        search_image_targets = (
-            NotaryV1Validator.__search_image_targets_for_digest
-            if image.has_digest()
-            else NotaryV1Validator.__search_image_targets_for_tag
-        )
-        # filter out the searched for digests, if present
+        # search for digests in given targets
         digests = list(
-            map(lambda x: search_image_targets(x, image), signed_image_targets)
+            map(
+                lambda x: NotaryV1Validator.__search_image_targets(x, image),
+                signed_image_targets,
+            )
         )
 
         # in case certain delegations are needed, `signed_image_targets` should only
@@ -224,28 +223,35 @@ class NotaryV1Validator(ValidatorInterface):
         return image_targets
 
     @staticmethod
-    def __search_image_targets_for_digest(trust_data: dict, image: Image):
-        """
-        Search in the `trust_data` for a signed digest, given an `image` with
-        digest.
-        """
-        image_digest = base64.b64encode(bytes.fromhex(image.digest)).decode("utf-8")
-        if image_digest in {data["hashes"]["sha256"] for data in trust_data.values()}:
-            return image.digest
+    def __search_image_targets(trust_data: dict, image: Image):
+        if image.tag:
+            if image.tag not in trust_data:
+                return None
 
+            base64_digest = trust_data[image.tag]["hashes"][const.SHA256]
+            digest = base64.b64decode(base64_digest).hex()
+
+            # if both tag and digest are given
+            if image.digest:
+                # validate if the digest in the trust_data found by the tag,
+                # matches the digest requested by the image reference
+                if digest == image.digest:
+                    return digest
+                else:
+                    raise ValidationError(
+                        message="Image tag and digest do not match.",
+                        tag=image.tag,
+                        tag_digest=digest,
+                        digest=image.digest,
+                    )
+            # if only the tag is given
+            return digest
+        # if only the digest is given
+        elif image.digest:
+            digest = base64.b64encode(bytes.fromhex(image.digest)).decode("utf-8")
+            if digest in {data["hashes"][const.SHA256] for data in trust_data.values()}:
+                return image.digest
         return None
-
-    @staticmethod
-    def __search_image_targets_for_tag(trust_data: dict, image: Image):
-        """
-        Search in the `trust_data` for a digest, given an `image` with tag.
-        """
-        image_tag = image.tag
-        if image_tag not in trust_data:
-            return None
-
-        base64_digest = trust_data[image_tag]["hashes"]["sha256"]
-        return base64.b64decode(base64_digest).hex()
 
     async def __update_with_delegation_trust_data(
         self, trust_data, delegations, key_store, image

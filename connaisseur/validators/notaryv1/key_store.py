@@ -1,5 +1,6 @@
 from connaisseur.exceptions import NotFoundException
 from connaisseur.trust_root import TrustRoot
+import connaisseur.constants as const
 
 
 class KeyStore:
@@ -68,7 +69,7 @@ class KeyStore:
             self.hashes.setdefault(
                 role,
                 (
-                    hashes[role].get("hashes", {}).get("sha256"),
+                    hashes[role].get("hashes", {}).get(const.SHA256),
                     hashes[role].get("length", 0),
                 ),
             )

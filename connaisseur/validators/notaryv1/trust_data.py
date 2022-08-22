@@ -7,6 +7,7 @@ from datetime import datetime
 import pytz
 from dateutil import parser
 
+import connaisseur.constants as const
 from connaisseur.exceptions import (
     InvalidTrustDataFormatError,
     NoSuchClassError,
@@ -189,7 +190,7 @@ class TargetsData(TrustData):  # pylint: disable=abstract-method
 
     def get_digest(self, tag: str):
         try:
-            return self.signed.get("targets", {})[tag]["hashes"]["sha256"]
+            return self.signed.get("targets", {})[tag]["hashes"][const.SHA256]
         except KeyError as err:
             msg = "Unable to find digest for tag {tag}."
             raise NotFoundException(message=msg, tag=tag) from err

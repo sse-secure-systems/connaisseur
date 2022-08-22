@@ -56,6 +56,13 @@ test_cases:
     namespace: default
     expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
     expected_result: INVALID
+  - id: rstd
+    txt: Testing signed image with tag and digest...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed@sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7
+    namespace: default
+    expected_msg: pod/pod-rstd created
+    expected_result: VALID
   cosign:
   - id: cu
     txt: Testing unsigned cosign image...
@@ -78,6 +85,10 @@ test_cases:
     namespace: default
     expected_msg: pod/pod-cs created
     expected_result: null
+  - id: cstd
+    txt: Testing signed cosign image with tag and digest...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-signed@sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7
   multi-cosigned:
   - id: mc-u
     txt: Testing multi-cosigned image `threshold` => undefined, not reached...

@@ -85,6 +85,22 @@ def test_init(m_notary, val_config):
                 match=r"Unable to find signed digest for image.*'image': '[^']*securesystemsengineering/alice-image:missingtag",
             ),
         ),
+        (
+            "securesystemsengineering/alice-image:test@sha256:ac904c9b191d14faf54b7952f2650a4bb21c201bf34131388b851e8ce992a652",
+            None,
+            [],
+            "ac904c9b191d14faf54b7952f2650a4bb21c201bf34131388b851e8ce992a652",
+            fix.no_exc(),
+        ),
+        (
+            "securesystemsengineering/alice-image:test@sha256:13333333333333333333333333333337",
+            None,
+            [],
+            "",
+            pytest.raises(
+                exc.ValidationError, match=r".*tag and digest do not match.*"
+            ),
+        ),
     ],
 )
 async def test_validate(
@@ -358,21 +374,6 @@ async def test_process_chain_of_trust(
             ),
             None,
         ),
-    ],
-)
-def test_search_image_targets_for_digest(sample_nv1, image: str, digest: str):
-    data = fix.get_td("sample_releases")["signed"]["targets"]
-    assert (
-        sample_nv1._NotaryV1Validator__search_image_targets_for_digest(
-            data, Image(image)
-        )
-        == digest
-    )
-
-
-@pytest.mark.parametrize(
-    "image, digest",
-    [
         (
             "image:v1",
             "1388abc7a12532836c3a81bdb0087409b15208f5aeba7a87aedcfd56d637c145",
@@ -384,10 +385,10 @@ def test_search_image_targets_for_digest(sample_nv1, image: str, digest: str):
         ("image:v3", None),
     ],
 )
-def test_search_image_targets_for_tag(sample_nv1, image: str, digest: str):
+def test_search_image_targets_for_digest(sample_nv1, image: str, digest: str):
     data = fix.get_td("sample_releases")["signed"]["targets"]
     assert (
-        sample_nv1._NotaryV1Validator__search_image_targets_for_tag(data, Image(image))
+        sample_nv1._NotaryV1Validator__search_image_targets(data, Image(image))
         == digest
     )
 

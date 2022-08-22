@@ -6,6 +6,7 @@ import traceback
 from flask import Flask, jsonify, request
 from prometheus_flask_exporter import PrometheusMetrics, NO_PREFIX
 
+import connaisseur.constants as const
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.alert import send_alerts
 from connaisseur.config import Config
@@ -190,5 +191,5 @@ async def __validate_image(type_index, image, admission_request):
     msg = f'successful verification of image "{original_image}"'
     logging.info(__create_logging_msg(msg, **logging_context))
     if trusted_digest:
-        image.set_digest(trusted_digest)
+        image.digest, image.digest_algo = trusted_digest, const.SHA256
         return admission_request.wl_object.get_json_patch(image, type_, index)

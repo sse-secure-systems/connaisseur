@@ -42,7 +42,7 @@ import connaisseur.exceptions as exc
             "image",
             "tag",
             None,
-            "",
+            None,
             "registry.io",
             fix.no_exc(),
         ),
@@ -94,16 +94,7 @@ import connaisseur.exceptions as exc
             "master-node:5000",
             fix.no_exc(),
         ),
-        ("Test/test:v1", "test", "v1", None, "", "Test", fix.no_exc()),
-        (
-            "docker.io/Library/image:tag",
-            "image",
-            "tag",
-            None,
-            None,
-            "docker.io",
-            pytest.raises(exc.InvalidImageFormatError),
-        ),
+        ("Test/test:v1", "test", "v1", None, None, "Test", fix.no_exc()),
         (
             "docker.io/library/image:Tag",
             "image",
@@ -112,6 +103,38 @@ import connaisseur.exceptions as exc
             "library",
             "docker.io",
             fix.no_exc(),
+        ),
+        (
+            "ghcr.io/repo/test/image-with-tag-and-digest:v1.2.3@sha256:f8816ada742348e1adfcec5c2a180b675bf6e4a294e0feb68bd70179451e1242",
+            "image-with-tag-and-digest",
+            "v1.2.3",
+            "f8816ada742348e1adfcec5c2a180b675bf6e4a294e0feb68bd70179451e1242",
+            "repo/test",
+            "ghcr.io",
+            fix.no_exc(),
+        ),
+        (
+            "image@sha:859b5aada817b3eb53410222e8fc232cf126c9e598390ae61895eb96f52ae46d",
+            None,
+            None,
+            None,
+            None,
+            None,
+            pytest.raises(exc.InvalidImageFormatError, match=r".*is not supported.*"),
+        ),
+        (
+            (
+                "what/a/long/path/to/an/image/that/is/quite/unnecessarily/long/if/you/ask/me/this/shouldnt"
+                "/be/as/long/as/this/is/but/in/order/to/test/this/i/see/no/other/way/that/using/such/a"
+                "ridiculous/long/name/that/may/or/may/not/make/it/into/the/book/from/this/guiness/person/"
+                "the/one/with/the/beer/you/know/image:tag"
+            ),
+            None,
+            None,
+            None,
+            None,
+            None,
+            pytest.raises(exc.InvalidImageFormatError, match=r".*not a valid.*"),
         ),
     ],
 )
@@ -125,41 +148,6 @@ def test_image(
         assert i.digest == digest
         assert i.repository == repo
         assert i.registry == registry
-
-
-@pytest.mark.parametrize(
-    "image, tag, digest",
-    [
-        (
-            "image:tag",
-            "tag",
-            "859b5aada817b3eb53410222e8fc232cf126c9e598390ae61895eb96f52ae46d",
-        )
-    ],
-)
-def test_set_digest(image: str, tag: str, digest: str):
-    i = img.Image(image)
-    i.set_digest(digest)
-    assert i.digest == digest
-    assert i.tag == tag
-
-
-@pytest.mark.parametrize(
-    "image, digest",
-    [
-        ("image:tag", False),
-        (
-            (
-                "image@sha256:859b5aada817b3eb53410222e8f"
-                "c232cf126c9e598390ae61895eb96f52ae46d"
-            ),
-            True,
-        ),
-    ],
-)
-def test_has_digest(image: str, digest: bool):
-    i = img.Image(image)
-    assert i.has_digest() == digest
 
 
 @pytest.mark.parametrize(
@@ -183,6 +171,16 @@ def test_has_digest(image: str, digest: bool):
             ),
         ),
         ("path/image", "docker.io/path/image:latest"),
+        (
+            (
+                "ghcr.io/repo/test/image-with-tag-and-digest:v1.2.3"
+                "@sha256:859b5aada817b3eb53410222e8fc232cf126c9e598390ae61895eb96f52ae46d"
+            ),
+            (
+                "ghcr.io/repo/test/image-with-tag-and-digest:v1.2.3"
+                "@sha256:859b5aada817b3eb53410222e8fc232cf126c9e598390ae61895eb96f52ae46d"
+            ),
+        ),
     ],
 )
 def test_str(image: str, str_image: str):
