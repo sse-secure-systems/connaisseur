@@ -1,5 +1,8 @@
 # Validation Mode
 
+> :warning: Be aware that disabling image reference mutation has significant impact on the security guarantees of signature verification.
+> Carefully consider the notes below.
+
 Validation mode allows configuration whether Connaisseur mutates image references (tags to trusted digests).
 
 In default behavior during validation, Connaisseur uses the image reference (tag or digest) from the admission request to identify a trusted digest (digest with valid signature from a configured trust root) and modifies the reference to the trusted digest if one exists or denies the request otherwise.
@@ -10,6 +13,8 @@ In consequence, a mutated image reference causes an error for such tools, as act
 To resolve this, it is possible to configure Connaisseur to only validate but not mutate image references by which the original image reference (tag or digest) remains unchanged and successful admission only indicates that a trusted digest exists.
 However, image tag and digest are only loosly associated which introduces a [*time-of-check to time-of-use* vulnerability](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use): an attacker slips in a malicious image after Connaisseur validated that a given tag exhibits a signed digest but before the runtime resolves the tag for pulling the image.
 This supposedly small time window might be significantly larger if images are re-pulled by the container runtime at a later time for some reason.
+
+As disabling image reference mutation considerably lowers the security guarantees of image signatures for the above reasons, it is generally advised to reference images by (signed) digests instead of tags in which case no mutation takes place even if mutation remains activated.
 
 To disable image mutation, set the `validationMode.mutateImage` flag to `false` in `helm/values.yaml`.
 

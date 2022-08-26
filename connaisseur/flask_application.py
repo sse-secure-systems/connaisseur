@@ -24,7 +24,7 @@ sends its response back.
 """
 CONFIG = Config()
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
-VALIDATION_MODE_MUTATE = os.environ.get("VALIDATION_MODE_MUTATE", "true") == "true"
+VALIDATION_MODE_MUTATE = os.environ.get("VALIDATION_MODE_MUTATE", "true") != "false"
 
 metrics = PrometheusMetrics(
     APP,
