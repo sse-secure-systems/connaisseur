@@ -144,7 +144,7 @@ detectionMode: false
 
 # validation mode allows advanced configuration of image validation such as whether to mutate image references
 validationMode:
-  mutateImage: false  # mutate image references to signed digests ('true', default) or keep original reference ('false', less secure)
+  mutateImage: true  # mutate image references to signed digests ('true', default) or keep original reference ('false', less secure)
 
 # namespaced validation allows to restrict the namespaces that will be subject to Connaisseur verification.
 # when enabled, based on namespaced validation mode ('ignore' or 'validate')
