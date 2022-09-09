@@ -83,7 +83,7 @@ class Notary:
 
         try:
             url = f"https://{self.host}/_notary_server/health"
-            request_kwargs = {"url": url, "verify": self.cert}
+            request_kwargs = {"url": url, "verify": self.cert, "timeout": 30}
             response = requests.get(**request_kwargs)
 
             return response.status_code == 200

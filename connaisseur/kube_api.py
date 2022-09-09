@@ -18,7 +18,7 @@ def request_kube_api(path: str):
     url = f"https://{kube_ip}:{kube_port}/{path}"
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = requests.get(url, verify=ca_path, headers=headers)
+    response = requests.get(url, verify=ca_path, headers=headers, timeout=30)
     response.raise_for_status()
 
     return response.json()

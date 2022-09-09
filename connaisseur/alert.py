@@ -142,7 +142,7 @@ class Alert:
         response = None
         try:
             response = requests.post(
-                self.receiver_url, data=self.payload, headers=self.headers
+                self.receiver_url, data=self.payload, headers=self.headers, timeout=30
             )
             response.raise_for_status()
             logging.info("sent alert to %s", self.template)
