@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-7_wsgi-server/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.3">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.4">
     
     
       
@@ -1463,6 +1463,7 @@ connaisseur-deployment-d86fbfcd8-w46dz   298m         67Mi
 <p>Its memory footprint is higher than for Cheroot and Flask, but its CPU footprint is on par with Cheroot and slightly better than Flask's.</p>
 <h4 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">⚓︎</a></h4>
 <p>We chose option 1.2 and will for now go forward with Cheroot as the WSGI server. The decision was based on the server performing best in the relevant parts of the stress and load tests.</p>
+
 
 
 

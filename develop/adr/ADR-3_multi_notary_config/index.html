@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-3_multi_notary_config/">
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.3">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.4">
     
     
       
@@ -1294,6 +1294,7 @@ You're not viewing the docs of the latest version.
 <p>Option 4 was chosen. If more than one notary configuration or key within a configuration are present, one of those can be called "default" (setting the <code>name</code> field). That way it should be obvious enough, which configuration or key will be used, if not further specified within the image policy, while keeping configuration effort low.</p>
 <h3 id="choice-3_1">Choice 3<a class="headerlink" href="#choice-3_1" title="Permanent link">⚓︎</a></h3>
 <p>Option 3 was chosen. Notary and Connaisseur will be completely decoupled, with Connaisseur logging all notaries it can't reach. This way Connaisseur can still be operational, even with all notaries being unreachable. Otherwise Connaisseur would have blocked even images that were allowlisted. This is a breaking change, but we agreed that it is better as it allows e.g. deployments for which the respective image policy specifies <code>verify: false</code>.</p>
+
 
 
 
