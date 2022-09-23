@@ -130,7 +130,7 @@ jobs:
 
   trivy-config-scanner:
     name: trivy config scan
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

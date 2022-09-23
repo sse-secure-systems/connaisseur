@@ -41,7 +41,7 @@ jobs:
 
   trivy-dockerhub-image-scan:
     name: trivy scan (latest public image)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
