@@ -8,6 +8,10 @@ on:
   schedule:
     - cron: '40 6 * * 3'
 
+# Reduce default permission of GITHUB_TOKEN to nothing
+# Repository can still be checked out during these jobs
+permissions: {}
+
 jobs:
   analyze:
     name: Analyze

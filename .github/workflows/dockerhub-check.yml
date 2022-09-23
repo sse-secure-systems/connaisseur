@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '37 6 * * 3'
 
+# No permissions needed
+permissions: {}
+
 jobs:
   dockerhub-check:
     runs-on: ubuntu-latest

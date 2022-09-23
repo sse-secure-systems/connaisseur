@@ -9,6 +9,10 @@ on:
       - master
       - develop
 
+# Reduce default permission of GITHUB_TOKEN to nothing
+# Repository can still be checked out during these jobs
+permissions: {}
+
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*.*.*'
 
+# Needs write on repo contents as it pushes to gh-pages branch
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
