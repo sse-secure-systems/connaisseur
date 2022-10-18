@@ -17,7 +17,7 @@ from connaisseur.exceptions import (
     WrongKeyError,
 )
 from connaisseur.image import Image
-from connaisseur.trust_root import KMSKey, TrustRoot, ECDSAKey
+from connaisseur.trust_root import KMSKey, TrustRoot, ECDSAKey, KeyLessTrustRoot
 from connaisseur.util import safe_path_func  # nosec
 from connaisseur.validators.interface import ValidatorInterface
 
@@ -27,6 +27,7 @@ class CosignValidator(ValidatorInterface):
     trust_roots: list
     k8s_keychain: bool
     rekor_url: str
+    experimental: bool
 
     def __init__(
         self,
@@ -44,6 +45,7 @@ class CosignValidator(ValidatorInterface):
             if host is None or host.startswith(("https://", "http://"))
             else f"https://{host}"
         )
+        self.experimental = self.rekor_url is not None
 
     async def validate(
         self, image: Image, trust_root: str = None, **kwargs
@@ -256,9 +258,6 @@ class CosignValidator(ValidatorInterface):
         # reminder when implementing RSA validation:
         # ["--key", "/dev/stdin", self.value.save_pkcs1()]
 
-        # reminder when implementing Keyless validation:
-        # ["--cert-email", self.value, b""]
-
         if isinstance(trust_root, ECDSAKey):
             return self.__invoke_cosign(
                 image,
@@ -276,6 +275,16 @@ class CosignValidator(ValidatorInterface):
                     "inline_tr": trust_root.value,
                 },
             )
+        elif isinstance(trust_root, KeyLessTrustRoot):
+            self.experimental = True
+            return self.__invoke_cosign(
+                image,
+                {
+                    "option_kword": "--certificate-email",
+                    "inline_tr": trust_root.value,
+                },
+            )
+
         msg = (
             "The trust_root type {tr_type} is unsupported for a validator of type"
             "{val_type}."
@@ -336,7 +345,7 @@ class CosignValidator(ValidatorInterface):
         ):
             env["SSL_CERT_FILE"] = f"/app/certs/cosign/{self.name}.crt"
         # Rekor support requires setting of COSIGN_EXPERIMENTAL
-        if self.rekor_url is not None:
+        if self.experimental:
             env.update({"COSIGN_EXPERIMENTAL": "1"})
             env.update({"TUF_ROOT": "/app/.sigstore"})
         return env
