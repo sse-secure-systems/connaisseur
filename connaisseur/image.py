@@ -69,7 +69,6 @@ class Image:
         Set the digest to the given `digest`.
         """
         self.digest = digest
-        self.tag = None
 
     def has_digest(self) -> bool:
         """

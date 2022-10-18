@@ -128,13 +128,20 @@ def test_image(
 
 
 @pytest.mark.parametrize(
-    "image, digest",
-    [("image:tag", "859b5aada817b3eb53410222e8fc232cf126c9e598390ae61895eb96f52ae46d")],
+    "image, tag, digest",
+    [
+        (
+            "image:tag",
+            "tag",
+            "859b5aada817b3eb53410222e8fc232cf126c9e598390ae61895eb96f52ae46d",
+        )
+    ],
 )
-def test_set_digest(image: str, digest: str):
+def test_set_digest(image: str, tag: str, digest: str):
     i = img.Image(image)
     i.set_digest(digest)
     assert i.digest == digest
+    assert i.tag == tag
 
 
 @pytest.mark.parametrize(
