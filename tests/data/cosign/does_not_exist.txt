@@ -1,2 +1,2 @@
-Error: entity not found in registry
-main.go:46: error during command execution: entity not found in registry
+Error: GET https://index.docker.io/v2/library/testimage/manifests/v1: MANIFEST_UNKNOWN: manifest unknown; unknown tag=v1
+main.go:62: error during command execution: GET https://index.docker.io/v2/library/testimage/manifests/v1: MANIFEST_UNKNOWN: manifest unknown; unknown tag=v1

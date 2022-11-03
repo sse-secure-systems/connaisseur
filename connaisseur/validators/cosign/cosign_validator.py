@@ -196,10 +196,7 @@ class CosignValidator(ValidatorInterface):
                 image=str(image),
                 trust_root=trust_root["name"],
             )
-        elif (
-            "Error: no matching signatures:\nsignature not found in transparency log\n"
-            in stderr
-        ):
+        elif "Error: no matching signatures:\nsearching log query:" in stderr:
             msg = "Failed to find signature in transparency log."
             raise ValidationError(
                 message=msg,
@@ -217,7 +214,7 @@ class CosignValidator(ValidatorInterface):
                 image=str(image),
                 trust_root=trust_root["name"],
             )
-        elif "Error: entity not found in registry\nmain.go:" in stderr:
+        elif "MANIFEST_UNKNOWN" in stderr:
             msg = 'Image "{image}" does not exist.'
             raise NotFoundException(
                 message=msg,
