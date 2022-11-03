@@ -1,4 +1,4 @@
-FROM python:3-alpine as base
+FROM python:alpine as base
 
 # Build dependencies
 FROM base as builder
@@ -6,8 +6,12 @@ FROM base as builder
 RUN mkdir /install
 WORKDIR /install
 COPY requirements.txt /requirements.txt
+
+# Have to upgrade pip and install extra packages due to error when installing frozenlist
 # Since we run inside an alpine based container, we cannot compile yarl and multidict
-RUN YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install --no-cache-dir --prefix=/install -r /requirements.txt
+RUN apk add --no-cache gcc~=11.2.1_git20220219-r2 libc-dev~=0.7.2-r3 \
+ && pip install --no-cache-dir --upgrade pip~=22.3 \
+ && YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install --no-cache-dir --prefix=/install -r /requirements.txt
 
 # Load and verify Cosign
 FROM debian:bullseye-slim as cosign_loader

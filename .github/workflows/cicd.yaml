@@ -72,7 +72,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install packages
         # Since we run inside an alpine based container, we cannot compile yarl and multidic
-        run: YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
+        run: |
+          apk add gcc libc-dev
+          pip3 install --upgrade pip
+          YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
       - name: Lint
         run: pylint --ignore-patterns=tests,coverage connaisseur
 
@@ -83,7 +86,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install packages
-        run: pip3 install -r requirements_dev.txt && pip3 install .
+        run: |
+          apt update && apt install gcc build-essential -y
+          pip3 install --upgrade pip
+          pip3 install -r requirements_dev.txt && pip3 install .
       - name: Install Git and curl
         run: apt update && apt install -y git curl
       - name: Test

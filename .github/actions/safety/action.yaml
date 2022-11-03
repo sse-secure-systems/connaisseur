@@ -4,7 +4,10 @@ runs:
   using: "composite"
   steps:
     - name: Install packages
-      run: pip3 install -r requirements_dev.txt
+      run: |
+        apt update && apt install gcc build-essential -y
+        pip3 install --upgrade pip
+        pip3 install -r requirements_dev.txt
       shell: sh
     - name: Freeze packages
       run: pip3 freeze > actual_package_versions.txt
