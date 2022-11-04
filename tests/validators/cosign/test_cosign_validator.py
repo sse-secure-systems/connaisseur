@@ -291,7 +291,7 @@ def test_get_pinned_keys(
             "testimage:v1",
             None,
             "2f6d89c49ad745bfd5d997f9b2d253329323da4c500c7fe343e068c0382b8df4",
-            pytest.raises(exc.CosignError),
+            pytest.raises(exc.CosignError, match=r"'image': '[^']*testimage:v1"),
         ),
     ],
 )
