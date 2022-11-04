@@ -60,21 +60,30 @@ def test_init(m_notary, val_config):
             "charlie",
             ["del1"],
             "",
-            pytest.raises(exc.InsufficientTrustDataError, match=r"'image_name': '[^']*securesystemsengineering/charlie-image:test2"),
+            pytest.raises(
+                exc.InsufficientTrustDataError,
+                match=r"'image': '[^']*securesystemsengineering/charlie-image:test2",
+            ),
         ),
         (
             "securesystmesengineering/dave-image:test",
             "charlie",
             ["del1", "del2"],
             "",
-            pytest.raises(exc.AmbiguousDigestError, match=r"'image_name': '[^']*securesystmesengineering/dave-image:test"),
+            pytest.raises(
+                exc.AmbiguousDigestError,
+                match=r"'image': '[^']*securesystmesengineering/dave-image:test",
+            ),
         ),
         (
             "securesystemsengineering/alice-image:missingtag",
             None,
             [],
             "ac904c9b191d14faf54b7952f2650a4bb21c201bf34131388b851e8ce992a652",
-            pytest.raises(exc.NotFoundException, match=r"Unable to find signed digest for image.*'image_name': '[^']*securesystemsengineering/alice-image:missingtag"),
+            pytest.raises(
+                exc.NotFoundException,
+                match=r"Unable to find signed digest for image.*'image': '[^']*securesystemsengineering/alice-image:missingtag",
+            ),
         ),
     ],
 )

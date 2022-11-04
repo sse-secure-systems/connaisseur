@@ -239,3 +239,15 @@ def test_error_handler(
         response = client.post("/mutate", json=mock_request_data)
         assert response.status_code == 500
         assert response.get_data().decode() == err
+
+
+@pytest.mark.asyncio
+async def test__validate_image_adds_context(mocker, adm_req_samples):
+    mocker.patch(
+        "connaisseur.config.Config.get_validator",
+        return_value=StaticValidator("", False),
+    )
+    with pytest.raises(exc.ValidationError, match=r"'image': '[^']*myimagename:andtag"):
+        await pytest.fa.__validate_image(
+            (0, 0), "myimagename:andtag", AdmissionRequest(adm_req_samples[0])
+        )

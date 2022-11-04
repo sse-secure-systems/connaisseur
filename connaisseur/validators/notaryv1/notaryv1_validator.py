@@ -62,22 +62,22 @@ class NotaryV1Validator(ValidatorInterface):
         # consist of delegation role targets. if searched for the signed digest, none of
         # them should be empty
         if req_delegations and not all(digests):
-            msg = "Not all required delegations have trust data for image {image_name}."
-            raise InsufficientTrustDataError(message=msg, image_name=str(image))
+            msg = "Not all required delegations have trust data for image {image}."
+            raise InsufficientTrustDataError(message=msg, image=str(image))
 
         # filter out empty results and squash same elements
         digests = set(filter(None, digests))
 
         # no digests could be found
         if not digests:
-            msg = "Unable to find signed digest for image {image_name}."
-            raise NotFoundException(message=msg, image_name=str(image))
+            msg = "Unable to find signed digest for image {image}."
+            raise NotFoundException(message=msg, image=str(image))
 
         # if there is more than one valid digest in the set, no decision can be made,
         # which to chose
         if len(digests) > 1:
-            msg = "Found multiple signed digests for image {image_name}."
-            raise AmbiguousDigestError(message=msg, image_name=str(image))
+            msg = "Found multiple signed digests for image {image}."
+            raise AmbiguousDigestError(message=msg, image=str(image))
 
         return digests.pop()
 
@@ -204,10 +204,10 @@ class NotaryV1Validator(ValidatorInterface):
                 ]
                 msg = (
                     "Unable to find trust data for delegation "
-                    "roles {tuf_roles} and image {image_name}."
+                    "roles {tuf_roles} and image {image}."
                 )
                 raise NotFoundException(
-                    message=msg, tuf_roles=str(tuf_roles), image_name=str(image)
+                    message=msg, tuf_roles=str(tuf_roles), image=str(image)
                 )
 
             image_targets = [

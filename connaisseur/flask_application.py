@@ -126,8 +126,6 @@ def __create_logging_msg(msg: str, **kwargs):
 
 
 async def __admit(admission_request: AdmissionRequest):
-    logging_context = dict(admission_request.context)
-
     patches = asyncio.gather(
         *[
             __validate_image(type_and_index, image, admission_request)
@@ -138,6 +136,7 @@ async def __admit(admission_request: AdmissionRequest):
     try:
         await patches
     except BaseConnaisseurException as err:
+        logging_context = dict(admission_request.context)
         err.update_context(**logging_context)
         raise err
 
@@ -185,6 +184,8 @@ async def __validate_image(type_index, image, admission_request):
 
         trusted_digest = await validator.validate(image, **policy_rule.arguments)
     except BaseConnaisseurException as err:
+        # add contextual information to all errors
+        err.update_context(**logging_context)
         raise err
     msg = f'successful verification of image "{original_image}"'
     logging.info(__create_logging_msg(msg, **logging_context))

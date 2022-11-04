@@ -114,8 +114,8 @@ class Config:
                 best_match = match.compare(best_match)
 
         if not best_match:
-            msg = "No matching policy rule could be found for image {image_name}."
-            raise NoMatchingPolicyRuleError(message=msg, image_name=str(image))
+            msg = "No matching policy rule could be found for image {image}."
+            raise NoMatchingPolicyRuleError(message=msg, image=str(image))
 
         most_specific_rule = next(
             filter(lambda x: x["pattern"] == best_match.key, self.policy), None
