@@ -355,7 +355,7 @@ case $1 in
   kubectl create clusterrolebinding ${NAME} --clusterrole=auxillary --serviceaccount=${NS}:${NAME}
 
   # Use that service account's config to run the Connaisseur deployment to see no other namespace is touched
-  TOKEN=$(kubectl describe secrets -n ${NS} "$(kubectl describe serviceaccount ${NAME} -n ${NS} | grep Tokens | awk '{print $2}')" | grep token: | awk '{print $2}')
+  TOKEN=$(kubectl create token ${NAME} --namespace=${NS})
   kubectl config set-credentials ${CTX} --token=${TOKEN}
   kubectl config set-context ${CTX} --cluster=${CLUSTER_NAME} --user=${CTX}
   kubectl config use-context ${CTX}
