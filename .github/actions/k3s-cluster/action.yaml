@@ -13,16 +13,16 @@ inputs:
 outputs:
   kubeconfig:
     description: Path to kubeconfig file
-    value: ${{ steps.set-output.outputs.kubeconfig }}
+    value: ${{ steps.set-versions.outputs.kubeconfig }}
   k3s-version:
     description: "Installed k3s version, such as v1.20.0+k3s2"
-    value: "${{ steps.set-output.outputs.k3s-version }}"
+    value: "${{ steps.set-versions.outputs.k3s-version }}"
   k8s-version:
     description: "Installed k8s version, such as v1.20.0"
-    value: "${{ steps.set-output.outputs.k8s-version }}"
+    value: "${{ steps.set-versions.outputs.k8s-version }}"
   helm-version:
     description: "Installed helm version, such as v3.4.2"
-    value: "${{ steps.set-output.outputs.helm-version }}"
+    value: "${{ steps.set-versions.outputs.helm-version }}"
 
 runs:
   using: "composite"
@@ -49,12 +49,12 @@ runs:
       shell: bash
 
     - name: Set version output
-      id: set-output
+      id: set-versions
       run: |
         echo "::group::Set version output"
-        echo "::set-output name=kubeconfig::$HOME/.kube/config"
-        echo "::set-output name=k3s-version::$(k3s --version | sed 's/.*\(v[0-9][^ ]*\).*/\1/')"
-        echo "::set-output name=k8s-version::$(k3s --version | sed 's/.*\(v[0-9][^+]*\).*/\1/')"
+        echo "kubeconfig=$HOME/.kube/config" >> $GITHUB_OUTPUT
+        echo "k3s-version=$(k3s --version | grep 'k3s' | sed 's/.*\(v[0-9][^ ]*\).*/\1/')" >> $GITHUB_OUTPUT
+        echo "k8s-version=$(k3s --version | grep 'k3s' | sed 's/.*\(v[0-9][^+]*\).*/\1/')" >> $GITHUB_OUTPUT
         echo "::endgroup::"
       shell: bash
 
