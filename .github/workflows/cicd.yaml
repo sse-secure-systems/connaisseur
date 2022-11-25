@@ -271,16 +271,53 @@ jobs:
       fail-fast: false
       matrix:
         k8s-version: [
-            # "v1.16",
-            # "v1.17",
-            # "v1.18",
-            # "v1.19",
             "v1.20",
             "v1.21",
             "v1.22",
             "v1.23",
             "v1.24",
             "v1.25",
+          ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: actions/download-artifact@v3
+        with:
+          name: images
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+      - name: Configure Connaisseur
+        run: |
+          yq e '.deployment.imagePullPolicy = "Never"' -i helm/values.yaml
+          yq e '.policy +={"pattern": "docker.io/securesystemsengineering/connaisseur:v*"} | .policy[4].pattern style="double"' -i helm/values.yaml
+          yq e '.policy[4].validator = "allow"' -i helm/values.yaml
+          yq e '.deployment.replicasCount = "1"' -i helm/values.yaml
+      - name: Run pre-config and workload integration tests
+        run: |
+          bash tests/integration/integration-test.sh "pre-and-workload"
+        shell: bash
+      - name: Display k8s logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+        shell: bash
+
+  k8s-legacy-versions:
+    # k3s with older versions doesn't play with newer kernel, so we're running those on deprecated hosts, yay...
+    runs-on: ubuntu-18.04
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s-version: [
+            "v1.16",
+            "v1.17",
+            "v1.18",
+            "v1.19",
           ]
     steps:
       - uses: actions/checkout@v3
