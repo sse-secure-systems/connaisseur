@@ -2,7 +2,7 @@ name: nightly-scans
 
 on:
   schedule:
-    - cron: '30 1 * * *'
+    - cron: "30 1 * * *"
 
 # Reduce default permission of GITHUB_TOKEN to nothing
 # Repository can still be checked out during these jobs
@@ -53,8 +53,7 @@ jobs:
         run: |
           sudo snap install yq
       - name: Get latest public image
-        run:
-          echo "LATEST-IMAGE=docker.io/$(yq e '.deployment.image' helm/values.yaml)" >> $GITHUB_ENV
+        run: echo "LATEST-IMAGE=docker.io/$(yq e '.deployment.image' helm/values.yaml)" >> $GITHUB_ENV
       - name: Run Trivy
         uses: aquasecurity/trivy-action@master
         with:
@@ -82,8 +81,8 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
-           name: trivy-reports
-           path: trivy-reports
+          name: trivy-reports
+          path: trivy-reports
 
   get-root:
     runs-on: ubuntu-latest
@@ -103,7 +102,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        integration-test-arg: ["regular", "cosign", "deployment", "pre-config", "helm-repo"]
+        integration-test-arg:
+          ["regular", "cosign", "deployment", "pre-config", "helm-repo"]
     services:
       alerting-endpoint:
         image: securesystemsengineering/alerting-endpoint
@@ -119,7 +119,7 @@ jobs:
       - uses: ./.github/actions/k3s-cluster
         name: Setup K8s cluster
         with:
-          k3s-channel: v1.22
+          k3s-channel: v1.25
       - name: Set environment variables for alerting listener
         run: |
           CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
@@ -150,8 +150,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s-version:
-          ["v1.16", "v1.17", "v1.18", "v1.19", "v1.20", "v1.21", "v1.22", "v1.23", "v1.24", "v1.25"]
+        k8s-version: [
+            # "v1.16",
+            # "v1.17",
+            # "v1.18",
+            # "v1.19",
+            "v1.20",
+            "v1.21",
+            "v1.22",
+            "v1.23",
+            "v1.24",
+            "v1.25",
+          ]
     steps:
       - uses: actions/checkout@v3
       - name: Install yq
