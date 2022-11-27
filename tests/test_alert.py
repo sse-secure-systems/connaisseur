@@ -1,3 +1,4 @@
+import os
 import pytest
 from datetime import datetime, timedelta
 import json
@@ -55,6 +56,76 @@ slack_receiver_config = {
 custom_receiver_config = {
     "receiver_url": "this.is.a.testurl.conn",
     "template": "custom",
+}
+
+receiver_config_bearer_env = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "bearer",
+    "receiver_authentication_bearer": {
+        "token_env": "CONNAISSEUR_ALERTING_TOKEN",
+    },
+    "template": "slack",
+}
+
+receiver_config_bearer_env_invalid_scheme = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "bearer",
+    "receiver_authentication_bearer": {
+        "token_env": "CONNAISSEUR_ALERTING_TOKEN",
+        "authentication_scheme": "",
+    },
+    "template": "slack",
+}
+
+receiver_config_bearer_file = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "bearer",
+    "receiver_authentication_bearer": {
+        "token_file": "/tmp/token123456",
+    },
+    "template": "slack",
+}
+
+receiver_config_bearer_env_scheme = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "bearer",
+    "receiver_authentication_bearer": {
+        "token_env": "CONNAISSEUR_ALERTING_TOKEN",
+        "authentication_scheme": "Newscheme",
+    },
+    "template": "slack",
+}
+
+receiver_config_basic = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "basic",
+    "receiver_authentication_basic": {
+        "username_env": "CONNAISSEUR_ALERTING_USERNAME",
+        "password_env": "CONNAISSEUR_ALERTING_PASSWORD",
+    },
+    "template": "slack",
+}
+
+receiver_config_basic_invalid_scheme = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "basic",
+    "receiver_authentication_basic": {
+        "username_env": "CONNAISSEUR_ALERTING_USERNAME",
+        "password_env": "CONNAISSEUR_ALERTING_PASSWORD",
+        "authentication_scheme": "Ba sic",
+    },
+    "template": "slack",
+}
+
+receiver_config_basic_scheme = {
+    "receiver_url": "this.is.a.testurl.conn",
+    "receiver_authentication_type": "basic",
+    "receiver_authentication_basic": {
+        "username_env": "CONNAISSEUR_ALERTING_USERNAME",
+        "password_env": "CONNAISSEUR_ALERTING_PASSWORD",
+        "authentication_scheme": "Newscheme",
+    },
+    "template": "slack",
 }
 
 keybase_receiver_config = {
@@ -129,6 +200,57 @@ injection_string = '"]}, "test": "Can I inject into json?", "cluster":'
             pytest.raises(ConfigurationError, match=r".*invalid format.*"),
         ),
         ("/", True, pytest.raises(ConfigurationError, match=r".*error occurred.*")),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig_bearer_1.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig_bearer_2.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig_bearer_3.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig_bearer_4.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig_basic_1.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig_basic_2.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig_basic_3.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/misconfigured_config/alertconfig_basic_4.json",
+            True,
+            pytest.raises(ConfigurationError, match=r".*invalid format.*"),
+        ),
+        (
+            "tests/data/alerting/valid_config/alertconfig_bearer_1.json",
+            False,
+            fix.no_exc(),
+        ),
+        (
+            "tests/data/alerting/valid_config/alertconfig_basic_1.json",
+            False,
+            fix.no_exc(),
+        ),
+        ("tests/data/alerting/missing.json", True, fix.no_exc()),
     ],
 )
 def test_alert_config_init(
@@ -257,6 +379,147 @@ def test_alert_init(
             )
         if receiver_config["template"] == "custom":
             assert alert_payload == json.loads(alert_.payload)
+
+
+@pytest.mark.parametrize(
+    "receiver_config, envs, files, headers_count, header, exception",
+    [
+        (
+            receiver_config_bearer_env,
+            {"CONNAISSEUR_ALERTING_TOKEN": "AAABBBCCCDDD"},
+            {},
+            2,
+            {"Authorization": "Bearer AAABBBCCCDDD"},
+            fix.no_exc(),
+        ),
+        (
+            receiver_config_bearer_env_scheme,
+            {"CONNAISSEUR_ALERTING_TOKEN": "AAABBBCCCDDD"},
+            {},
+            2,
+            {"Authorization": "Newscheme AAABBBCCCDDD"},
+            fix.no_exc(),
+        ),
+        (
+            receiver_config_bearer_file,
+            {},
+            {"/tmp/token123456": "AAABBBCCCDDDEEE"},
+            2,
+            {"Authorization": "Bearer AAABBBCCCDDDEEE"},
+            fix.no_exc(),
+        ),
+        (
+            receiver_config_bearer_env,
+            {"CONNAISSEUR_ALERTING_TOKEN": ""},
+            {},
+            1,
+            {},
+            pytest.raises(
+                ConfigurationError,
+                match=r"No token found from environmental variable.*",
+            ),
+        ),
+        (
+            receiver_config_bearer_env_invalid_scheme,
+            {},
+            {},
+            1,
+            {},
+            pytest.raises(
+                ConfigurationError,
+                match=r"The authentication scheme cannot be null or empty.",
+            ),
+        ),
+        (
+            receiver_config_bearer_file,
+            {},
+            {},
+            1,
+            {},
+            pytest.raises(ConfigurationError, match=r"No token file found.*"),
+        ),
+        (
+            receiver_config_basic,
+            {
+                "CONNAISSEUR_ALERTING_USERNAME": "user",
+                "CONNAISSEUR_ALERTING_PASSWORD": "password",
+            },
+            {},
+            2,
+            {"Authorization": "Basic user:password"},
+            fix.no_exc(),
+        ),
+        (
+            receiver_config_basic_scheme,
+            {
+                "CONNAISSEUR_ALERTING_USERNAME": "user",
+                "CONNAISSEUR_ALERTING_PASSWORD": "password",
+            },
+            {},
+            2,
+            {"Authorization": "Newscheme user:password"},
+            fix.no_exc(),
+        ),
+        (
+            receiver_config_basic,
+            {"CONNAISSEUR_ALERTING_USERNAME": "", "CONNAISSEUR_ALERTING_PASSWORD": ""},
+            {},
+            1,
+            {},
+            pytest.raises(
+                ConfigurationError,
+                match=r"No username or password found from environmental variables.*",
+            ),
+        ),
+        (
+            receiver_config_basic_invalid_scheme,
+            {},
+            {},
+            1,
+            {},
+            pytest.raises(
+                ConfigurationError,
+                match=r"The authentication scheme must contain only letters.",
+            ),
+        ),
+    ],
+)
+def test_alert_init_auth(
+    monkeypatch,
+    m_ad_schema_path,
+    m_alerting_without_send,
+    receiver_config: dict,
+    envs: dict,
+    files: dict,
+    headers_count: int,
+    header: dict,
+    exception,
+):
+    alert_message = "Alert Message"
+    admission_request = admission_request_deployment
+
+    for env, value in envs.items():
+        if value == "":
+            if env in os.environ:
+                del os.environ[env]
+        else:
+            os.environ[env] = envs[env]
+        # monkeypatch.setenv(os.environ[env], envs[env])
+
+    for filepath, content in files.items():
+        with open(filepath, "w") as f:
+            f.write(content)
+
+    with exception:
+        alert_ = alert.Alert(
+            alert_message, receiver_config, AdmissionRequest(admission_request)
+        )
+        assert len(alert_.headers) == headers_count
+        assert header.items() <= alert_.headers.items()
+        # assert list(header.keys())[0] in alert_.headers.keys()
+
+    for filepath in files:
+        os.remove(filepath)
 
 
 @pytest.mark.parametrize(

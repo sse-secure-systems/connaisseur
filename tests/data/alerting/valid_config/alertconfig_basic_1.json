@@ -1,0 +1,32 @@
+{
+    "reject_request": {
+        "message": "CONNAISSEUR rejected a request",
+        "templates": [
+            {
+                "priority": 3,
+                "receiver_url": "https://hooks.slack.com/services/123",
+                "template": "slack",
+                "receiver_authentication_type": "basic",
+                "receiver_authentication_basic": {
+                    "username_env": "",
+                    "password_env": ""
+                }
+            }
+        ]
+    },
+    "admit_request": {
+        "message": "CONNAISSEUR admitted a request",
+        "templates": [
+            {
+                "priority": 3,
+                "receiver_url": "https://hooks.slack.com/services/123",
+                "template": "slack",
+                "receiver_authentication_type": "basic",
+                "receiver_authentication_basic": {
+                    "username_env": "",
+                    "password_env": ""
+                }
+            }
+        ]
+    }
+}

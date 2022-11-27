@@ -83,6 +83,30 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          {{- if .Values.deployment.env }}
+            {{- range $e := .Values.deployment.env }}
+            - name: {{ $e.name }}
+              value: {{ $e.value }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.deployment.envValueFrom}}
+            {{- range $e := .Values.deployment.envValueFrom }}
+            - name:  {{ $e.name }}
+              valueFrom:
+                {{- if $e.valueFrom.secretKeyRef }}
+                secretKeyRef:
+                  name: {{ $e.valueFrom.secretKeyRef.name }}
+                  key: {{ $e.valueFrom.secretKeyRef.key }}
+                {{- else if $e.valueFrom.configMapKeyRef }}
+                configMapKeyRef:
+                  name: {{ $e.valueFrom.configMapKeyRef.name }}
+                  key: {{ $e.valueFrom.configMapKeyRef.key }}
+                {{- else if $e.valueFrom.fieldRef }}
+                fieldRef:
+                  fieldPath: {{ $e.valueFrom.fieldRef.fieldPath }}
+                {{- end }}
+            {{- end }}
+          {{- end }}
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
           securityContext:

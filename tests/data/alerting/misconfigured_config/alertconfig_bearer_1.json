@@ -1,0 +1,17 @@
+{
+    "reject_request": {
+        "message": "CONNAISSEUR rejected a request",
+        "templates": [
+            {
+                "priority": 3,
+                "receiver_url": "https://hooks.slack.com/services/123",
+                "template": "slack",
+                "receiver_authentication_type": "bearer",
+                "receiver_authentication_bearer": {
+                    "token_env": "123",
+                    "token_file": "123"
+                }
+            }
+        ]
+    }
+}
