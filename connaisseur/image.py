@@ -80,7 +80,7 @@ class Image:
         repo_reg = "".join(
             f"{item}/" for item in [self.registry, self.repository] if item
         )
-        tag = f":{self.tag}" if not self.digest else f":{self.tag}@sha256:{self.digest}"
+        tag = f":{self.tag}" if not self.digest else f"@sha256:{self.digest}" if not self.tag else f":{self.tag}@sha256:{self.digest}"
         return f"{repo_reg}{self.name}{tag}"
 
     def __eq__(self, other):
