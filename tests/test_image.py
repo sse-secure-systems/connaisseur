@@ -183,6 +183,16 @@ def test_has_digest(image: str, digest: bool):
             ),
         ),
         ("path/image", "docker.io/path/image:latest"),
+        (
+            (
+                "image:tag@sha256:859b5aada817b3eb53410222"
+                "e8fc232cf126c9e598390ae61895eb96f52ae46d"
+            ),
+            (
+                "docker.io/library/image:tag@sha256:859b5aada817b3eb"
+                "53410222e8fc232cf126c9e598390ae61895eb96f52ae46d"
+            ),
+        ),
     ],
 )
 def test_str(image: str, str_image: str):
