@@ -73,7 +73,6 @@ jobs:
       - name: Install packages
         # Since we run inside an alpine based container, we cannot compile yarl and multidic
         run: |
-          apk add gcc libc-dev
           pip3 install --upgrade pip
           YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
       - name: Lint

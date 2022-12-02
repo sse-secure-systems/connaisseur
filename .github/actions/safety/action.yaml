@@ -5,7 +5,6 @@ runs:
   steps:
     - name: Install packages
       run: |
-        apt update && apt install gcc build-essential -y
         pip3 install --upgrade pip
         pip3 install -r requirements_dev.txt
       shell: sh

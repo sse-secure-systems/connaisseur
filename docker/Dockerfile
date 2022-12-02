@@ -9,7 +9,7 @@ COPY requirements.txt /requirements.txt
 
 # Have to upgrade pip and install extra packages due to error when installing frozenlist
 # Since we run inside an alpine based container, we cannot compile yarl and multidict
-RUN apk add --no-cache gcc~=11.2.1_git20220219-r2 libc-dev~=0.7.2-r3 \
+RUN apk add --no-cache \
  && pip install --no-cache-dir --upgrade pip~=22.3 \
  && YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install --no-cache-dir --prefix=/install -r /requirements.txt
 
