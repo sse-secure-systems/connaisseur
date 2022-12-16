@@ -1,6 +1,26 @@
 {
     "type": "object",
     "properties": {
+        "deployment": {
+            "type": "object",
+            "properties": {
+                "tls": {
+                    "type": "object",
+                    "properties": {
+                        "cert": {
+                            "type": "string"
+                        },
+                        "key": {
+                            "type": "string"
+                        }
+                    },
+                    "dependentRequired": {
+                        "cert": ["key"],
+                        "key": ["cert"]
+                    }
+                }
+            }
+        },
         "validators": {
             "type": "array",
             "items": {

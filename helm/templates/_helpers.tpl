@@ -126,7 +126,19 @@ Extract Kubernetes Minor Version.
 {{- end -}}
 
 
-{{- define "getInstalledTLSCert" -}}
+{{- define "validateTLSConfig" -}}
+{{- if hasKey .Values.deployment "tls" -}}
+{{- if and (not (hasKey .Values.deployment.tls "cert")) (hasKey .Values.deployment.tls "key")}}
+{{ fail "Helm configuration has a 'deployment.tls' section with a 'key' attribute, but is missing the 'cert' attribute." -}}
+{{- end -}}
+{{- if and (not (hasKey .Values.deployment.tls "key")) (hasKey .Values.deployment.tls "cert")}}
+{{ fail "Helm configuration has a 'deployment.tls' section with a 'cert' attribute, but is missing the 'key' attribute." -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- define "getInstalledEncodedTLSCert" -}}
 {{- $data := (lookup "v1" "Secret" .Release.Namespace (printf "%s-tls" .Chart.Name)).data -}}
 {{- if $data -}}
     {{ get $data "tls.crt" }}
@@ -134,7 +146,7 @@ Extract Kubernetes Minor Version.
 {{- end -}}
 
 
-{{- define "getInstalledTLSKey" -}}
+{{- define "getInstalledEncodedTLSKey" -}}
 {{- $data := (lookup "v1" "Secret" .Release.Namespace (printf "%s-tls" .Chart.Name)).data -}}
 {{- if $data -}}
     {{ get $data "tls.key" }}
@@ -147,6 +159,15 @@ Extract Kubernetes Minor Version.
 {{ include (print $.Template.BasePath "/config-secrets.yaml") . }}
 {{ include (print $.Template.BasePath "/env.yaml") . }}
 {{ include (print $.Template.BasePath "/alertconfig.yaml") . }}
+{{- end -}}
+
+
+{{- define "getConfigChecksum" -}}
+{{- if hasKey .Values.deployment "tls" -}}
+    {{- printf "%s\n%s" .Values.deployment.tls (include "getConfigFiles" .)  | sha256sum }}
+{{- else -}}
+    {{ include "getConfigFiles" . | sha256sum }}
+{{- end -}}
 {{- end -}}
 
 

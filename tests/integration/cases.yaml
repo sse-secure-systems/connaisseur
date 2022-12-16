@@ -284,3 +284,18 @@ test_cases:
     namespace: default
     expected_msg: pod/pod-poff created
     expected_result: null
+  certificate:
+  - id: x509u
+    txt: Testing unsigned image...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
+    expected_result: INVALID
+  - id: x509s
+    txt: Testing signed image...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: default
+    expected_msg: pod/pod-x509s created
+    expected_result: VALID

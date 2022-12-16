@@ -311,6 +311,29 @@ pre_config_int_test() {
   multi_test "pre-config"
 }
 
+### CERTIFICATE INT TEST ####################################
+certificate_int_test() {
+  multi_test "certificate"
+}
+
+### CERTIFICATE TEST ####################################
+certificate_check() {
+  DIFF=$(diff tests/integration/tls.key <(kubectl get secrets -n connaisseur connaisseur-tls -o json | jq -r '.data."tls.key"' | base64 -d) || true)
+  if [[ ${DIFF} != "" ]]; then
+    echo "Unexpected TLS key. Should be pre-configured one."
+    EXIT=1
+  else
+    echo "Found expected TLS key."
+  fi
+  DIFF=$(diff tests/integration/tls.cert <(kubectl get secrets -n connaisseur connaisseur-tls -o json | jq -r '.data."tls.crt"' | base64 -d) || true)
+  if [[ ${DIFF} != "" ]]; then
+    echo "Unexpected TLS certificate. Should be pre-configured one."
+    EXIT=1
+  else
+    echo "Found expected TLS certificate."
+  fi
+}
+
 case $1 in
 "regular")
   update_via_env_vars
@@ -403,6 +426,18 @@ case $1 in
   update_values '.deployment.imagePullPolicy="Never"'
   make_install
   load_test
+  ;;
+"configured-cert")
+  echo "Testing deployment of Connaisseur using a pre-configured TLS certificate. See issue https://github.com/sse-secure-systems/connaisseur/issues/225"
+  update_via_env_vars
+  make install
+  certificate_int_test
+  # Clean up such that next test doesn't run into existing test pods
+  kubectl delete pods -luse="connaisseur-integration-test" -A >/dev/null
+  yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/update_cert.yaml
+  make_upgrade
+  certificate_check
+  certificate_int_test
   ;;
 *)
   echo "Invalid test case. Exiting..."
