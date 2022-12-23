@@ -1,12 +1,15 @@
 import os
 import re
-from connaisseur.trust_root import TrustRoot
+
 import pytest
 from aioresponses import aioresponses
-from ... import conftest as fix
+
+import connaisseur.exceptions as exc
 import connaisseur.validators.notaryv1.notaryv1_validator as nv1
 from connaisseur.image import Image
-import connaisseur.exceptions as exc
+from connaisseur.trust_root import TrustRoot
+
+from ... import conftest as fix
 
 
 @pytest.mark.parametrize(

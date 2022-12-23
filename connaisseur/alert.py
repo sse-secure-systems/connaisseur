@@ -7,14 +7,14 @@ from typing import Optional
 import requests
 from jinja2 import StrictUndefined, Template
 
-from connaisseur.util import safe_json_open, validate_schema
+from connaisseur.admission_request import AdmissionRequest
 from connaisseur.exceptions import (
     AlertSendingError,
     ConfigurationError,
     InvalidConfigurationFormatError,
     InvalidImageFormatError,
 )
-from connaisseur.admission_request import AdmissionRequest
+from connaisseur.util import safe_json_open, validate_schema
 
 
 class AlertingConfiguration:

@@ -4,21 +4,20 @@ import logging
 import os
 import re
 import subprocess  # nosec
-
 from concurrent.futures import ThreadPoolExecutor
 
 import connaisseur.constants as const
 from connaisseur.exceptions import (
     CosignError,
     CosignTimeout,
-    NotFoundException,
     InvalidFormatException,
+    NotFoundException,
     UnexpectedCosignData,
     ValidationError,
     WrongKeyError,
 )
 from connaisseur.image import Image
-from connaisseur.trust_root import KMSKey, TrustRoot, ECDSAKey
+from connaisseur.trust_root import ECDSAKey, KMSKey, TrustRoot
 from connaisseur.util import safe_path_func  # nosec
 from connaisseur.validators.interface import ValidatorInterface
 
@@ -163,7 +162,10 @@ class CosignValidator(ValidatorInterface):
                         digest = sig_data["critical"]["image"].get(
                             "docker-manifest-digest", ""
                         )
-                        if re.match(rf"{const.SHA256}:[0-9A-Fa-f]{{64}}", digest) is None:
+                        if (
+                            re.match(rf"{const.SHA256}:[0-9A-Fa-f]{{64}}", digest)
+                            is None
+                        ):
                             msg = "Digest '{digest}' does not match expected digest pattern."
                             raise InvalidFormatException(message=msg, digest=digest)
                     except Exception as err:

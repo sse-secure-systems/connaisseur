@@ -2,7 +2,6 @@ import connaisseur.kube_api as k_api
 from connaisseur.exceptions import ParentNotFoundError, UnknownAPIVersionError
 from connaisseur.image import Image
 
-
 SUPPORTED_API_VERSIONS = {
     "Pod": ["v1"],
     "Deployment": ["apps/v1", "apps/v1beta1", "apps/v1beta2"],

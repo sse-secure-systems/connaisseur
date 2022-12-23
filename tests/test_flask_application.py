@@ -1,13 +1,16 @@
 import re
+
 import pytest
 from aioresponses import aioresponses
-from . import conftest as fix
+
 import connaisseur.alert as alert
 import connaisseur.config as co
 import connaisseur.exceptions as exc
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.image import Image
 from connaisseur.validators.static.static_validator import StaticValidator
+
+from . import conftest as fix
 
 
 @pytest.fixture(autouse=True)

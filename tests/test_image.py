@@ -1,7 +1,9 @@
 import pytest
-from . import conftest as fix
-import connaisseur.image as img
+
 import connaisseur.exceptions as exc
+import connaisseur.image as img
+
+from . import conftest as fix
 
 
 @pytest.mark.parametrize(

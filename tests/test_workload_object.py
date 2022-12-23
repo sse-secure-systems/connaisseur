@@ -1,9 +1,10 @@
 import pytest
-from . import conftest as fix
-import connaisseur.workload_object as wl
+
 import connaisseur.exceptions as exc
+import connaisseur.workload_object as wl
 from connaisseur.image import Image
 
+from . import conftest as fix
 
 static_k8s = [
     {

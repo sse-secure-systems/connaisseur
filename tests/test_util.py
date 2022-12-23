@@ -1,7 +1,9 @@
 import pytest
-from . import conftest as fix
-import connaisseur.util as ut
+
 import connaisseur.exceptions as exc
+import connaisseur.util as ut
+
+from . import conftest as fix
 
 
 @pytest.mark.parametrize(

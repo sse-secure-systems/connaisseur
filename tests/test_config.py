@@ -1,9 +1,11 @@
 import pytest
-from . import conftest as fix
+
 import connaisseur.config as co
 import connaisseur.exceptions as exc
 import connaisseur.validators as vals
 from connaisseur.image import Image
+
+from . import conftest as fix
 
 
 @pytest.fixture(autouse=True)

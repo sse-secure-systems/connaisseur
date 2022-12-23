@@ -1,8 +1,10 @@
 import pytest
-from ... import conftest as fix
-import connaisseur.validators.static.static_validator as st
+
 import connaisseur.exceptions as exc
+import connaisseur.validators.static.static_validator as st
 from connaisseur.image import Image
+
+from ... import conftest as fix
 
 
 @pytest.mark.parametrize("name, approve", [("sample", True), ("sample", False)])

@@ -4,7 +4,7 @@ import os
 import traceback
 
 from flask import Flask, jsonify, request
-from prometheus_flask_exporter import PrometheusMetrics, NO_PREFIX
+from prometheus_flask_exporter import NO_PREFIX, PrometheusMetrics
 
 import connaisseur.constants as const
 from connaisseur.admission_request import AdmissionRequest
@@ -16,7 +16,6 @@ from connaisseur.exceptions import (
     ConfigurationError,
 )
 from connaisseur.util import get_admission_review
-
 
 APP = Flask(__name__)
 """

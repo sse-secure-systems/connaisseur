@@ -1,6 +1,7 @@
 import collections
 import fnmatch
 import os
+
 import yaml
 
 from connaisseur.exceptions import (

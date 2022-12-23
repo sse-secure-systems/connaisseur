@@ -5,12 +5,11 @@ import os
 from logging.config import dictConfig
 
 from cheroot.server import HTTPServer
-from cheroot.wsgi import Server
 from cheroot.ssl.builtin import BuiltinSSLAdapter
+from cheroot.wsgi import Server
 
 from connaisseur.flask_application import APP
 from connaisseur.logging_wrapper import ConnaisseurLoggingWrapper
-
 
 if __name__ == "__main__":
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")

@@ -1,7 +1,9 @@
 import pytest
-from ... import conftest as fix
-import connaisseur.validators.notaryv1.tuf_role as tuf
+
 import connaisseur.exceptions as exc
+import connaisseur.validators.notaryv1.tuf_role as tuf
+
+from ... import conftest as fix
 
 
 @pytest.mark.parametrize(

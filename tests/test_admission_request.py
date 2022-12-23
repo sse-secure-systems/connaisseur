@@ -1,8 +1,9 @@
 import pytest
-from . import conftest as fix
+
 import connaisseur.admission_request as admreq
 import connaisseur.exceptions as exc
 
+from . import conftest as fix
 
 static_adm_req = [
     {

@@ -1,10 +1,13 @@
 import base64
-from connaisseur.trust_root import TrustRoot
+
 import pytest
-from ... import conftest as fix
-import connaisseur.validators.notaryv1.key_store as ks
-from connaisseur.validators.notaryv1.trust_data import TrustData
+
 import connaisseur.exceptions as exc
+import connaisseur.validators.notaryv1.key_store as ks
+from connaisseur.trust_root import TrustRoot
+from connaisseur.validators.notaryv1.trust_data import TrustData
+
+from ... import conftest as fix
 
 sample_key = (
     "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtR5kwrDK22SyCu"

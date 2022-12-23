@@ -1,21 +1,22 @@
+import json
 import os
 import re
-import json
+from contextlib import contextmanager
+
 import pytest
 import requests
 from aioresponses import CallbackResult
-import connaisseur.kube_api
-import connaisseur.config as co
+
 import connaisseur.admission_request as admreq
 import connaisseur.alert as alert
-from connaisseur.trust_root import TrustRoot
-import connaisseur.validators.notaryv1.trust_data as td
+import connaisseur.config as co
+import connaisseur.kube_api
+import connaisseur.util as util
 import connaisseur.validators.notaryv1.key_store as ks
 import connaisseur.validators.notaryv1.notary as no
 import connaisseur.validators.notaryv1.notaryv1_validator as nv1
-import connaisseur.util as util
-from contextlib import contextmanager
-
+import connaisseur.validators.notaryv1.trust_data as td
+from connaisseur.trust_root import TrustRoot
 
 """
 This file is used for sharing fixtures across all other test files.

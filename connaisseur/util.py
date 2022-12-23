@@ -5,7 +5,7 @@ import re
 from typing import Optional
 
 import yaml
-from jsonschema import FormatChecker, validate, ValidationError
+from jsonschema import FormatChecker, ValidationError, validate
 
 from connaisseur.exceptions import PathTraversalError
 

@@ -1,11 +1,14 @@
+import subprocess
+
 import pytest
 import pytest_subprocess
-import subprocess
-from ... import conftest as fix
-from connaisseur.image import Image
-import connaisseur.validators.cosign.cosign_validator as co
+
 import connaisseur.exceptions as exc
+import connaisseur.validators.cosign.cosign_validator as co
+from connaisseur.image import Image
 from connaisseur.trust_root import TrustRoot
+
+from ... import conftest as fix
 
 example_key = (
     "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXb"

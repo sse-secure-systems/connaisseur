@@ -1,8 +1,9 @@
 import pytest
-from . import conftest as fix
+
 import connaisseur.exceptions as exc
 import connaisseur.trust_root as trust_root
 
+from . import conftest as fix
 
 sample_ecdsa = "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f\nQQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==\n-----END PUBLIC KEY-----"
 sample_rsa = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs5pC7R5OTSTUMJHUniPk\nrLfmGDAUxZtRlvIE+pGPCD6cUXH22advkK87xwpupjxdVYuKTFnWHUIyFJwjI3vu\nsievezcAr0E/xxyeo49tWog9kFoooK3qmXjpETC8OpvNROZ0K3qhlm9PZkGo3gSJ\n/B4rMU/d+jkCI8eiUPpdVQOczdBoD5nzQAF1mfmffWGsbKY+d8/l77Vset0GXExR\nzUtnglMhREyHNpDeQUg5OEn+kuGLlTzIxpIF+MlbzP3+xmNEzH2iafr0ae2g5kX2\n880priXpxG8GXW2ybZmPvchclnvFu4ZfZcM10FpgYJFvR/9iofFeAka9u5z6VZcc\nmQIDAQAB\n-----END PUBLIC KEY-----"

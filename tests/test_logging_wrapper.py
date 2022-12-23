@@ -1,9 +1,10 @@
-import pytest
 import time
 
-from . import conftest as fix
+import pytest
 
 import connaisseur.logging_wrapper as lw
+
+from . import conftest as fix
 
 
 @pytest.fixture

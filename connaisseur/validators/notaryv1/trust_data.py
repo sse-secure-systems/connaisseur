@@ -15,7 +15,7 @@ from connaisseur.exceptions import (
     ValidationError,
     WrongKeyError,
 )
-from connaisseur.trust_root import TrustRoot, ECDSAKey
+from connaisseur.trust_root import ECDSAKey, TrustRoot
 from connaisseur.util import validate_schema
 from connaisseur.validators.notaryv1.key_store import KeyStore
 

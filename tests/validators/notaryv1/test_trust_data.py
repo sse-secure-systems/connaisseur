@@ -1,11 +1,14 @@
-import pytest
-import json
-import pytz
 import datetime as dt
-from ... import conftest as fix
-import connaisseur.validators.notaryv1.trust_data as td
+import json
+
+import pytest
+import pytz
+
 import connaisseur.exceptions as exc
+import connaisseur.validators.notaryv1.trust_data as td
 from connaisseur.trust_root import TrustRoot
+
+from ... import conftest as fix
 
 pub_root_keys = {
     "2cd463575a31cb3184320e889e82fb1f9e3bbebee2ae42b2f825b0c8a734e798": {

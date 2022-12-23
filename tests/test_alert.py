@@ -1,11 +1,13 @@
-import pytest
-from datetime import datetime, timedelta
 import json
+from datetime import datetime, timedelta
 
-from . import conftest as fix
+import pytest
+
 import connaisseur.alert as alert
 from connaisseur.admission_request import AdmissionRequest
 from connaisseur.exceptions import AlertSendingError, ConfigurationError
+
+from . import conftest as fix
 
 with open(
     "tests/data/sample_admission_requests/ad_request_deployments.json", "r"

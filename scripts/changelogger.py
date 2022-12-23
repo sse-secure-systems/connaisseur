@@ -1,9 +1,10 @@
 import argparse
 import base64
-import requests
 import subprocess
 import sys
 import time
+
+import requests
 
 sep = "@@__CHGLOG__@@"
 delim = "@@__CHGLOG_DELIMITER__@@"

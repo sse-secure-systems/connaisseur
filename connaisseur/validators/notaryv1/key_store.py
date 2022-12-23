@@ -1,6 +1,6 @@
+import connaisseur.constants as const
 from connaisseur.exceptions import NotFoundException
 from connaisseur.trust_root import TrustRoot
-import connaisseur.constants as const
 
 
 class KeyStore:
