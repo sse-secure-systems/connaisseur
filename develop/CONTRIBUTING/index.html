@@ -1034,7 +1034,7 @@ This includes the following steps:</p>
 <h3 id="set-up-the-environment">Set up the environment<a class="headerlink" href="#set-up-the-environment" title="Permanent link">⚓︎</a></h3>
 <p>To start contributing, you will need to set up your local environment.
 First step is to get the source code by cloning this repository:</p>
-<p><div class="highlight"><pre><span></span><code>git clone git@github.com:sse-secure-systems/connaisseur.git
+<p><div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:sse-secure-systems/connaisseur.git
 </code></pre></div>
 In order to review the effects of your changes, you should create your own Kubernetes cluster and install Connaisseur.
 This is described in the <a href="../getting_started/">getting started</a>.
@@ -1082,7 +1082,7 @@ pytest --cov=connaisseur --cov-report=xml tests/
 </ul>
 <p>You can also run this integration test on a local cluster. There is a more <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/tests/integration/README.md">detailed guided</a> on how to do that.</p>
 <p>If you are changing documentation, you can simply inspect your changes locally via:</p>
-<div class="highlight"><pre><span></span><code>docker run --rm -it -p <span class="m">8000</span>:8000 -v <span class="si">${</span><span class="nv">PWD</span><span class="si">}</span>:/docs squidfunk/mkdocs-material
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>-v<span class="w"> </span><span class="si">${</span><span class="nv">PWD</span><span class="si">}</span>:/docs<span class="w"> </span>squidfunk/mkdocs-material
 </code></pre></div>
 <h3 id="signed-commits-and-pull-requests">Signed commits and pull requests<a class="headerlink" href="#signed-commits-and-pull-requests" title="Permanent link">⚓︎</a></h3>
 <p>All changes to the <code>develop</code> and <code>master</code> branch must be signed which is enforced via <a href="https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-required-commit-signing">branch protection</a>.
@@ -1091,14 +1091,14 @@ Consequently, we appreciate but do not require that commits in PRs are signed.</
 <p>A general introduction into signing commits can for example be found in the <a href="https://withblue.ink/2020/05/17/how-and-why-to-sign-git-commits.html">With Blue Ink blog</a>. For details on setting everything up for GitHub, please follow the steps in the <a href="https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification">Documentation</a>.</p>
 <p>Once you have generated your local GPG key, added it to your GitHub account and informed Git about it, you are set up to create signed commits.
 We recommend to configure Git to sign commits by default via:
-<div class="highlight"><pre><span></span><code>git config commit.gpgsign <span class="nb">true</span>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>config<span class="w"> </span>commit.gpgsign<span class="w"> </span><span class="nb">true</span>
 </code></pre></div>
 This avoids forgetting to use the <code>-S</code> flag when committing changes.
 In case it happens anyways, you can always rebase to sign earlier commits:
-<div class="highlight"><pre><span></span><code>git rebase -i master
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>rebase<span class="w"> </span>-i<span class="w"> </span>master
 </code></pre></div>
 You can then mark all commits that need to be signed as <code>edit</code> and sign them without any other changes via:
-<div class="highlight"><pre><span></span><code>git commit -S --amend --no-edit
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>commit<span class="w"> </span>-S<span class="w"> </span>--amend<span class="w"> </span>--no-edit
 </code></pre></div>
 Finally, you force push to overwrite the unsigned commits via <code>git push -f</code>.</p>
 <h3 id="semantic-and-conventional-commits">Semantic and conventional commits<a class="headerlink" href="#semantic-and-conventional-commits" title="Permanent link">⚓︎</a></h3>

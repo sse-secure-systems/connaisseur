@@ -962,9 +962,9 @@ You're not viewing the docs of the latest version.
 <h1 id="detection-mode">Detection Mode<a class="headerlink" href="#detection-mode" title="Permanent link">⚓︎</a></h1>
 <p>A detection mode is available in order to avoid interruptions of a running cluster, to support initial rollout or for testing purposes.
 In detection mode, Connaisseur admits all images to the cluster, but issues a warning<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> and logs an error message for images that do not comply with the policy or in case of other unexpected failures:</p>
-<div class="highlight"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
-&gt; Warning: Unable to find signed digest <span class="k">for</span> image docker.io/securesystemsengineering/testimage:unsigned. <span class="o">(</span>not denied due to DETECTION_MODE<span class="o">)</span>
-&gt; pod/unsigned created
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>unsigned<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
+&gt;<span class="w"> </span>Warning:<span class="w"> </span>Unable<span class="w"> </span>to<span class="w"> </span>find<span class="w"> </span>signed<span class="w"> </span>digest<span class="w"> </span><span class="k">for</span><span class="w"> </span>image<span class="w"> </span>docker.io/securesystemsengineering/testimage:unsigned.<span class="w"> </span><span class="o">(</span>not<span class="w"> </span>denied<span class="w"> </span>due<span class="w"> </span>to<span class="w"> </span>DETECTION_MODE<span class="o">)</span>
+&gt;<span class="w"> </span>pod/unsigned<span class="w"> </span>created
 </code></pre></div>
 <p>To activate the detection mode, set the <code>detectionMode</code> flag to <code>true</code> in <code>helm/values.yaml</code>.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>

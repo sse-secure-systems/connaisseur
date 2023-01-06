@@ -1010,15 +1010,15 @@ Cosign on the other hand is somewhat more straightforward to use.</p>
 <p>General usage of DCT is described in the <a href="https://docs.docker.com/engine/security/trust/">docker documentation</a>.
 Detailed information on all configuration options for Connaisseur is provided in the <a href="../validators/notaryv1/">Notary (V1) validator section</a>.
 For now, we just need to generate a public-private root key pair via:</p>
-<div class="highlight"><pre><span></span><code>docker trust key generate root
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>trust<span class="w"> </span>key<span class="w"> </span>generate<span class="w"> </span>root
 </code></pre></div>
 <p>You will be prompted for a password, the private key is automatically imported and a <code>root.pub</code> file is created in your current folder that contains your public key which should look similar to:</p>
-<div class="highlight"><pre><span></span><code>-----BEGIN PUBLIC KEY-----
-role: root
+<div class="highlight"><pre><span></span><code>-----BEGIN<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
+role:<span class="w"> </span>root
 
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5
 YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ<span class="o">==</span>
------END PUBLIC KEY-----
+-----END<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
 </code></pre></div>
 <p>We will only need the actual base64 encoded part of the key later.</p>
 </div>
@@ -1027,22 +1027,22 @@ YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ<span class="o">==</sp
 You can download Cosign from its <a href="https://github.com/sigstore/cosign/releases">GitHub repository</a>.
 Detailed information on all configuration options for Connaisseur is provided in the <a href="../validators/sigstore_cosign/">Cosign validator section</a>.
 For now, we just need to generate a key pair via:</p>
-<div class="highlight"><pre><span></span><code>cosign generate-key-pair
+<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>generate-key-pair
 </code></pre></div>
 <p>You will be prompted to set a password, after which a private (<code>cosign.key</code>) and public (<code>cosign.pub</code>) key are created.
 In the next step, we will need the public key that should look similar to:</p>
-<div class="highlight"><pre><span></span><code>-----BEGIN PUBLIC KEY-----
+<div class="highlight"><pre><span></span><code>-----BEGIN<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
 <span class="nv">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA</span><span class="o">==</span>
------END PUBLIC KEY-----
+-----END<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
 </code></pre></div>
 </div>
 </div>
 <h2 id="configure-connaisseur">Configure Connaisseur<a class="headerlink" href="#configure-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>Now, we will need to configure Connaisseur.
 Let's first clone the repository:</p>
-<div class="highlight"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
-<span class="nb">cd</span> connaisseur
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sse-secure-systems/connaisseur.git
+<span class="nb">cd</span><span class="w"> </span>connaisseur
 </code></pre></div>
 <p>Connaisseur is configured via <code>helm/values.yaml</code>, so we will start there.
 We need to set Connaisseur to use our previously created public key for validation.
@@ -1050,53 +1050,53 @@ To do so, go to the <code>.validators</code> and find the <code>default</code> v
 We need to uncomment the trust root with name <code>default</code> and add our previously created public key.
 The result should look similar to this:</p>
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Docker Content Trust</label><div class="tabbed-content">
-<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span><span class="w"></span>
-<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"> </span><span class="c1"># configure the notary server to be used</span><span class="w"></span>
-<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># the `default` key is used if no key is specified in image policy</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># enter your key below</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5</span><span class="w"></span>
-<span class="w">      </span><span class="no">YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  -----BEGIN CERTIFICATE-----</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  ...</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  -----END CERTIFICATE-----</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#auth:  # credentials in case the trust data requires authentication</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  # either (preferred solution)</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  # or (only for notaryv1 validator)</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  username: myuser</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  password: mypass</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"> </span><span class="c1"># configure the notary server to be used</span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># the `default` key is used if no key is specified in image policy</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># enter your key below</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5</span>
+<span class="w">      </span><span class="no">YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
+<span class="w">  </span><span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span>
+<span class="w">  </span><span class="c1">#  -----BEGIN CERTIFICATE-----</span>
+<span class="w">  </span><span class="c1">#  ...</span>
+<span class="w">  </span><span class="c1">#  -----END CERTIFICATE-----</span>
+<span class="w">  </span><span class="c1">#auth:  # credentials in case the trust data requires authentication</span>
+<span class="w">  </span><span class="c1">#  # either (preferred solution)</span>
+<span class="w">  </span><span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span>
+<span class="w">  </span><span class="c1">#  # or (only for notaryv1 validator)</span>
+<span class="w">  </span><span class="c1">#  username: myuser</span>
+<span class="w">  </span><span class="c1">#  password: mypass</span>
 </code></pre></div>
 </div>
 <input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Cosign</label><div class="tabbed-content">
 <p><em>In addition for Cosign, the <code>type</code> needs to be set to <code>cosign</code> and the <code>host</code> is not required.</em></p>
-<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span><span class="w"></span>
-<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># the `default` key is used if no key is specified in image policy</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># enter your key below</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span><span class="w"></span>
-<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  -----BEGIN CERTIFICATE-----</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  ...</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  -----END CERTIFICATE-----</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#auth:  # credentials in case the trust data requires authentication</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  # either (preferred solution)</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  # or (only for notaryv1 validator)</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  username: myuser</span><span class="w"></span>
-<span class="w">  </span><span class="c1">#  password: mypass</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># the `default` key is used if no key is specified in image policy</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># enter your key below</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
+<span class="w">  </span><span class="c1">#cert: |  # in case the trust data host is using a self-signed certificate</span>
+<span class="w">  </span><span class="c1">#  -----BEGIN CERTIFICATE-----</span>
+<span class="w">  </span><span class="c1">#  ...</span>
+<span class="w">  </span><span class="c1">#  -----END CERTIFICATE-----</span>
+<span class="w">  </span><span class="c1">#auth:  # credentials in case the trust data requires authentication</span>
+<span class="w">  </span><span class="c1">#  # either (preferred solution)</span>
+<span class="w">  </span><span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span>
+<span class="w">  </span><span class="c1">#  # or (only for notaryv1 validator)</span>
+<span class="w">  </span><span class="c1">#  username: myuser</span>
+<span class="w">  </span><span class="c1">#  password: mypass</span>
 </code></pre></div>
 </div>
 </div>
@@ -1106,31 +1106,31 @@ Per default, Connaisseur's image policy under <code>.policy</code> in <code>helm
 Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the <a href="../basics/">basics</a> to leverage the full potential of Connaisseur.</p>
 <h2 id="deploy-connaisseur">Deploy Connaisseur<a class="headerlink" href="#deploy-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>So let's deploy Connaisseur to the cluster:</p>
-<div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>This can take a few minutes.
 You should be prompted something like:</p>
-<div class="highlight"><pre><span></span><code>NAME: connaisseur
-LAST DEPLOYED: Fri Jul  <span class="m">9</span> <span class="m">20</span>:43:10 <span class="m">2021</span>
-NAMESPACE: connaisseur
-STATUS: deployed
-REVISION: <span class="m">1</span>
-TEST SUITE: None
+<div class="highlight"><pre><span></span><code>NAME:<span class="w"> </span>connaisseur
+LAST<span class="w"> </span>DEPLOYED:<span class="w"> </span>Fri<span class="w"> </span>Jul<span class="w">  </span><span class="m">9</span><span class="w"> </span><span class="m">20</span>:43:10<span class="w"> </span><span class="m">2021</span>
+NAMESPACE:<span class="w"> </span>connaisseur
+STATUS:<span class="w"> </span>deployed
+REVISION:<span class="w"> </span><span class="m">1</span>
+TEST<span class="w"> </span>SUITE:<span class="w"> </span>None
 </code></pre></div>
 <p>Afterwards, we can check that Connaisseur is running via <code>kubectl get all -n connaisseur</code> which should look similar to:</p>
-<div class="highlight"><pre><span></span><code>NAME                                          READY   STATUS    RESTARTS   AGE
-pod/connaisseur-deployment-6876c87c8c-txrkj   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m9s
-pod/connaisseur-deployment-6876c87c8c-wvr7q   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m9s
-pod/connaisseur-deployment-6876c87c8c-rnc7k   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m9s
+<div class="highlight"><pre><span></span><code>NAME<span class="w">                                          </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+pod/connaisseur-deployment-6876c87c8c-txrkj<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>2m9s
+pod/connaisseur-deployment-6876c87c8c-wvr7q<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>2m9s
+pod/connaisseur-deployment-6876c87c8c-rnc7k<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>2m9s
 
-NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>   AGE
-service/connaisseur-svc   ClusterIP   <span class="m">10</span>.152.183.166   &lt;none&gt;        <span class="m">443</span>/TCP   2m10s
+NAME<span class="w">                      </span>TYPE<span class="w">        </span>CLUSTER-IP<span class="w">       </span>EXTERNAL-IP<span class="w">   </span>PORT<span class="o">(</span>S<span class="o">)</span><span class="w">   </span>AGE
+service/connaisseur-svc<span class="w">   </span>ClusterIP<span class="w">   </span><span class="m">10</span>.152.183.166<span class="w">   </span>&lt;none&gt;<span class="w">        </span><span class="m">443</span>/TCP<span class="w">   </span>2m10s
 
-NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/connaisseur-deployment   <span class="m">3</span>/3     <span class="m">3</span>            <span class="m">3</span>           2m9s
+NAME<span class="w">                                     </span>READY<span class="w">   </span>UP-TO-DATE<span class="w">   </span>AVAILABLE<span class="w">   </span>AGE
+deployment.apps/connaisseur-deployment<span class="w">   </span><span class="m">3</span>/3<span class="w">     </span><span class="m">3</span><span class="w">            </span><span class="m">3</span><span class="w">           </span>2m9s
 
-NAME                                                DESIRED   CURRENT   READY   AGE
-replicaset.apps/connaisseur-deployment-6876c87c8c   <span class="m">3</span>         <span class="m">3</span>         <span class="m">3</span>       2m9s
+NAME<span class="w">                                                </span>DESIRED<span class="w">   </span>CURRENT<span class="w">   </span>READY<span class="w">   </span>AGE
+replicaset.apps/connaisseur-deployment-6876c87c8c<span class="w">   </span><span class="m">3</span><span class="w">         </span><span class="m">3</span><span class="w">         </span><span class="m">3</span><span class="w">       </span>2m9s
 </code></pre></div>
 <h2 id="test-connaisseur">Test Connaisseur<a class="headerlink" href="#test-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>Now that we created our key pairs, configured and deployed Connaisseur, the next step is to test our setup.
@@ -1138,48 +1138,48 @@ So let's create and push a test image.
 Feel free to use our simple test Dockerfile under <code>tests/Dockerfile</code> (make sure to set your own <code>IMAGE</code> name):</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Typically, IMAGE=&lt;REGISTRY&gt;/&lt;REPOSITORY-NAME&gt;/&lt;IMAGE-NAME&gt;:&lt;TAG&gt;, like</span>
 <span class="nv">IMAGE</span><span class="o">=</span>docker.io/securesystemsengineering/demo:test
-docker build -f tests/Dockerfile -t <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span> .
-docker push <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>tests/Dockerfile<span class="w"> </span>-t<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span><span class="w"> </span>.
+docker<span class="w"> </span>push<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <blockquote>
 <p>In case you have DCT turned on per default via environment variable <code>DOCKER_CONTENT_TRUST=1</code>, you should disable for now during the <code>docker push</code> by adding the <code>--disable-content-trust=true</code>.</p>
 </blockquote>
 <p>If we try to deploy this unsigned image:</p>
-<div class="highlight"><pre><span></span><code>kubectl run <span class="nb">test</span> --image<span class="o">=</span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--image<span class="o">=</span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>Connaisseur denies the request due to lack of trust data or signed digest, e.g.:</p>
-<div class="highlight"><pre><span></span><code>Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: Unable to get root trust data from default.
+<div class="highlight"><pre><span></span><code>Error<span class="w"> </span>from<span class="w"> </span>server:<span class="w"> </span>admission<span class="w"> </span>webhook<span class="w"> </span><span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span><span class="w"> </span>denied<span class="w"> </span>the<span class="w"> </span>request:<span class="w"> </span>Unable<span class="w"> </span>to<span class="w"> </span>get<span class="w"> </span>root<span class="w"> </span>trust<span class="w"> </span>data<span class="w"> </span>from<span class="w"> </span>default.
 <span class="c1"># or</span>
-Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: No trust data <span class="k">for</span> image <span class="s2">&quot;docker.io/securesystemsengineering/demo:test&quot;</span>.
+Error<span class="w"> </span>from<span class="w"> </span>server:<span class="w"> </span>admission<span class="w"> </span>webhook<span class="w"> </span><span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span><span class="w"> </span>denied<span class="w"> </span>the<span class="w"> </span>request:<span class="w"> </span>No<span class="w"> </span>trust<span class="w"> </span>data<span class="w"> </span><span class="k">for</span><span class="w"> </span>image<span class="w"> </span><span class="s2">&quot;docker.io/securesystemsengineering/demo:test&quot;</span>.
 <span class="c1"># or</span>
-Error from server: admission webhook <span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span> denied the request: could not find signed digest <span class="k">for</span> image <span class="s2">&quot;docker.io/securesystemsengineering/demo:test&quot;</span> <span class="k">in</span> trust data.
+Error<span class="w"> </span>from<span class="w"> </span>server:<span class="w"> </span>admission<span class="w"> </span>webhook<span class="w"> </span><span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span><span class="w"> </span>denied<span class="w"> </span>the<span class="w"> </span>request:<span class="w"> </span>could<span class="w"> </span>not<span class="w"> </span>find<span class="w"> </span>signed<span class="w"> </span>digest<span class="w"> </span><span class="k">for</span><span class="w"> </span>image<span class="w"> </span><span class="s2">&quot;docker.io/securesystemsengineering/demo:test&quot;</span><span class="w"> </span><span class="k">in</span><span class="w"> </span>trust<span class="w"> </span>data.
 </code></pre></div>
 <p>So let's sign the image and try again.</p>
 <div class="tabbed-set" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Docker Content Trust</label><div class="tabbed-content">
 <p>In DCT signing works via <code>docker push</code> using the <code>--disable-content-trust</code> flag:</p>
-<div class="highlight"><pre><span></span><code>docker push <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span> --disable-content-trust<span class="o">=</span><span class="nb">false</span>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>push<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span><span class="w"> </span>--disable-content-trust<span class="o">=</span><span class="nb">false</span>
 </code></pre></div>
 <p>You will be prompted to provide your password and might be asked to set a new repository key.
 The trust data will then be pushed to the Docker Hub Notary server.</p>
 </div>
 <input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">Cosign</label><div class="tabbed-content">
 <p>For Cosign, we use the private key file from the first step:</p>
-<div class="highlight"><pre><span></span><code>cosign sign -key cosign.key <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>sign<span class="w"> </span>-key<span class="w"> </span>cosign.key<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>You will be asked to enter your password after wich the signature data will be pushed to your repository.</p>
 </div>
 </div>
 <p>After successful signing, we try again:</p>
-<div class="highlight"><pre><span></span><code>kubectl run <span class="nb">test</span> --image<span class="o">=</span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--image<span class="o">=</span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>Now, the request is admitted to the cluster and Kubernetes returns:</p>
-<div class="highlight"><pre><span></span><code>pod/test created
+<div class="highlight"><pre><span></span><code>pod/test<span class="w"> </span>created
 </code></pre></div>
 <p>You did it <img alt="🥳" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f973.svg" title=":partying_face:" /> you just verified your first signed images in your Kuberenetes cluster <img alt="👯" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f46f.svg" title=":people_with_bunny_ears_partying:" /></p>
 <p>Read on to learn how to fully configure Connaisseur <img alt="🛠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f6e0.svg" title=":tools:" /></p>
 <h2 id="cleanup">Cleanup<a class="headerlink" href="#cleanup" title="Permanent link">⚓︎</a></h2>
 <p>To uninstall Connaisseur, use:</p>
-<div class="highlight"><pre><span></span><code>helm uninstall connaisseur --namespace connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>connaisseur<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>Uninstallation can take a moment as Connaisseur needs to validate the deletion webhook.</p>
 

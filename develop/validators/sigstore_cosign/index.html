@@ -1096,44 +1096,44 @@ You can read more about it <a href="https://blog.sigstore.dev/">here</a>.</p>
 <p>Getting started with Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>.
 You can download Cosign from its <a href="https://github.com/sigstore/cosign/releases">GitHub repository</a>.
 In short: After installation, a keypair is generated via:</p>
-<div class="highlight"><pre><span></span><code>cosign generate-key-pair
+<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>generate-key-pair
 </code></pre></div>
 <p>You will be prompted to set a password, after which a private (<code>cosign.key</code>) and public (<code>cosign.pub</code>) key are created.
 You can then use Cosign to sign a container image using:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Here, ${IMAGE} is REPOSITORY/IMAGE_NAME:TAG</span>
-cosign sign -key cosign.key <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+cosign<span class="w"> </span>sign<span class="w"> </span>-key<span class="w"> </span>cosign.key<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>The created signature can be verfied via:</p>
-<div class="highlight"><pre><span></span><code>cosign verify -key cosign.pub <span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>verify<span class="w"> </span>-key<span class="w"> </span>cosign.pub<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>To use Connaisseur with Cosign, configure a validator in <code>helm/values.yaml</code> with the generated public key (<code>cosign.pub</code>) as a trust root.
 The entry in <code>.validators</code> should look something like this (make sure to add your own public key to trust root <code>default</code>):</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w"></span>
-<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># YOUR PUBLIC KEY BELOW</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span><span class="w"></span>
-<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># YOUR PUBLIC KEY BELOW</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
 </code></pre></div>
 <p>In <code>.policy</code>, add a pattern to match your public key to your own repository:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/testimage:co*&quot;</span><span class="w">  </span><span class="c1"># YOUR REPOSITORY</span><span class="w"></span>
-<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/testimage:co*&quot;</span><span class="w">  </span><span class="c1"># YOUR REPOSITORY</span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
 </code></pre></div>
 <p>After installation, you are ready to verify your images against your public key:</p>
-<div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>A quick guide for installation and testing is available in <a href="../../getting_started/#deploy-connaisseur">getting started</a>.
 In case you just use the default values for the validator and image policy given above, you are able to successfully validate our signed testimage:</p>
-<div class="highlight"><pre><span></span><code>kubectl run signed --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>signed<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed
 </code></pre></div>
 <p>And compare this to the unsigned image:</p>
-<div class="highlight"><pre><span></span><code>kubectl run unsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-unsigned
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>unsigned<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-unsigned
 </code></pre></div>
 <p>Or signed with a different key:</p>
-<div class="highlight"><pre><span></span><code>kubectl run altsigned --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed-alt
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>altsigned<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:co-signed-alt
 </code></pre></div>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
 <p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys for Cosign (refer to <a href="../../basics/#validators">basics</a> for more information on default keys):</p>
@@ -1235,22 +1235,22 @@ In case you just use the default values for the validator and image policy given
 </tbody>
 </table>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h3>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w"></span>
-<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span><span class="w"></span>
-<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
 
-<span class="nt">policy</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/testimage:co-*&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"></span>
-<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span><span class="w"></span>
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/testimage:co-*&quot;</span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span>
 </code></pre></div>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">⚓︎</a></h3>
@@ -1258,17 +1258,17 @@ In case you just use the default values for the validator and image policy given
 <h4 id="dockerconfigjson">dockerconfigjson<a class="headerlink" href="#dockerconfigjson" title="Permanent link">⚓︎</a></h4>
 <p>Create a <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> Kubernetes secret in the Connaisseur namespace and pass the secret name to Connaisseur as <code>auth.secret_name</code>.
 The secret can for example be created directly from your local <code>config.json</code> (for docker this resides in <code>~/.docker/config.json</code>):</p>
-<div class="highlight"><pre><span></span><code>kubectl create secret generic my-secret <span class="se">\</span>
-  --from-file<span class="o">=</span>.dockerconfigjson<span class="o">=</span>path/to/config.json <span class="se">\</span>
-  --type<span class="o">=</span>kubernetes.io/dockerconfigjson <span class="se">\</span>
-  -n connaisseur
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>my-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-file<span class="o">=</span>.dockerconfigjson<span class="o">=</span>path/to/config.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--type<span class="o">=</span>kubernetes.io/dockerconfigjson<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>The secret can also be generated directly from supplied credentials (which may differ from your local <code>config.json</code>, using:</p>
-<div class="highlight"><pre><span></span><code>kubectl create secret docker-registry my-secret <span class="se">\</span>
-  --docker-server<span class="o">=</span>https://index.docker.io/v1/ <span class="se">\</span>
-  --docker-username<span class="o">=</span><span class="s1">&#39;&lt;your username&gt;&#39;</span> <span class="se">\</span>
-  --docker-password<span class="o">=</span><span class="s1">&#39;&lt;your password&gt;&#39;</span> <span class="se">\</span>
-  -n connaisseur
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>docker-registry<span class="w"> </span>my-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-server<span class="o">=</span>https://index.docker.io/v1/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-username<span class="o">=</span><span class="s1">&#39;&lt;your username&gt;&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--docker-password<span class="o">=</span><span class="s1">&#39;&lt;your password&gt;&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>connaisseur
 </code></pre></div>
 <blockquote>
 <p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.695 8.695 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.75.75 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75zM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75zM5.75 12a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5z"/></svg></span> <strong>Note</strong>: At present, it <a href="https://github.com/sigstore/cosign/issues/587#issuecomment-1062510930">seems to be necessary</a> to suffix your registry server URL with <code>/v1/</code>. This may become unnecessary in the future.</p>
@@ -1280,16 +1280,16 @@ It is possible to provide one Kubernetes secret with a <code>config.json</code> 
 Thus, <a href="https://pkg.go.dev/github.com/google/go-containerregistry/pkg/authn/k8schain">k8schain</a> is used by <code>cosign</code> to pick up ambient registry credentials from the environment and for example use workload identities in case of common cloud providers.</p>
 <p>For example, when validating against an ECR private repository, the credentials of an IAM user allowed to perform actions
 <code>ecr:GetAuthorizationToken</code>, <code>ecr:BatchGetImage</code>, and <code>ecr:GetDownloadUrlForLayer</code> could be added to the secret <code>connaisseur-env-secrets</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span><span class="w"></span>
-<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-env-secrets</span><span class="w"></span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"></span>
-<span class="nt">data</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">AWS_ACCESS_KEY_ID</span><span class="p">:</span><span class="w"> </span><span class="err">***</span><span class="w"></span>
-<span class="w">  </span><span class="nt">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span><span class="w"> </span><span class="err">***</span><span class="w"></span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-env-secrets</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">AWS_ACCESS_KEY_ID</span><span class="p">:</span><span class="w"> </span><span class="err">***</span>
+<span class="w">  </span><span class="nt">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span><span class="w"> </span><span class="err">***</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </code></pre></div>
 <p>If <code>k8s_keychain</code> is set to <code>true</code> in the validator configuration, <code>cosign</code> will log into ECR at time of validation.
 See <a href="https://github.com/sigstore/cosign/pull/972">this cosign pull request</a> for more details.</p>
@@ -1297,18 +1297,18 @@ See <a href="https://github.com/sigstore/cosign/pull/972">this cosign pull reque
 <p>Connaisseur supports Cosign's URI-based <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">KMS integration</a> to manage the signing and verification keys.
 Simply configure the trust root key value as the respective URI.
 In case of a <a href="https://github.com/sigstore/cosign/blob/main/KMS.md#kubernetes-secret">Kubernetes secret</a>, this would take the following form:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w"></span>
-<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s://connaisseur/cosignkeys</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s://connaisseur/cosignkeys</span>
 </code></pre></div>
 <p>For that specific case of a Kubernetes secret, make sure to place it in a suitable namespace and grant Connaisseur access to it<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
 <p>Most other KMS will require credentials for authentication that must be provided via environment variables.
 Such environment variables can be injected into Connaisseur via <code>deployment.envs</code> in <code>helm/values.yaml</code>, e.g.:</p>
 <div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">envs</span><span class="p">:</span><span class="w"> </span>
-<span class="w">    </span><span class="nt">VAULT_ADDR</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvault.com</span><span class="w"></span>
-<span class="w">    </span><span class="nt">VAULT_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secrettoken</span><span class="w"></span>
+<span class="w">    </span><span class="nt">VAULT_ADDR</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvault.com</span>
+<span class="w">    </span><span class="nt">VAULT_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secrettoken</span>
 </code></pre></div>
 <h3 id="multi-signature-verification">Multi-signature verification<a class="headerlink" href="#multi-signature-verification" title="Permanent link">⚓︎</a></h3>
 <blockquote>
@@ -1326,60 +1326,60 @@ This allows to implement several advanced use cases (and policies):</p>
 </ul>
 <p>Multi-signature verification is scoped to the trust roots specified within a referenced validator.
 Consider the following validator configuration:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w"></span>
-<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alice</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ</span><span class="w"></span>
-<span class="w">      </span><span class="no">wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bob</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o</span><span class="w"></span>
-<span class="w">      </span><span class="no">EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">charlie</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span><span class="w"></span>
-<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4</span><span class="w"></span>
-<span class="w">      </span><span class="no">ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==</span><span class="w"></span>
-<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alice</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ</span>
+<span class="w">      </span><span class="no">wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bob</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o</span>
+<span class="w">      </span><span class="no">EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">charlie</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4</span>
+<span class="w">      </span><span class="no">ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
 </code></pre></div>
 <p>The trust roots <code>alice</code>, <code>bob</code>, and <code>charlie</code> are all included for verification in case <code>.policy[*].with.trust_root</code> is set to <code>"*"</code> (note that this is a special flag, not a real wildcard):</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
-<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
 </code></pre></div>
 <p>As neither <code>threshold</code> nor <code>required</code> are specified, Connaisseur will require signatures of all trust roots (<code>alice</code>, <code>bob</code>, and <code>charlie</code>) and deny an image otherwise.
 If either <code>threshold</code> or <code>required</code> is specified, it takes precedence.
 For example, it is possible to configure a threshold number of required signatures via the <code>threshold</code> key:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
-<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">    </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 </code></pre></div>
 <p>In this case, valid signatures of two or more out of the three trust roots are required for admittance.
 Using the <code>required</code> key, it is possible to enforce specific trusted roots:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
-<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span>
 </code></pre></div>
 <p>Now, only images with valid signatures of trust roots <code>alice</code> and <code>bob</code> are admitted.
 It is possible to combine <code>threshold</code> and <code>required</code> keys:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span><span class="w"></span>
-<span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">trust_root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">    </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;alice&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;bob&quot;</span><span class="p p-Indicator">]</span>
 </code></pre></div>
 <p>Thus, at least 3 valid signatures are required and <code>alice</code> and <code>bob</code> must be among those.</p>
 <h3 id="transparency-log-verification">Transparency log verification<a class="headerlink" href="#transparency-log-verification" title="Permanent link">⚓︎</a></h3>
@@ -1399,33 +1399,33 @@ Furthermore, the <code>host</code> allows switching to private rekor instances, 
 <ol>
 <li id="fn:1">
 <p>The corresponding role and rolebinding should look similar to the following:
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-role</span><span class="w"></span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span><span class="w">  </span><span class="c1"># namespace of respective k8s secret, might have to change that</span><span class="w"></span>
-<span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span><span class="w"></span>
-<span class="nt">rules</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;*&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;secrets&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="nn">---</span><span class="w"></span>
-<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RoleBinding</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-rolebinding</span><span class="w"></span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span><span class="w">  </span><span class="c1"># namespace of respective k8s secret, might have to change that</span><span class="w"></span>
-<span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span><span class="w"></span>
-<span class="nt">subjects</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-serviceaccount</span><span class="w"></span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span><span class="w">  </span><span class="c1"># Connaisseur&#39;s namespace, might have to change that</span><span class="w"></span>
-<span class="nt">roleRef</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-role</span><span class="w"></span>
-<span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-role</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span><span class="w">  </span><span class="c1"># namespace of respective k8s secret, might have to change that</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;*&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;secrets&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RoleBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-rolebinding</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span><span class="w">  </span><span class="c1"># namespace of respective k8s secret, might have to change that</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span>
+<span class="nt">subjects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-serviceaccount</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur</span><span class="w">  </span><span class="c1"># Connaisseur&#39;s namespace, might have to change that</span>
+<span class="nt">roleRef</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connaisseur-kms-role</span>
+<span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
 </code></pre></div>
 Make sure to adjust it as needed.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>

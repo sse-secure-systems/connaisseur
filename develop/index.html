@@ -1084,24 +1084,24 @@ It is built to be extendable and currently aims to support the following signing
 <p>Connaisseur comes pre-configured with public keys for its own repository and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> (official images can be found <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">here</a>).
 It can be fully configured via <code>helm/values.yaml</code>.
 For a quick start, clone the Connaisseur repository:</p>
-<div class="highlight"><pre><span></span><code>git clone https://github.com/sse-secure-systems/connaisseur.git
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sse-secure-systems/connaisseur.git
 </code></pre></div>
 <p>Next, install Connaisseur via <a href="https://helm.sh">Helm</a>:</p>
-<div class="highlight"><pre><span></span><code>helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>Once installation has finished, you are good to go.
 Successful verification can be tested via official Docker images like <code>hello-world</code>:</p>
-<div class="highlight"><pre><span></span><code>kubectl run hello-world --image<span class="o">=</span>docker.io/hello-world
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>hello-world<span class="w"> </span>--image<span class="o">=</span>docker.io/hello-world
 </code></pre></div>
 <p>Or our signed <code>testimage</code>:</p>
-<div class="highlight"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:signed
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:signed
 </code></pre></div>
 <p>Both will return <code>pod/&lt;name&gt; created</code>. However, when trying to deploy an unsigned image:</p>
-<div class="highlight"><pre><span></span><code>kubectl run demo --image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
 </code></pre></div>
 <p>Connaisseur denies the request and returns an error <code>(...) Unable to find signed digest (...)</code>. Since the images above are signed using Docker Content Trust, you can inspect the trust data using <code>docker trust inspect --pretty &lt;image-name&gt;</code>.</p>
 <p>To uninstall Connaisseur use:</p>
-<div class="highlight"><pre><span></span><code>helm uninstall connaisseur --namespace connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>connaisseur<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>Congrats <img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> you just validated the first images in your cluster!
 To get started configuring and verifying your own images and signatures, please follow our <a href="getting_started/">setup guide</a>.</p>
