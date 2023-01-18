@@ -1,5 +1,5 @@
 -r requirements.txt
-aioresponses~=0.7.3
+aioresponses~=0.7.4
 freezegun~=1.2.2
 parsedatetime~=2.6
 pylint~=2.15.10
