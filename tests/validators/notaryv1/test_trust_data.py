@@ -1,4 +1,5 @@
 import datetime as dt
+from freezegun import freeze_time
 import json
 
 import pytest
@@ -528,8 +529,9 @@ def test_get_digest(m_trust_data, data: dict, tag: str, digest: str, exception):
 
 
 # # This test will fail in January 2023 due to the expiry date in the test data
-# # TODO: Autogenerate test data with "up-to-date" expiry dates
+# # which is fixed by freezing time just before expiry via freezegun module
 @pytest.mark.parametrize("data, role", [(fix.get_td("sample_snapshot"), "snapshot")])
+@freeze_time("Jan 10th, 2023")
 def test_validate(m_trust_data, sample_key_store, data: dict, role: str):
     _trust_data = td.TrustData(data, role)
     _trust_data.validate(sample_key_store)
