@@ -1150,25 +1150,25 @@ In case you just use the default values for the validator and image policy given
 <tr>
 <td><code>name</code></td>
 <td></td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>See <a href="../../basics/#validators">basics</a>.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
 <td></td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td><code>cosign</code>; the validator type must be set to <code>cosign</code>.</td>
 </tr>
 <tr>
 <td><code>trust_roots[*].name</code></td>
 <td></td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>See <a href="../../basics/#validators">basics</a>.</td>
 </tr>
 <tr>
 <td><code>trust_roots[*].key</code></td>
 <td></td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>See <a href="../../basics/#validators">basics</a>. ECDSA public key from <code>cosign.pub</code> file or <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">KMS URI</a>. See additional notes <a href="#kms-support">below</a>.</td>
 </tr>
 <tr>
@@ -1217,7 +1217,7 @@ In case you just use the default values for the validator and image policy given
 <tr>
 <td><code>with.trust_root</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>Setting the name of trust root to <code>"*"</code> enables verification of multiple trust roots. Refer to section on <a href="#multi-signature-verification">multi-signature verification</a> for more information.</td>
 </tr>
 <tr>
@@ -1312,7 +1312,7 @@ Such environment variables can be injected into Connaisseur via <code>deployment
 </code></pre></div>
 <h3 id="multi-signature-verification">Multi-signature verification<a class="headerlink" href="#multi-signature-verification" title="Permanent link">⚓︎</a></h3>
 <blockquote>
-<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might be unstable over time.
+<p><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might be unstable over time.
 As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
 </blockquote>
 <p>Connaisseur can verify multiple signatures for a single image.
@@ -1384,7 +1384,7 @@ It is possible to combine <code>threshold</code> and <code>required</code> keys:
 <p>Thus, at least 3 valid signatures are required and <code>alice</code> and <code>bob</code> must be among those.</p>
 <h3 id="transparency-log-verification">Transparency log verification<a class="headerlink" href="#transparency-log-verification" title="Permanent link">⚓︎</a></h3>
 <blockquote>
-<p><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might be unstable over time.
+<p><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might be unstable over time.
 As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
 </blockquote>
 <p>The sigstore project contains a transparency log called <a href="https://docs.sigstore.dev/rekor/overview">Rekor</a> that provides an immutable, tamper-resistant ledger to record signed metadata to an immutable record.
