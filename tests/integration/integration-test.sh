@@ -241,6 +241,7 @@ regular_int_test() {
   DEPLOYED_SHA=$(kubectl get pod pod-rs -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://')
   if [[ "${DEPLOYED_SHA}" != 'c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7' ]]; then
     echo -e "${FAILED}"
+    EXIT="1"
   else
     echo -e "${SUCCESS}"
   fi
