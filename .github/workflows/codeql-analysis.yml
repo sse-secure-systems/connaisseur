@@ -8,9 +8,11 @@ on:
   schedule:
     - cron: '40 6 * * 3'
 
-# Reduce default permission of GITHUB_TOKEN to nothing
-# Repository can still be checked out during these jobs
-permissions: {}
+# Reduce to minimal permission set: https://github.com/github/codeql-action/issues/464#issuecomment-828680607
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: read
 
 jobs:
   analyze:
