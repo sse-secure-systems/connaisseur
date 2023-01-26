@@ -20,6 +20,7 @@ It provides several additional features:
 - [Metrics](features/metrics.md): *get prometheus metrics at `/metrics`*
 - [Alerting](features/alerting.md): *send alerts based on verification result*
 - [Detection Mode](features/detection_mode.md): *warn but do not block invalid images*
+- [Validation Mode](features/validation_mode.md): *configure whether or not to mutate images*
 - [Namespaced Validation](features/namespaced_validation.md): *restrict validation to dedicated namespaces*
 - [Automatic Child Approval](features/automatic_child_approval.md): *configure approval of Kubernetes child resources*
 
