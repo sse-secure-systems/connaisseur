@@ -12,6 +12,7 @@ class AdmissionRequest:
         )
 
         request = ad_request["request"]
+        self.__request = request
         self.uid = request["uid"]
         self.kind = request["kind"]["kind"]
         self.namespace = request["namespace"]
@@ -28,3 +29,7 @@ class AdmissionRequest:
             "name": self.wl_object.name,
             "namespace": self.namespace,
         }
+
+    @property
+    def old_wl_object(self):
+        return WorkloadObject(self.__request.get("oldObject"), self.namespace)

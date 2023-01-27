@@ -195,12 +195,34 @@ def test_create_logging_msg(msg, kwargs, out):
             },
             fix.no_exc(),
         ),
+        (
+            8,
+            {
+                "apiVersion": "admission.k8s.io/v1",
+                "kind": "AdmissionReview",
+                "response": {
+                    "uid": "6418f614-b7f1-4c57-94bf-14fc30b2d791",
+                    "allowed": True,
+                    "status": {"code": 202},
+                },
+            },
+            fix.no_exc(),
+        ),
     ],
 )
 async def test_admit(
-    adm_req_samples, index, m_request, m_expiry, m_trust_data, out, exception
+    monkeypatch,
+    adm_req_samples,
+    index,
+    m_request,
+    m_expiry,
+    m_trust_data,
+    out,
+    exception,
 ):
     with exception:
+        if index == 8:
+            monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", "1")
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
             response = await pytest.fa.__admit(AdmissionRequest(adm_req_samples[index]))

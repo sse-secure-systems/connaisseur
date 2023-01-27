@@ -153,6 +153,17 @@ async def __validate_image(type_index, image, admission_request):
     type_, index = type_index
     logging_context.update(image=original_image)
 
+    # if automatic_unchanged_approval is enabled, admit resource updates
+    # if they do not alter the resource's image reference(s)
+    # https://github.com/sse-secure-systems/connaisseur/issues/820
+    unchanged_approval_on = os.environ.get("AUTOMATIC_UNCHANGED_APPROVAL", "0") == "1"
+    if unchanged_approval_on and admission_request.operation.upper() == "UPDATE":
+        old_images = admission_request.old_wl_object.containers.values()
+        if image in old_images:
+            msg = f'automatic approval for unchanged image "{original_image}".'
+            logging.info(__create_logging_msg(msg, **logging_context))
+            return
+
     # child resources have mutated image names, as their parents got mutated
     # before their creation. this may result in mismatch of rules or duplicate
     # lookups for already approved images. so child resources are automatically

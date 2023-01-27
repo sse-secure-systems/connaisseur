@@ -1,9 +1,9 @@
 import datetime as dt
-from freezegun import freeze_time
 import json
 
 import pytest
 import pytz
+from freezegun import freeze_time
 
 import connaisseur.exceptions as exc
 import connaisseur.validators.notaryv1.trust_data as td
