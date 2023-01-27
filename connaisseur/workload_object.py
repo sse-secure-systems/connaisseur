@@ -1,3 +1,5 @@
+from functools import cached_property
+
 import connaisseur.kube_api as k_api
 from connaisseur.exceptions import ParentNotFoundError, UnknownAPIVersionError
 from connaisseur.image import Image
@@ -48,7 +50,7 @@ class WorkloadObject:
                 wl_obj_name=self.name,
             )
 
-    @property
+    @cached_property
     def parent_containers(self):
         parent_containers = {}
         for owner in self._owner:
@@ -91,7 +93,7 @@ class WorkloadObject:
     def spec(self):
         return self._spec["template"]["spec"]
 
-    @property
+    @cached_property
     def containers(self):
         return {
             (container_type, index): Image(container["image"])

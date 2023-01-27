@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from connaisseur.exceptions import InvalidFormatException
 from connaisseur.util import validate_schema
 from connaisseur.workload_object import WorkloadObject
@@ -30,6 +32,6 @@ class AdmissionRequest:
             "namespace": self.namespace,
         }
 
-    @property
+    @cached_property
     def old_wl_object(self):
         return WorkloadObject(self.__request.get("oldObject"), self.namespace)
