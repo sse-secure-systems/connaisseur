@@ -1,5 +1,7 @@
+import asyncio
 import re
 
+import aiohttp
 import pytest
 from aioresponses import aioresponses
 
@@ -216,43 +218,89 @@ async def test_admit(
     out,
     exception,
 ):
+    session = aiohttp.ClientSession()
     with exception:
         if index == 8:
             monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", "1")
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-            response = await pytest.fa.__admit(AdmissionRequest(adm_req_samples[index]))
+            response = await pytest.fa.__admit(
+                AdmissionRequest(adm_req_samples[index]), session
+            )
             assert response == out
 
 
 @pytest.mark.parametrize(
-    "function, err",
+    "function, err, status",
     [
         (
             {
-                "target": "connaisseur.flask_application.send_alerts",
+                "target": "connaisseur.flask_application.dispatch_alerts",
                 "side_effect": exc.AlertSendingError(""),
             },
             "Alert could not be sent. Check the logs for more details!",
+            500,
         ),
         (
             {
-                "target": "connaisseur.flask_application.send_alerts",
+                "target": "connaisseur.flask_application.dispatch_alerts",
                 "side_effect": exc.ConfigurationError(""),
             },
             "Alerting configuration is not valid. Check the logs for more details!",
+            500,
+        ),
+        (
+            {
+                "target": "connaisseur.flask_application.__admit",
+                "side_effect": exc.BaseConnaisseurException("Some message"),
+            },
+            "Some message",
+            200,
+        ),
+        (
+            {
+                "target": "connaisseur.flask_application.__admit",
+                "side_effect": asyncio.TimeoutError(""),
+            },
+            "couldn't retrieve the necessary trust data for verification within 30s. most likely there was a network failure. check connectivity to external servers or retry",
+            200,
+        ),
+        (
+            {
+                "target": "connaisseur.flask_application.__admit",
+                "side_effect": Exception(""),
+            },
+            "unknown error. please check the logs.",
+            200,
         ),
     ],
 )
-def test_error_handler(mocker, m_ad_schema_path, m_alerting, function, err):
+def test_error_handler(
+    mocker,
+    m_ad_schema_path,
+    m_alerting,
+    function,
+    err,
+    status,
+):
     mocker.patch("connaisseur.flask_application.__admit", return_value=True)
     mock_function = mocker.patch(**function)
     with pytest.fa.APP.test_request_context():
         client = pytest.fa.APP.test_client()
         mock_request_data = fix.get_admreq("deployments")
         response = client.post("/mutate", json=mock_request_data)
-        assert response.status_code == 500
-        assert response.get_data().decode() == err
+        assert response.status_code == status
+        # If Connaisseur fails, response is error
+        if status == 500:
+            assert response.get_data().decode() == err
+        # Else Connaisseur returns the error in its message and denies the request
+        else:
+            print(response.get_json())
+            print(response.get_json().get("response"))
+            assert response.get_json().get("response").get("allowed") == False
+            assert (
+                response.get_json().get("response").get("status").get("message") == err
+            )
 
 
 @pytest.mark.asyncio
@@ -261,7 +309,8 @@ async def test__validate_image_adds_context(mocker, adm_req_samples):
         "connaisseur.config.Config.get_validator",
         return_value=StaticValidator("", False),
     )
+    session = aiohttp.ClientSession()
     with pytest.raises(exc.ValidationError, match=r"'image': '[^']*myimagename:andtag"):
         await pytest.fa.__validate_image(
-            (0, 0), "myimagename:andtag", AdmissionRequest(adm_req_samples[0])
+            (0, 0), "myimagename:andtag", AdmissionRequest(adm_req_samples[0]), session
         )

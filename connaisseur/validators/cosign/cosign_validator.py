@@ -1,4 +1,3 @@
-# import asyncio
 import json
 import logging
 import os
@@ -59,10 +58,6 @@ class CosignValidator(ValidatorInterface):
         # digests and errors
         vals = self.__get_pinned_trust_roots(trust_root, required, threshold)
 
-        # use concurrent.futures for now
-        # tasks = [self.__validation_task(k, str(image)) for k in self.vals.keys()]
-        # await asyncio.gather(*tasks)
-
         # prepare executor
         num_workers = len(vals)
         executor = ThreadPoolExecutor(num_workers)
@@ -71,7 +66,6 @@ class CosignValidator(ValidatorInterface):
         # thread-safe execution
         arguments = [(k, v.copy(), str(image)) for k, v in vals.items()]
         futures = [executor.submit(self.__validation_task, *arg) for arg in arguments]
-        # await results (output dropped as `vals` is updated within function)
         for future in futures:
             vals.update(future.result())
 
@@ -118,14 +112,12 @@ class CosignValidator(ValidatorInterface):
 
         return trust_roots
 
-    # async def __validation_task(self, trust_root: str, image: str):
     def __validation_task(self, trust_root: str, val: dict, image: str):
         """
-        Async task for each validation to gather all required validations,
+        Task for each validation to gather all required validations,
         execute concurrently and update results.
         """
         try:
-            # self.vals[trust_root]["digest"] = await self.__get_cosign_validated_digests(
             val["digest"] = self.__get_cosign_validated_digests(image, val)
         except Exception as err:
             val["error"] = err
@@ -133,7 +125,6 @@ class CosignValidator(ValidatorInterface):
 
         return {trust_root: val}
 
-    # async def __get_cosign_validated_digests(self, image: str, trust_root: dict):
     def __get_cosign_validated_digests(self, image: str, trust_root: dict):
         """
         Get and process Cosign validation output for a given `image` and `trust_root`

@@ -89,49 +89,58 @@ class Notary:
         except Exception:
             return False
 
-    async def get_trust_data(self, image: Image, role: TUFRole, token: str = None):
+    async def get_trust_data(
+        self,
+        session: aiohttp.ClientSession,
+        image: Image,
+        role: TUFRole,
+        token: str = None,
+    ):
         im_repo = f"{image.repository}/" if image.repository else ""
         url = (
             f"https://{self.host}/v2/{image.registry}/{im_repo}"
             f"{image.name}/_trust/tuf/{str(role)}.json"
         )
 
-        async with aiohttp.ClientSession() as session:
-            request_kwargs = {
-                "url": url,
-                "ssl": self.cert,
-                "headers": ({"Authorization": f"Bearer {token}"} if token else None),
-            }
-            async with session.get(**request_kwargs) as response:
-                status = response.status
-                if (
-                    status == 401
-                    and not token
-                    and ("www-authenticate" in [k.lower() for k in response.headers])
-                ):
-                    auth_url = self.__parse_auth(
-                        {k.lower(): v for k, v in response.headers.items()}[
-                            "www-authenticate"
-                        ]
-                    )
-                    token = await self.__get_auth_token(auth_url)
-                    return await self.get_trust_data(image, role, token)
+        request_kwargs = {
+            "url": url,
+            "ssl": self.cert,
+            "headers": ({"Authorization": f"Bearer {token}"} if token else None),
+        }
+        async with session.get(**request_kwargs) as response:
+            status = response.status
+            if (
+                status == 401
+                and not token
+                and ("www-authenticate" in [k.lower() for k in response.headers])
+            ):
+                auth_url = self.__parse_auth(
+                    {k.lower(): v for k, v in response.headers.items()}[
+                        "www-authenticate"
+                    ]
+                )
+                token = await self.__get_auth_token(session, auth_url)
+                return await self.get_trust_data(session, image, role, token)
 
-                if status == 404:
-                    msg = "Unable to get {tuf_role} trust data from {notary_name}."
-                    raise NotFoundException(
-                        message=msg, notary_name=self.name, tuf_role=str(role)
-                    )
+            if status == 404:
+                msg = "Unable to get {tuf_role} trust data from {notary_name}."
+                raise NotFoundException(
+                    message=msg, notary_name=self.name, tuf_role=str(role)
+                )
 
-                response.raise_for_status()
-                data = await response.text()
-                return TrustData(json.loads(data), str(role))
+            response.raise_for_status()
+            data = await response.text()
+            return TrustData(json.loads(data), str(role))
 
     async def get_delegation_trust_data(
-        self, image: Image, role: TUFRole, token: str = None
+        self,
+        session: aiohttp.ClientSession,
+        image: Image,
+        role: TUFRole,
+        token: str = None,
     ):
         try:
-            return await self.get_trust_data(image, role, token)
+            return await self.get_trust_data(session, image, role, token)
         except Exception as ex:
             if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
                 raise ex
@@ -201,47 +210,48 @@ class Notary:
 
         return url
 
-    async def __get_auth_token(self, url: str):
+    async def __get_auth_token(self, session: aiohttp.ClientSession, url: str):
         """
         Return the JWT from the given `url`, using user and password from
         environment variables.
 
         Raise an exception if a HTTP error status code occurs.
         """
-        async with aiohttp.ClientSession() as session:
-            request_kwargs = {
-                "url": url,
-                "ssl": self.cert,
-                "auth": (aiohttp.BasicAuth(**self.auth) if self.auth else None),
-            }
-            async with session.get(**request_kwargs) as response:
-                if response.status >= 500:
-                    msg = "Unable to get authentication token from {auth_url}."
-                    raise NotFoundException(
-                        message=msg, notary_name=self.name, auth_url=url
-                    )
-
-                response.raise_for_status()
-
-                try:
-                    token_key = "access_token" if self.is_acr else "token"
-                    token = (await response.json(content_type=None))[token_key]
-                except KeyError as err:
-                    msg = "Unable to retrieve authentication token from {auth_url} response."
-                    raise NotFoundException(
-                        message=msg, notary_name=self.name, auth_url=url
-                    ) from err
-
-                token_re = (
-                    r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$"  # nosec
+        request_kwargs = {
+            "url": url,
+            "ssl": self.cert,
+            "auth": (aiohttp.BasicAuth(**self.auth) if self.auth else None),
+        }
+        async with session.get(**request_kwargs) as response:
+            if response.status >= 500:
+                msg = "Unable to get authentication token from {auth_url}."
+                raise NotFoundException(
+                    message=msg, notary_name=self.name, auth_url=url
                 )
 
-                if not re.match(token_re, token):
-                    msg = "{validation_kind} has an invalid format."
-                    raise InvalidFormatException(
-                        message=msg,
-                        validation_kind="Authentication token",
-                        notary_name=self.name,
-                        auth_url=url,
-                    )
-                return token
+            response.raise_for_status()
+
+            try:
+                token_key = "access_token" if self.is_acr else "token"
+                token = (await response.json(content_type=None))[token_key]
+            except KeyError as err:
+                msg = (
+                    "Unable to retrieve authentication token from {auth_url} response."
+                )
+                raise NotFoundException(
+                    message=msg, notary_name=self.name, auth_url=url
+                ) from err
+
+            token_re = (
+                r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$"  # nosec
+            )
+
+            if not re.match(token_re, token):
+                msg = "{validation_kind} has an invalid format."
+                raise InvalidFormatException(
+                    message=msg,
+                    validation_kind="Authentication token",
+                    notary_name=self.name,
+                    auth_url=url,
+                )
+            return token

@@ -1,6 +1,7 @@
 import os
 import re
 
+import aiohttp
 import pytest
 from aioresponses import aioresponses
 
@@ -117,10 +118,13 @@ async def test_validate(
     digest: str,
     exception,
 ):
+    session = aiohttp.ClientSession()
     with exception:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-            signed_digest = await sample_nv1.validate(Image(image), key, delegations)
+            signed_digest = await sample_nv1.validate(
+                Image(image), session, key, delegations
+            )
             assert signed_digest == digest
 
 
@@ -340,12 +344,13 @@ async def test_process_chain_of_trust(
     exception,
 ):
     monkeypatch.setenv("DELEGATION_COUNT", "0")
+    session = aiohttp.ClientSession()
     with exception:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
             signed_targets = (
                 await sample_nv1._NotaryV1Validator__process_chain_of_trust(
-                    Image(image), delegations, TrustRoot(key)
+                    session, Image(image), delegations, TrustRoot(key)
                 )
             )
 
@@ -409,9 +414,10 @@ def test_search_image_targets_for_digest(sample_nv1, image: str, digest: str):
 async def test_update_with_delegation_trust_data(
     m_request, m_trust_data, m_expiry, alice_key_store, sample_nv1, delegations
 ):
+    session = aiohttp.ClientSession()
     assert (
         await sample_nv1._NotaryV1Validator__update_with_delegation_trust_data(
-            {}, delegations, alice_key_store, Image("alice-image")
+            session, {}, delegations, alice_key_store, Image("alice-image")
         )
         is None
     )

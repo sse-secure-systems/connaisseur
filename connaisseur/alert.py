@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from datetime import datetime
+from threading import Thread
 from typing import Optional
 
 import requests
@@ -162,6 +163,23 @@ class Alert:
         return headers
 
 
+def dispatch_alerts(
+    admission_request: AdmissionRequest, admit_event: bool, reason: str = None
+) -> None:
+    """
+    Send out alerts for the admission request.
+    If alerts must succeed for the admission to be allowed, do it synchronously,
+    otherwise run the alert sending in a different thread to return a webhook response sooner.
+    """
+    if must_alerting_succeed(admit_event):
+        send_alerts(admission_request, admit_event)
+    else:
+        alert_thread = Thread(
+            target=send_alerts, args=[admission_request, admit_event, reason]
+        )
+        alert_thread.run()
+
+
 def send_alerts(
     admission_request: AdmissionRequest, admit_event: bool, reason: str = None
 ) -> None:
@@ -175,3 +193,17 @@ def send_alerts(
                 else f"CONNAISSEUR rejected a request: {reason}"
             )
             Alert(message, receiver, admission_request).send_alert()
+
+
+def must_alerting_succeed(admit_event: bool) -> bool:
+    # If image is rejected anyways, failing to send alerts won't change the outcome
+    if not admit_event:
+        return False
+    # If image would be admitted, check whether alerting must succeed to actually admit
+    al_config = AlertingConfiguration()
+    event_category = "admit_request"
+    if al_config.alerting_required(event_category):
+        for receiver in al_config.config[event_category]["templates"]:
+            if receiver.get("fail_if_alert_sending_fails", False):
+                return True
+    return False

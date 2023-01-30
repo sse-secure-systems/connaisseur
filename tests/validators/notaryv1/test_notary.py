@@ -1,5 +1,6 @@
 import re
 
+import aiohttp
 import pytest
 import yaml
 from aiohttp.client_exceptions import ClientResponseError
@@ -148,11 +149,12 @@ def test_healthy(sample_notaries, m_request, index, host, health):
 async def test_get_trust_data(
     sample_notaries, m_request, m_trust_data, index, image, role, output, exception
 ):
+    session = aiohttp.ClientSession()
     with exception:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
             no = notary.Notary(**sample_notaries[index])
-            td = await no.get_trust_data(Image(image), role)
+            td = await no.get_trust_data(session, Image(image), role)
             assert td.signed == output["signed"]
             assert td.signatures == output["signatures"]
 
@@ -184,11 +186,14 @@ async def test_get_delegation_trust_data(
     log_lvl,
 ):
     monkeypatch.setenv("LOG_LEVEL", log_lvl)
+    session = aiohttp.ClientSession()
     with exception:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback)
             no = notary.Notary(**sample_notaries[index])
-            td = await no.get_delegation_trust_data(Image(image), "targets/phbelitz")
+            td = await no.get_delegation_trust_data(
+                session, Image(image), "targets/phbelitz"
+            )
             assert output is bool(td)
 
 
@@ -274,9 +279,10 @@ def test_parse_auth(sample_notaries, headers, url, exception):
     ],
 )
 async def test_get_auth_token(sample_notaries, m_request, index, url, token, exception):
+    session = aiohttp.ClientSession()
     with exception:
         with aioresponses() as aio:
             aio.get(url, callback=fix.async_callback)
             no = notary.Notary(**sample_notaries[index])
-            auth_token = await no._Notary__get_auth_token(url)
+            auth_token = await no._Notary__get_auth_token(session, url)
             assert auth_token == token

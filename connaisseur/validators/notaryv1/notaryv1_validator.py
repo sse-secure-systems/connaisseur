@@ -3,6 +3,8 @@ import base64
 import datetime as dt
 import logging
 
+from aiohttp import ClientSession
+
 import connaisseur.constants as const
 from connaisseur.exceptions import (
     AmbiguousDigestError,
@@ -27,7 +29,12 @@ class NotaryV1Validator(ValidatorInterface):
         self.notary = Notary(name, **kwargs)
 
     async def validate(
-        self, image: Image, trust_root: str = None, delegations: list = None, **kwargs
+        self,
+        image: Image,
+        session: ClientSession,
+        trust_root: str = None,
+        delegations: list = None,
+        **kwargs,
     ):  # pylint: disable=arguments-differ
         if delegations is None:
             delegations = []
@@ -41,7 +48,7 @@ class NotaryV1Validator(ValidatorInterface):
         # get list of targets fields, containing tag to signed digest mapping from
         # `targets.json` and all potential delegation roles
         signed_image_targets = await self.__process_chain_of_trust(
-            image, req_delegations, root_key
+            session, image, req_delegations, root_key
         )
 
         # search for digests in given targets
@@ -87,7 +94,11 @@ class NotaryV1Validator(ValidatorInterface):
         return delegation_role
 
     async def __process_chain_of_trust(
-        self, image: Image, req_delegations: list, root_key: TrustRoot
+        self,
+        session: ClientSession,
+        image: Image,
+        req_delegations: list,
+        root_key: TrustRoot,
     ):  # pylint: disable=too-many-branches
         """
         Process the whole chain of trust, provided by the notary
@@ -108,7 +119,10 @@ class NotaryV1Validator(ValidatorInterface):
         # load all trust data
         t_start = dt.datetime.now()
         trust_data_list = await asyncio.gather(
-            *[self.notary.get_trust_data(image, TUFRole(role)) for role in tuf_roles]
+            *[
+                self.notary.get_trust_data(session, image, TUFRole(role))
+                for role in tuf_roles
+            ]
         )
         duration = (dt.datetime.now() - t_start).total_seconds()
         logging.debug("Pulled trust data for image %s in %s seconds.", image, duration)
@@ -171,7 +185,7 @@ class NotaryV1Validator(ValidatorInterface):
 
             # download only the required delegation files
             await self.__update_with_delegation_trust_data(
-                trust_data, req_delegations, key_store, image
+                session, trust_data, req_delegations, key_store, image
             )
 
             # if certain delegations are required, then only take the targets fields of the
@@ -249,11 +263,13 @@ class NotaryV1Validator(ValidatorInterface):
         return None
 
     async def __update_with_delegation_trust_data(
-        self, trust_data, delegations, key_store, image
+        self, session: ClientSession, trust_data, delegations, key_store, image
     ):
         delegation_trust_data_list = await asyncio.gather(
             *[
-                self.notary.get_delegation_trust_data(image, TUFRole(delegation))
+                self.notary.get_delegation_trust_data(
+                    session, image, TUFRole(delegation)
+                )
                 for delegation in delegations
             ]
         )

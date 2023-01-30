@@ -3,12 +3,13 @@ import logging
 import os
 import traceback
 
+import aiohttp
 from flask import Flask, jsonify, request
 from prometheus_flask_exporter import NO_PREFIX, PrometheusMetrics
 
 import connaisseur.constants as const
 from connaisseur.admission_request import AdmissionRequest
-from connaisseur.alert import send_alerts
+from connaisseur.alert import dispatch_alerts
 from connaisseur.config import Config
 from connaisseur.exceptions import (
     AlertSendingError,
@@ -64,27 +65,7 @@ def mutate():
     Handle the '/mutate' path and accept CREATE and UPDATE requests.
     Send a response back, which either denies or allows the request.
     """
-    admission_request = None
-    try:
-        logging.debug(request.json)
-        admission_request = AdmissionRequest(request.json)
-        response = asyncio.run(__admit(admission_request))
-    except Exception as err:
-        if isinstance(err, BaseConnaisseurException):
-            err_log = str(err)
-            msg = err.user_msg  # pylint: disable=no-member
-        else:
-            err_log = str(traceback.format_exc())
-            msg = "unknown error. please check the logs."
-        send_alerts(admission_request, False, msg)
-        logging.error(err_log)
-        uid = admission_request.uid if admission_request else ""
-        return jsonify(
-            get_admission_review(uid, False, msg=msg, detection_mode=DETECTION_MODE)
-        )
-
-    send_alerts(admission_request, True)
-    return jsonify(response)
+    return asyncio.run(__async_mutate())
 
 
 def metrics_label(response, label):
@@ -116,14 +97,56 @@ def readyz():
     return "", 200
 
 
+async def __async_mutate():
+    # Maximum timeout for admission control is 30s
+    # If Connaisseur issues requests that timeout after the webhook times out
+    # k8s will report that Connaisseur was unresponsive, which isn't quite true
+    # thus we timeout slightly earlier
+    # https://github.com/sse-secure-systems/connaisseur/issues/448
+    timeout = aiohttp.ClientTimeout(total=const.AIO_TIMEOUT_SECONDS)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
+        admission_request = None
+        try:
+            logging.debug(request.json)
+            admission_request = AdmissionRequest(request.json)
+            response = await __admit(admission_request, session)
+            # Depending on whether alerting must succeed, run it synchronously or in the background
+            dispatch_alerts(admission_request, True)
+            return jsonify(response)
+        except Exception as err:
+            if isinstance(err, BaseConnaisseurException):
+                err_log = str(err)
+                msg = err.user_msg  # pylint: disable=no-member
+            elif isinstance(err, asyncio.TimeoutError):
+                err_log = str(traceback.format_exc())
+                msg = (
+                    "couldn't retrieve the necessary trust data for verification within 30s. most likely"
+                    + " there was a network failure. check connectivity to external servers or retry"
+                )
+            else:
+                err_log = str(traceback.format_exc())
+                msg = "unknown error. please check the logs."
+            dispatch_alerts(admission_request, False, msg)
+            logging.error(err_log)
+            uid = admission_request.uid if admission_request else ""
+            return jsonify(
+                get_admission_review(
+                    uid,
+                    False,
+                    msg=msg,
+                    detection_mode=DETECTION_MODE,
+                )
+            )
+
+
 def __create_logging_msg(msg: str, **kwargs):
     return str({"message": msg, "context": {**kwargs}})
 
 
-async def __admit(admission_request: AdmissionRequest):
+async def __admit(admission_request: AdmissionRequest, session: aiohttp.ClientSession):
     patches = asyncio.gather(
         *[
-            __validate_image(type_and_index, image, admission_request)
+            __validate_image(type_and_index, image, admission_request, session)
             for type_and_index, image in admission_request.wl_object.containers.items()
         ]
     )
@@ -142,7 +165,9 @@ async def __admit(admission_request: AdmissionRequest):
     )
 
 
-async def __validate_image(type_index, image, admission_request):
+async def __validate_image(
+    type_index, image, admission_request, session: aiohttp.ClientSession
+):
     logging_context = dict(admission_request.context)
     original_image = str(image)
     type_, index = type_index
@@ -188,7 +213,9 @@ async def __validate_image(type_index, image, admission_request):
             )
         )
 
-        trusted_digest = await validator.validate(image, **policy_rule.arguments)
+        validator_arguments = policy_rule.arguments.copy()
+        validator_arguments.update({"session": session})
+        trusted_digest = await validator.validate(image, **validator_arguments)
     except BaseConnaisseurException as err:
         # add contextual information to all errors
         err.update_context(**logging_context)
