@@ -16,7 +16,7 @@ from connaisseur.validators.validator import Validator
 
 class Config:
     """
-    Config Object that contains all notary configurations.
+    Config Object that contains all runtime configurations.
     """
 
     __PATH = "/app/connaisseur-config/config.yaml"
@@ -28,7 +28,7 @@ class Config:
 
     def __init__(self):
         """
-        Create a Config object, containing all validator configurations.
+        Create a Config object, containing all runtime configurations.
         Read a config file, validate its contents and then create Validator objects,
         storing them.
 
