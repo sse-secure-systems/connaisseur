@@ -9,3 +9,5 @@ connaisseur/coverage.xml
 connaisseur/coverage.txt
 # ignore pycache
 connaisseur/__pycache__/
+# ignore venv folder
+venv/
