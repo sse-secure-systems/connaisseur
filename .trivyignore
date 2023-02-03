@@ -1,3 +1,14 @@
+# no fix yet, no actual risk, risk accepted
 CVE-2022-32149
+
+# no fix yet, no actual risk, risk accepted
 CVE-2022-41717
+
+# no fix yet, no actual risk, risk accepted
 CVE-2022-41721
+
+# noise rule "Storing sensitive content in configMaps is unsafe", dropped
+AVD-KSV-0109
+
+# noisy rule "Storing secrets in configMaps is unsafe", dropped
+AVD-KSV-0110
