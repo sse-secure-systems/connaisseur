@@ -20,7 +20,6 @@ from connaisseur.validators.notaryv1.tuf_role import TUFRole
 
 
 class Notary:
-
     name: str
     host: str
     root_keys: list

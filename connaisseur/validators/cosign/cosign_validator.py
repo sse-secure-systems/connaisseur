@@ -101,9 +101,7 @@ class CosignValidator(ValidatorInterface):
         if missing_trs:
             msg = 'Trust roots "{tr_names}" not configured for validator "{validator_name}".'
             raise NotFoundException(
-                message=msg,
-                tr_names=", ".join(missing_trs),
-                validator_name=self.name,
+                message=msg, tr_names=", ".join(missing_trs), validator_name=self.name
             )
 
         # construct key validation dictionary for pinned keys
@@ -270,11 +268,7 @@ class CosignValidator(ValidatorInterface):
             )
         elif isinstance(trust_root, KMSKey):
             return self.__invoke_cosign(
-                image,
-                {
-                    "option_kword": "--key",
-                    "inline_tr": trust_root.value,
-                },
+                image, {"option_kword": "--key", "inline_tr": trust_root.value}
             )
         msg = (
             "The trust_root type {tr_type} is unsupported for a validator of type"
@@ -322,7 +316,7 @@ class CosignValidator(ValidatorInterface):
                     message=msg, trust_data_type="dev.cosignproject.cosign/signature"
                 ) from err
 
-        return process.returncode, stdout.decode("utf-8"), stderr.decode("utf-8")
+        return (process.returncode, stdout.decode("utf-8"), stderr.decode("utf-8"))
 
     def __get_envs(self):
         """

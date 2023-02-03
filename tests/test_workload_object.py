@@ -103,7 +103,7 @@ def test_k8s_object_init(adm_req_sample_objects, index, exception):
                     "securesystemsengineering/charlie-image@sha256"
                     ":91ac9b26df583762234c1cdb2fc930364754ccc59bc7"
                     "52a2bfe298d2ea68f9ff"
-                ),
+                )
             },
             fix.no_exc(),
         ),
@@ -133,10 +133,7 @@ def test_k8s_object_parent_containers(
                 )
             },
         ),
-        (
-            2,
-            {("containers", 0): Image("securesystemsengineering/sample-san-sama:hai")},
-        ),
+        (2, {("containers", 0): Image("securesystemsengineering/sample-san-sama:hai")}),
         (3, {("containers", 0): Image("busybox")}),
         (
             5,

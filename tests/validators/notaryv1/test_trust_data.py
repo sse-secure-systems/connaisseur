@@ -301,12 +301,7 @@ def test_validate_signature(
             ),
             fix.no_exc(),
         ),
-        (
-            "",
-            "",
-            TrustRoot("mail@example.com"),
-            pytest.raises(exc.WrongKeyError),
-        ),
+        ("", "", TrustRoot("mail@example.com"), pytest.raises(exc.WrongKeyError)),
     ],
 )
 def test_validate_signature_with_key(
@@ -446,10 +441,7 @@ def test_get_hashes(m_trust_data, data: dict, role: str, hashes: dict):
 
 @pytest.mark.parametrize(
     "data, out",
-    [
-        (fix.get_td("sample_targets"), True),
-        (fix.get_td("sample2_targets"), False),
-    ],
+    [(fix.get_td("sample_targets"), True), (fix.get_td("sample2_targets"), False)],
 )
 def test_has_delegation(m_trust_data, data: dict, out: bool):
     trust_data_ = td.TrustData(data, "targets")
@@ -476,10 +468,7 @@ def test_get_delegations(m_trust_data, data: dict, out: list):
     [
         (fix.get_td("sample_targets"), []),
         (fix.get_td("sample2_targets"), ["hai"]),
-        (
-            fix.get_td("sample3_targets"),
-            ["v1.0.9", "v1.0.9-slim-fat_image", "v382"],
-        ),
+        (fix.get_td("sample3_targets"), ["v1.0.9", "v1.0.9-slim-fat_image", "v382"]),
     ],
 )
 def test_get_tags(m_trust_data, data: dict, out: list):

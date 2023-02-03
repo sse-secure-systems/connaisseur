@@ -407,12 +407,7 @@ def test_search_image_targets_for_digest(sample_nv1, image: str, digest: str):
     ],
 )
 async def test_update_with_delegation_trust_data(
-    m_request,
-    m_trust_data,
-    m_expiry,
-    alice_key_store,
-    sample_nv1,
-    delegations,
+    m_request, m_trust_data, m_expiry, alice_key_store, sample_nv1, delegations
 ):
     assert (
         await sample_nv1._NotaryV1Validator__update_with_delegation_trust_data(

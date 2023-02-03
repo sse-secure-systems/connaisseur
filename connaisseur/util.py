@@ -112,9 +112,7 @@ def validate_schema(data: dict, schema_path: str, kind: str, exception):
     except ValidationError as err:
         msg = "{validation_kind} has an invalid format: {validation_err}."
         raise exception(
-            message=msg,
-            validation_kind=kind,
-            validation_err=str(err),
+            message=msg, validation_kind=kind, validation_err=str(err)
         ) from err
 
 

@@ -16,7 +16,6 @@ bo = "BODY:%b"
 
 
 class Commit:
-
     hash_: str
     subject_: str
     categories_: list

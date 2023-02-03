@@ -160,12 +160,7 @@ def test_alert_config_init(
     ],
 )
 def test_alerting_required(
-    m_alerting,
-    m_ad_schema_path,
-    alerting_path,
-    admission_request,
-    event_category,
-    out,
+    m_alerting, m_ad_schema_path, alerting_path, admission_request, event_category, out
 ):
     alert.AlertingConfiguration._AlertingConfiguration__PATH = alerting_path
     assert alert.AlertingConfiguration().alerting_required(event_category) is out
@@ -275,20 +270,8 @@ def test_alert_init(
             },
             fix.no_exc(),
         ),
-        (
-            opsgenie_receiver_config,
-            "",
-            401,
-            {},
-            fix.no_exc(),
-        ),
-        (
-            opsgenie_receiver_config_throw,
-            "",
-            401,
-            {},
-            pytest.raises(AlertSendingError),
-        ),
+        (opsgenie_receiver_config, "", 401, {}, fix.no_exc()),
+        (opsgenie_receiver_config_throw, "", 401, {}, pytest.raises(AlertSendingError)),
     ],
 )
 def test_alert_send_alert(

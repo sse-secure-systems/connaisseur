@@ -17,14 +17,7 @@ def test_init(name, approve):
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "approve, out, exception",
-    [
-        (True, None, fix.no_exc()),
-        (
-            False,
-            None,
-            pytest.raises(exc.ValidationError),
-        ),
-    ],
+    [(True, None, fix.no_exc()), (False, None, pytest.raises(exc.ValidationError))],
 )
 async def test_validate(approve, out, exception):
     with exception:

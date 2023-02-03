@@ -26,14 +26,8 @@ static = vals.static.static_validator.StaticValidator
 cosign = vals.cosign.cosign_validator.CosignValidator
 static_config = {
     "validators": [
-        {
-            "name": "default",
-            "type": nv1,
-        },
-        {
-            "name": "harbor",
-            "type": nv1,
-        },
+        {"name": "default", "type": nv1},
+        {"name": "harbor", "type": nv1},
         {"name": "allow", "type": static},
         {"name": "deny", "type": static},
         {"name": "cosign-example", "type": cosign},

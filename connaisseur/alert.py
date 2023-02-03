@@ -18,7 +18,6 @@ from connaisseur.util import safe_json_open, validate_schema
 
 
 class AlertingConfiguration:
-
     __PATH = "/app/config/alertconfig.json"
     __SCHEMA_PATH = "/app/connaisseur/res/alertconfig_schema.json"
 

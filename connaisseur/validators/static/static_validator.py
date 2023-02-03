@@ -4,7 +4,6 @@ from connaisseur.validators.interface import ValidatorInterface
 
 
 class StaticValidator(ValidatorInterface):
-
     name: str
     approve: bool
 

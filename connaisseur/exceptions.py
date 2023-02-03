@@ -116,7 +116,6 @@ class UnreachableError(BaseConnaisseurException):
 
 
 class AlertingException(Exception):
-
     message: str
 
     def __init__(self, message: str):

@@ -19,15 +19,10 @@ from connaisseur.validators.notaryv1.tuf_role import TUFRole
 
 
 class NotaryV1Validator(ValidatorInterface):
-
     name: str
     notary: Notary
 
-    def __init__(
-        self,
-        name: str,
-        **kwargs,
-    ):
+    def __init__(self, name: str, **kwargs):
         super().__init__(name, **kwargs)
         self.notary = Notary(name, **kwargs)
 

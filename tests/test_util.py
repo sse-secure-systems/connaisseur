@@ -23,11 +23,7 @@ def test_safe_path_func(path, exception):
 admission_review_plain = {
     "apiVersion": "admission.k8s.io/v1",
     "kind": "AdmissionReview",
-    "response": {
-        "uid": 1,
-        "allowed": True,
-        "status": {"code": 202},
-    },
+    "response": {"uid": 1, "allowed": True, "status": {"code": 202}},
 }
 admission_review_msg = {
     "apiVersion": "admission.k8s.io/v1",
@@ -106,13 +102,7 @@ admission_review_msg_patch = {
 def test_get_admission_review(monkeypatch, uid, allowed, patch, msg, dm, review):
     monkeypatch.setenv("KUBE_VERSION", "v1.20.0")
     assert (
-        ut.get_admission_review(
-            uid,
-            allowed,
-            patch=patch,
-            msg=msg,
-            detection_mode=dm,
-        )
+        ut.get_admission_review(uid, allowed, patch=patch, msg=msg, detection_mode=dm)
         == review
     )
 

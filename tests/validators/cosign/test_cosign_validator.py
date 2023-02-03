@@ -25,22 +25,14 @@ static_cosigns = [
         "name": "cosign1",
         "type": "cosign",
         "trust_roots": [
-            {
-                "name": "default",
-                "key": example_key,
-            },
+            {"name": "default", "key": example_key},
             {"name": "test", "key": example_key2},
         ],
     },
     {
         "name": "cosign2",
         "type": "cosign",
-        "trust_roots": [
-            {
-                "name": "test",
-                "key": "...",
-            },
-        ],
+        "trust_roots": [{"name": "test", "key": "..."}],
         "auth": {"k8s_keychain": True},
         "host": "https://rekor.instance.com",
     },
@@ -65,10 +57,7 @@ static_cosigns = [
         "name": "cosign1",
         "type": "cosign",
         "trust_roots": [
-            {
-                "name": "test1",
-                "key": example_key,
-            },
+            {"name": "test1", "key": example_key},
             {"name": "test2", "key": example_key2},
             {"name": "test3", "key": example_key2},
         ],
@@ -77,12 +66,7 @@ static_cosigns = [
         "name": "cosign1",
         "type": "cosign",
         "host": "rekor.sigstore.dev",
-        "trust_roots": [
-            {
-                "name": "default",
-                "key": example_key,
-            }
-        ],
+        "trust_roots": [{"name": "default", "key": example_key}],
     },
 ]
 
@@ -177,22 +161,8 @@ def test_init(index: int, kchain: bool, host: str):
 @pytest.mark.parametrize(
     "index, key_name, required, threshold, key, exception",
     [
-        (
-            0,
-            None,
-            [],
-            1,
-            gen_vals(static_cosigns[0], [0]),
-            fix.no_exc(),
-        ),
-        (
-            0,
-            "test",
-            [],
-            1,
-            gen_vals(static_cosigns[0], [1]),
-            fix.no_exc(),
-        ),
+        (0, None, [], 1, gen_vals(static_cosigns[0], [0]), fix.no_exc()),
+        (0, "test", [], 1, gen_vals(static_cosigns[0], [1]), fix.no_exc()),
         (
             0,
             "non_existing",
@@ -446,10 +416,7 @@ def test_get_cosign_validated_digests(
         (
             "testimage:v1",
             "k8s://example_ns/example_key",
-            {
-                "option_kword": "--key",
-                "inline_tr": "k8s://example_ns/example_key",
-            },
+            {"option_kword": "--key", "inline_tr": "k8s://example_ns/example_key"},
             fix.no_exc(),
         ),
         (
@@ -525,19 +492,13 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
         ),
         (
             "testimage:v1",
-            {
-                "option_kword": "--key",
-                "inline_tr": "k8s://connaisseur/test_key",
-            },
+            {"option_kword": "--key", "inline_tr": "k8s://connaisseur/test_key"},
             False,
             None,
         ),
         (
             "testimage:v1",
-            {
-                "option_kword": "--key",
-                "inline_tr": "k8s://connaisseur/test_key",
-            },
+            {"option_kword": "--key", "inline_tr": "k8s://connaisseur/test_key"},
             False,
             "https://rekor.sigstore.dev",
         ),
@@ -586,12 +547,7 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
     )
 
 
-@pytest.mark.parametrize(
-    "image",
-    [
-        "testimage:v1",
-    ],
-)
+@pytest.mark.parametrize("image", ["testimage:v1"])
 def test_invoke_cosign_timeout_expired(
     mocker, mock_add_kill_fake_process, fake_process, image
 ):
@@ -629,13 +585,7 @@ def test_invoke_cosign_timeout_expired(
     assert "Cosign timed out." in str(err.value)
 
 
-@pytest.mark.parametrize(
-    "index, COSIGN_EXPERIMENTAL",
-    [
-        (0, 0),
-        (5, 1),
-    ],
-)
+@pytest.mark.parametrize("index, COSIGN_EXPERIMENTAL", [(0, 0), (5, 1)])
 def test_get_envs(monkeypatch, index, COSIGN_EXPERIMENTAL):
     env = co.CosignValidator(**static_cosigns[index])._CosignValidator__get_envs()
     assert env["DOCKER_CONFIG"] == "/app/connaisseur-config/cosign1/.docker/"

@@ -30,7 +30,6 @@ class Image:
     digest_algo: Optional[str]
 
     def __init__(self, image: str):  # pylint: disable=too-many-locals
-
         # implements https://github.com/distribution/distribution/blob/main/reference/regexp.go
         digest_hex = r"[0-9a-fA-F]{32,}"
         digest_algorithm_component = r"[A-Za-z][A-Za-z0-9]*"

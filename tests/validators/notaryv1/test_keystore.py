@@ -19,19 +19,19 @@ pub_root_keys = {
         (
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErIGdt5pelfWOSjmY7k+/TypV0IFF"
             "9XLA+K4swhclLJb79cLoeBBDqkkUrkfhN5gxRnA//wA3amL4WXkaGsb9zQ=="
-        ),
+        )
     ),
     "7dbacd611d5933ca3f0fad581ed233881c501229343613f63f2d4b5771ee4299": TrustRoot(
         (
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEzRo/rFtBEAJLvEFU7xem34GpEsw"
             "xsw6nW9YiBqbAcba6LWZuem7slTp+List+NKAVK3EzJCjUixooO5ss4Erug=="
-        ),
+        )
     ),
     "f1997e14be3d33c5677282b6a73060d8124f4020f464644e27ab76f703eb6f7e": TrustRoot(
         (
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMza1L1+e8vfZ1q7+GA5E0st13g7j"
             "WR7fdQSsxkdrpJ6IkUq9D6f9BUopD83YvLBMEMy20MBvsICJnXMu8IZlYA=="
-        ),
+        )
     ),
 }
 
@@ -40,13 +40,13 @@ target_keys = {
         (
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEchQNiJJt4PTaEeAzaztL+TQZqTa"
             "0iM0YSf+w0LjSElobVsYgnqIbCWe6pGX3UvcCngNw7N4uGkdVNVMS2Tslg=="
-        ),
+        )
     ),
     "70aa109003a93131c63499c70dcfc8db3ba33ca81bdd1abcd52c067a8acc0492": TrustRoot(
         (
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEM0xl8F5nwIV3IAru1Pf85WCo4cfT"
             "OQ91jhxVaQ3xHMeW430q7R4H/tJmAXUZBe+nOTX8pgtmrLpT+Hu/H7pUhw=="
-        ),
+        )
     ),
 }
 
@@ -58,9 +58,7 @@ snapshot_hashes = {
     "targets/releases": ("pNjHgtwOrSZB5l0bzHZt9u3dUdFpKsPBhWPiVrIMm88=", 712),
 }
 
-timestamp_hashes = {
-    "snapshot": ("cNXm5R+rJsc3WNQVH8M1G/cTwkO1doq5n8fQmYpQcfQ=", 1286),
-}
+timestamp_hashes = {"snapshot": ("cNXm5R+rJsc3WNQVH8M1G/cTwkO1doq5n8fQmYpQcfQ=", 1286)}
 
 
 @pytest.mark.parametrize(

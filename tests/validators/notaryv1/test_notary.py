@@ -67,13 +67,7 @@ static_notaries = [
 ]
 
 
-@pytest.mark.parametrize(
-    "index, exception",
-    [
-        (0, fix.no_exc()),
-        (1, fix.no_exc()),
-    ],
-)
+@pytest.mark.parametrize("index, exception", [(0, fix.no_exc()), (1, fix.no_exc())])
 def test_notary(sample_notaries, index, exception):
     with exception:
         no = notary.Notary(**sample_notaries[index])
@@ -152,14 +146,7 @@ def test_healthy(sample_notaries, m_request, index, host, health):
     ],
 )
 async def test_get_trust_data(
-    sample_notaries,
-    m_request,
-    m_trust_data,
-    index,
-    image,
-    role,
-    output,
-    exception,
+    sample_notaries, m_request, m_trust_data, index, image, role, output, exception
 ):
     with exception:
         with aioresponses() as aio:

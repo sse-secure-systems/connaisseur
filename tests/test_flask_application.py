@@ -96,11 +96,7 @@ def test_mutate(
 
 
 def test_mutate_calls_send_alert_for_invalid_admission_request(
-    monkeypatch,
-    adm_req_samples,
-    m_request,
-    m_trust_data,
-    m_alerting_without_send,
+    monkeypatch, adm_req_samples, m_request, m_trust_data, m_alerting_without_send
 ):
     with aioresponses() as aio:
         aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
@@ -248,14 +244,7 @@ async def test_admit(
         ),
     ],
 )
-def test_error_handler(
-    mocker,
-    m_ad_schema_path,
-    m_alerting,
-    function,
-    err,
-):
-
+def test_error_handler(mocker, m_ad_schema_path, m_alerting, function, err):
     mocker.patch("connaisseur.flask_application.__admit", return_value=True)
     mock_function = mocker.patch(**function)
     with pytest.fa.APP.test_request_context():

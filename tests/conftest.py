@@ -58,7 +58,6 @@ def get_cosign_err_msg(path):
 
 @pytest.fixture
 def m_request(monkeypatch):
-
     monkeypatch.setattr(requests, "get", mock_get_request)
     monkeypatch.setattr(requests, "post", mock_post_request)
     monkeypatch.setattr(connaisseur.kube_api, "__get_token", kube_token)

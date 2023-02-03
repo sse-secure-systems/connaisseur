@@ -80,12 +80,7 @@ def mutate():
         logging.error(err_log)
         uid = admission_request.uid if admission_request else ""
         return jsonify(
-            get_admission_review(
-                uid,
-                False,
-                msg=msg,
-                detection_mode=DETECTION_MODE,
-            )
+            get_admission_review(uid, False, msg=msg, detection_mode=DETECTION_MODE)
         )
 
     send_alerts(admission_request, True)
