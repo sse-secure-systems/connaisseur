@@ -117,7 +117,7 @@ def readyz():
 
 
 def __create_logging_msg(msg: str, **kwargs):
-    return str({"message": msg, "context": dict(**kwargs)})
+    return str({"message": msg, "context": {**kwargs}})
 
 
 async def __admit(admission_request: AdmissionRequest):

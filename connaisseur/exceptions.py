@@ -14,11 +14,11 @@ class BaseConnaisseurException(Exception):
     def __init__(self, message: str = default_message, **kwargs):
         self.message = message.format(**kwargs)
         self.detection_mode = os.environ.get("DETECTION_MODE", "0") == "1"
-        self.context = dict(**kwargs, detection_mode=self.detection_mode)
+        self.context = {**kwargs, "detection_mode": self.detection_mode}
         super().__init__()
 
     def __str__(self):
-        return str(dict(message=self.message, context=self.context))
+        return str({"message": self.message, "context": self.context})
 
     @property
     def user_msg(self):
@@ -28,7 +28,7 @@ class BaseConnaisseurException(Exception):
         return msg
 
     def update_context(self, **kwargs):
-        self.context.update(dict(**kwargs))
+        self.context.update({**kwargs})
 
 
 class ValidationError(BaseConnaisseurException):
