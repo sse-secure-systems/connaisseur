@@ -1071,8 +1071,6 @@ To autoformat the code:
 We recommend the following approach for running pytest in a container:
 <div class="highlight"><pre><span></span><code>docker run -it --rm -v &lt;path-to-repository&gt;:/data --entrypoint=ash python:alpine
 cd data
-pip3 install --upgrade pip
-apk add libc-dev gcc
 YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
 pytest --cov=connaisseur --cov-report=xml tests/
 </code></pre></div></p>
