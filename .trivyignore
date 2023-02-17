@@ -7,6 +7,12 @@ CVE-2022-41717
 # no fix yet, no actual risk, risk accepted
 CVE-2022-41721
 
+# DOS if attacker can manipulate HTTP/2 stream
+# pertains to Cosign dependency on Go stdlib
+# fix exists, but Cosign needs to apply it
+# may or may not be applicable in Cosign context :shrug:
+CVE-2022-41723
+
 # noise rule "Storing sensitive content in configMaps is unsafe", dropped
 AVD-KSV-0109
 
