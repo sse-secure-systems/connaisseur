@@ -2,6 +2,8 @@ import argparse
 import asyncio
 import base64
 
+import aiohttp
+
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
@@ -13,7 +15,8 @@ from connaisseur.validators.notaryv1.tuf_role import TUFRole
 
 async def get_pub_root_key(host: str, image: Image):
     notary = Notary("no", host, ["not_empty"])
-    root_td = await notary.get_trust_data(image, TUFRole("root"))
+    async with (aiohttp.ClientSession()) as session:
+        root_td = await notary.get_trust_data(session, image, TUFRole("root"))
 
     root_key_id = root_td.signatures[0].get("keyid")
     root_cert_base64 = (
