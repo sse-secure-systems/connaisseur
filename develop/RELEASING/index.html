@@ -1069,7 +1069,7 @@ You also need to be in the list of valid signers for Connaisseur.
 If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:philipp.belitz@securesystems.de">Philipp Belitz</a>.</p>
 <h2 id="merge-pr">Merge PR<a class="headerlink" href="#merge-pr" title="Permanent link">⚓︎</a></h2>
 <p>Run <code>git checkout master</code> to switch to the <code>master</code> branch and then run <code>git merge develop</code> to merge <code>develop</code> in.
-Then run <code>git push</code> and <code>git push --tags</code> to publish all changes and the new tag.</p>
+Then run <code>git push origin master --tags</code> to publish all changes and the new tag.</p>
 <h2 id="create-release-page">Create release page<a class="headerlink" href="#create-release-page" title="Permanent link">⚓︎</a></h2>
 <p>Finally a release on GitHub should be created.
 Go to the <a href="https://github.com/sse-secure-systems/connaisseur/releases">Connaisseur releases page</a>, then click <em>Draft a new release</em>.
