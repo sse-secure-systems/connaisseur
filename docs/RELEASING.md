@@ -56,7 +56,7 @@ If not already (you can check with `docker trust inspect securesystemsengineerin
 ## Merge PR
 
 Run `git checkout master` to switch to the `master` branch and then run `git merge develop` to merge `develop` in.
-Then run `git push` and `git push --tags` to publish all changes and the new tag.
+Then run `git push origin master --tags` to publish all changes and the new tag.
 
 ## Create release page
 
