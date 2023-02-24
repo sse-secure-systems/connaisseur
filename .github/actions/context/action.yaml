@@ -101,6 +101,8 @@ runs:
       uses: docker/metadata-action@v4
       with:
         images: ${{ steps.get_context.outputs.BUILD_REGISTRY }}/${{ steps.get_context.outputs.BUILD_REPO }}
+        flavor: |
+          latest=false
     - name: Show context
       id: show_context
       run: |
