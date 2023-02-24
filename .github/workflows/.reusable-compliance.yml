@@ -8,6 +8,7 @@ permissions: read-all
 jobs:
   ossf-scorecard:
     runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'master' || github.event_name == 'pull_request' }}
     permissions:
       security-events: write
       id-token: write
