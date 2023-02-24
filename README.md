@@ -2,6 +2,7 @@
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/connaisseur)](https://artifacthub.io/packages/search?repo=connaisseur)
 ![pipeline status](https://github.com/sse-secure-systems/connaisseur/workflows/cicd/badge.svg)
 [![codecov](https://codecov.io/gh/sse-secure-systems/connaisseur/branch/master/graph/badge.svg)](https://codecov.io/gh/sse-secure-systems/connaisseur)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/sse-secure-systems/connaisseur/badge)](https://api.securityscorecards.dev/projects/github.com/sse-secure-systems/connaisseur)
 
 ![](docs/assets/connaisseur_fulllogo.svg)
 
