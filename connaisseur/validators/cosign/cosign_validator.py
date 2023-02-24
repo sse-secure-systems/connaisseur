@@ -188,7 +188,10 @@ class CosignValidator(ValidatorInterface):
                 image=str(image),
                 trust_root=trust_root["name"],
             )
-        elif "Error: no matching signatures:\nsearching log query:" in stderr:
+        elif (
+            "Error: no matching signatures:\nsignature not found in transparency log"
+            in stderr
+        ):
             msg = "Failed to find signature in transparency log."
             raise ValidationError(
                 message=msg,

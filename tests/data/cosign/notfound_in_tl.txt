@@ -1,2 +1,2 @@
 Error: no matching signatures:
-searching log query:
+signature not found in transparency log
