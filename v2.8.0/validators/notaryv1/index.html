@@ -1,0 +1,1539 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Admission controller for Kubernetes integrating container image signature verification and trust pinning into a cluster to ensure that only valid images are being deployed - simple, flexible, secure.">
+      
+      
+      
+        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/v2.8.0/validators/notaryv1/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../sigstore_cosign/">
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.14">
+    
+    
+      
+        <title>Notary (V1) / DCT - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.113286f1.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#notary-v1-dct" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
+            
+            
+  <!-- Add your announcement here, including arbitrary HTML -->
+   <header style="font-size:17px">
+        <center>&#11088; <strong> If you like Connaisseur, give it a star on <a href="https://github.com/sse-secure-systems/connaisseur">GitHub</a> or share your <a href="https://github.com/sse-secure-systems/connaisseur/discussions">feedback</a>!</strong> &#11088;</center>
+
+          </div>
+          
+        </aside>
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+You're not viewing the docs of the latest version.
+<a href="../../.."><strong>Click here to go to the latest version.</strong></a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Notary (V1) / DCT
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sse-secure-systems/connaisseur" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sse-secure-systems/connaisseur
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    CONNAISSEUR - Verify Container Image Signatures in Kubernetes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sse-secure-systems/connaisseur" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sse-secure-systems/connaisseur
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../basics/" class="md-nav__link">
+        Basics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+          Validators
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Validators
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Notary (V1) / DCT
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Notary (V1) / DCT
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    Basic usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-signing-key-pairs" class="md-nav__link">
+    Creating signing key pairs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-signatures" class="md-nav__link">
+    Creating signatures
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getting-the-public-root-key" class="md-nav__link">
+    Getting the public root key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-and-running-connaisseur" class="md-nav__link">
+    Configuring and running Connaisseur
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-validation" class="md-nav__link">
+    Understanding validation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-notes" class="md-nav__link">
+    Additional notes
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enforcing-delegations" class="md-nav__link">
+    Enforcing delegations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-azure-container-registry" class="md-nav__link">
+    Using Azure Container Registry
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sigstore_cosign/" class="md-nav__link">
+        sigstore / Cosign
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notaryv2/" class="md-nav__link">
+        Notary V2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+          Features
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Features
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/metrics/" class="md-nav__link">
+        Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/alerting/" class="md-nav__link">
+        Alerting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/detection_mode/" class="md-nav__link">
+        Detection Mode
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/namespaced_validation/" class="md-nav__link">
+        Namespaced Validation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/automatic_child_approval/" class="md-nav__link">
+        Automatic Child Approval
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/automatic_update_approval/" class="md-nav__link">
+        Automatic Unchanged Approval
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Security
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Security
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../threat_model/" class="md-nav__link">
+        Threat Model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SECURITY/" class="md-nav__link">
+        Security Policy
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Development
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Development
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CONTRIBUTING/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../RELEASING/" class="md-nav__link">
+        Releasing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+          ADRs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          ADRs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/" class="md-nav__link">
+        Architecture Decision Records
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
+        ADR 1: Bootstrap Sentinel
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-2_release-management/" class="md-nav__link">
+        ADR 2: Release Management
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-3_multi_notary_config/" class="md-nav__link">
+        ADR 3: Multiple Notary Configuration
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
+        ADR 4: Modular Validation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
+        ADR 5: No More Bootstrap Pods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-6_dynamic-config/" class="md-nav__link">
+        ADR 6: Dynamic Configuration
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-7_wsgi-server/" class="md-nav__link">
+        ADR 7: WSGI Server
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/sse-secure-systems/connaisseur/releases" class="md-nav__link">
+        Releases ⧉
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/sse-secure-systems/connaisseur/discussions" class="md-nav__link">
+        Support ⧉
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    Basic usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-signing-key-pairs" class="md-nav__link">
+    Creating signing key pairs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-signatures" class="md-nav__link">
+    Creating signatures
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getting-the-public-root-key" class="md-nav__link">
+    Getting the public root key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-and-running-connaisseur" class="md-nav__link">
+    Configuring and running Connaisseur
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-validation" class="md-nav__link">
+    Understanding validation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    Configuration options
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-notes" class="md-nav__link">
+    Additional notes
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enforcing-delegations" class="md-nav__link">
+    Enforcing delegations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-azure-container-registry" class="md-nav__link">
+    Using Azure Container Registry
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="notary-v1-dct">Notary (V1) / DCT<a class="headerlink" href="#notary-v1-dct" title="Permanent link">⚓︎</a></h1>
+<p><a href="https://github.com/theupdateframework/notary">Notary</a> (V1<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>) works as an external service holding signatures and trust data of artifacts based on <a href="https://theupdateframework.io/">The Update Framework (TUF)</a>.
+<a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust (DCT)</a> is a client implementation by Docker to manage such trust data for container images like signing images or verifying the corresponding signatures.
+It is part of the standard Docker CLI (<code>docker</code>) and for example provides the <a href="https://docs.docker.com/engine/reference/commandline/trust/"><code>docker trust</code></a> commands.</p>
+<p>Using DCT, the trust data is per default pushed to the Notary server associated to the container registry.
+However, not every public container registry provides an associated Notary server and thus support for DCT must be checked for the provider in question.
+<a href="https://hub.docker.com/">Docker Hub</a> for example, runs an associated Notary server (notary.docker.io) and even uses it to serve trust data for the <a href="https://docs.docker.com/docker-hub/official_images/">Docker Official Images</a>.
+In fact, since Connaisseur's pre-built images are shared via the <a href="https://hub.docker.com/repository/docker/securesystemsengineering/connaisseur">Connaisseur Docker Hub repository</a>, its own trust data is maintained on Docker Hub's Notary server.
+Besides the public Notary instances, Notary can also be run as a private or even standalone instance.
+<a href="https://goharbor.io/">Harbor</a> for example comes along with an associated Notary instance.</p>
+<p>Validating a container image via DCT requires a repository's public root key as well as fetching the repository's trust data from the associated Notary server.
+While DCT relies on <em>trust on first use</em> (TOFU) for repositories' public root keys, Connaisseur enforces manual pinning to a public root key that must be configured in advance.</p>
+<h2 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">⚓︎</a></h2>
+<p>In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the public root key of other images and configure Connaisseur via <code>validators[*].trust_roots[*].key</code> in <code>helm/values.yaml</code> to pin trust to those keys.
+Both is described below.
+However, there is also step-by-step instructions for using Notary in the <a href="../../getting_started/">getting started guide</a>.</p>
+<h3 id="creating-signing-key-pairs">Creating signing key pairs<a class="headerlink" href="#creating-signing-key-pairs" title="Permanent link">⚓︎</a></h3>
+<p>You can either create the root key manually or push an image with DCT enabled upon which <code>docker</code> will guide you to set up the keys as described in the next section.
+In order to generate a public-private root key pair manually, you can use:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>trust<span class="w"> </span>key<span class="w"> </span>generate<span class="w"> </span>root
+</code></pre></div>
+<p>You will be prompted for a password, the private key is automatically imported and a <code>root.pub</code> file is created in your current folder that contains your public key which should look similar to:</p>
+<div class="highlight"><pre><span></span><code>-----BEGIN<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
+role:<span class="w"> </span>root
+
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELDzXwqie/P66R3gVpFDWMhxOyol5
+YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ<span class="o">==</span>
+-----END<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
+</code></pre></div>
+<p>You will only need the actual base64 encoded part for configuring the <code>validators[*].trust_roots[*].key</code> in <code>helm/values.yaml</code> of Connaisseur to validate your images.
+How to extract the public root key for any image is described <a href="#getting-the-public-root-key">below</a>.</p>
+<h3 id="creating-signatures">Creating signatures<a class="headerlink" href="#creating-signatures" title="Permanent link">⚓︎</a></h3>
+<p>Before you can start validating images using the Notary (V1) validator, you'll first need an image which has been signed using DCT.
+Easiest way to do this is by pushing an image of your choice (e.g. <code>busybox:stable</code>) to your Docker Hub repository with DCT activated (either set the environment variable <code>DOCKER_CONTENT_TRUST=1</code> or use the <code>--disable-content-trust=false</code> flag).
+If you haven't created any signatures for images in the current repository yet, you'll be asked to enter a passphrase for a root key and targets key, which get generated on your machine.
+Have a look into the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a> to read more about TUF roles and their meanings.
+If you already have these keys, just enter the required passphrase.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>push<span class="w"> </span>&lt;your-repo&gt;/busybox:stable
+&gt;<span class="w"> </span>The<span class="w"> </span>push<span class="w"> </span>refers<span class="w"> </span>to<span class="w"> </span>repository<span class="w"> </span><span class="o">[</span>&lt;your-repo&gt;/busybox<span class="o">]</span>
+&gt;<span class="w"> </span>5b8c72934dfc:<span class="w"> </span>Pushed
+&gt;<span class="w"> </span>stable:<span class="w"> </span>digest:<span class="w"> </span>sha256:dca71257cd2e72840a21f0323234bb2e33fea6d949fa0f21c5102146f583486b<span class="w"> </span>size:<span class="w"> </span><span class="m">527</span>
+&gt;<span class="w"> </span>Signing<span class="w"> </span>and<span class="w"> </span>pushing<span class="w"> </span>trust<span class="w"> </span>metadata
+&gt;<span class="w"> </span>You<span class="w"> </span>are<span class="w"> </span>about<span class="w"> </span>to<span class="w"> </span>create<span class="w"> </span>a<span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>signing<span class="w"> </span>key<span class="w"> </span>passphrase.<span class="w"> </span>This<span class="w"> </span>passphrase
+&gt;<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>used<span class="w"> </span>to<span class="w"> </span>protect<span class="w"> </span>the<span class="w"> </span>most<span class="w"> </span>sensitive<span class="w"> </span>key<span class="w"> </span><span class="k">in</span><span class="w"> </span>your<span class="w"> </span>signing<span class="w"> </span>system.<span class="w"> </span>Please
+&gt;<span class="w"> </span>choose<span class="w"> </span>a<span class="w"> </span>long,<span class="w"> </span>complex<span class="w"> </span>passphrase<span class="w"> </span>and<span class="w"> </span>be<span class="w"> </span>careful<span class="w"> </span>to<span class="w"> </span>keep<span class="w"> </span>the<span class="w"> </span>password<span class="w"> </span>and<span class="w"> </span>the
+&gt;<span class="w"> </span>key<span class="w"> </span>file<span class="w"> </span>itself<span class="w"> </span>secure<span class="w"> </span>and<span class="w"> </span>backed<span class="w"> </span>up.<span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>highly<span class="w"> </span>recommended<span class="w"> </span>that<span class="w"> </span>you<span class="w"> </span>use<span class="w"> </span>a
+&gt;<span class="w"> </span>password<span class="w"> </span>manager<span class="w"> </span>to<span class="w"> </span>generate<span class="w"> </span>the<span class="w"> </span>passphrase<span class="w"> </span>and<span class="w"> </span>keep<span class="w"> </span>it<span class="w"> </span>safe.<span class="w"> </span>There<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>no
+&gt;<span class="w"> </span>way<span class="w"> </span>to<span class="w"> </span>recover<span class="w"> </span>this<span class="w"> </span>key.<span class="w"> </span>You<span class="w"> </span>can<span class="w"> </span>find<span class="w"> </span>the<span class="w"> </span>key<span class="w"> </span><span class="k">in</span><span class="w"> </span>your<span class="w"> </span>config<span class="w"> </span>directory.
+&gt;<span class="w"> </span>Enter<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>5fb3e1e:
+&gt;<span class="w"> </span>Repeat<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>5fb3e1e:
+&gt;<span class="w"> </span>Enter<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>repository<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>6c2a04c:
+&gt;<span class="w"> </span>Repeat<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>repository<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>6c2a04c:
+&gt;<span class="w"> </span>Finished<span class="w"> </span>initializing<span class="w"> </span><span class="s2">&quot;&lt;your-repo&gt;/busybox&quot;</span>
+</code></pre></div>
+<p>The freshly generated keys are directly imported to the Docker client.
+Private keys reside in <code>~/.docker/trust/private</code> and public trust data is added to <code>~/.docker/trust/tuf/</code>.
+The created signature for your image is pushed to the public Docker Hub Notary (notary.docker.io).
+The private keys and password are required whenever a new version of the image is pushed with DCT activated.</p>
+<h3 id="getting-the-public-root-key">Getting the public root key<a class="headerlink" href="#getting-the-public-root-key" title="Permanent link">⚓︎</a></h3>
+<p>Signature validation via Connaisseur requires the <a href="https://theupdateframework.github.io/specification/latest/#root">public root key</a> to verify against as a trust anchor.
+But from where do you get this, especially for public images whose signatures you didn't create?
+We have created the <em>get_root_key</em> utility to extract the public root key of images.
+To use it, either use our pre-built image or build the docker image yourself via <code>docker build -t get-public-root-key -f docker/Dockerfile.getRoot .</code> and run it on the image to be verified:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># pre-built</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>docker.io/securesystemsengineering/get-public-root-key<span class="w"> </span>-i<span class="w"> </span>securesystemsengineering/testimage
+<span class="c1"># or self-built</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>get-public-root-key<span class="w"> </span>-i<span class="w"> </span>securesystemsengineering/testimage
+&gt;<span class="w"> </span>KeyID:<span class="w"> </span>76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
+&gt;<span class="w"> </span>Key:<span class="w"> </span>-----BEGIN<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
+&gt;<span class="w"> </span>MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+&gt;<span class="w"> </span>d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</span>
+&gt;<span class="w"> </span>-----END<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
+</code></pre></div>
+<p>The <code>-i</code> (<code>--image</code>) option is required and takes the image, for which you want the public key.
+There is also the <code>-s</code> (<code>--server</code>) option, which defines the Notary server that should be used and which defaults to <code>notary.docker.io</code>.</p>
+<p>The public repository root key resides with the signature data in the Notary instance, so what the <em>get_root_key</em> utility does in the background is just fetching, locating and parsing the public repository root key for the given image.</p>
+<h3 id="configuring-and-running-connaisseur">Configuring and running Connaisseur<a class="headerlink" href="#configuring-and-running-connaisseur" title="Permanent link">⚓︎</a></h3>
+<p>Now that you either created your own keys and signed images or extracted the public key of other images, you will need to configure Connaisseur to use those keys for validation.
+This is done via <code>validators</code> in <code>helm/values.yaml</code>.
+The corresponding entry should look similar to the following (using the extracted public key as trust root):</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># THE DESIRED PUBLIC KEY BELOW</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f</span>
+<span class="w">      </span><span class="no">QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
+</code></pre></div>
+<p>You also need to create a corresponding entry in the image policy via <code>policy</code> in <code>helm/values.yaml</code>, for example:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/&lt;REPOSITORY&gt;/&lt;IMAGE&gt;:*&quot;</span><span class="w">  </span><span class="c1"># THE DESIRED REPOSITORY</span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
+</code></pre></div>
+<p>After installation, you are ready to verify your images against your public key:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
+</code></pre></div>
+<p>Connaisseur now rejects all images from the given repository that have not been signed based on the provided public key.
+A quick guide for installation and testing is available in <a href="../../getting_started/#deploy-connaisseur">getting started</a>.
+It also provides a full step-by-step guide.</p>
+<h3 id="understanding-validation">Understanding validation<a class="headerlink" href="#understanding-validation" title="Permanent link">⚓︎</a></h3>
+<p>Using the simple pre-configuration shipped with Connaisseur, it is possible to test validation by deploying some pods:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>test-signed<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:signed
+&gt;<span class="w"> </span>pod/test-signed<span class="w"> </span>created
+
+kubectl<span class="w"> </span>run<span class="w"> </span>test-unsigned<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
+&gt;<span class="w"> </span>Error<span class="w"> </span>from<span class="w"> </span>server:<span class="w"> </span>admission<span class="w"> </span>webhook<span class="w"> </span><span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span><span class="w"> </span>denied<span class="w"> </span>the<span class="w"> </span>request:<span class="w"> </span>Unable<span class="w"> </span>to<span class="w"> </span>find<span class="w"> </span>signed<span class="w"> </span>digest<span class="w"> </span><span class="k">for</span><span class="w"> </span>image<span class="w"> </span>docker.io/securesystemsengineering/testimage:unsigned.
+<span class="c1"># or in case of a signature with a different key</span>
+&gt;<span class="w"> </span>Error<span class="w"> </span>from<span class="w"> </span>server:<span class="w"> </span>admission<span class="w"> </span>webhook<span class="w"> </span><span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span><span class="w"> </span>denied<span class="w"> </span>the<span class="w"> </span>request:<span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>verify<span class="w"> </span>signature<span class="w"> </span>of<span class="w"> </span>trust<span class="w"> </span>data<span class="w"> </span>root.
+</code></pre></div>
+<p>How does Connaisseur validate these requests and convert the images with tags to digests?
+What happens in the background is that Connaisseur looks up trust data of the image in the <code>root</code>, <code>snapshot</code>, <code>timestamp</code> and <code>targets</code> files (in json format) by querying the API of the Notary server.
+Trust data syntax is validated against their known schemas and the files' signatures are validated against their respective public keys.
+The pinned root key is used for the <code>root.json</code> file that in turn contains the other keys which can then be trusted for validation of the remaining trust data (<code>snapshot.json</code>, <code>timestamp.json</code>, <code>targets.json</code>).
+Furthermore, Connaisseur gathers trust data of potential delegations linked in the <code>targets</code> file which can then be used to <a href="#enforcing-delegations">enforce delegations</a>.</p>
+<p>At this point, Connaisseur is left with a validated set of trust data.
+Connaisseur filters the trust data for consistent signed digests that actually relate to the image under validation.
+In case exactly one trusted digest remains, Connaisseur modifies the admission request and admits it.
+Otherwise, admission is rejected.</p>
+<p>While it is obvious to reject an image that does not exhibit a trusted digest, there is the special case of multiple trusted digests.
+This only occurs in some edge cases, but at this point Connaisseur cannot identify the right digest anymore and consequently has to reject.</p>
+<p>For more information on TUF roles, please refer to <a href="https://theupdateframework.io/security/">TUF's documentation</a> or checkout <a href="https://berlin-crypto.github.io/event/dockerimagesignatures.html">this introductory presentation</a> on how the trust data formats work and are validated by Connaisseur.</p>
+<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
+<p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys for Notary (V1) (refer to <a href="../../basics/#validators">basics</a> for more information on default keys):</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>See <a href="../../basics/#validators">basics</a>.</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><code>notaryv1</code>; the validator type must be set to <code>notaryv1</code>.</td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>URL of the Notary instance, in which the signatures reside, e.g. <code>notary.docker.io</code>.</td>
+</tr>
+<tr>
+<td><code>trust_roots[*].name</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>See <a href="../../basics/#validators">basics</a>.</td>
+</tr>
+<tr>
+<td><code>trust_roots[*].key</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td>See <a href="../../basics/#validators">basics</a>. ECDSA public root key.</td>
+</tr>
+<tr>
+<td><code>auth</code></td>
+<td>-</td>
+<td></td>
+<td>Authentication credentials for the Notary server in case the trust data is not public.</td>
+</tr>
+<tr>
+<td><code>auth.secret_name</code></td>
+<td>-</td>
+<td></td>
+<td>(Preferred over <code>username</code> + <code>password</code> combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file <code>auth.yaml</code> containing:<br/>&nbsp; <code>username: &lt;user&gt;</code> <br/>&nbsp; <code>password: &lt;password&gt;</code> <br/>Run <code>kubectl create secret generic &lt;kube-secret-name&gt; --from-file auth.yaml -n connaisseur</code> to create the secret.</td>
+</tr>
+<tr>
+<td><code>auth.username</code></td>
+<td>-</td>
+<td></td>
+<td>Username to authenticate with. It is recommended to use <code>auth.secret_name</code> instead.</td>
+</tr>
+<tr>
+<td><code>auth.password</code></td>
+<td>-</td>
+<td></td>
+<td>Password or access token to authenticate with. It is recommended to use <code>auth.secret_name</code> instead.</td>
+</tr>
+<tr>
+<td><code>cert</code></td>
+<td>-</td>
+<td></td>
+<td>Self-signed certificate of the Notary instance, if used. Certificate must be supplied in <code>.pem</code> format.</td>
+</tr>
+<tr>
+<td><code>is_acr</code></td>
+<td><code>false</code></td>
+<td></td>
+<td><code>true</code> if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs.</td>
+</tr>
+</tbody>
+</table>
+<p><code>.policy[*]</code> in <code>helm/values.yaml</code> supports the following additional keys for Notary (V1) (refer to <a href="../../basics/#image-policy">basics</a> for more information on default keys):</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Default</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>with.delegations</code></td>
+<td>-</td>
+<td></td>
+<td>List of delegation names to enforce specific signers to be present. Refer to section on <a href="#enforcing-delegations">enforcing delegations</a> for more information.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">validators</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_essentials</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
+<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sse</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">      </span><span class="no">MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni</span>
+<span class="w">      </span><span class="no">qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==</span>
+<span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
+
+<span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/connaisseur:*&quot;</span>
+<span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_essentials</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sse</span>
+<span class="w">    </span><span class="nt">delegations</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">belitzphilipp</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">starkteetje</span>
+</code></pre></div>
+<h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
+<h3 id="enforcing-delegations">Enforcing delegations<a class="headerlink" href="#enforcing-delegations" title="Permanent link">⚓︎</a></h3>
+<p>Notary (V1) offers the functionality to delegate trust.
+To better understand this feature, it's best to have a basic understanding of the TUF key hierarchy, or more specifically the purpose of the root, targets and delegation keys.
+If you are more interested in this topic, please read the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a>.</p>
+<p>When creating the signatures of your docker images earlier, two keys were generated -- the root key and the targets key.
+The root key is the root of all trust and will be used whenever a new image repository is created and needs to be signed.
+It's also used to rotate all other kinds of keys, thus there is usually only one root key present.
+The targets key is needed for new signatures on one specific image repository, hence every image repository has its own targets key.
+Hierarchically speaking, the targets keys are below the root key, as the root key can be used to rotate the targets keys should they get compromised.</p>
+<p>Delegations will now go one level deeper, meaning they can be used to sign individual image repositories and only need the targets key for rotation purposes, instead of the root key.
+Also delegation keys are not bound to individual image repositories, so they can be re-used multiple times over different image repositories.
+So in a sense they can be understood as keys for individual signers.</p>
+<p>To create a delegation key run:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>trust<span class="w"> </span>key<span class="w"> </span>generate<span class="w"> </span>&lt;key-name&gt;
+&gt;<span class="w"> </span>Generating<span class="w"> </span>key<span class="w"> </span><span class="k">for</span><span class="w"> </span>&lt;key-name&gt;...
+&gt;<span class="w"> </span>Enter<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>&lt;key-name&gt;<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>9deed25:
+&gt;<span class="w"> </span>Repeat<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>&lt;key-name&gt;<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>9deed25:
+&gt;<span class="w"> </span>Successfully<span class="w"> </span>generated<span class="w"> </span>and<span class="w"> </span>loaded<span class="w"> </span>private<span class="w"> </span>key.<span class="w"> </span>Corresponding<span class="w"> </span>public<span class="w"> </span>key<span class="w"> </span>available:<span class="w"> </span>&lt;current-directory&gt;/&lt;key-name&gt;.pub
+</code></pre></div>
+<p>This delegation key now needs to be added as a signer to a respective image repository, like the <code>busybox</code> example <a href="#creating-signatures">above</a>.
+In doing so, you'll be asked for the targets key.</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>trust<span class="w"> </span>signer<span class="w"> </span>add<span class="w"> </span>--key<span class="w"> </span>&lt;key-name&gt;.pub<span class="w"> </span>&lt;key-name&gt;<span class="w"> </span>&lt;your-repo&gt;/busybox
+&gt;<span class="w"> </span>Adding<span class="w"> </span>signer<span class="w"> </span><span class="s2">&quot;&lt;key-name&gt;&quot;</span><span class="w"> </span>to<span class="w"> </span>&lt;your-repo&gt;/busybox...
+&gt;<span class="w"> </span>Enter<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>repository<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>b0014f8:
+&gt;<span class="w"> </span>Successfully<span class="w"> </span>added<span class="w"> </span>signer:<span class="w"> </span>&lt;key-name&gt;<span class="w"> </span>to<span class="w"> </span>&lt;your-repo&gt;/busybox
+</code></pre></div>
+<p>If you create a new signature for the image, you'll be asked for your delegation key instead of the targets key, therefore creating a signature using the delegation.</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>push<span class="w"> </span>&lt;your-repo&gt;/busybox:stable
+</code></pre></div>
+<p>Without further configuration, Connaisseur will accept all delegation signatures for an image that can ultimately be validated against the public root key.
+Connaisseur can enforce a certain signer/delegation (or multiple) for an image's signature via the <code>with.delegations</code> list inside an image policy rule.
+Simply add the signer's name to the list.
+You can also add multiple signer names to the list in which case Connaisseur will enforce that <em>all</em> delegations must have signed a matching image.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">policy</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;your-repo&gt;/busybox:*&quot;</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">delegations</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;key-name&gt;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;other-key-name&gt;</span>
+</code></pre></div>
+<p>The delegation feature can be useful in complex organisations where certain people may be required to sign specific critical images.
+Another use case is to sign an image with delegation keys in various stages of your CI and enforce that certain checks were passed, i.e. enforcing the signature of your linter, your security scanner and your software lisence compliance check.</p>
+<h3 id="using-azure-container-registry">Using Azure Container Registry<a class="headerlink" href="#using-azure-container-registry" title="Permanent link">⚓︎</a></h3>
+<p>Using Azure Container Registry (ACR) must be specified in the <a href="./#configuration-options">validator configuration</a> by setting <code>is_acr</code> to <code>true</code>.</p>
+<p>Moreover, you need to provide credentials of an Azure Identity having at least <code>read</code> access to the ACR (and, thus, to the associated Notary instance). Assuming you have the <code>az cli</code> installed you can create a Service Principal for this by running:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Retrieve the ID of your registry</span>
+<span class="nv">REGISTRY_ID</span><span class="o">=</span><span class="k">$(</span>az<span class="w"> </span>acr<span class="w"> </span>show<span class="w"> </span>--name<span class="w"> </span>&lt;ACR-NAME&gt;<span class="w">  </span>--query<span class="w"> </span><span class="s1">&#39;id&#39;</span><span class="w"> </span>-otsv<span class="k">)</span>
+
+<span class="c1"># Create a service principal with the Reader role on your registry</span>
+az<span class="w"> </span>ad<span class="w"> </span>sp<span class="w"> </span>create-for-rbac<span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;&lt;SERVICE-PRINCIPLE-NAME&gt;&quot;</span><span class="w"> </span>--role<span class="w"> </span>Reader<span class="w"> </span>--scopes<span class="w"> </span><span class="si">${</span><span class="nv">REGISTRY_ID</span><span class="si">}</span>
+</code></pre></div>
+<p>Use the resulting <code>applicationID</code> as <code>auth.username</code>, the resulting <code>password</code> as <code>auth.password</code> and set <code>&lt;ACR&gt;.azurecr.io</code> as <code>host</code> in the <code>helm/values.yaml</code> and you're ready to go!</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Notary does traditionally not carry the version number. However, in differentiation to the new <a href="https://github.com/notaryproject/notaryproject">Notary V2 project</a> we decided to add a careful "(V1)" whenever we refer to the original project.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <a href="https://securesystems.de">Secure Systems Engineering GmbH</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/sse-secure-systems" target="_blank" rel="noopener" title="SSE on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://hub.docker.com/r/securesystemsengineering/connaisseur" target="_blank" rel="noopener" title="Connaisseur images on Docker Hub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://artifacthub.io/packages/helm/connaisseur/connaisseur" target="_blank" rel="noopener" title="Connaisseur helm chart on Artifact Hub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M45.9 42.1c3-6.1 9.6-9.6 16.3-8.7L307 64l244.8-30.6c6.7-.8 13.3 2.7 16.3 8.7l41.7 83.4c9 17.9-.6 39.6-19.8 45.1l-163.4 46.7c-13.9 4-28.8-1.9-36.2-14.3L307 64l-83.4 139c-7.4 12.4-22.3 18.3-36.2 14.3L24.1 170.6c-19.3-5.5-28.8-27.2-19.9-45.1l41.7-83.4zM308.1 128l54.9 91.4c14.9 24.8 44.6 36.6 72.5 28.6L563 211.6v167c0 22-15 41.2-36.4 46.6l-204.1 51c-10.2 2.6-20.9 2.6-31 0l-204.1-51C66 419.7 51 400.5 51 378.5v-167L178.6 248c27.8 8 57.6-3.8 72.5-28.6l54.8-91.4h2.2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://medium.com/sse-blog" target="_blank" rel="noopener" title="SSE on Medium" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M180.5 74.262C80.813 74.262 0 155.633 0 256s80.819 181.738 180.5 181.738S361 356.373 361 256 280.191 74.262 180.5 74.262Zm288.25 10.646c-49.845 0-90.245 76.619-90.245 171.095s40.406 171.1 90.251 171.1 90.251-76.619 90.251-171.1H559c0-94.503-40.4-171.095-90.248-171.095Zm139.506 17.821c-17.526 0-31.735 68.628-31.735 153.274s14.2 153.274 31.735 153.274S640 340.631 640 256c0-84.649-14.215-153.271-31.742-153.271Z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.youtube.com/channel/UCReAmr98RzwYZeWG6CAwOhg" target="_blank" rel="noopener" title="SSE on YouTube" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://twitter.com/sse_gmbh" target="_blank" rel="noopener" title="SSE on Twitter" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/company/sse-secure-systems-engineering" target="_blank" rel="noopener" title="SSE on LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.securesystems.de/" target="_blank" rel="noopener" title="SSE Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M562.8 267.7c56.5-56.5 56.5-148 0-204.5-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6 31.5 31.5 31.5 82.5 0 114L405.3 334.8c-31.5 31.5-82.5 31.5-114 0-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C189.5 251.2 196 330 246 380c56.5 56.5 148 56.5 204.5 0l112.3-112.3zM43.2 244.3c-56.5 56.5-56.5 148 0 204.5 50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C57 372 57 321 88.5 289.5l112.2-112.3c31.5-31.5 82.5-31.5 114 0 27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C416.5 260.8 410 182 360 132c-56.5-56.5-148-56.5-204.5 0L43.2 244.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:connaisseur@securesystems.dev" target="_blank" rel="noopener" title="Email contact" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4l217.6 163.2c11.4 8.5 27 8.5 38.4 0l217.6-163.2c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48H48zM0 176v208c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V176L294.4 339.2a63.9 63.9 0 0 1-76.8 0L0 176z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.2a6f1dda.min.js"></script>
+      
+    
+  </body>
+</html>
