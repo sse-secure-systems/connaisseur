@@ -52,6 +52,7 @@ jobs:
     uses: ./.github/workflows/.reusable-sca.yml
     needs: [build]
     permissions:
+      security-events: write
       packages: read
     secrets: inherit
     with:
