@@ -9,6 +9,7 @@ src
 *.pem
 *.csr
 *.srl
+cosign.*
 testing-env/aks/k8s/deployment.yaml
 .vscode
 .pytest_cache

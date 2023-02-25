@@ -10,8 +10,8 @@ inputs:
   image_tag:
     description: 'Image tag to be used'
     required: true
-  branch_tag:
-    description: 'Branch tag to be used'
+  ref_tags:
+    description: 'Reference tags to be used'
     required: true
   image_labels:
     description: 'Image labels to be used'
@@ -44,12 +44,20 @@ runs:
         registry: ${{ inputs.image_registry }}
         username: ${{ inputs.repo_owner }}
         password: ${{ inputs.repo_token }}
+    - name: Generate tags
+      id: tags
+      run: |
+        echo "${{ inputs.ref_tags }}"
+        export PREFIX="${{ inputs.image_registry }}/${{ inputs.image_repo }}:"
+        TAGS="${PREFIX}${{ inputs.image_tag }},$(echo ${{ inputs.ref_tags }} | tr ' ' '\n' | awk '{print "${PREFIX}"$1}' | envsubst | tr '\n' ',')"
+        echo tags=${TAGS} >> ${GITHUB_OUTPUT}
+      shell: bash
     - name: Build and push image
       id: build
       uses: docker/build-push-action@v4
       with:
         push: true
-        tags: ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}, ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.branch_tag }}
+        tags: ${{ steps.tags.outputs.tags }}
         labels: ${{ inputs.image_labels }}
         file: docker/Dockerfile
         build-args: COSIGN_VERSION=${{ inputs.cosign_version }}
@@ -109,9 +117,9 @@ runs:
         echo "<tr><th>Build artifacts</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Registry</td><td><code>${{ inputs.image_registry }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Repository</td><td><code>${{ inputs.image_repo }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<tr><td>Tags</td><td><code>${{ inputs.image_tag }}</code>, <code>${{ inputs.branch_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Tags</td><td><code>${{ inputs.image_tag }}</code>, <code>${{ inputs.ref_tags }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Workflow image</td><td><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<tr><td>Branch image reference</td><td><code>${{ inputs.branch_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>All reference tags</td><td><code>$(echo ${{ steps.tags.outputs.tags }} | tr ',' '\n')</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Digest</td><td><code>${{ steps.build.outputs.digest }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Signature</td><td><code>${{ steps.verify.outputs.signature }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Public key</td><td><code>${PUBLIC_KEY}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
@@ -126,7 +134,7 @@ runs:
         echo "(needs <a href='https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry'>docker login via PAT</a> with package:read permission)" >> ${GITHUB_STEP_SUMMARY}
         echo "<ul>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li><b>Workflow image reference</b> by tag: <pre><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<li><b>Branch image reference</b> by tag: <pre><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.branch_tag }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li><b>Main image reference</b> by tag: <pre><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}:$(echo ${{ inputs.ref_tags }} | tr ' ' '\n' | head -n1)</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li><b>Image reference</b> by digest: <pre><code>${{ inputs.image_registry }}/${{ inputs.image_repo }}@${{ steps.build.outputs.digest }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li><b>Cosign signature</b>: <pre><code>${{ steps.verify.outputs.signature }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li><b>Syft SBOM (cyclonedx-json)</b>: <pre><code>${{ steps.verify.outputs.sbom }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
