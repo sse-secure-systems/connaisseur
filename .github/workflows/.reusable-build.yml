@@ -56,7 +56,7 @@ jobs:
       build_registry: ${{ steps.get_context.outputs.build_registry }}
       build_repo: ${{ steps.get_context.outputs.build_repo }}
       build_tag: ${{ steps.get_context.outputs.build_tag }}
-      branch_tag: ${{ steps.get_context.outputs.branch_tag }}
+      ref_tags: ${{ steps.get_context.outputs.ref_tags }}
       build_image: ${{ steps.get_context.outputs.build_image }}
       build_labels: ${{ steps.get_context.outputs.build_labels }}
     steps:
@@ -80,7 +80,7 @@ jobs:
           image_registry: ${{ needs.context.outputs.build_registry }}
           image_repo: ${{ needs.context.outputs.build_repo }}
           image_tag: ${{ needs.context.outputs.build_tag }}
-          branch_tag: ${{ needs.context.outputs.branch_tag }}
+          ref_tags: ${{ needs.context.outputs.ref_tags }}
           image_labels: ${{ needs.context.outputs.build_labels }}
           repo_owner: ${{ github.repository_owner }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}

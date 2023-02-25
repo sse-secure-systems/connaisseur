@@ -36,13 +36,13 @@ outputs:
     value: ${{ steps.get_context.outputs.BUILD_REPO }}
   build_tag:
     description: "Workflow build tag used for testing (unique for each run)"
-    value: ${{ steps.get_context.outputs.BUILD_TAG }}
-  branch_tag:
-    description: "Branch tag used for all builds on branch"
-    value: ${{ steps.show_context.outputs.BRANCH_TAG }}
+    value: ${{ steps.show_context.outputs.BUILD_TAG }}
   build_image:
     description: "Workflow build image used for testing, i.e. registry + repository + tag"
-    value: ${{ steps.get_context.outputs.BUILD_IMAGE }}
+    value: ${{ steps.show_context.outputs.BUILD_IMAGE }}
+  ref_tags:
+    description: "All reference tags used for build"
+    value: ${{ steps.show_context.outputs.REF_TAGS }}
   build_labels:
     description: "Repository- and workflow-specific build labels"
     value: ${{ steps.meta.outputs.labels }}
@@ -62,6 +62,8 @@ runs:
     - name: Get context
       id: get_context
       run: |
+        GHREF=${{ github.ref }}
+        echo "github.ref is: ${GHREF}"
         CHART_VERSION=${{ steps.get_chart_version.outputs.result }}
         COSIGN_VERSION=$(grep -Eo '^COSIGN_VERSION = .*' Makefile | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
         ORIGINAL_IMAGE=${{ steps.get_original_image.outputs.result }}
@@ -70,20 +72,12 @@ runs:
         ORIGINAL_TAG=$(echo "${ORIGINAL_IMAGE}" | cut -d "/" -f 2- | cut -d ':' -f 2)
         BUILD_REGISTRY=${{ inputs.build_registry }}
         BUILD_REPO=${{ inputs.build_repo }}
-
-        if [ "${{ github.ref }}" = refs/heads/master || "${{ github.ref }}" = refs/tags/v* ]; then
-          BUILD_TAG="${ORIGINAL_TAG}"
-          if [ "${{ github.workflow }}" = "nightly" ]; then
-            BUILD_TAG=${BUILD_TAG}-nightly
-          fi
-        elif [ "${{ github.ref_name }}" = "refs/heads/develop" ]; then
-          BUILD_TAG="develop"
-        else
+        if [[ "${GHREF}" != "refs/heads/master" &&
+          "${GHREF}" != "refs/tags/v"* &&
+          "${GHREF}" != "refs/heads/develop"
+        ]]; then
           BUILD_REPO="${BUILD_REPO}-test"
-          BUILD_TAG=${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
         fi
-
-        BUILD_IMAGE=${BUILD_REGISTRY}/${BUILD_REPO}:${BUILD_TAG}
 
         echo COSIGN_VERSION=${COSIGN_VERSION} >> ${GITHUB_OUTPUT}
         echo CHART_VERSION=${CHART_VERSION} >> ${GITHUB_OUTPUT}
@@ -93,8 +87,6 @@ runs:
         echo ORIGINAL_IMAGE=${ORIGINAL_IMAGE} >> ${GITHUB_OUTPUT}
         echo BUILD_REGISTRY=${BUILD_REGISTRY} >> ${GITHUB_OUTPUT}
         echo BUILD_REPO=${BUILD_REPO} >> ${GITHUB_OUTPUT}
-        echo BUILD_TAG=${BUILD_TAG} >> ${GITHUB_OUTPUT}
-        echo BUILD_IMAGE=${BUILD_IMAGE} >> ${GITHUB_OUTPUT}
       shell: bash
     - name: Generate metadata
       id: meta
@@ -102,12 +94,26 @@ runs:
       with:
         images: ${{ steps.get_context.outputs.BUILD_REGISTRY }}/${{ steps.get_context.outputs.BUILD_REPO }}
         flavor: |
-          latest=false
+          latest=true
+        tags: |
+          type=schedule
+          type=ref,event=branch
+          type=ref,event=tag
+          type=ref,event=pr
+          type=sha
     - name: Show context
       id: show_context
       run: |
-        BRANCH_TAG=$(echo "${{ steps.meta.outputs.tags }}" | cut -d ':' -f 2)
-        echo BRANCH_TAG=${BRANCH_TAG} >> ${GITHUB_OUTPUT}
+        PREFIX=$(echo "${{ steps.get_context.outputs.BUILD_REGISTRY }}/${{ steps.get_context.outputs.BUILD_REPO }}:" | sed 's%/%\/%g')
+        TAGS="${{ steps.meta.outputs.tags }}"
+        REF_TAGS="${TAGS//${PREFIX}/}"
+        BUILD_IMAGE=$(echo "${TAGS}" | tail -2 | head -1)
+        BUILD_TAG="${BUILD_IMAGE//${PREFIX}/}"
+        [[ ${BUILD_TAG} == "sha-"* ]] || exit 1 # check as parsing of the BUILD_TAG maybe fragile and dependent on docker/metadata-action priorities
+        REF_TAGS="${REF_TAGS//${BUILD_TAG}/}"
+        echo BUILD_TAG=${BUILD_TAG} >> ${GITHUB_OUTPUT}
+        echo BUILD_IMAGE=${BUILD_IMAGE} >> ${GITHUB_OUTPUT}
+        echo REF_TAGS=${REF_TAGS} >> ${GITHUB_OUTPUT}
         echo "# :clipboard: Context" >> ${GITHUB_STEP_SUMMARY}
         echo "<table>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><th>Build Context</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
@@ -119,9 +125,10 @@ runs:
         echo "<tr><td>Original image</td><td><code>${{ steps.get_context.outputs.ORIGINAL_IMAGE }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Build registry</td><td><code>${{ steps.get_context.outputs.BUILD_REGISTRY }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Build repository</td><td><code>${{ steps.get_context.outputs.BUILD_REPO }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<tr><td>Build tags</td><td><code>${{ steps.get_context.outputs.BUILD_TAG }}</code>, <code>${BRANCH_TAG}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<tr><td>Build image</td><td><code>${{ steps.get_context.outputs.BUILD_IMAGE }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<tr><td>Branch build image</td><td><code>${{ steps.meta.outputs.tags }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Build tag</td><td><code>${BUILD_TAG}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Build image</td><td><code>${BUILD_IMAGE}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Ref tags</td><td><code>${REF_TAGS}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>All build images</td><td><code>${{ steps.meta.outputs.tags }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Build labels</td><td><code>${{ steps.meta.outputs.labels }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "</table>" >> ${GITHUB_STEP_SUMMARY}
         echo "" >> ${GITHUB_STEP_SUMMARY}
@@ -137,7 +144,7 @@ runs:
         echo "<li>Build registry: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_registry &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Build repository: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_repo &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Build tag (workflow): <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_tag &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<li>Branch tag: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.branch_tag &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Ref tags: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.ref_tags &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Build image: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_image &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Build labels: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.build_labels &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "</ul>" >> ${GITHUB_STEP_SUMMARY}
