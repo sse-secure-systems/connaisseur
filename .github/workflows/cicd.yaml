@@ -77,16 +77,9 @@ jobs:
     uses: ./.github/workflows/.reusable-unit-test.yml
 
   docs:
-    runs-on: ubuntu-latest
-    container:
-      image: python:slim
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
-      - name: Build
-        run: |
-          pip install -r docs/requirements_docs.txt
-          mkdocs build
+    uses: ./.github/workflows/.reusable-docs.yaml
+    permissions:
+      contents: write
 
   integration-test:
     uses: ./.github/workflows/.reusable-integration-test.yml

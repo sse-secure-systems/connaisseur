@@ -1,9 +1,7 @@
-name: Build and Deploy Dev Documentation
+name: docs
 
 on:
-  push:
-    branches:
-      - develop
+  workflow_call:
 
 permissions: {}
 
@@ -17,13 +15,22 @@ jobs:
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
         with:
             fetch-depth: 0
+      - name: Set release env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Configure the git user
         run: |
           git config user.name "versioning_user"
           git config user.email "connaisseur@securesystems.dev"
-      - name: Install dependencies
+      - name: Install
         run: |
           pip install -r docs/requirements_docs.txt
       - name: Deploy
         run: |
-          mike deploy --push develop
+          if [[ "${GHREF}" == "refs/tags/v"* ]];
+          then
+            mike deploy --push --update-aliases ${RELEASE_VERSION} latest
+          elif [[ "${GHREF}" == "refs/heads/develop" ]]; then
+            mike deploy --push ${RELEASE_VERSION}
+          else
+            mkdocs build
+          fi

@@ -96,3 +96,9 @@ jobs:
           git add ./charts
           git commit -m "Publish helm chart ${CHART_VERSION}"
           git push https://${{ secrets.GITHUB_TOKEN }}@github.com/sse-secure-systems/connaisseur.git
+
+  publish_docs:
+    needs: [build, version-match, integration-test]
+    uses: ./.github/workflows/.reusable-docs.yaml
+    permissions:
+      contents: write
