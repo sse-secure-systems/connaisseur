@@ -99,3 +99,4 @@ jobs:
       repo_owner: ${{ github.repository_owner }}
       build_image: ${{ needs.build.outputs.build_image }}
       skip_integration_tests: ${{ needs.conditionals.outputs.skip_integration_tests }}
+      cosign_public_key: ${{ needs.build.outputs.cosign_public_key }}

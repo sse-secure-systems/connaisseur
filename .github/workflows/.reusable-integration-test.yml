@@ -15,6 +15,9 @@ on:
       skip_integration_tests:
         description: "Want to skip running certain integration tests 'none', 'non-required', 'all'?"
         type: string
+      cosign_public_key:
+        description: "Cosign public key used for signing the build image"
+        type: string
 
 permissions: {}
 
@@ -29,6 +32,7 @@ jobs:
       packages: read
     env:
       IMAGE: ${{ inputs.build_image }}
+      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
@@ -92,6 +96,7 @@ jobs:
       packages: read
     env:
       IMAGE: ${{ inputs.build_image }}
+      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
@@ -135,6 +140,7 @@ jobs:
       packages: read
     env:
       IMAGE: ${{ inputs.build_image }}
+      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
@@ -175,6 +181,7 @@ jobs:
       packages: read
     env:
       IMAGE: ${{ inputs.build_image }}
+      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     steps:
       - name: Checkout code
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
@@ -209,6 +216,7 @@ jobs:
           branch: ${{ github.head_ref || github.ref_name }}
       - name: Configure Connaisseur (master)
         run: |
+          COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n          }")"
           envsubst < tests/integration/ghcr-values.yaml > update
           yq '. *+ load("update")' -i helm/values.yaml
           rm update

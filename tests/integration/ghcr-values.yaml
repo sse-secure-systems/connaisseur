@@ -4,13 +4,10 @@ validators:
     trust_roots:
       - name: default
         key: |
-          -----BEGIN PUBLIC KEY-----
-          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQ70fJ/NA109p3/43cTgwnLQ+HsvK
-          jFK/0L1kLUQO+e2cL+3+y2s4IykwTxfSnqOSA0kEy1rTrhrXLCox4uRmSQ==
-          -----END PUBLIC KEY-----
+          ${COSIGN_PUBLIC_KEY}
     auth:
       secret_name: ${IMAGEPULLSECRET}
 
 policy:
-  - pattern: "ghcr.io/sse-secure-systems/*:*"
+  - pattern: "${IMAGE}"
     validator: connaisseur-ghcr

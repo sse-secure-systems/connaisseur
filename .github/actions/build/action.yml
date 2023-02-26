@@ -31,6 +31,10 @@ inputs:
   cosign_password:
     description: 'Cosign private key password'
     required: true
+outputs:
+  cosign_public_key:
+    description: 'Cosign public key'
+    value: ${{ steps.verify.outputs.public_key }}
 runs:
   using: "composite"
   steps:
@@ -93,7 +97,7 @@ runs:
         SIGNATURE=$(cosign triangulate ${TAGS})
         PUBLIC_KEY="${PUBLIC_KEY//$'\n'/'<br>'}"
         SBOM="${SIGNATURE::-4}.sbom"
-        echo public-key="${PUBLIC_KEY}" >> ${GITHUB_OUTPUT}
+        echo public_key="${PUBLIC_KEY}" >> ${GITHUB_OUTPUT}
         echo signature=${SIGNATURE} >> ${GITHUB_OUTPUT}
         echo sbom=${SBOM} >> ${GITHUB_OUTPUT}
       env:
@@ -110,7 +114,7 @@ runs:
       run: |
         CONFIGURE="yq '. *+ load(\"tests/integration/var-img.yaml\")' tests/integration/ghcr-values.yaml > ghcr.yaml &&\n\t IMAGE=\"${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}\" IMAGEPULLSECRET=\"<ImagePullSecret name>\" envsubst < ghcr.yaml > update &&\n\t yq '. *+ load(\"update\")' -i helm/values.yaml &&\n\t rm ghcr.yaml update"
         CONFIGURE=$(printf -- "${CONFIGURE}")
-        PUBLIC_KEY="${{ steps.verify.outputs.public-key }}"
+        PUBLIC_KEY="${{ steps.verify.outputs.public_key }}"
         PUBLIC_KEY="$(printf -- "${PUBLIC_KEY//'<br>'/'\n'}")"
         echo "# :building_construction: Build Information" >> ${GITHUB_STEP_SUMMARY}
         echo "<table>" >> ${GITHUB_STEP_SUMMARY}

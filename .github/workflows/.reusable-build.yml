@@ -6,6 +6,9 @@ on:
       cosign_version: 
         description: "Cosign version used for building Connaisseur image"
         value: ${{ jobs.context.outputs.cosign_version }}
+      cosign_public_key: 
+        description: "Cosign public key used for signing Connaisseur image"
+        value: ${{ jobs.build.outputs.cosign_public_key }}
       chart_version: 
         description: "Connaisseur Helm chart version"
         value: ${{ jobs.context.outputs.chart_version }}
@@ -71,10 +74,13 @@ jobs:
     needs: [context]
     permissions:
       packages: write
+    outputs:
+      cosign_public_key: ${{ steps.build.outputs.cosign_public_key }}
     steps:
       - name: Checkout code
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
       - name: Build Connaisseur
+        id: build
         uses: ./.github/actions/build
         with:
           image_registry: ${{ needs.context.outputs.build_registry }}

@@ -14,7 +14,10 @@ TIMEOUT=30
 RETRY=3
 
 ## Backup helm/values.yaml
-cp helm/values.yaml values.yaml.backup
+cp helm/values.yaml values.yaml.Backup
+
+## LOAD PUBLIC KEY
+COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n          }")"
 
 ## Join ghcr integration yaml
 if [[ -n "${IMAGE+x}" && -n "${IMAGEPULLSECRET+x}" ]]; then
