@@ -115,9 +115,9 @@ jobs:
         uses: ./.github/actions/trivy-config
 
   checkov:
+    runs-on: ubuntu-latest
     permissions:
       security-events: write
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
@@ -137,3 +137,20 @@ jobs:
         uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
         with:
           sarif_file: checkov-results.sarif
+
+  semgrep:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    container:
+      image: returntocorp/semgrep
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Scan
+        run: semgrep ci --config=auto --suppress-errors --sarif --output=semgrep-results.sarif || exit 0
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+        with:
+          sarif_file: semgrep-results.sarif
