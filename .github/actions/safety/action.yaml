@@ -1,24 +1,35 @@
 name: safety
-description: 'Run Safety on frozen dependencies'
+description: 'Run Safety on image'
+inputs:
+  image:
+    description: 'Image name'
+    required: true
+  registry:
+    description: 'Registry to login to pull image, e.g. "ghcr.io" for GHCR, leave empty if image is public'
+    required: false
+  repo_owner:
+    description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
+    required: false
+  repo_token:
+    description: 'Access token for repository owner, e.g. "secrets.GITHUB_TOKEN" for ghcr.io'
+    required: false
 runs:
   using: "composite"
   steps:
-    - name: Install packages
-      run: |
-        pip3 install --upgrade pip
-        pip3 install -r requirements_dev.txt
-      shell: sh
-    - name: Freeze packages
-      run: pip3 freeze > actual_package_versions.txt
-      shell: sh
-    - name: Install safety
-      run: pip3 install safety
-      shell: sh
+    - name: Login with registry
+      if: inputs.registry != ''
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.repo_owner }}
+        password: ${{ inputs.repo_token }}
     - name: Scan
-      run: safety check -r ./actual_package_versions.txt --full-report -o screen --save-json safety-report.json
+      run: |
+        docker run --user 0 -v ${PWD}:/results ${{ inputs.image }} /bin/ash -c \
+          'pip3 install safety && safety check --full-report -o screen --save-json /results/safety-report.json'
       shell: sh
     - name: Upload
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       if: failure()
       with:
         name: safety-report

@@ -3,28 +3,43 @@ name: sca
 on:
   workflow_call:
     inputs:
-      build_registry:
-        description: "Workflow build registry used for testing"
+      image:
+        description: "Image used for testing, i.e. registry + repository + tag"
         type: string
+        required: true
+      build_registry:
+        description: 'Registry to login to pull image, e.g. "ghcr.io" for GHCR, leave empty if image is public'
+        type: string
+        required: false
+        default: ''
       repo_owner:
         description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
         type: string
-      build_image:
-        description: "Workflow build image used for testing, i.e. registry + repository + tag"
+        required: false
+        default: ''
+      output:
+        description: 'Output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
         type: string
+        required: false
+        default: 'sarif'
 
 permissions: {}
 
 jobs:
   safety:
     runs-on: ubuntu-latest
-    container:
-      image: python:slim
+    permissions:
+      packages: read
     steps:
       - name: Checkout code
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
-      - name: Run Safety
+      - name: Run
         uses: ./.github/actions/safety
+        with:
+          image: ${{ inputs.image }}
+          registry: ${{ inputs.build_registry }}
+          repo_owner: ${{ inputs.repo_owner }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   trivy-image-scan:
     name: trivy image
@@ -37,10 +52,33 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
-      - name: Run Trivy
+      - name: Run
         uses: ./.github/actions/trivy-image
         with:
-          image: ${{ inputs.build_image }}
+          image: ${{ inputs.image }}
           registry: ${{ inputs.build_registry }}
           repo_owner: ${{ inputs.repo_owner }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+          output: ${{ inputs.output }}
+
+# WIP: Syft issue seems to cause error (https://github.com/anchore/syft/issues/1622)
+  dependency-submission:
+    name: syft / dependency review
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      contents: write
+    steps:
+    - name: Login with registry
+      if: inputs.registry != ''
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.repo_owner }}
+        password: ${{ inputs.repo_token }}
+    - name: Run
+      uses: anchore/sbom-action@07978da4bdb4faa726e52dfc6b1bed63d4b56479 # v0.13.3
+      with:
+        image: ${{ inputs.image }}
+        format: cyclonedx-json
+        dependency-snapshot: true

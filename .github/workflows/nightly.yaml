@@ -33,11 +33,11 @@ jobs:
   compliance:
     uses: ./.github/workflows/.reusable-compliance.yml
     permissions:
+      contents: write
       id-token: write
       security-events: write
       actions: read
       checks: read
-      contents: read
       deployments: read
       issues: read
       discussions: read
@@ -52,25 +52,27 @@ jobs:
     uses: ./.github/workflows/.reusable-sca.yml
     needs: [build]
     permissions:
+      contents: write
       security-events: write
       packages: read
     secrets: inherit
     with:
       build_registry: ${{ needs.build.outputs.build_registry }}
       repo_owner: ${{ github.repository_owner }}
-      build_image: ${{ needs.build.outputs.build_image }}
+      image: ${{ needs.build.outputs.build_image }}
 
-  trivy-released-image-scan:
-    name: trivy image scan (latest released image)
-    runs-on: ubuntu-latest
+  sca-released:
+    name: sca (released)
+    uses: ./.github/workflows/.reusable-sca.yml
     needs: [build]
-    steps:
-      - name: Scan
-        uses: aquasecurity/trivy-action@8bd2f9fbda2109502356ff8a6a89da55b1ead252 # 0.9.1
-        with:
-          image-ref: ${{ needs.build.outputs.original_image }}
-          format: "table"
-          exit-code: "1"
+    permissions:
+      contents: write
+      security-events: write
+      packages: read
+    secrets: inherit
+    with:
+      image: ${{ needs.build.outputs.original_image }}
+      output: "table"
 
   get-root:
     runs-on: ubuntu-latest

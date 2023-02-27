@@ -5,20 +5,24 @@ inputs:
     description: 'Image name'
     required: true
   registry:
-    description: 'Registry to login to pull image, leave empty if image is public'
+    description: 'Registry to login to pull image, e.g. "ghcr.io" for GHCR, leave empty if image is public'
     required: false
+    default: ''
   repo_owner:
     description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
     required: false
   repo_token:
     description: 'Access token for repository owner, e.g. "secrets.GITHUB_TOKEN" for ghcr.io'
     required: false
+  output:
+    description: 'Trivy output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
+    required: false
 runs:
   using: "composite"
   steps:
     - name: Login with registry
-      if: ${{ inputs.registry }} != ""
-      uses: docker/login-action@v2
+      if: inputs.registry != ''
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.repo_owner }}
@@ -28,16 +32,23 @@ runs:
         mkdir reports
       shell: sh
     - name: Run Trivy on image
+      if: inputs.output == 'sarif'
       uses: aquasecurity/trivy-action@8bd2f9fbda2109502356ff8a6a89da55b1ead252 # 0.9.1
       with:
         image-ref: ${{ inputs.image }}
         scan-type: "image"
-        exit-code: 0
-        hide-progress: false
-        ignore-unfixed: false
         format: 'sarif'
         output: 'reports/trivy-vuln-results.sarif'
+    - name: Run Trivy on image
+      if: inputs.output == 'table'
+      uses: aquasecurity/trivy-action@8bd2f9fbda2109502356ff8a6a89da55b1ead252 # 0.9.1
+      with:
+        image-ref: ${{ inputs.image }}
+        scan-type: "image"
+        exit-code: 1
+        format: 'table'
     - name: Upload
+      if: inputs.output == 'sarif'
       uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
       with:
         sarif_file: 'reports'

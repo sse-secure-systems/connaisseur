@@ -39,11 +39,11 @@ jobs:
   compliance:
     uses: ./.github/workflows/.reusable-compliance.yml
     permissions:
+      contents: write
       id-token: write
       security-events: write
       actions: read
       checks: read
-      contents: read
       deployments: read
       issues: read
       discussions: read
@@ -64,13 +64,14 @@ jobs:
     uses: ./.github/workflows/.reusable-sca.yml
     needs: [build]
     permissions:
+      contents: write
       security-events: write
       packages: read
     secrets: inherit
     with:
       build_registry: ${{ needs.build.outputs.build_registry }}
       repo_owner: ${{ github.repository_owner }}
-      build_image: ${{ needs.build.outputs.build_image }}
+      image: ${{ needs.build.outputs.build_image }}
 
   unit-test:
     uses: ./.github/workflows/.reusable-unit-test.yml
