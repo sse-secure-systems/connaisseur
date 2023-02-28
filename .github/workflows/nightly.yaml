@@ -10,9 +10,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  SKIP_INTEGRATION_TESTS: 'non-required' # 'none', 'non-required', 'all'
-
 jobs:
   conditionals:
     runs-on: ubuntu-latest
@@ -29,6 +26,8 @@ jobs:
     permissions:
       packages: write
     secrets: inherit
+    with:
+      build: false
 
   compliance:
     uses: ./.github/workflows/.reusable-compliance.yml
@@ -48,19 +47,6 @@ jobs:
       statuses: read
     secrets: inherit
 
-  sca:
-    uses: ./.github/workflows/.reusable-sca.yml
-    needs: [build]
-    permissions:
-      contents: write
-      security-events: write
-      packages: read
-    secrets: inherit
-    with:
-      build_registry: ${{ needs.build.outputs.build_registry }}
-      repo_owner: ${{ github.repository_owner }}
-      image: ${{ needs.build.outputs.build_image }}
-
   sca-released:
     name: sca (released)
     uses: ./.github/workflows/.reusable-sca.yml
@@ -75,6 +61,7 @@ jobs:
       output: "table"
 
   get-root:
+    name: Build and test get-root
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -90,21 +77,7 @@ jobs:
           docker run --rm get-root-key -i securesystemsengineering/testimage > output
           cat output | grep "KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508"
           cat output | grep "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe"
-
-  integration-test:
-    uses: ./.github/workflows/.reusable-integration-test.yml
-    needs: [conditionals, build]
-    if: needs.conditionals.outputs.skip_integration_tests != 'all'
-    permissions:
-      packages: read
-    secrets: inherit
-    with:
-      build_registry: ${{ needs.build.outputs.build_registry }}
-      repo_owner: ${{ github.repository_owner }}
-      build_image: ${{ needs.build.outputs.build_image }}
-      skip_integration_tests: ${{ needs.conditionals.outputs.skip_integration_tests }}
-      cosign_public_key: ${{ needs.build.outputs.cosign_public_key }}
-
+ 
   cleanup-registry:
     uses: ./.github/workflows/.reusable-cleanup-registry.yml
     needs: [build]

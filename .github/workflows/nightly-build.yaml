@@ -1,0 +1,58 @@
+name: nightly-build
+
+on:
+  schedule:
+    - cron: "30 1 * * *"
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  SKIP_INTEGRATION_TESTS: 'non-required' # 'none', 'non-required', 'all'
+
+jobs:
+  conditionals:
+    runs-on: ubuntu-latest
+    outputs:
+      skip_integration_tests: ${{ steps.conditionals.outputs.skip_integration_tests }}
+    steps:
+      - name: CI conditionals
+        id: conditionals
+        run: |
+          echo "skip_integration_tests=${SKIP_INTEGRATION_TESTS}" >> ${GITHUB_OUTPUT}
+
+  build:
+    uses: ./.github/workflows/.reusable-build.yml
+    permissions:
+      packages: write
+    secrets: inherit
+
+  sca:
+    uses: ./.github/workflows/.reusable-sca.yml
+    needs: [build]
+    permissions:
+      contents: write
+      security-events: write
+      packages: read
+    secrets: inherit
+    with:
+      build_registry: ${{ needs.build.outputs.build_registry }}
+      repo_owner: ${{ github.repository_owner }}
+      image: ${{ needs.build.outputs.build_image }}
+
+  integration-test:
+    uses: ./.github/workflows/.reusable-integration-test.yml
+    needs: [conditionals, build]
+    if: needs.conditionals.outputs.skip_integration_tests != 'all'
+    permissions:
+      packages: read
+    secrets: inherit
+    with:
+      build_registry: ${{ needs.build.outputs.build_registry }}
+      repo_owner: ${{ github.repository_owner }}
+      build_image: ${{ needs.build.outputs.build_image }}
+      skip_integration_tests: ${{ needs.conditionals.outputs.skip_integration_tests }}
+      cosign_public_key: ${{ needs.build.outputs.cosign_public_key }}

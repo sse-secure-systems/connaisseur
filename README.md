@@ -1,6 +1,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/sse-secure-systems/connaisseur/blob/master/LICENSE)
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/connaisseur)](https://artifacthub.io/packages/search?repo=connaisseur)
 ![pipeline status](https://github.com/sse-secure-systems/connaisseur/workflows/cicd/badge.svg)
+[![nightly-build](https://github.com/xopham/connaisseur/actions/workflows/nightly-build.yaml/badge.svg)](https://github.com/xopham/connaisseur/actions/workflows/nightly-build.yaml)
 [![codecov](https://codecov.io/gh/sse-secure-systems/connaisseur/branch/master/graph/badge.svg)](https://codecov.io/gh/sse-secure-systems/connaisseur)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/sse-secure-systems/connaisseur/badge)](https://api.securityscorecards.dev/projects/github.com/sse-secure-systems/connaisseur)
 

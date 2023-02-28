@@ -2,6 +2,12 @@ name: build
 
 on:
   workflow_call:
+    inputs:
+      build:
+        description: "Run actual build job?"
+        type: boolean
+        required: false
+        default: true
     outputs:
       cosign_version: 
         description: "Cosign version used for building Connaisseur image"
@@ -71,6 +77,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    if: inputs.build
     needs: [context]
     permissions:
       packages: write
