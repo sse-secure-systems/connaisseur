@@ -61,6 +61,26 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           output: ${{ inputs.output }}
 
+  grype:
+    name: grype
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      security-events: write
+    container:
+      image: docker:stable
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Run
+        uses: ./.github/actions/grype
+        with:
+          image: ${{ inputs.image }}
+          registry: ${{ inputs.build_registry }}
+          repo_owner: ${{ inputs.repo_owner }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          output: ${{ inputs.output }}
+
 # WIP: Syft issue seems to cause error (https://github.com/anchore/syft/issues/1622)
   dependency-submission:
     name: syft / dependency review
@@ -69,16 +89,16 @@ jobs:
       packages: read
       contents: write
     steps:
-    - name: Login with registry
-      if: inputs.registry != ''
-      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
-      with:
-        registry: ${{ inputs.registry }}
-        username: ${{ inputs.repo_owner }}
-        password: ${{ inputs.repo_token }}
-    - name: Run
-      uses: anchore/sbom-action@07978da4bdb4faa726e52dfc6b1bed63d4b56479 # v0.13.3
-      with:
-        image: ${{ inputs.image }}
-        format: cyclonedx-json
-        dependency-snapshot: true
+      - name: Login with registry
+        if: inputs.registry != ''
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ inputs.repo_token }}
+      - name: Run
+        uses: anchore/sbom-action@07978da4bdb4faa726e52dfc6b1bed63d4b56479 # v0.13.3
+        with:
+          image: ${{ inputs.image }}
+          format: cyclonedx-json
+          dependency-snapshot: true

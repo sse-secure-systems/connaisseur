@@ -1,0 +1,49 @@
+name: grype
+description: 'Run Grype on image'
+inputs:
+  image:
+    description: 'Image name'
+    required: true
+  registry:
+    description: 'Registry to login to pull image, e.g. "ghcr.io" for GHCR, leave empty if image is public'
+    required: false
+    default: ''
+  repo_owner:
+    description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
+    required: false
+  repo_token:
+    description: 'Access token for repository owner, e.g. "secrets.GITHUB_TOKEN" for ghcr.io'
+    required: false
+  output:
+    description: 'Grype output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Login with registry
+      if: inputs.registry != ''
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.repo_owner }}
+        password: ${{ inputs.repo_token }}
+    - name: Scan
+      if: inputs.output == 'table'
+      uses: anchore/scan-action@v3
+      with:
+        image: ${{ inputs.image }}
+        fail-build: true
+        output-format: table
+    - name: Scan
+      id: scan
+      if: inputs.output == 'sarif'
+      uses: anchore/scan-action@v3
+      with:
+        image: ${{ inputs.image }}
+        fail-build: false
+        output-format: sarif
+    - name: Upload
+      if: inputs.output == 'sarif'
+      uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
