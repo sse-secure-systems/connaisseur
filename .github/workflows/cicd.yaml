@@ -69,7 +69,7 @@ jobs:
       packages: read
     secrets: inherit
     with:
-      build_registry: ${{ needs.build.outputs.build_registry }}
+      registry: ${{ needs.build.outputs.build_registry }}
       repo_owner: ${{ github.repository_owner }}
       image: ${{ needs.build.outputs.build_image }}
 

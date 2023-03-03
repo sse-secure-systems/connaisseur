@@ -7,7 +7,7 @@ on:
         description: "Image used for testing, i.e. registry + repository + tag"
         type: string
         required: true
-      build_registry:
+      registry:
         description: 'Registry to login to pull image, e.g. "ghcr.io" for GHCR, leave empty if image is public'
         type: string
         required: false
@@ -37,7 +37,7 @@ jobs:
         uses: ./.github/actions/safety
         with:
           image: ${{ inputs.image }}
-          registry: ${{ inputs.build_registry }}
+          registry: ${{ inputs.registry }}
           repo_owner: ${{ inputs.repo_owner }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -56,7 +56,7 @@ jobs:
         uses: ./.github/actions/trivy-image
         with:
           image: ${{ inputs.image }}
-          registry: ${{ inputs.build_registry }}
+          registry: ${{ inputs.registry }}
           repo_owner: ${{ inputs.repo_owner }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           output: ${{ inputs.output }}
@@ -76,7 +76,7 @@ jobs:
         uses: ./.github/actions/grype
         with:
           image: ${{ inputs.image }}
-          registry: ${{ inputs.build_registry }}
+          registry: ${{ inputs.registry }}
           repo_owner: ${{ inputs.repo_owner }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           output: ${{ inputs.output }}
@@ -95,7 +95,7 @@ jobs:
         with:
           registry: ${{ inputs.registry }}
           username: ${{ inputs.repo_owner }}
-          password: ${{ inputs.repo_token }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run
         uses: anchore/sbom-action@07978da4bdb4faa726e52dfc6b1bed63d4b56479 # v0.13.3
         with:
