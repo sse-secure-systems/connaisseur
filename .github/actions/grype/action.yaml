@@ -44,6 +44,6 @@ runs:
         output-format: sarif
     - name: Upload
       if: inputs.output == 'sarif'
-      uses: github/codeql-action/upload-sarif@e00cd12e3ee0ce24d476645336a315351be51d88 # v2.12.3
+      uses: github/codeql-action/upload-sarif@32dc499307d133bb5085bae78498c0ac2cf762d5 # v2.2.5
       with:
         sarif_file: ${{ steps.scan.outputs.sarif }}
