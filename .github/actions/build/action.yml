@@ -41,9 +41,9 @@ runs:
     - name: Install Cosign
       uses: sigstore/cosign-installer@9becc617647dfa20ae7b1151972e9b3a2c338a2b # v2.8.1
     - name: Set up Docker buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@f03ac48505955848960e80bbb68046aa35c7b9e7 # v2.4.1
     - name: Login with registry
-      uses: docker/login-action@v2
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
       with:
         registry: ${{ inputs.image_registry }}
         username: ${{ inputs.repo_owner }}
@@ -58,7 +58,7 @@ runs:
       shell: bash
     - name: Build and push image
       id: build
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671 # v4.0.0
       with:
         push: true
         tags: ${{ steps.tags.outputs.tags }}
@@ -68,7 +68,7 @@ runs:
         sbom: true
         provenance: true
     - name: Create SBOM
-      uses: anchore/sbom-action@v0
+      uses: anchore/sbom-action@07978da4bdb4faa726e52dfc6b1bed63d4b56479 # v0.13.3
       with:
         image: ${{ inputs.image_registry }}/${{ inputs.image_repo }}@${{ steps.build.outputs.digest }}
         format: cyclonedx-json
