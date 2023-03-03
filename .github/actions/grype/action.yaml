@@ -29,7 +29,7 @@ runs:
         password: ${{ inputs.repo_token }}
     - name: Scan
       if: inputs.output == 'table'
-      uses: anchore/scan-action@v3
+      uses: anchore/scan-action@dafbc97d7259af88b61bd260f2fde565d0668a72 # v3.3.4
       with:
         image: ${{ inputs.image }}
         fail-build: true
@@ -37,7 +37,7 @@ runs:
     - name: Scan
       id: scan
       if: inputs.output == 'sarif'
-      uses: anchore/scan-action@v3
+      uses: anchore/scan-action@dafbc97d7259af88b61bd260f2fde565d0668a72 # v3.3.4
       with:
         image: ${{ inputs.image }}
         fail-build: false
