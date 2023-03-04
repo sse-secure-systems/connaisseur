@@ -21,21 +21,24 @@ COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n          }")"
 
 ## Join ghcr integration yaml
 if [[ -n "${IMAGE+x}" && -n "${IMAGEPULLSECRET+x}" ]]; then
-  yq '. *+ load("tests/integration/var-img.yaml")' tests/integration/ghcr-values.yaml > ghcr-tmp
-  envsubst < ghcr-tmp > ghcr-values
+  yq '. *+ load("tests/integration/var-img.yaml")' tests/integration/ghcr-values.yaml >ghcr-tmp
+  envsubst <ghcr-tmp >ghcr-values
+  envsubst <tests/integration/ghcr-values.yaml >ghcr-validator
   rm ghcr-tmp
 else
-  echo "" > ghcr-values
+  echo "" >ghcr-values
 fi
 
 ### SINGLE TEST CASE ####################################
 single_test() { # ID TXT TYP REF NS MSG RES
   echo -n "[$1] $2"
-  i=0 # intialize iterator
-  while : ; do
-    i=$((i+1))
+  i=0                                                              # intialize iterator
+  export RAND=$(head -c 5 /dev/urandom | hexdump -ve '1/1 "%.2x"') # creating a random index to label the pods and avoid name collision for repeated runs
+  MSG=$(envsubst <<<"$6")                                          # in case RAND is to be used, it needs to be added as ${RAND} to cases.yaml (and maybe deployment file)
+  while :; do
+    i=$((i + 1))
     if [[ "$3" == "deploy" ]]; then
-      kubectl run pod-$1 --image="$4" --namespace="$5" -luse="connaisseur-integration-test" >output.log 2>&1 || true
+      kubectl run pod-$1-${RAND} --image="$4" --namespace="$5" -luse="connaisseur-integration-test" >output.log 2>&1 || true
     elif [[ "$3" == "workload" ]]; then
       envsubst <tests/integration/workload-objects/$4.yaml | kubectl apply -f - >output.log 2>&1 || true
     else
@@ -44,7 +47,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
     # if the webhook couldn't be called, try again.
     [[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt $RETRY ]] || break
   done
-  if [[ ! "$(cat output.log)" =~ "$6" ]]; then
+  if [[ ! "$(cat output.log)" =~ "${MSG}" ]]; then
     echo -e ${FAILED}
     echo "::group::Output"
     cat output.log
@@ -61,7 +64,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
   fi
 
   # 3 tries on first test, 2 tries on second, 1 try for all subsequential
-  RETRY=$((RETRY-1))
+  RETRY=$((RETRY - 1))
 }
 
 ### MULTI TEST CASE FROM FILE ####################################
@@ -115,12 +118,12 @@ workload_test() { # WORKLOAD_KIND
       # NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
       # coredns                  2/2     2            2           177d
       STATUSES=$(kubectl get ${KIND})
-      NUMBER_UNREADY=$(( $(echo "${STATUSES}" | awk '{print $2}' | awk -F "/" '$1!=$2 { print $0 }' | wc -l) - 1)) # Preserving header row for better readability
+      NUMBER_UNREADY=$(($(echo "${STATUSES}" | awk '{print $2}' | awk -F "/" '$1!=$2 { print $0 }' | wc -l) - 1)) # Preserving header row for better readability
     elif [[ "${KIND}" == "ReplicaSet" || "${KIND}" == "DaemonSet" || "${KIND}" == "ReplicationController" ]]; then
       # NAME                 DESIRED   CURRENT   READY   AGE
       # coredns-558bd4d5db   2         2         2       177d
       STATUSES=$(kubectl get ${KIND} | awk '$2!=$4 {print $0}')
-      NUMBER_UNREADY=$(( $(echo "${STATUSES}" | wc -l) - 1 )) # Preserving header row for better readability
+      NUMBER_UNREADY=$(($(echo "${STATUSES}" | wc -l) - 1)) # Preserving header row for better readability
     elif [[ "${KIND}" == "Job" || "${KIND}" == "CronJob" ]]; then
       # NAME                        COMPLETIONS   DURATION   AGE
       # cronjob-signed-1674474300   0/1           30s        30s
@@ -205,6 +208,21 @@ create_imagepullsecret_in_ns() { # NAMESPACE # CREATE
 }
 
 ### INSTALLING CONNAISSEUR ####################################
+helm_install_release() { # NAMESPACE
+  create_imagepullsecret_in_ns ${1}
+  echo -n "Installing released Connaisseur..."
+  helm repo add connaisseur https://sse-secure-systems.github.io/connaisseur/charts
+  helm show values connaisseur/connaisseur >release.yaml
+  yq '. *+ load("ghcr-validator")' release.yaml >release_patched.yaml
+  helm install connaisseur connaisseur/connaisseur --atomic \
+    --namespace ${1} --values release_patched.yaml >/dev/null || {
+    echo -e "${FAILED}"
+    exit 1
+  }
+  echo -e "${SUCCESS}"
+  sleep ${TIMEOUT}
+}
+
 make_install() {
   create_imagepullsecret_in_ns "connaisseur"
   echo -n "Installing Connaisseur..."
@@ -288,8 +306,7 @@ make_uninstall() {
 
 helm_uninstall() {
   echo -n 'Uninstalling Connaisseur...'
-  helm uninstall connaisseur -n connaisseur >/dev/null &&
-    kubectl delete ns connaisseur >/dev/null || {
+  helm uninstall connaisseur -n connaisseur >/dev/null || {
     echo -e "${FAILED}"
     exit 1
   }
@@ -307,22 +324,22 @@ update_values_minimal() {
 }
 
 update_via_env_vars() {
-  envsubst < tests/integration/update.yaml > update
+  envsubst <tests/integration/update.yaml >update
   yq '. *+ load("ghcr-values")' -i update
   yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
   rm update
 }
 
 update_helm_for_workloads() {
-  envsubst < tests/integration/update-for-workloads.yaml > update
+  envsubst <tests/integration/update-for-workloads.yaml >update
   yq '. *+ load("ghcr-values")' -i update
   yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
   rm update
 }
 
-debug_vaules() {
+debug_vaules() { #PATH
   echo "::group::values.yaml"
-  cat helm/values.yaml
+  cat "$1"
   echo "::endgroup::"
 }
 
@@ -332,7 +349,8 @@ regular_int_test() {
 
   ### EDGE CASE TAG IN RELEASES AND TARGETS ####################################
   echo -n "[edge1] Testing edge case of tag defined in both targets and release json file..."
-  DEPLOYED_SHA=$(kubectl get pod pod-rs -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://')
+  POD=$(kubectl get pods -o name | grep "pod-rs-")
+  DEPLOYED_SHA=$(kubectl get "${POD}" -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://')
   if [[ "${DEPLOYED_SHA}" != 'c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7' ]]; then
     echo -e "${FAILED}"
     EXIT="1"
@@ -520,12 +538,20 @@ case $1 in
   update_via_env_vars
   make_install
   certificate_int_test
-  # Clean up such that next test doesn't run into existing test pods
-  kubectl delete pods -luse="connaisseur-integration-test" -A >/dev/null
   yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/update-cert.yaml
   make_upgrade
   certificate_check
   certificate_int_test
+  ;;
+"upgrade")
+  helm_install_release "connaisseur"
+  debug_vaules "release_patched.yaml"
+  pre_config_int_test
+  update_values_minimal
+  debug_vaules "helm/values.yaml"
+  helm_upgrade_namespace "connaisseur"
+  pre_config_int_test
+  helm_uninstall
   ;;
 *)
   echo "Invalid test case. Exiting..."

@@ -19,14 +19,14 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:signed
     namespace: default
-    expected_msg: pod/pod-rs created
+    expected_msg: pod/pod-rs-${RAND} created
     expected_result: VALID
   - id: rsds
     txt: Testing signed image with designated signer...
     type: deploy
     ref: securesystemsengineering/testimage:special_sig
     namespace: default
-    expected_msg: pod/pod-rsds created
+    expected_msg: pod/pod-rsds-${RAND} created
     expected_result: VALID
   - id: rsmds
     txt: Testing image with missing designated signer...
@@ -61,7 +61,7 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:signed@sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7
     namespace: default
-    expected_msg: pod/pod-rstd created
+    expected_msg: pod/pod-rstd-${RAND} created
     expected_result: VALID
   cosign:
   - id: cu
@@ -83,7 +83,7 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:co-signed
     namespace: default
-    expected_msg: pod/pod-cs created
+    expected_msg: pod/pod-cs-${RAND} created
     expected_result: null
   - id: cstd
     txt: Testing signed cosign image with tag and digest...
@@ -102,7 +102,7 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie
     namespace: default
-    expected_msg: pod/pod-mc-s created
+    expected_msg: pod/pod-mc-s-${RAND} created
     expected_result: null
   - id: mct2-u
     txt: Testing multi-cosigned image `threshold` => 2, not reached...
@@ -116,7 +116,7 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:multi-cosigned-bob-charlie
     namespace: default
-    expected_msg: pod/pod-mct2-s created
+    expected_msg: pod/pod-mct2-s-${RAND} created
     expected_result: null
   - id: mcr-u
     txt: Testing multi-cosigned image `required` signers => ['alice', 'charlie'], not reached...
@@ -130,7 +130,7 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:multi-cosigned-charlie-alice
     namespace: default
-    expected_msg: pod/pod-mcr-s created
+    expected_msg: pod/pod-mcr-s-${RAND} created
     expected_result: null
   rekor-cosigned:
   - id: rcu
@@ -152,7 +152,7 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:rekor-cosigned-tl
     namespace: default
-    expected_msg: pod/pod-rcstl created
+    expected_msg: pod/pod-rcstl-${RAND} created
     expected_result: null
   ignore-namespace-val:
   - id: iuu
@@ -167,14 +167,14 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:signed
     namespace: default
-    expected_msg: pod/pod-isu created
+    expected_msg: pod/pod-isu-${RAND} created
     expected_result: null
   - id: iui
     txt: Testing unsigned image in ignored namespace...
     type: deploy
     ref: securesystemsengineering/testimage:unsigned
     namespace: ignoredns
-    expected_msg: pod/pod-iui created
+    expected_msg: pod/pod-iui-${RAND} created
     expected_result: null
   validate-namespace-val:
   - id: vue
@@ -189,14 +189,14 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:signed
     namespace: validatedns
-    expected_msg: pod/pod-vse created
+    expected_msg: pod/pod-vse-${RAND} created
     expected_result: null
   - id: vuu
     txt: Testing unsigned image in unlabelled namespace...
     type: deploy
     ref: securesystemsengineering/testimage:unsigned
     namespace: default
-    expected_msg: pod/pod-vuu created
+    expected_msg: pod/pod-vuu-${RAND} created
     expected_result: null
   deployment:
   - id: d1s
@@ -275,7 +275,7 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:signed
     namespace: default
-    expected_msg: pod/pod-pnv1s created
+    expected_msg: pod/pod-pnv1s-${RAND} created
     expected_result: null
   - id: poff
     txt: Testing signed official docker image...
@@ -283,7 +283,7 @@ test_cases:
     # choose official image that doesn't exit, so we can check ready status
     ref: docker.io/library/nginx
     namespace: default
-    expected_msg: pod/pod-poff created
+    expected_msg: pod/pod-poff-${RAND} created
     expected_result: null
   certificate:
   - id: x509u
@@ -298,5 +298,5 @@ test_cases:
     type: deploy
     ref: securesystemsengineering/testimage:signed
     namespace: default
-    expected_msg: pod/pod-x509s created
+    expected_msg: pod/pod-x509s-${RAND} created
     expected_result: VALID
