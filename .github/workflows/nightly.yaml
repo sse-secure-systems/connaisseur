@@ -11,16 +11,6 @@ defaults:
     shell: bash
 
 jobs:
-  conditionals:
-    runs-on: ubuntu-latest
-    outputs:
-      skip_integration_tests: ${{ steps.conditionals.outputs.skip_integration_tests }}
-    steps:
-      - name: CI conditionals
-        id: conditionals
-        run: |
-          echo "skip_integration_tests=${SKIP_INTEGRATION_TESTS}" >> ${GITHUB_OUTPUT}
-
   build:
     uses: ./.github/workflows/.reusable-build.yml
     permissions:
