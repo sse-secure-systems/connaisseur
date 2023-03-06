@@ -2,7 +2,7 @@
 aioresponses~=0.7.4
 freezegun~=1.2.2
 parsedatetime~=2.6
-pylint~=2.16.2
+pylint~=2.16.3
 pytest-asyncio~=0.20.3
 pytest-cov~=4.0.0
 pytest-mock~=3.10.0
