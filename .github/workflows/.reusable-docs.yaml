@@ -26,10 +26,10 @@ jobs:
           pip install -r docs/requirements_docs.txt
       - name: Deploy
         run: |
-          if [[ "${GHREF}" == "refs/tags/v"* ]];
+          if [[ "${GITHUB_REF}" == "refs/tags/v"* ]];
           then
             mike deploy --push --update-aliases ${RELEASE_VERSION} latest
-          elif [[ "${GHREF}" == "refs/heads/develop" ]]; then
+          elif [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
             mike deploy --push ${RELEASE_VERSION}
           else
             mkdocs build
