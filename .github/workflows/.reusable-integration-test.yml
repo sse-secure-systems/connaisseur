@@ -57,7 +57,7 @@ jobs:
           - 56243:56243
     steps:
       - name: Checkout code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: Login with registry
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
         with:
@@ -110,7 +110,7 @@ jobs:
           ]
     steps:
       - name: Checkout code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: Login with registry
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
         with:
@@ -152,7 +152,7 @@ jobs:
           ]
     steps:
       - name: Checkout code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: Login with registry
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
         with:
@@ -184,7 +184,7 @@ jobs:
       COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: Login with registry
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
         with:
@@ -206,7 +206,7 @@ jobs:
             --type=kubernetes.io/dockerconfigjson \
             --namespace=connaisseur
       - name: Checkout code (master)
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
         with:
           ref: "master"
       - name: Checkout required current files
@@ -235,7 +235,7 @@ jobs:
         run: |
           kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
       - name: Checkout code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - name: Configure current version
         run: |
           envsubst < tests/integration/var-img.yaml > update
