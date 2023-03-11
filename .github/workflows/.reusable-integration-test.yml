@@ -1,45 +1,46 @@
-name: integration-test
+name: integration test
 
 on:
   workflow_call:
     inputs:
-      build_registry:
+      image:
+        description: "Workflow build image used for testing, i.e. registry + repository + tag"
+        type: string
+        required: false
+        default: ""
+      registry:
         description: "Workflow build registry used for testing"
         type: string
+        required: false
+        default: ""
       repo_owner:
         description: 'Name of repository owner, e.g. "inputs.repo_owner" for ghcr.io'
         type: string
-      build_image:
-        description: "Workflow build image used for testing, i.e. registry + repository + tag"
-        type: string
+        default: ""
       skip_integration_tests:
         description: "Want to skip running certain integration tests 'none', 'non-required', 'all'?"
         type: string
+        required: false
+        default: "none"
       cosign_public_key:
         description: "Cosign public key used for signing the build image"
         type: string
+        required: false
+        default: ""
 
 permissions: {}
 
-env:
-  IMAGEPULLSECRET: dockerconfigjson-ghcr
-
 jobs:
-  integration-test:
-    name: integration test
+  required:
+    name: required
     runs-on: ubuntu-latest
     permissions:
       packages: read
-    env:
-      IMAGE: ${{ inputs.build_image }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
-      fail-fast: false
       matrix:
-        integration-test-arg:
+        test_case:
           [
             "complexity",
-            "load",
             "regular",
             "cosign",
             "multi-cosigned",
@@ -48,8 +49,6 @@ jobs:
             "deployment",
             "pre-config",
             "other-ns",
-            "configured-cert",
-            "upgrade",
           ]
     services:
       alerting-endpoint:
@@ -62,46 +61,50 @@ jobs:
       - name: Login with registry
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
         with:
-          registry: ${{ inputs.build_registry }}
-          username: ${{ inputs.repo_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install yq
-        run: |
-          sudo snap install yq
-      - uses: ./.github/actions/k8s-version-config
-        name: Setup k8s cluster
-        with:
-          k8s-version: v1.25
-      - name: Get alerting endpoint IP
-        id: get_ip
-        uses: ./.github/actions/alerting-endpoint
-      - name: Run test
-        run: |
-          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
-        env:
-          ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
-      - name: Display Connaisseur configuration
-        if: always()
-        run: |
-          echo "::group::values.yaml"
-          yq e '.' helm/values.yaml
-          echo "::endgroup::"
-      - name: Display k8s logs if integration test failed
-        if: failure()
-        run: |
-          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+          image: ${{ inputs.image }}
+          registry: ${{ inputs.registry }}
+          repo_owner: ${{ inputs.repo_owner }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          cosign_public_key: ${{ inputs.cosign_public_key }}
+          test_case: ${{ matrix.test_case }}
 
-  k8s-versions:
+  non-required:
+    name: non-required
     runs-on: ubuntu-latest
+    if: inputs.skip_integration_tests != 'non-required'
     permissions:
       packages: read
-    env:
-      IMAGE: ${{ inputs.build_image }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
-        k8s-version: [
+        test_case:
+          [
+            "load",
+            "configured-cert",
+            "upgrade",
+          ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+      - uses: ./.github/actions/integration-test
+        name: Run test
+        with:
+          image: ${{ inputs.image }}
+          registry: ${{ inputs.registry }}
+          repo_owner: ${{ inputs.repo_owner }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          cosign_public_key: ${{ inputs.cosign_public_key }}
+          test_case: ${{ matrix.test_case }}
+
+  k8s-versions:
+    name: k8s versions
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    strategy:
+      matrix:
+        k8s_version:
+          [
             "v1.20",
             "v1.21",
             "v1.22",
@@ -113,40 +116,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
-      - name: Login with registry
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+      - name: Run test
+        uses: ./.github/actions/integration-test
         with:
-          registry: ${{ inputs.build_registry }}
-          username: ${{ inputs.repo_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install yq
-        run: |
-          sudo snap install yq
-      - uses: ./.github/actions/k8s-version-config
-        name: Setup k8s cluster
-        with:
-          k8s-version: ${{ matrix.k8s-version }}
-      - name: Run pre-config and workload integration tests
-        run: |
-          bash tests/integration/integration-test.sh "pre-and-workload"
-      - name: Display k8s logs if integration test failed
-        if: failure()
-        run: |
-          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+          image: ${{ inputs.image }}
+          registry: ${{ inputs.registry }}
+          repo_owner: ${{ inputs.repo_owner }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          cosign_public_key: ${{ inputs.cosign_public_key }}
+          k8s_version: ${{ matrix.k8s_version }}
 
   k8s-legacy-versions:
-    # k3s with older versions doesn't play with newer kernel, so we're running those on deprecated hosts, yay...
+    name: k8s legacy versions
     runs-on: ubuntu-18.04
     if: inputs.skip_integration_tests != 'non-required'
     permissions:
       packages: read
-    env:
-      IMAGE: ${{ inputs.build_image }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
-        k8s-version: [
+        k8s_version:
+          [
             "v1.16",
             "v1.17",
             "v1.18",
@@ -155,23 +145,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
-      - name: Login with registry
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+      - name: Run test
+        uses: ./.github/actions/integration-test
         with:
-          registry: ${{ inputs.build_registry }}
-          username: ${{ inputs.repo_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install yq
-        run: |
-          sudo snap install yq
-      - uses: ./.github/actions/k8s-version-config
-        name: Setup k8s cluster
-        with:
-          k8s-version: ${{ matrix.k8s-version }}
-      - name: Run pre-config and workload integration tests
-        run: |
-          bash tests/integration/integration-test.sh "pre-and-workload"
-      - name: Display k8s logs if integration test failed
-        if: failure()
-        run: |
-          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+          image: ${{ inputs.image }}
+          registry: ${{ inputs.registry }}
+          repo_owner: ${{ inputs.repo_owner }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          cosign_public_key: ${{ inputs.cosign_public_key }}
+          k8s_version: ${{ matrix.k8s_version }}

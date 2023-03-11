@@ -14,19 +14,18 @@ TIMEOUT=30
 RETRY=3
 
 ## Backup helm/values.yaml
-cp helm/values.yaml values.yaml.Backup
-
-## LOAD PUBLIC KEY
-COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n          }")"
+cp helm/values.yaml values.yaml.backup
 
 ## Join ghcr integration yaml
-if [[ -n "${IMAGE+x}" && -n "${IMAGEPULLSECRET+x}" ]]; then
+if [[ -n "${IMAGE+x}" && ${IMAGE} && -n "${IMAGEPULLSECRET+x}" && ${IMAGEPULLSECRET} ]]; then
+	COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n          }")"
 	yq '. *+ load("tests/integration/var-img.yaml")' tests/integration/ghcr-values.yaml >ghcr-tmp
 	envsubst <ghcr-tmp >ghcr-values
 	envsubst <tests/integration/ghcr-values.yaml >ghcr-validator
 	rm ghcr-tmp
 else
 	echo "" >ghcr-values
+	echo "" >ghcr-validator
 fi
 
 ### SINGLE TEST CASE ####################################
@@ -194,7 +193,7 @@ create_imagepullsecret_in_ns() { # NAMESPACE # CREATE
 		}
 		echo -e "${SUCCESS}"
 	fi
-	if [[ -n "${IMAGEPULLSECRET+x}" ]]; then
+	if [[ -n "${IMAGEPULLSECRET+x}" && ${IMAGEPULLSECRET} ]]; then
 		echo -n "Creating imagePullSecret '${IMAGEPULLSECRET}'..."
 		kubectl create secret generic ${IMAGEPULLSECRET} \
 			--from-file=.dockerconfigjson=$HOME/.docker/config.json \
@@ -535,7 +534,7 @@ case $1 in
 	;;
 "configured-cert")
 	echo "Testing deployment of Connaisseur using a pre-configured TLS certificate. See issue https://github.com/sse-secure-systems/connaisseur/issues/225"
-	update_via_env_vars
+	update_values_minimal
 	make_install
 	certificate_int_test
 	yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml tests/integration/update-cert.yaml
