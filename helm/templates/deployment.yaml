@@ -51,12 +51,14 @@ spec:
             - name: {{ .Chart.Name }}-certs
               mountPath: /app/certs
               readOnly: true
+            {{- if .Values.alerting}}
             - name: {{ .Chart.Name }}-alert-templates
               mountPath: "/app/config/templates"
               readOnly: true
             - name: {{ .Chart.Name }}-alertconfig
               mountPath: "/app/config"
               readOnly: true
+            {{- end }}
             - name: {{ .Chart.Name }}-config
               mountPath: /app/connaisseur-config/config.yaml
               subPath: config.yaml
@@ -106,12 +108,14 @@ spec:
         - name: {{ .Chart.Name }}-certs
           secret:
             secretName: {{ .Chart.Name }}-tls
+        {{- if .Values.alerting}}
         - name: {{ .Chart.Name }}-alertconfig
           secret:
             secretName: {{ .Chart.Name }}-alertconfig
         - name: {{ .Chart.Name }}-alert-templates
           configMap:
             name: {{ .Chart.Name }}-alert-templates
+        {{- end }}
         - name: {{ .Chart.Name }}-config
           configMap:
             name: {{ .Chart.Name }}-config

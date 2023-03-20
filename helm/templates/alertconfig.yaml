@@ -1,3 +1,4 @@
+{{- if .Values.alerting}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -29,3 +30,4 @@ stringData:
   alertconfig.json: |
     {{ mustToJson .Values.alerting | nindent 4 }}
   {{- end }}
+{{- end }}
