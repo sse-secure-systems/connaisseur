@@ -337,7 +337,7 @@ update_helm_for_workloads() {
 	rm update
 }
 
-debug_vaules() { #PATH
+debug_values() { #PATH
 	echo "::group::values.yaml"
 	cat "$1"
 	echo "::endgroup::"
@@ -545,10 +545,10 @@ case $1 in
 	;;
 "upgrade")
 	helm_install_release "connaisseur"
-	debug_vaules "release_patched.yaml"
+	debug_values "release_patched.yaml"
 	pre_config_int_test
 	update_values_minimal
-	debug_vaules "helm/values.yaml"
+	debug_values "helm/values.yaml"
 	helm_upgrade_namespace "connaisseur"
 	pre_config_int_test
 	helm_uninstall
