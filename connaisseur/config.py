@@ -32,7 +32,7 @@ class Config:
         Read a config file, validate its contents and then create Validator objects,
         storing them.
 
-        Raise `NotFoundException` if the configuration file is not found.
+        Raise `FileNotFoundError` or `NotFoundException` if the configuration file is not found.
 
         Raise `InvalidFormatException` if the configuration file has an invalid format.
         """
@@ -43,8 +43,11 @@ class Config:
             msg = "Error loading connaisseur config file."
             raise NotFoundException(message=msg)
 
-        with open(self.__SECRETS_PATH, "r", encoding="utf-8") as secrets_configfile:
-            secrets_config_content = yaml.safe_load(secrets_configfile)
+        try:
+            with open(self.__SECRETS_PATH, "r", encoding="utf-8") as secrets_configfile:
+                secrets_config_content = yaml.safe_load(secrets_configfile)
+        except FileNotFoundError:  # If empty, secrets config doesn't produce a resource
+            secrets_config_content = {}
 
         config = self.__merge_configs(config_content, secrets_config_content)
 

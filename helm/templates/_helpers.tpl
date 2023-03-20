@@ -71,6 +71,18 @@ Extract Kubernetes Minor Version.
 {{- end -}}
 
 
+{{- define "hasConfigSecrets" -}}
+{{- range .Values.validators -}}
+    {{- if and (and (eq .type "notaryv1") (hasKey . "auth") not (hasKey . "auth.secret_name" )) -}}
+        1
+    {{- end -}}
+    {{- if and (eq .type "cosign") (hasKey . "cert") -}}
+        1
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+
 {{- define "external-secrets-vol" -}}
 {{- $external_secret := dict -}}
 {{- range .Values.validators -}}
@@ -172,7 +184,7 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "hasCosignCerts" -}}  
-{{- range .Values.validators     -}}
+{{- range .Values.validators -}}
     {{- if and (eq .type "cosign") (hasKey . "cert") -}}
         1
     {{- end -}}
@@ -181,7 +193,7 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "getCosignCerts" -}}
-{{- range .Values.validators     -}}
+{{- range .Values.validators -}}
     {{- if and (eq .type "cosign") (hasKey . "cert") }}
     {{ .name }}.crt: {{ .cert | b64enc -}}
     {{- end -}}
