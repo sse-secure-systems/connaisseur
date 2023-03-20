@@ -40,3 +40,32 @@ jobs:
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
       - name: Review
         uses: actions/dependency-review-action@c090f4e553673e6e505ea70d6a95362ee12adb94 # v3.0.3
+
+  check-commit-message:
+    runs-on: ubuntu-latest
+    permissions: {}
+    if: ${{ github.event_name == 'pull_request' }} # Only run on PRs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }} # Otherwise will checkout merge commit, which isn't conform
+          fetch-depth: ${{ github.event.pull_request.commits }} # Fetch all commits of the MR, but only those
+      - name: Check commit messages for conformity
+        run: |
+          echo "Commits between dev branch and current SHA:"
+          COMMITS=$(git log --pretty=%H)
+          echo "${COMMITS}"
+          EXIT=0
+          COMMIT_MSGS=$(git log --pretty=%s) # show subject only
+          for commit in ${COMMITS}; do
+              MSG=$(git log ${commit} -n1 --pretty=%s)
+              TYPE=$(echo ${MSG} | awk '{{ print $1 }}')
+              if ! [[ "${TYPE}" =~ ^(build|ci|docs|feat|fix|refactor|test|update):$ ]]; then
+                EXIT=1
+                echo "Commit message of commit ${commit} doesn't conform to 'type: msg' format:"
+                echo "${MSG}"
+                echo "-------------------------"
+              fi
+          done
+          exit ${EXIT}
