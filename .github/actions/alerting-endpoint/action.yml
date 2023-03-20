@@ -1,7 +1,7 @@
 name: alerting-endpoint
 description: 'Get alerting endpoint IP'
 outputs:
-  ip: 
+  ip:
     description: "IP address of the alerting endpoint"
     value: ${{ steps.get_ip.outputs.IP }}
 runs:

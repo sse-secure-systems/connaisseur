@@ -10,10 +10,10 @@ inputs:
     required: false
     default: "${{ github.repository }}"
 outputs:
-  cosign_version: 
+  cosign_version:
     description: "Cosign version used for building Connaisseur image"
     value: ${{ steps.get_context.outputs.COSIGN_VERSION }}
-  chart_version: 
+  chart_version:
     description: "Connaisseur Helm chart version"
     value: ${{ steps.get_context.outputs.CHART_VERSION }}
   original_registry:

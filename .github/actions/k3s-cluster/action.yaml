@@ -29,7 +29,7 @@ runs:
   steps:
     - name: Setup k3s ${{ inputs.k3s-channel }}
       run: |
-        curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s - 
+        curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL="${{ inputs.k3s-channel }}" sh -s -
       shell: bash
 
     # By providing a kubeconfig owned by the current user with 600 permissions,

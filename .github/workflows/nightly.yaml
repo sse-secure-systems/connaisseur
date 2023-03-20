@@ -67,7 +67,7 @@ jobs:
           docker run --rm get-root-key -i securesystemsengineering/testimage > output
           cat output | grep "KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508"
           cat output | grep "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe"
- 
+
   cleanup-registry:
     uses: ./.github/workflows/.reusable-cleanup-registry.yml
     needs: [build]
