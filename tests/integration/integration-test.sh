@@ -287,7 +287,7 @@ make_upgrade() {
 
 helm_upgrade_namespace() { # NS
 	echo -n 'Upgrading Connaisseur...'
-	helm upgrade connaisseur helm -n ${1} --wait >/dev/null || {
+	helm upgrade connaisseur helm -n ${1} --values "helm/values.yaml" --wait >/dev/null || {
 		echo -e ${FAILED}
 		exit 1
 	}
