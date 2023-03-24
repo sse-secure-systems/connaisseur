@@ -106,7 +106,7 @@ The following checks were performed on each of these signatures:
 """
 
 
-def gen_vals(static_cosign, root_no: list = None, digest=None, error=None):
+def gen_vals(static_cosign, root_no: list = None, digest=None, error=None, tlog=False):
     if root_no is None:
         root_no = range(len(static_cosign["trustRoots"]))
 
@@ -119,6 +119,7 @@ def gen_vals(static_cosign, root_no: list = None, digest=None, error=None):
             "trust_root": TrustRoot("".join(static_cosign["trustRoots"][num]["key"])),
             "digest": digest[num],
             "error": error,
+            "verify_tlog": tlog,
         }
         for num in root_no
     }
@@ -167,16 +168,17 @@ def test_init(index: int, kchain: bool, host: str):
 
 
 @pytest.mark.parametrize(
-    "index, key_name, required, threshold, key, exception",
+    "index, key_name, required, threshold, key, tlog, exception",
     [
-        (0, None, [], 1, gen_vals(static_cosigns[0], [0]), fix.no_exc()),
-        (0, "test", [], 1, gen_vals(static_cosigns[0], [1]), fix.no_exc()),
+        (0, None, [], 1, gen_vals(static_cosigns[0], [0]), False, fix.no_exc()),
+        (0, "test", [], 1, gen_vals(static_cosigns[0], [1]), False, fix.no_exc()),
         (
             0,
             "non_existing",
             [],
             1,
             None,
+            False,
             pytest.raises(
                 exc.NotFoundException, match=r'.*Trust roots "non_existing.*'
             ),
@@ -187,6 +189,7 @@ def test_init(index: int, kchain: bool, host: str):
             [],
             1,
             None,
+            False,
             pytest.raises(exc.NotFoundException, match=r'.*Trust roots "default".*'),
         ),
         (
@@ -195,6 +198,7 @@ def test_init(index: int, kchain: bool, host: str):
             [],
             len(static_cosigns[4]["trustRoots"]),
             gen_vals(static_cosigns[4], range(3)),
+            False,
             fix.no_exc(),
         ),
         (
@@ -203,6 +207,7 @@ def test_init(index: int, kchain: bool, host: str):
             ["test1", "non_existent"],
             1,
             None,
+            False,
             pytest.raises(
                 exc.NotFoundException, match=r'.*Trust roots "non_existent".*'
             ),
@@ -213,20 +218,38 @@ def test_init(index: int, kchain: bool, host: str):
             ["test1", "non_existent", "another_nonexistent"],
             1,
             None,
+            False,
             pytest.raises(
                 exc.NotFoundException,
                 match=r'.*Trust roots "(another_nonexistent, non_existent|non_existent, another_nonexistent)".*',
             ),
         ),
+        (
+            0,
+            None,
+            [],
+            1,
+            gen_vals(static_cosigns[0], [0], tlog=False),
+            False,
+            fix.no_exc(),
+        ),
     ],
 )
 def test_get_pinned_keys(
-    index: int, key_name: str, required: list, threshold: int, key: str, exception
+    index: int,
+    key_name: str,
+    required: list,
+    threshold: int,
+    key: str,
+    tlog: bool,
+    exception,
 ):
     with exception:
         val = co.CosignValidator(**static_cosigns[index])
         assert str_vals(
-            val._CosignValidator__get_pinned_trust_roots(key_name, required, threshold)
+            val._CosignValidator__get_pinned_trust_roots(
+                key_name, required, threshold, tlog
+            )
         ) == str_vals(key)
 
 
@@ -296,6 +319,7 @@ async def test_validate(
         )
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "status_code, stdout, stderr, image, output, exception",
     [
@@ -392,27 +416,29 @@ async def test_validate(
         ),
     ],
 )
-def test_get_cosign_validated_digests(
+async def test_get_cosign_validated_digests(
     mock_invoke_cosign, status_code, stdout, stderr, image, output, exception
 ):
     with exception:
         val = co.CosignValidator(**static_cosigns[0])
-        digest = val._CosignValidator__get_cosign_validated_digests(
+        digest = await val._CosignValidator__get_cosign_validated_digests(
             image, gen_vals(static_cosigns[0], [0])["default"]
         )
         assert digest == output.pop()
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "image, key, process_input, exception",
+    "image, key, tlog, process_input, exception",
     [
         (
             "testimage:v1",
             example_key,
+            False,
             {
                 "option_kword": "--key",
                 "inline_tr": "/dev/stdin",
-                "trustRoot": (
+                "trust_root": (
                     b"-----BEGIN PUBLIC KEY-----\n"
                     b"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbz\n"
                     b"NBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n"
@@ -424,18 +450,38 @@ def test_get_cosign_validated_digests(
         (
             "testimage:v1",
             "k8s://example_ns/example_key",
+            False,
             {"option_kword": "--key", "inline_tr": "k8s://example_ns/example_key"},
             fix.no_exc(),
         ),
         (
             "testimage:v1",
             "mail@example.com",
+            False,
             {"option_kword": "", "inline_tr": ""},
             pytest.raises(exc.WrongKeyError),
         ),
+        (
+            "testimage:v1",
+            example_key,
+            True,
+            {
+                "option_kword": "--key",
+                "inline_tr": "/dev/stdin",
+                "trust_root": (
+                    b"-----BEGIN PUBLIC KEY-----\n"
+                    b"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbz\n"
+                    b"NBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n"
+                    b"-----END PUBLIC KEY-----\n"
+                ),
+            },
+            fix.no_exc(),
+        ),
     ],
 )
-def test_validate_using_key(fake_process, image, key, process_input, exception):
+async def test_validate_using_key(
+    fake_process, image, key, tlog, process_input, exception
+):
     def stdin_function(input):
         return {"stderr": input.decode(), "stdout": input}
 
@@ -449,6 +495,8 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
     fake_process_calls = [
         "/app/cosign/cosign",
         "verify",
+        *([] if tlog else ["--insecure-ignore-tlog"]),
+        "--insecure-ignore-sct",
         "--output",
         "text",
         process_input["option_kword"],
@@ -465,28 +513,36 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
     config = static_cosigns[0].copy()
     val = co.CosignValidator(**config)
     with exception:
-        returncode, stdout, stderr = val._CosignValidator__validate_using_trust_root(
-            im, TrustRoot(key)
+        (
+            returncode,
+            stdout,
+            stderr,
+        ) = await val._CosignValidator__validate_using_trust_root(
+            im, TrustRoot(key), tlog
         )
         assert fake_process_calls in fake_process.calls
         assert (returncode, stdout, stderr) == (
             0,
-            "{}{}".format(cosign_payload, process_input.get("trustRoot", b"").decode()),
             "{}{}".format(
-                cosign_stderr_at_success, process_input.get("trustRoot", b"").decode()
+                cosign_payload, process_input.get("trust_root", b"").decode()
+            ),
+            "{}{}".format(
+                cosign_stderr_at_success, process_input.get("trust_root", b"").decode()
             ),
         )
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "image, process_input, k8s_keychain, host",
+    "image, tlog, process_input, k8s_keychain, host",
     [
         (
             "testimage:v1",
+            False,
             {
                 "option_kword": "--key",
                 "inline_tr": "/dev/stdin",
-                "trustRoot": (
+                "trust_root": (
                     b"-----BEGIN PUBLIC KEY-----\n"
                     b"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbz\n"
                     b"NBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n"
@@ -498,19 +554,39 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
         ),
         (
             "testimage:v1",
+            False,
             {"option_kword": "--key", "inline_tr": "k8s://connaisseur/test_key"},
             False,
             None,
         ),
         (
             "testimage:v1",
+            False,
             {"option_kword": "--key", "inline_tr": "k8s://connaisseur/test_key"},
             False,
             "https://rekor.sigstore.dev",
         ),
+        (
+            "testimage:v1",
+            True,
+            {
+                "option_kword": "--key",
+                "inline_tr": "/dev/stdin",
+                "trust_root": (
+                    b"-----BEGIN PUBLIC KEY-----\n"
+                    b"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbz\n"
+                    b"NBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n"
+                    b"-----END PUBLIC KEY-----\n"
+                ),
+            },
+            False,
+            None,
+        ),
     ],
 )
-def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
+async def test_invoke_cosign(
+    fake_process, image, tlog, process_input, k8s_keychain, host
+):
     def stdin_function(input):
         return {"stderr": input.decode(), "stdout": input}
 
@@ -523,6 +599,8 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
     fake_process_calls = [
         "/app/cosign/cosign",
         "verify",
+        *([] if tlog else ["--insecure-ignore-tlog"]),
+        "--insecure-ignore-sct",
         "--output",
         "text",
         process_input["option_kword"],
@@ -542,7 +620,9 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
     if host:
         config["host"] = {"rekor": host}
     val = co.CosignValidator(**config)
-    returncode, stdout, stderr = val._CosignValidator__invoke_cosign(im, process_input)
+    returncode, stdout, stderr = await val._CosignValidator__invoke_cosign(
+        im, process_input, tlog
+    )
     assert fake_process_calls in fake_process.calls
     assert (returncode, stdout, stderr) == (
         0,
@@ -553,8 +633,9 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
     )
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize("image", ["testimage:v1"])
-def test_invoke_cosign_timeout_expired(
+async def test_invoke_cosign_timeout_expired(
     mocker, mock_add_kill_fake_process, fake_process, image
 ):
     def callback_function(input):
@@ -566,6 +647,8 @@ def test_invoke_cosign_timeout_expired(
         [
             "/app/cosign/cosign",
             "verify",
+            "--insecure-ignore-tlog",
+            "--insecure-ignore-sct",
             "--output",
             "text",
             "--key",
@@ -578,13 +661,14 @@ def test_invoke_cosign_timeout_expired(
     mock_kill = mocker.patch("pytest_subprocess.fake_popen.FakePopen.kill")
 
     with pytest.raises(exc.CosignTimeout) as err:
-        co.CosignValidator(**static_cosigns[0])._CosignValidator__invoke_cosign(
+        await co.CosignValidator(**static_cosigns[0])._CosignValidator__invoke_cosign(
             image,
             {
                 "option_kword": "--key",
                 "inline_tr": "/dev/stdin",
                 "trust_root": example_pubkey,
             },
+            False,
         )
 
     mock_kill.assert_has_calls([mocker.call()])
@@ -595,10 +679,6 @@ def test_invoke_cosign_timeout_expired(
 def test_get_envs(monkeypatch, index, COSIGN_EXPERIMENTAL):
     env = co.CosignValidator(**static_cosigns[index])._CosignValidator__get_envs()
     assert env["DOCKER_CONFIG"] == "/app/connaisseur-config/cosign1/.docker/"
-    if COSIGN_EXPERIMENTAL:
-        assert env["COSIGN_EXPERIMENTAL"] == f"{COSIGN_EXPERIMENTAL}"
-    else:
-        assert "COSIGN_EXPERIMENTAL" not in env.keys()
 
 
 @pytest.mark.parametrize(
