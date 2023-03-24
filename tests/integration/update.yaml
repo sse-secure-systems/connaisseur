@@ -78,20 +78,25 @@ application:
     validator: allow
   - pattern: docker.io/securesystemsengineering/testimage:co-*
     validator: cosign
+    with:
+      verifyInTransparencyLog: false
   - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-alice*"
     validator: multicosigner
     with:
       trustRoot: "*"
+      verifyInTransparencyLog: false
   - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-bob*"
     validator: multicosigner
     with:
       trustRoot: "*"
       threshold: 2
+      verifyInTransparencyLog: false
   - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-charlie*"
     validator: multicosigner
     with:
       trustRoot: "*"
       required: ["alice", "charlie"]
+      verifyInTransparencyLog: false
   - pattern: docker.io/securesystemsengineering/testimage:rekor-*
     validator: rekor-cosign
     with:

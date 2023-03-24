@@ -1,9 +1,9 @@
+import asyncio
 import json
 import logging
 import os
 import re
 import subprocess  # nosec
-from concurrent.futures import ThreadPoolExecutor
 
 import connaisseur.constants as const
 from connaisseur.exceptions import (
@@ -46,7 +46,11 @@ class CosignValidator(ValidatorInterface):
         )
 
     async def validate(
-        self, image: Image, trustRoot: str = None, **kwargs
+        self,
+        image: Image,
+        trustRoot: str = None,
+        verifyInTransparencyLog: bool = True,
+        **kwargs,
     ):  # pylint: disable=arguments-differ,invalid-name
         required = kwargs.get("required", [])
         # if not configured, `threshold` is 1 if trust root is not "*" or
@@ -57,24 +61,31 @@ class CosignValidator(ValidatorInterface):
         )
         # vals is a validations dict for each required trust root containing validated
         # digests and errors
-        vals = self.__get_pinned_trust_roots(trustRoot, required, threshold)
+        vals = self.__get_pinned_trust_roots(
+            trustRoot, required, threshold, verifyInTransparencyLog
+        )
 
-        # prepare executor
-        num_workers = len(vals)
-        executor = ThreadPoolExecutor(num_workers)
         # prepare tasks
         # a copy of vals dictionaries is passed to concurrent validation to ensure
         # thread-safe execution
         arguments = [(k, v.copy(), str(image)) for k, v in vals.items()]
-        futures = [executor.submit(self.__validation_task, *arg) for arg in arguments]
-        for future in futures:
-            vals.update(future.result())
+        results = await asyncio.gather(
+            *[self.__validation_task(*args) for args in arguments]
+        )
+        for result in results:
+            vals.update(result)
 
         return CosignValidator.__apply_policy(
             vals=vals, threshold=threshold, required=required
         )
 
-    def __get_pinned_trust_roots(self, tr_name: str, required: list, threshold: int):
+    def __get_pinned_trust_roots(
+        self,
+        tr_name: str,
+        required: list,
+        threshold: int,
+        verify_tlog: bool,
+    ):
         """
         Extract the pinned trust root(s) selected for validation from the list of trust
         roots.
@@ -105,6 +116,7 @@ class CosignValidator(ValidatorInterface):
                 "name": t["name"],
                 "trust_root": TrustRoot("".join(t["key"])),
                 "digest": None,
+                "verify_tlog": verify_tlog,
                 "error": None,
             }
             for t in self.trust_roots
@@ -113,31 +125,31 @@ class CosignValidator(ValidatorInterface):
 
         return trust_roots
 
-    def __validation_task(self, trust_root: str, val: dict, image: str):
+    async def __validation_task(self, trust_root: str, values: dict, image: str):
         """
         Task for each validation to gather all required validations,
         execute concurrently and update results.
         """
         try:
-            val["digest"] = self.__get_cosign_validated_digests(image, val)
+            values["digest"] = await self.__get_cosign_validated_digests(image, values)
         except Exception as err:
-            val["error"] = err
+            values["error"] = err
             logging.info(err)
 
-        return {trust_root: val}
+        return {trust_root: values}
 
-    def __get_cosign_validated_digests(self, image: str, trust_root: dict):
+    async def __get_cosign_validated_digests(self, image: str, values: dict):
         """
         Get and process Cosign validation output for a given `image` and `trust_root`
         and either return a list of valid digests or raise a suitable exception
         in case no valid signature is found or Cosign fails.
         """
-        returncode, stdout, stderr = self.__validate_using_trust_root(
-            image, trust_root["trust_root"]
+        returncode, stdout, stderr = await self.__validate_using_trust_root(
+            image, values["trust_root"], values["verify_tlog"]
         )
         logging.info(
             "COSIGN output of trust root '%s' for image'%s': RETURNCODE: %s; STDOUT: %s; STDERR: %s",
-            trust_root["name"],
+            values["name"],
             str(image),
             returncode,
             stdout,
@@ -170,7 +182,7 @@ class CosignValidator(ValidatorInterface):
                             trust_data_type="dev.cosignproject.cosign/signature",
                             stderr=stderr,
                             image=str(image),
-                            trust_root=trust_root["name"],
+                            trust_root=values["name"],
                         ) from err
                     # remove prefix 'sha256'
                     digests.append(digest.removeprefix(f"{const.SHA256}:"))
@@ -187,7 +199,7 @@ class CosignValidator(ValidatorInterface):
                 trust_data_type="dev.cosignproject.cosign/signature",
                 stderr=stderr,
                 image=str(image),
-                trust_root=trust_root["name"],
+                trust_root=values["name"],
             )
         elif (
             "Error: no matching signatures:\nsignature not found in transparency log"
@@ -199,7 +211,7 @@ class CosignValidator(ValidatorInterface):
                 trust_data_type="dev.cosignproject.cosign/signature",
                 stderr=stderr,
                 image=str(image),
-                trust_root=trust_root["name"],
+                trust_root=values["name"],
             )
         elif "Error: no matching signatures:\n\nmain.go:" in stderr:
             msg = 'No trust data for image "{image}".'
@@ -208,7 +220,7 @@ class CosignValidator(ValidatorInterface):
                 trust_data_type="dev.cosignproject.cosign/signature",
                 stderr=stderr,
                 image=str(image),
-                trust_root=trust_root["name"],
+                trust_root=values["name"],
             )
         elif "MANIFEST_UNKNOWN" in stderr:
             msg = 'Image "{image}" does not exist.'
@@ -217,7 +229,7 @@ class CosignValidator(ValidatorInterface):
                 trust_data_type="dev.cosignproject.cosign/signature",
                 stderr=stderr,
                 image=str(image),
-                trust_root=trust_root["name"],
+                trust_root=values["name"],
             )
         else:
             msg = 'Unexpected Cosign exception for image "{image}": {stderr}.'
@@ -226,7 +238,7 @@ class CosignValidator(ValidatorInterface):
                 trust_data_type="dev.cosignproject.cosign/signature",
                 stderr=stderr,
                 image=str(image),
-                trust_root=trust_root["name"],
+                trust_root=values["name"],
             )
         if not digests:
             msg = (
@@ -238,11 +250,16 @@ class CosignValidator(ValidatorInterface):
                 trust_data_type="dev.cosignproject.cosign/signature",
                 stderr=stderr,
                 image=str(image),
-                trust_root=trust_root["name"],
+                trust_root=values["name"],
             )
         return digests.pop()
 
-    def __validate_using_trust_root(self, image: str, trust_root: TrustRoot):
+    async def __validate_using_trust_root(
+        self,
+        image: str,
+        trust_root: TrustRoot,
+        verify_tlog: bool,
+    ):
         """
         Call the `CosignValidator.__invoke_cosign` method, using a specific trust root.
         """
@@ -253,17 +270,20 @@ class CosignValidator(ValidatorInterface):
         # ["--cert-email", self.value, b""]
 
         if isinstance(trust_root, ECDSAKey):
-            return self.__invoke_cosign(
+            return await self.__invoke_cosign(
                 image,
                 {
                     "option_kword": "--key",
                     "inline_tr": "/dev/stdin",
                     "trust_root": trust_root.value.to_pem(),
                 },
+                verify_tlog,
             )
         elif isinstance(trust_root, KMSKey):
-            return self.__invoke_cosign(
-                image, {"option_kword": "--key", "inline_tr": trust_root.value}
+            return await self.__invoke_cosign(
+                image,
+                {"option_kword": "--key", "inline_tr": trust_root.value},
+                verify_tlog,
             )
         msg = (
             "The trust_root type {tr_type} is unsupported for a validator of type"
@@ -271,7 +291,12 @@ class CosignValidator(ValidatorInterface):
         )
         raise WrongKeyError(message=msg, tr_type=type(trust_root), val_type="cosign")
 
-    def __invoke_cosign(self, image: str, tr_args: dict):
+    async def __invoke_cosign(
+        self,
+        image: str,
+        tr_args: dict,
+        verify_tlog: bool,
+    ):
         """
         Invoke the Cosign binary in a subprocess for a specific `image` given trust root
         argument dict (`tr_args`) and return the returncode, stdout and stderr. The trust
@@ -281,9 +306,18 @@ class CosignValidator(ValidatorInterface):
 
         Raises an exception if Cosign times out.
         """
-        cmd = [
-            "/app/cosign/cosign",
+
+        # on the use of `--insecure-ignore-sct`: this flag disables/enables
+        # the validation that a certificate was added to the transparency log.
+        # without the support of keyless, no certificates are being used in the
+        # first place, so it can be safely ignored.
+        # once we do enable it, we run into problems that multiple parallel
+        # processes try to access a local file, of which only one process
+        # will win, while the others fail.
+        args = [
             "verify",
+            *([] if verify_tlog else ["--insecure-ignore-tlog"]),
+            "--insecure-ignore-sct",
             "--output",
             "text",
             tr_args["option_kword"],
@@ -293,23 +327,24 @@ class CosignValidator(ValidatorInterface):
             image,
         ]
 
-        with subprocess.Popen(  # nosec
-            cmd,
+        process = await asyncio.create_subprocess_exec(  # nosec
+            "/app/cosign/cosign",
+            *args,
             env=self.__get_envs(),
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-        ) as process:
-            try:
-                stdout, stderr = process.communicate(
-                    input=tr_args.get("trust_root", None), timeout=60
-                )
-            except subprocess.TimeoutExpired as err:
-                process.kill()
-                msg = "Cosign timed out."
-                raise CosignTimeout(
-                    message=msg, trust_data_type="dev.cosignproject.cosign/signature"
-                ) from err
+        )
+        try:
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(input=tr_args.get("trust_root", None)), timeout=60
+            )
+        except subprocess.TimeoutExpired as err:
+            process.kill()
+            msg = "Cosign timed out."
+            raise CosignTimeout(
+                message=msg, trust_data_type="dev.cosignproject.cosign/signature"
+            ) from err
 
         return (process.returncode, stdout.decode("utf-8"), stderr.decode("utf-8"))
 
@@ -320,14 +355,11 @@ class CosignValidator(ValidatorInterface):
         env = os.environ.copy()
         # Extend the OS env vars only for passing to the subprocess below
         env["DOCKER_CONFIG"] = f"/app/connaisseur-config/{self.name}/.docker/"
+        env["TUF_ROOT"] = "/app/.sigstore"
         if safe_path_func(
             os.path.exists, "/app/certs/cosign", f"/app/certs/cosign/{self.name}.crt"
         ):
             env["SSL_CERT_FILE"] = f"/app/certs/cosign/{self.name}.crt"
-        # Rekor support requires setting of COSIGN_EXPERIMENTAL
-        if self.rekor_url is not None:
-            env.update({"COSIGN_EXPERIMENTAL": "1"})
-            env.update({"TUF_ROOT": "/app/.sigstore"})
         return env
 
     @staticmethod

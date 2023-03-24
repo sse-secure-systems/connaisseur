@@ -1,7 +1,7 @@
 NAMESPACE = connaisseur
 IMAGE_REPOSITORY := $(shell yq e '.kubernetes.deployment.image.repository' helm/values.yaml)
 VERSION := $(shell yq e '.appVersion' helm/Chart.yaml)
-COSIGN_VERSION = 1.13.1
+COSIGN_VERSION = 2.0.0
 
 .PHONY: all docker install uninstall upgrade annihilate
 
