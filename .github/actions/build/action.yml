@@ -116,7 +116,7 @@ runs:
         CONFIGURE=$(printf -- "${CONFIGURE}")
         PUBLIC_KEY="${{ steps.verify.outputs.public_key }}"
         PUBLIC_KEY="$(printf -- "${PUBLIC_KEY//'<br>'/'\n'}")"
-        HELM_PATCH="yq e '.deployment.image.repository = \"${{ inputs.image_registry }}/${{ inputs.image_repo }}\"' -i helm/values.yaml\nyq e '.deployment.image.tag = \"${{ inputs.image_tag }}\"' -i helm/values.yaml"
+        HELM_PATCH="yq e '.kubernetes.deployment.image.repository = \"${{ inputs.image_registry }}/${{ inputs.image_repo }}\"' -i helm/values.yaml\nyq e '.kubernetes.deployment.image.tag = \"${{ inputs.image_tag }}\"' -i helm/values.yaml"
         HELM_PATCH=$(printf -- "${HELM_PATCH}")
         echo "# :building_construction: Build Information" >> ${GITHUB_STEP_SUMMARY}
         echo "<table>" >> ${GITHUB_STEP_SUMMARY}

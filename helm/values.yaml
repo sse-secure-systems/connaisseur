@@ -1,88 +1,89 @@
-# configure Connaisseur deployment
-deployment:
-  replicasCount: 3
-  image:
-    repository: docker.io/securesystemsengineering/connaisseur
-    # Running a different version than the version in the Chart.yaml may not work as the
-    # Connaisseur application version depends on the layout of the Helm deployment
-    # Thus, if unset, we default to the appVersion of the Chart.yaml
-    # tag: v1.2.3
-  imagePullPolicy: IfNotPresent
-  # imagePullSecrets contains an optional list of Kubernetes Secrets, in Connaisseur namespace,
-  # that are needed to access the registry containing Connaisseur image.
-  # imagePullSecrets:
-  # - name: "my-container-secret"
-  failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
-  # Use 'reinvocationPolicy: IfNeeded' to be called again as part of the admission evaluation if the object
-  # being admitted is modified by other admission plugins after the initial webhook call
-  # Note that if Connaisseur is invoked a second time, the policy to be applied might change in between.
-  # Make sure, your Connaisseur policies are set up to handle multiple mutations of the image originally
-  # specified in the manifest, e.g. my.private.registry/image:1.0.0 and my.private.registry/image@sha256:<hash-of-1.0.0-image>
-  reinvocationPolicy: Never
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
-  nodeSelector: {}
-  tolerations: []
-  affinity:
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - podAffinityTerm:
-            labelSelector:
-              matchExpressions:
-                - key: app.kubernetes.io/instance
-                  operator: In
-                  values:
-                    - connaisseur
-            topologyKey: kubernetes.io/hostname
-          weight: 100
-  #annotations:  # uncomment when using Kubernetes prior v1.19
-  #  seccomp.security.alpha.kubernetes.io/pod: runtime/default  # uncomment when using Kubernetes prior v1.19
-  securityContext:
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-    privileged: false
-    readOnlyRootFilesystem: true
-    runAsNonRoot: true
-    runAsUser: 10001  # remove when using openshift or OKD 4
-    runAsGroup: 20001  # remove when using openshift or OKD 4
-    seccompProfile:  # remove when using Kubernetes prior v1.19, openshift or OKD 4
-      type: RuntimeDefault  # remove when using Kubernetes prior v1.19, openshift or OKD 4
-  # PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25
-  podSecurityPolicy:
-    enabled: false
-    name: ["connaisseur-psp"]  # list of PSPs to use, "connaisseur-psp" is the project-provided default
-  envs: {} # dict of additional environment variables, which will be stored as a secret and injected into the Connaisseur pods
-  # Extra config
-  extraContainers: []
-  extraVolumes: []
-  extraVolumeMounts: []
-  # tls:
-  #   # Public TLS certificate to be used by Connaisseur for its endpoints
-  #   # Will override certificate of prior installation
-  #   # Has to be used in conjunction with a private TLS key
-  #   cert: |
-  #     -----BEGIN CERTIFICATE-----
-  #     ...
-  #     -----END CERTIFICATE-----
-  #   # Private TLS key to be used by Connaisseur for its endpoints
-  #   # Will override key of prior installation
-  #   # Has to be used in conjunction with a public certificate
-  #   key: |
-  #     -----BEGIN PRIVATE KEY-----
-  #     ...
-  #     -----END PRIVATE KEY-----
+kubernetes:
+  # configure Connaisseur deployment
+  deployment:
+    replicasCount: 3
+    image:
+      repository: docker.io/securesystemsengineering/connaisseur
+      # Running a different version than the version in the Chart.yaml may not work as the
+      # Connaisseur application version depends on the layout of the Helm deployment
+      # Thus, if unset, we default to the appVersion of the Chart.yaml
+      # tag: v1.2.3
+    imagePullPolicy: IfNotPresent
+    # imagePullSecrets contains an optional list of Kubernetes Secrets, in Connaisseur namespace,
+    # that are needed to access the registry containing Connaisseur image.
+    # imagePullSecrets:
+    # - name: "my-container-secret"
+    failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
+    # Use 'reinvocationPolicy: IfNeeded' to be called again as part of the admission evaluation if the object
+    # being admitted is modified by other admission plugins after the initial webhook call
+    # Note that if Connaisseur is invoked a second time, the policy to be applied might change in between.
+    # Make sure, your Connaisseur policies are set up to handle multiple mutations of the image originally
+    # specified in the manifest, e.g. my.private.registry/image:1.0.0 and my.private.registry/image@sha256:<hash-of-1.0.0-image>
+    reinvocationPolicy: Never
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    nodeSelector: {}
+    tolerations: []
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/instance
+                    operator: In
+                    values:
+                      - connaisseur
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+    #annotations:  # uncomment when using Kubernetes prior v1.19
+    #  seccomp.security.alpha.kubernetes.io/pod: runtime/default  # uncomment when using Kubernetes prior v1.19
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 10001  # remove when using openshift or OKD 4
+      runAsGroup: 20001  # remove when using openshift or OKD 4
+      seccompProfile:  # remove when using Kubernetes prior v1.19, openshift or OKD 4
+        type: RuntimeDefault  # remove when using Kubernetes prior v1.19, openshift or OKD 4
+    # PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25
+    podSecurityPolicy:
+      enabled: false
+      name: ["connaisseur-psp"]  # list of PSPs to use, "connaisseur-psp" is the project-provided default
+    envs: {} # dict of additional environment variables, which will be stored as a secret and injected into the Connaisseur pods
+    # Extra config
+    extraContainers: []
+    extraVolumes: []
+    extraVolumeMounts: []
+    # tls:
+    #   # Public TLS certificate to be used by Connaisseur for its endpoints
+    #   # Will override certificate of prior installation
+    #   # Has to be used in conjunction with a private TLS key
+    #   cert: |
+    #     -----BEGIN CERTIFICATE-----
+    #     ...
+    #     -----END CERTIFICATE-----
+    #   # Private TLS key to be used by Connaisseur for its endpoints
+    #   # Will override key of prior installation
+    #   # Has to be used in conjunction with a public certificate
+    #   key: |
+    #     -----BEGIN PRIVATE KEY-----
+    #     ...
+    #     -----END PRIVATE KEY-----
 
-# configure Connaisseur service
-service:
-  type: ClusterIP
-  port: 443
+  # configure Connaisseur service
+  service:
+    type: ClusterIP
+    port: 443
 
 ### VALIDATORS ###
 # validators are a set of configurations (types, public keys, authentication)

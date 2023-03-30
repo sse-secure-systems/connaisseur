@@ -1,6 +1,6 @@
-{{- if .Values.deployment.podSecurityPolicy }}
-{{- if .Values.deployment.podSecurityPolicy.enabled }}
-{{- if has "connaisseur-psp" .Values.deployment.podSecurityPolicy.name }}
+{{- if .Values.kubernetes.deployment.podSecurityPolicy }}
+{{- if .Values.kubernetes.deployment.podSecurityPolicy.enabled }}
+{{- if has "connaisseur-psp" .Values.kubernetes.deployment.podSecurityPolicy.name }}
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:

@@ -1,22 +1,27 @@
 {
     "type": "object",
     "properties": {
-        "deployment": {
+        "kubernetes": {
             "type": "object",
             "properties": {
-                "tls": {
+                "deployment": {
                     "type": "object",
                     "properties": {
-                        "cert": {
-                            "type": "string"
-                        },
-                        "key": {
-                            "type": "string"
+                        "tls": {
+                            "type": "object",
+                            "properties": {
+                                "cert": {
+                                    "type": "string"
+                                },
+                                "key": {
+                                    "type": "string"
+                                }
+                            },
+                            "dependentRequired": {
+                                "cert": ["key"],
+                                "key": ["cert"]
+                            }
                         }
-                    },
-                    "dependentRequired": {
-                        "cert": ["key"],
-                        "key": ["cert"]
                     }
                 }
             }

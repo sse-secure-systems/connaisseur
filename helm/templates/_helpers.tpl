@@ -139,12 +139,12 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "validateTLSConfig" -}}
-{{- if hasKey .Values.deployment "tls" -}}
-{{- if and (not (hasKey .Values.deployment.tls "cert")) (hasKey .Values.deployment.tls "key")}}
-{{ fail "Helm configuration has a 'deployment.tls' section with a 'key' attribute, but is missing the 'cert' attribute." -}}
+{{- if hasKey .Values.kubernetes.deployment "tls" -}}
+{{- if and (not (hasKey .Values.kubernetes.deployment.tls "cert")) (hasKey .Values.kubernetes.deployment.tls "key")}}
+{{ fail "Helm configuration has a 'kubernetes.deployment.tls' section with a 'key' attribute, but is missing the 'cert' attribute." -}}
 {{- end -}}
-{{- if and (not (hasKey .Values.deployment.tls "key")) (hasKey .Values.deployment.tls "cert")}}
-{{ fail "Helm configuration has a 'deployment.tls' section with a 'cert' attribute, but is missing the 'key' attribute." -}}
+{{- if and (not (hasKey .Values.kubernetes.deployment.tls "key")) (hasKey .Values.kubernetes.deployment.tls "cert")}}
+{{ fail "Helm configuration has a 'kubernetes.deployment.tls' section with a 'cert' attribute, but is missing the 'key' attribute." -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -175,8 +175,8 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "getConfigChecksum" -}}
-{{- if hasKey .Values.deployment "tls" -}}
-    {{- printf "%s\n%s" .Values.deployment.tls (include "getConfigFiles" .)  | sha256sum }}
+{{- if hasKey .Values.kubernetes.deployment "tls" -}}
+    {{- printf "%s\n%s" .Values.kubernetes.deployment.tls (include "getConfigFiles" .)  | sha256sum }}
 {{- else -}}
     {{ include "getConfigFiles" . | sha256sum }}
 {{- end -}}

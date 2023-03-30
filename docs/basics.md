@@ -51,19 +51,19 @@ Download the Connaisseur resources required for installation either by cloning t
 ### Configure
 
 The configuration of Connaisseur is completely done in the `helm/values.yaml`.
-The upper `deployment` section offers some general Kubernetes typical configurations like image version or resources.
+The upper `kubernetes.deployment` section offers some general Kubernetes typical configurations like image version or resources.
 Noteworthy configurations are:
 
-- `deployment.failurePolicy`: Failure policy allows configuration whether the mutating admission webhook should fail closed (`Fail`, *default*) or open (`Ignore`) should the Connaisseur service become unavailable. While Connaisseur is configured to be secure by default, setting the [failure policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) to `Ignore` allows to prioritize cluster access[^1].
-- `deployment.reinvocationPolicy`: [Reinvocation Policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#reinvocation-policy) defines whether Connaisseur is called again as part of the admission evaluation if the object being admitted is modified by other admission plugins after the initial webhook call (`IfNeeded`) or not (`Never`, *default*). Note that if Connaisseur is invoked a second time, the policy to be applied might change in between[^2]. Make sure, your Connaisseur policies are set up to handle multiple mutations of the image originally specified in the manifest, e.g. `my.private.registry/image:1.0.0` and `my.private.registry/image@sha256:<hash-of-1.0.0-image>`.
-- `deployment.securityContext`: Connaisseur ships with secure defaults. However, some keys are not supported by all versions or flavors of Kubernetes and might need adjustment[^3]. This is mentioned in the comments to the best of our knowledge.
-- `deployment.podSecurityPolicy`: Some clusters require a PSP. A secure default PSP for Connaisseur is available.
+- `kubernetes.deployment.failurePolicy`: Failure policy allows configuration whether the mutating admission webhook should fail closed (`Fail`, *default*) or open (`Ignore`) should the Connaisseur service become unavailable. While Connaisseur is configured to be secure by default, setting the [failure policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) to `Ignore` allows to prioritize cluster access[^1].
+- `kubernetes.deployment.reinvocationPolicy`: [Reinvocation Policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#reinvocation-policy) defines whether Connaisseur is called again as part of the admission evaluation if the object being admitted is modified by other admission plugins after the initial webhook call (`IfNeeded`) or not (`Never`, *default*). Note that if Connaisseur is invoked a second time, the policy to be applied might change in between[^2]. Make sure, your Connaisseur policies are set up to handle multiple mutations of the image originally specified in the manifest, e.g. `my.private.registry/image:1.0.0` and `my.private.registry/image@sha256:<hash-of-1.0.0-image>`.
+- `kubernetes.deployment.securityContext`: Connaisseur ships with secure defaults. However, some keys are not supported by all versions or flavors of Kubernetes and might need adjustment[^3]. This is mentioned in the comments to the best of our knowledge.
+- `kubernetes.deployment.podSecurityPolicy`: Some clusters require a PSP. A secure default PSP for Connaisseur is available.
 
 [^1]: This is not to be confused with the [detection mode](features/detection_mode.md) feature: In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.
 
 [^2]: During the first mutation, Connaisseur converts the image tag to its digests. Read more in the [overview of Connaisseur](https://sse-secure-systems.github.io/connaisseur/v2.4.1/#trusted-digests)
 
-[^3]: In those cases, consider using security annotations via `deployment.annotations` or pod security policies `deployment.podSecurityPolicy` if available.
+[^3]: In those cases, consider using security annotations via `kubernetes.deployment.annotations` or pod security policies `kubernetes.deployment.podSecurityPolicy` if available.
 
 The actual configuration consists of the `validators` and image `policy` sections.
 These are described in detail [below](#detailed-configuration) and for initials steps it is instructive to follow the [getting started guide](getting_started.md).
