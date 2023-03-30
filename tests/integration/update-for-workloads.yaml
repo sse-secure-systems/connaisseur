@@ -11,7 +11,7 @@ validators:
 - name: default
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: docker-official
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -27,7 +27,7 @@ validators:
 - name: dockerhub-basics
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: docker-official
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -45,7 +45,7 @@ policy:
   - pattern: "docker.io/library/*:*"
     validator: dockerhub-basics
     with:
-      trust_root: docker-official
+      trustRoot: docker-official
   - pattern: "k8s.gcr.io/*:*"
     validator: allow
   - pattern: "docker.io/rancher/library-busybox:*" # Allow PVC creation helper of k3s
@@ -55,4 +55,4 @@ policy:
   - pattern: "docker.io/securesystemsengineering/*:*"
     validator: dockerhub-basics
     with:
-      trust_root: securesystemsengineering-official
+      trustRoot: securesystemsengineering-official

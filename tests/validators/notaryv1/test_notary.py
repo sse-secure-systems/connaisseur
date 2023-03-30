@@ -29,7 +29,7 @@ static_notaries = [
     {
         "name": "default",
         "host": "notary.docker.io",
-        "trust_roots": [
+        "trustRoots": [
             {
                 "name": "default",
                 "key": (
@@ -49,12 +49,12 @@ static_notaries = [
                 ),
             },
         ],
-        "is_acr": False,
+        "isAcr": False,
     },
     {
         "name": "harbor",
         "host": "notary.harbor.domain",
-        "trust_roots": [
+        "trustRoots": [
             {
                 "name": "library",
                 "key": "-----BEGIN PUBLIC KEY-----\n"
@@ -63,7 +63,7 @@ static_notaries = [
                 "-----END PUBLIC KEY-----\n",
             }
         ],
-        "is_acr": True,
+        "isAcr": True,
     },
 ]
 
@@ -74,8 +74,8 @@ def test_notary(sample_notaries, index, exception):
         no = notary.Notary(**sample_notaries[index])
         assert no.name == static_notaries[index]["name"]
         assert no.host == static_notaries[index]["host"]
-        assert no.root_keys == static_notaries[index]["trust_roots"]
-        assert no.is_acr == static_notaries[index].get("is_acr", False)
+        assert no.root_keys == static_notaries[index]["trustRoots"]
+        assert no.is_acr == static_notaries[index].get("isAcr", False)
 
 
 @pytest.mark.parametrize(
@@ -92,7 +92,7 @@ def test_notary(sample_notaries, index, exception):
 def test_get_key(sample_notaries, index, key_name, key, exception):
     no = notary.Notary(**sample_notaries[index])
     with exception:
-        assert no.get_key(key_name) == static_notaries[index]["trust_roots"][key]["key"]
+        assert no.get_key(key_name) == static_notaries[index]["trustRoots"][key]["key"]
 
 
 @pytest.mark.parametrize(

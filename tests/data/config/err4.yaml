@@ -1,7 +1,7 @@
 validators:
 - name: default
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: default
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -37,7 +37,7 @@ validators:
     hMC42zeU+yxxy3vukMa4xX2BGzyjAg+qaDh6YwWui80r2/BlYXvSsSl3dIgtVwL4
     DSo1s+3uJ4evVKDRf3vLwKLTtiYfd20=
     -----END CERTIFICATE-----
-  trust_roots:
+  trustRoots:
   - name: library
     key: |
       -----BEGIN PUBLIC KEY-----

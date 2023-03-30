@@ -501,7 +501,7 @@ case $1 in
 	;;
 "deployment")
 	update_via_env_vars
-	update_values '.policy += {"pattern": "docker.io/library/*:*", "validator": "dockerhub-basics", "with": {"trust_root": "docker-official"}}'
+	update_values '.policy += {"pattern": "docker.io/library/*:*", "validator": "dockerhub-basics", "with": {"trustRoot": "docker-official"}}'
 	make_install
 	deployment_int_test
 	;;

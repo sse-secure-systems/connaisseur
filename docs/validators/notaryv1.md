@@ -18,7 +18,7 @@ While DCT relies on *trust on first use* (TOFU) for repositories' public root ke
 
 ## Basic usage
 
-In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the public root key of other images and configure Connaisseur via `validators[*].trust_roots[*].key` in `helm/values.yaml` to pin trust to those keys.
+In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the public root key of other images and configure Connaisseur via `validators[*].trustRoots[*].key` in `helm/values.yaml` to pin trust to those keys.
 Both is described below.
 However, there is also step-by-step instructions for using Notary in the [getting started guide](../getting_started.md).
 
@@ -42,7 +42,7 @@ YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==
 -----END PUBLIC KEY-----
 ```
 
-You will only need the actual base64 encoded part for configuring the `validators[*].trust_roots[*].key` in `helm/values.yaml` of Connaisseur to validate your images.
+You will only need the actual base64 encoded part for configuring the `validators[*].trustRoots[*].key` in `helm/values.yaml` of Connaisseur to validate your images.
 How to extract the public root key for any image is described [below](#getting-the-public-root-key).
 
 ### Creating signatures
@@ -111,7 +111,7 @@ The corresponding entry should look similar to the following (using the extracte
 - name: customvalidator
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: default
     key: |  # THE DESIRED PUBLIC KEY BELOW
       -----BEGIN PUBLIC KEY-----
@@ -176,14 +176,14 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 | `name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `type` | - | :heavy_check_mark: | `notaryv1`; the validator type must be set to `notaryv1`. |
 | `host` | - | :heavy_check_mark: | URL of the Notary instance, in which the signatures reside, e.g. `notary.docker.io`. |
-| `trust_roots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
-| `trust_roots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public root key. |
+| `trustRoots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
+| `trustRoots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public root key. |
 | `auth` | - | | Authentication credentials for the Notary server in case the trust data is not public. |
-| `auth.secret_name` | - | | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file `auth.yaml` containing:<br/>&nbsp; `username: <user>` <br/>&nbsp; `password: <password>` <br/>Run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml -n connaisseur` to create the secret.|
-| `auth.username` | - | | Username to authenticate with. It is recommended to use `auth.secret_name` instead. |
-| `auth.password` | - | | Password or access token to authenticate with. It is recommended to use `auth.secret_name` instead. |
+| `auth.secretName` | - | | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file `auth.yaml` containing:<br/>&nbsp; `username: <user>` <br/>&nbsp; `password: <password>` <br/>Run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml -n connaisseur` to create the secret.|
+| `auth.username` | - | | Username to authenticate with. It is recommended to use `auth.secretName` instead. |
+| `auth.password` | - | | Password or access token to authenticate with. It is recommended to use `auth.secretName` instead. |
 | `cert` | - | | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
-| `is_acr` | `false` | | `true` if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs. |
+| `isAcr` | `false` | | `true` if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs. |
 
 `.policy[*]` in `helm/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
@@ -198,7 +198,7 @@ validators:
 - name: docker_essentials
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: sse
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -279,7 +279,7 @@ Another use case is to sign an image with delegation keys in various stages of y
 
 ### Using Azure Container Registry
 
-Using Azure Container Registry (ACR) must be specified in the [validator configuration](./notaryv1.md#configuration-options) by setting `is_acr` to `true`.
+Using Azure Container Registry (ACR) must be specified in the [validator configuration](./notaryv1.md#configuration-options) by setting `isAcr` to `true`.
 
 Moreover, you need to provide credentials of an Azure Identity having at least `read` access to the ACR (and, thus, to the associated Notary instance). Assuming you have the `az cli` installed you can create a Service Principal for this by running:
 

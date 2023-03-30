@@ -34,7 +34,7 @@ The entry will have the following data fields (**bold** are mandatory):
     - `user` -- Username to authenticate with.
     - `password` -- Password to authenticate with.
     - `secretName` -- Kubernetes secret reference to use *INSTEAD* of user/password combination.
-- `is_acr` -- Marks the notary as being part of an Azure Container Registry.
+- `isAcr` -- Marks the notary as being part of an Azure Container Registry.
 
 The image policy will have two additional fields per rule entry (in "quotes" are already present fields):
 

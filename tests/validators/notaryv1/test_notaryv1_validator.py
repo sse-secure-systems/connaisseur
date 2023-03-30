@@ -14,7 +14,7 @@ from ... import conftest as fix
 
 
 @pytest.mark.parametrize(
-    "val_config", [{"name": "nv1", "host": "me", "trust_roots": ["not_empty"]}]
+    "val_config", [{"name": "nv1", "host": "me", "trustRoots": ["not_empty"]}]
 )
 def test_init(m_notary, val_config):
     val = nv1.NotaryV1Validator(**val_config)
@@ -139,7 +139,7 @@ async def test_validate(
 )
 def test_healthy(m_request, url, acr, health):
     val = nv1.NotaryV1Validator(
-        **{"name": "sample", "host": url, "trust_roots": ["not_empty"], "is_acr": acr}
+        **{"name": "sample", "host": url, "trustRoots": ["not_empty"], "isAcr": acr}
     )
     assert val.healthy is health
 

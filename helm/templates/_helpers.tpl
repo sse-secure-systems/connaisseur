@@ -56,7 +56,7 @@ Extract Kubernetes Minor Version.
     {{- $validator := deepCopy . -}}
     {{- if eq $validator.type "notaryv1" -}}
         {{- if $validator.auth -}}
-            {{- if not $validator.auth.secret_name -}}
+            {{- if not $validator.auth.secretName -}}
                 {{- $_ := set $secret_dict $validator.name (dict "auth" $validator.auth) -}}
             {{- end -}}
         {{- end -}}
@@ -89,19 +89,19 @@ Extract Kubernetes Minor Version.
     {{- $validator := deepCopy . -}}
     {{- if eq $validator.type "notaryv1" -}}
         {{- if $validator.auth -}}
-            {{ if $validator.auth.secret_name }}
+            {{ if $validator.auth.secretName }}
 - name: {{ $validator.name }}-vol
   secret:
-    secretName: {{ $validator.auth.secret_name }}
+    secretName: {{ $validator.auth.secretName }}
             {{- end -}}
         {{- end -}}
     {{- else if eq $validator.type "notaryv2" -}}
     {{- else if eq $validator.type "cosign" -}}
         {{- if $validator.auth -}}
-            {{ if $validator.auth.secret_name }}
+            {{ if $validator.auth.secretName }}
 - name: {{ $validator.name }}-vol
   secret:
-    secretName: {{ $validator.auth.secret_name }}
+    secretName: {{ $validator.auth.secretName }}
     items:
       - key: .dockerconfigjson
         path: config.json
@@ -118,7 +118,7 @@ Extract Kubernetes Minor Version.
     {{- $validator := deepCopy . -}}
     {{- if eq $validator.type "notaryv1" -}}
         {{- if $validator.auth -}}
-            {{ if $validator.auth.secret_name }}
+            {{ if $validator.auth.secretName }}
 - name: {{ $validator.name }}-vol
   mountPath: /app/connaisseur-config/{{ $validator.name }}
   readOnly: True
@@ -127,7 +127,7 @@ Extract Kubernetes Minor Version.
     {{- else if eq $validator.type "notaryv2" -}}
     {{- else if eq $validator.type "cosign" -}}
         {{- if $validator.auth -}}
-            {{ if $validator.auth.secret_name }}
+            {{ if $validator.auth.secretName }}
 - name: {{ $validator.name }}-vol
   mountPath: /app/connaisseur-config/{{ $validator.name }}/.docker/
   readOnly: True

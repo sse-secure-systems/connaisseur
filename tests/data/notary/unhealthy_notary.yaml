@@ -1,6 +1,6 @@
 name: default
 host: unhealthy.notary.io
-trust_roots:
+trustRoots:
   - name: connytest
     key: |
       -----BEGIN PUBLIC KEY-----

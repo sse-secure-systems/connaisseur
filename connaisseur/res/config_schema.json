@@ -64,7 +64,7 @@
                                     "type": "string",
                                     "pattern": "(([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6})|(localhost))(\\:\\d{2,5})?"
                                 },
-                                "trust_roots": {
+                                "trustRoots": {
                                     "type": [
                                         "array",
                                         "null"
@@ -87,7 +87,7 @@
                                     "minItems": 0,
                                     "uniqueItems": true
                                 },
-                                "is_acr": {
+                                "isAcr": {
                                     "type": "boolean"
                                 },
                                 "cert": {
@@ -113,13 +113,13 @@
                                         },
                                         {
                                             "properties": {
-                                                "secret_name": {
+                                                "secretName": {
                                                     "type": "string",
                                                     "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"
                                                 }
                                             },
                                             "required": [
-                                                "secret_name"
+                                                "secretName"
                                             ]
                                         }
                                     ]
@@ -127,7 +127,7 @@
                             },
                             "required": [
                                 "host",
-                                "trust_roots"
+                                "trustRoots"
                             ]
                         }
                     },
@@ -155,7 +155,7 @@
                                     "type": "string",
                                     "pattern": "(https?:\\/\\/)?(([a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5})|(localhost))(:[0-9]{1,5})?(\\/.*)?"
                                 },
-                                "trust_roots": {
+                                "trustRoots": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
@@ -180,23 +180,23 @@
                                     "oneOf": [
                                         {
                                             "properties": {
-                                              "secret_name": {
+                                              "secretName": {
                                                   "type": "string",
                                                   "pattern": "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"
                                               }
                                             },
                                             "required": [
-                                                "secret_name"
+                                                "secretName"
                                             ]
                                         },
                                         {
                                             "properties": {
-                                              "k8s_keychain": {
+                                              "k8sKeychain": {
                                                   "type": "boolean"
                                               }
                                             },
                                             "required": [
-                                                "k8s_keychain"
+                                                "k8sKeychain"
                                             ]
                                         }
                                     ]
@@ -211,7 +211,7 @@
                                 }
                             },
                             "required": [
-                                "trust_roots"
+                                "trustRoots"
                             ]
                         }
                     },

@@ -14,7 +14,7 @@ from .. import conftest as fix
                 "type": "notaryv1",
                 "name": "notary1",
                 "host": "me",
-                "trust_roots": [{"name": "i'm", "key": "not_empty"}],
+                "trustRoots": [{"name": "i'm", "key": "not_empty"}],
             },
             val.NotaryV1Validator,
             fix.no_exc(),
@@ -28,7 +28,7 @@ from .. import conftest as fix
             {
                 "type": "cosign",
                 "name": "cosigngn",
-                "trust_roots": [{"name": "i'm", "key": "not_empty"}],
+                "trustRoots": [{"name": "i'm", "key": "not_empty"}],
             },
             val.CosignValidator,
             fix.no_exc(),
