@@ -8,11 +8,11 @@ validators:
 - name: default
   type: notaryv1
   host: notary.docker.io
-  trust_roots: []
+  trustRoots: []
 - name: dockerhub-basics
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: docker-official
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -27,7 +27,7 @@ validators:
       -----END PUBLIC KEY-----
 - name: cosign
   type: cosign
-  trust_roots:
+  trustRoots:
   - name: default
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -36,7 +36,7 @@ validators:
       -----END PUBLIC KEY-----
 - name: multicosigner
   type: cosign
-  trust_roots:
+  trustRoots:
   - name: alice
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -58,7 +58,7 @@ validators:
 - name: rekor-cosign
   type: cosign
   host: rekor.sigstore.dev
-  trust_roots:
+  trustRoots:
   - name: rekored-key
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -69,7 +69,7 @@ policy:
 - pattern: "*:*"
   validator: dockerhub-basics
   with:
-    trust_root: securesystemsengineering-official
+    trustRoot: securesystemsengineering-official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: docker.io/securesystemsengineering/connaisseur:*
@@ -79,35 +79,35 @@ policy:
 - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-alice*"
   validator: multicosigner
   with:
-    trust_root: "*"
+    trustRoot: "*"
 - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-bob*"
   validator: multicosigner
   with:
-    trust_root: "*"
+    trustRoot: "*"
     threshold: 2
 - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-charlie*"
   validator: multicosigner
   with:
-    trust_root: "*"
+    trustRoot: "*"
     required: ["alice", "charlie"]
 - pattern: docker.io/securesystemsengineering/testimage:rekor-*
   validator: rekor-cosign
   with:
-    trust_root: "rekored-key"
+    trustRoot: "rekored-key"
 - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
   validator: dockerhub-basics
   with:
-    trust_root: securesystemsengineering-official
+    trustRoot: securesystemsengineering-official
     delegations: ["starkteetje"]
 - pattern: "docker.io/securesystemsengineering/testimage:wrong_signer"
   validator: dockerhub-basics
   with:
-    trust_root: securesystemsengineering-official
+    trustRoot: securesystemsengineering-official
     delegations: ["belitzphilipp"]
 - pattern: "docker.io/securesystemsengineering/testimage:double_sig"
   validator: dockerhub-basics
   with:
-    trust_root: securesystemsengineering-official
+    trustRoot: securesystemsengineering-official
     delegations: ["belitzphilipp", "starkteetje"]
 detectionMode: false
 namespacedValidation:

@@ -307,7 +307,7 @@ def sample_nv1(m_notary):
     sample_notary = {
         "name": "dockerhub",
         "host": "notary.docker.io",
-        "trust_roots": [
+        "trustRoots": [
             {
                 "name": "default",
                 "key": (
@@ -324,7 +324,7 @@ def sample_nv1(m_notary):
             },
             {"name": "missingkey", "key": ""},
         ],
-        "is_acr": False,
+        "isAcr": False,
         "auth": {"username": "bert", "password": "bertig"},
         "cert": None,
     }

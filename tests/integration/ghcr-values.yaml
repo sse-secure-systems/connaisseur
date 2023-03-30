@@ -1,12 +1,12 @@
 validators:
   - name: connaisseur-ghcr
     type: cosign
-    trust_roots:
+    trustRoots:
       - name: default
         key: |
           ${COSIGN_PUBLIC_KEY}
     auth:
-      secret_name: ${IMAGEPULLSECRET}
+      secretName: ${IMAGEPULLSECRET}
 
 policy:
   - pattern: "${IMAGE}:${TAG}"

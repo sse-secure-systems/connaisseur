@@ -24,7 +24,7 @@ static_cosigns = [
     {
         "name": "cosign1",
         "type": "cosign",
-        "trust_roots": [
+        "trustRoots": [
             {"name": "default", "key": example_key},
             {"name": "test", "key": example_key2},
         ],
@@ -32,31 +32,31 @@ static_cosigns = [
     {
         "name": "cosign2",
         "type": "cosign",
-        "trust_roots": [{"name": "test", "key": "..."}],
-        "auth": {"k8s_keychain": True},
+        "trustRoots": [{"name": "test", "key": "..."}],
+        "auth": {"k8sKeychain": True},
         "host": "https://rekor.instance.com",
     },
     {
         "name": "cosign1",
         "type": "cosign",
-        "trust_roots": [
+        "trustRoots": [
             {"name": "megatest", "key": "..."},
             {"name": "test", "key": "..."},
         ],
-        "auth": {"k8s_keychain": False},
+        "auth": {"k8sKeychain": False},
         "host": "http://foo.bar",
     },
     {
         "name": "cosign1",
         "type": "cosign",
-        "trust_roots": [],
-        "auth": {"secret_name": "my-secret"},
+        "trustRoots": [],
+        "auth": {"secretName": "my-secret"},
         "host": "rekor.tlog.xyz",
     },
     {
         "name": "cosign1",
         "type": "cosign",
-        "trust_roots": [
+        "trustRoots": [
             {"name": "test1", "key": example_key},
             {"name": "test2", "key": example_key2},
             {"name": "test3", "key": example_key2},
@@ -66,7 +66,7 @@ static_cosigns = [
         "name": "cosign1",
         "type": "cosign",
         "host": "rekor.sigstore.dev",
-        "trust_roots": [{"name": "default", "key": example_key}],
+        "trustRoots": [{"name": "default", "key": example_key}],
     },
 ]
 
@@ -100,15 +100,15 @@ The following checks were performed on each of these signatures:
 
 def gen_vals(static_cosign, root_no: list = None, digest=None, error=None):
     if root_no is None:
-        root_no = range(len(static_cosign["trust_roots"]))
+        root_no = range(len(static_cosign["trustRoots"]))
 
     if not isinstance(digest, list):
-        digest = [digest] * len(static_cosign["trust_roots"])
+        digest = [digest] * len(static_cosign["trustRoots"])
 
     return {
-        static_cosign["trust_roots"][num]["name"]: {
-            "name": static_cosign["trust_roots"][num]["name"],
-            "trust_root": TrustRoot("".join(static_cosign["trust_roots"][num]["key"])),
+        static_cosign["trustRoots"][num]["name"]: {
+            "name": static_cosign["trustRoots"][num]["name"],
+            "trust_root": TrustRoot("".join(static_cosign["trustRoots"][num]["key"])),
             "digest": digest[num],
             "error": error,
         }
@@ -153,7 +153,7 @@ def mock_add_kill_fake_process(monkeypatch):
 def test_init(index: int, kchain: bool, host: str):
     val = co.CosignValidator(**static_cosigns[index])
     assert val.name == static_cosigns[index]["name"]
-    assert val.trust_roots == static_cosigns[index]["trust_roots"]
+    assert val.trust_roots == static_cosigns[index]["trustRoots"]
     assert val.k8s_keychain == kchain
     assert val.rekor_url == host
 
@@ -185,7 +185,7 @@ def test_init(index: int, kchain: bool, host: str):
             4,
             "*",
             [],
-            len(static_cosigns[4]["trust_roots"]),
+            len(static_cosigns[4]["trustRoots"]),
             gen_vals(static_cosigns[4], range(3)),
             fix.no_exc(),
         ),
@@ -404,7 +404,7 @@ def test_get_cosign_validated_digests(
             {
                 "option_kword": "--key",
                 "inline_tr": "/dev/stdin",
-                "trust_root": (
+                "trustRoot": (
                     b"-----BEGIN PUBLIC KEY-----\n"
                     b"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbz\n"
                     b"NBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n"
@@ -463,11 +463,9 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
         assert fake_process_calls in fake_process.calls
         assert (returncode, stdout, stderr) == (
             0,
+            "{}{}".format(cosign_payload, process_input.get("trustRoot", b"").decode()),
             "{}{}".format(
-                cosign_payload, process_input.get("trust_root", b"").decode()
-            ),
-            "{}{}".format(
-                cosign_stderr_at_success, process_input.get("trust_root", b"").decode()
+                cosign_stderr_at_success, process_input.get("trustRoot", b"").decode()
             ),
         )
 
@@ -480,7 +478,7 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
             {
                 "option_kword": "--key",
                 "inline_tr": "/dev/stdin",
-                "trust_root": (
+                "trustRoot": (
                     b"-----BEGIN PUBLIC KEY-----\n"
                     b"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6uuXbZhEfTYb4Mnb/LdrtXKTIIbz\n"
                     b"NBp8mwriocbaxXxzquvbZpv4QtOTPoIw+0192MW9dWlSVaQPJd7IaiZIIQ==\n"
@@ -532,7 +530,7 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
         stdin_callable=stdin_function,
     )
     config = static_cosigns[0].copy()
-    config["auth"] = {"k8s_keychain": k8s_keychain}
+    config["auth"] = {"k8sKeychain": k8s_keychain}
     if host:
         config["host"] = host
     val = co.CosignValidator(**config)

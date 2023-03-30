@@ -31,13 +31,13 @@ class CosignValidator(ValidatorInterface):
         self,
         name: str,
         host: str = None,
-        trust_roots: list = None,
+        trustRoots: list = None,  # pylint: disable=invalid-name
         auth: dict = None,
         **kwargs,
     ):
         super().__init__(name, **kwargs)
-        self.trust_roots = trust_roots
-        self.k8s_keychain = False if auth is None else auth.get("k8s_keychain", False)
+        self.trust_roots = trustRoots
+        self.k8s_keychain = False if auth is None else auth.get("k8sKeychain", False)
         self.rekor_url = (
             host
             if host is None or host.startswith(("https://", "http://"))
@@ -45,18 +45,18 @@ class CosignValidator(ValidatorInterface):
         )
 
     async def validate(
-        self, image: Image, trust_root: str = None, **kwargs
-    ):  # pylint: disable=arguments-differ
+        self, image: Image, trustRoot: str = None, **kwargs
+    ):  # pylint: disable=arguments-differ,invalid-name
         required = kwargs.get("required", [])
         # if not configured, `threshold` is 1 if trust root is not "*" or
         # `required` is specified and number of trust roots otherwise
         threshold = kwargs.get(
             "threshold",
-            1 if trust_root != "*" or any(required) else len(self.trust_roots),
+            1 if trustRoot != "*" or any(required) else len(self.trust_roots),
         )
         # vals is a validations dict for each required trust root containing validated
         # digests and errors
-        vals = self.__get_pinned_trust_roots(trust_root, required, threshold)
+        vals = self.__get_pinned_trust_roots(trustRoot, required, threshold)
 
         # prepare executor
         num_workers = len(vals)

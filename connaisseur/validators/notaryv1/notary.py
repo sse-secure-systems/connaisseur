@@ -33,16 +33,16 @@ class Notary:
         self,
         name: str,
         host: str,
-        trust_roots: list,
-        is_acr: bool = False,
+        trustRoots: list,  # pylint: disable=invalid-name
+        isAcr: bool = False,  # pylint: disable=invalid-name
         auth: dict = None,
         cert: str = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
         self.name = name
         self.host = host
-        self.root_keys = trust_roots or []
-        self.is_acr = is_acr
+        self.root_keys = trustRoots or []
+        self.is_acr = isAcr
         if auth is None:
             auth = {}
         self.auth = {"login" if k == "username" else k: v for k, v in auth.items()}

@@ -107,7 +107,7 @@ The result should look similar to this:
     - name: default
       type: notaryv1  # or other supported validator (e.g. "cosign")
       host: notary.docker.io # configure the notary server to be used
-      trust_roots:
+      trustRoots:
       # the `default` key is used if no key is specified in image policy
       - name: default
         key: |  # enter your key below
@@ -121,7 +121,7 @@ The result should look similar to this:
       #  -----END CERTIFICATE-----
       #auth:  # credentials in case the trust data requires authentication
       #  # either (preferred solution)
-      #  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
+      #  secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
       #  # or (only for notaryv1 validator)
       #  username: myuser
       #  password: mypass
@@ -135,7 +135,7 @@ The result should look similar to this:
     # the `default` validator is used if no validator is specified in image policy
     - name: default
       type: cosign  # or other supported validator (e.g. "cosign")
-      trust_roots:
+      trustRoots:
       # the `default` key is used if no key is specified in image policy
       - name: default
         key: |  # enter your key below
@@ -149,7 +149,7 @@ The result should look similar to this:
       #  -----END CERTIFICATE-----
       #auth:  # credentials in case the trust data requires authentication
       #  # either (preferred solution)
-      #  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
+      #  secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
       #  # or (only for notaryv1 validator)
       #  username: myuser
       #  password: mypass

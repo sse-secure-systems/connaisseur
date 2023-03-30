@@ -32,14 +32,14 @@ class NotaryV1Validator(ValidatorInterface):
         self,
         image: Image,
         session: ClientSession,
-        trust_root: str = None,
+        trustRoot: str = None,  # pylint: disable=invalid-name
         delegations: list = None,
         **kwargs,
     ):  # pylint: disable=arguments-differ
         if delegations is None:
             delegations = []
         # get the public root key
-        root_key = TrustRoot(self.notary.get_key(trust_root))
+        root_key = TrustRoot(self.notary.get_key(trustRoot))
         # prepend `targets/` to the required delegation roles, if not already present
         req_delegations = list(
             map(NotaryV1Validator.__normalize_delegation, delegations)

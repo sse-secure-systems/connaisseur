@@ -2,7 +2,7 @@ validators:
 - name: default
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
     - name: default
       key: |
         -----BEGIN PUBLIC KEY-----
@@ -39,7 +39,7 @@ validators:
     hMC42zeU+yxxy3vukMa4xX2BGzyjAg+qaDh6YwWui80r2/BlYXvSsSl3dIgtVwL4
     DSo1s+3uJ4evVKDRf3vLwKLTtiYfd20=
     -----END CERTIFICATE-----
-  trust_roots:
+  trustRoots:
   - name: library
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -54,7 +54,7 @@ validators:
   approve: False
 - name: cosign-example
   type: cosign
-  trust_roots:
+  trustRoots:
   - name: default
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -64,7 +64,7 @@ validators:
 - name: ext
   type: notaryv1
   host: notary.external.domain
-  trust_roots:
+  trustRoots:
     - name: default
       key: |
         -----BEGIN PUBLIC KEY-----
@@ -74,11 +74,11 @@ validators:
 - name: localhost
   type: notaryv1
   host: localhost
-  trust_roots: []
+  trustRoots: []
 - name: localhost_port
   type: notaryv1
   host: localhost:4443
-  trust_roots: []
+  trustRoots: []
 policy:
 - pattern: "*:*"
   with:

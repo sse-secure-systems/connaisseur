@@ -97,7 +97,7 @@ match_image_digest = (
         ),
         (
             "err4",
-            pytest.raises(exc.InvalidConfigurationFormatError, match=r".*roots.*"),
+            pytest.raises(exc.InvalidConfigurationFormatError, match=r".*Roots.*"),
         ),
         (
             "err5",

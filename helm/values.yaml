@@ -103,7 +103,7 @@ validators:
   - name: default
     type: notaryv1  # or other supported validator (e.g. "cosign")
     host: notary.docker.io # configure the notary server for notaryv1 or rekor url for cosign
-    trust_roots:
+    trustRoots:
     # # the `default` key is used if no key is specified in image policy
     #- name: default
     #  key: |  # enter your public key below
@@ -116,7 +116,7 @@ validators:
     #  -----END CERTIFICATE-----
     #auth:  # credentials in case the trust data requires authentication
     #  # either (preferred solution)
-    #  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
+    #  secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
     #  # or (only for notaryv1 validator)
     #  username: myuser
     #  password: mypass
@@ -124,7 +124,7 @@ validators:
   - name: dockerhub-basics
     type: notaryv1
     host: notary.docker.io
-    trust_roots:
+    trustRoots:
       # public key for official docker images (https://hub.docker.com/search?q=&type=image&image_filter=official)
       # !if not needed feel free to remove the key!
       - name: docker-official
@@ -150,13 +150,13 @@ policy:
   - pattern: "docker.io/library/*:*"
     validator: dockerhub-basics
     with:
-      trust_root: docker-official
+      trustRoot: docker-official
   - pattern: "k8s.gcr.io/*:*"
     validator: allow
   - pattern: "docker.io/securesystemsengineering/*:*"
     validator: dockerhub-basics
     with:
-      trust_root: securesystemsengineering-official
+      trustRoot: securesystemsengineering-official
 
 # in detection mode, deployment will not be denied, but only prompted
 # and logged. this allows testing the functionality without

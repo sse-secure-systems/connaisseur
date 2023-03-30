@@ -221,9 +221,9 @@ The special case of static validators used to simply allow or deny images withou
 | - | - | - | - |
 | `name` | - | :heavy_check_mark: | Name of the validator, which is referenced in the image policy. It must consist of lower case alphanumeric characters or '-'. If the name is `default`, it will be used if no validator is specified. |
 | `type` | - | :heavy_check_mark: | Type of the validator, e.g. `notaryv1` or `cosign`, which is dependent on the [signing solution in use](validators/README.md). |
-| `trust_roots` | - | :heavy_check_mark: | List of trust anchors to validate the signatures against. In practice, this is typically a list of public keys. |
-| `trust_roots[*].name` | - | :heavy_check_mark: | Name of the trust anchor, which is referenced in the image policy. If the name is `default`, it will be used if no key is specified. |
-| `trust_roots[*].key` | - | :heavy_check_mark: | Value of the trust anchor, most commonly a PEM encoded public key. |
+| `trustRoots` | - | :heavy_check_mark: | List of trust anchors to validate the signatures against. In practice, this is typically a list of public keys. |
+| `trustRoots[*].name` | - | :heavy_check_mark: | Name of the trust anchor, which is referenced in the image policy. If the name is `default`, it will be used if no key is specified. |
+| `trustRoots[*].key` | - | :heavy_check_mark: | Value of the trust anchor, most commonly a PEM encoded public key. |
 | `auth`| - | | Credentials that should be used in case authentication is required for validation. Details are provided on validator-specific pages. |
 
 *Further configuration fields specific to the validator type are described in the [respective section](validators/README.md).*
@@ -235,7 +235,7 @@ validators:
 - name: default
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: default
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -247,7 +247,7 @@ validators:
     password: lookatmeimjumping
 - name: myvalidator
   type: cosign
-  trust_roots:
+  trustRoots:
   - name: mykey
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -304,7 +304,7 @@ In order to perform the actual validation, Connaisseur will call the validator s
 The reference to validator and exact trust root is resolved in the following way:
 
 1. The validator with name (`validators[*].name`) equal to the `validator` value in the selected rule is chosen. If no validator is specified, the validator with name `default` is used if it exists.
-2. Of that validator, the trust root (e.g. public key) is chosen which name (`.validators.trust_roots[*].name`) matches the policies trust root string (`with.trust_root`). If no trust root is specified, the trust root with name `default` is used if it exists.
+2. Of that validator, the trust root (e.g. public key) is chosen which name (`.validators.trustRoots[*].name`) matches the policies trust root string (`with.trustRoot`). If no trust root is specified, the trust root with name `default` is used if it exists.
 
 Let's review the pattern and validator matching at a minimal example.
 We consider the following validator and policy configuration (most fields have been omitted for clarity):
@@ -312,12 +312,12 @@ We consider the following validator and policy configuration (most fields have b
 ```yaml
 validators:
 - name: default     # validator 1
-  trust_roots:
+  trustRoots:
   - name: default   # key 1
     key: |
       ...
 - name: myvalidator # validator 2
-  trust_roots:
+  trustRoots:
   - name: default   # key 2
     key: |
       ...
@@ -332,7 +332,7 @@ policy:
 - pattern: "docker.io/myrepo/myimg:*" # rule 3
   validator: myvalidator
   with:
-    trust_root: mykey
+    trustRoot: mykey
 ```
 
 Now deploying the following images we would get the matchings:
@@ -356,7 +356,7 @@ There is two rules that should remain intact in some form in order to not brick 
 | `pattern` | - | :heavy_check_mark: | Globbing pattern to match an image name against. |
 | `validator` | `default` | | Name of a validator in the `validators` list. If not provided, the validator with name `default` is used if it exists. |
 | `with` | - | | Additional parameters to use for a validator. See more specifics in [validator section](validators/README.md). |
-|`with.trust_root`| `default` | | Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. |
+|`with.trustRoot`| `default` | | Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. |
 
 #### Example
 
@@ -366,7 +366,7 @@ policy:
 - pattern: "docker.io/myrepo/*:*"
   validator: myvalidator
   with:
-    trust_root: mykey
+    trustRoot: mykey
 - pattern: "docker.io/myrepo/deniedimage:*"
   validator: deny
 - pattern: "docker.io/myrepo/allowedimage:v*"
@@ -383,7 +383,7 @@ In case this repository is private, authentication would have to be added to the
 
 ```yaml
   auth:
-    secret_name: k8ssecret
+    secretName: k8ssecret
 ```
 
 The Kubernetes secret would have to be created separately according to the validator documentation.
@@ -400,7 +400,7 @@ validators:
 - name: default
   type: notaryv1  # or e.g. 'cosign'
   host: notary.docker.io  # only required in case of notaryv1
-  trust_roots:
+  trustRoots:
   - name: default
     key: |  # your public key below
       -----BEGIN PUBLIC KEY-----
@@ -410,7 +410,7 @@ validators:
 - name: dockerhub_basics
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: securesystemsengineering_official
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -425,7 +425,7 @@ policy:
 - pattern: "docker.io/securesystemsengineering/*:*"
   validator: dockerhub_basics
   with:
-    trust_root: securesystemsengineering_official
+    trustRoot: securesystemsengineering_official
 ```
 
 
@@ -444,7 +444,7 @@ validators:
 - name: default
   type: notaryv1  # or e.g. 'cosign'
   host: notary.docker.io  # only required in case of notaryv1
-  trust_roots:
+  trustRoots:
   - name: default
     key: |  # your public key below
       -----BEGIN PUBLIC KEY-----
@@ -454,7 +454,7 @@ validators:
 - name: dockerhub_basics
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: securesystemsengineering_official
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -471,7 +471,7 @@ policy:
 - pattern: "docker.io/securesystemsengineering/*:*"
   validator: dockerhub_basics
   with:
-    trust_root: securesystemsengineering_official
+    trustRoot: securesystemsengineering_official
 ```
 
 The `*:*` rule could also have been omitted as Connaisseur denies unmatched images.
@@ -492,7 +492,7 @@ validators:
 - name: dockerhub_basics
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: docker_official
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -512,13 +512,13 @@ policy:
 - pattern: "docker.io/library/*:*"
   validator: dockerhub_basics
   with:
-    trust_root: docker_official
+    trustRoot: docker_official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: "docker.io/securesystemsengineering/*:*"
   validator: dockerhub_basics
   with:
-    trust_root: securesystemsengineering_official
+    trustRoot: securesystemsengineering_official
 ```
 
 #### Case: Only validate Docker Hub official images and allow all others
@@ -536,7 +536,7 @@ validators:
 - name: dockerhub_basics
   type: notaryv1
   host: notary.docker.io
-  trust_roots:
+  trustRoots:
   - name: docker_official
     key: |
       -----BEGIN PUBLIC KEY-----
@@ -556,13 +556,13 @@ policy:
 - pattern: "docker.io/library/*:*"
   validator: dockerhub_basics
   with:
-    trust_root: docker_official
+    trustRoot: docker_official
 - pattern: "k8s.gcr.io/*:*"
   validator: allow
 - pattern: "docker.io/securesystemsengineering/*:*"
   validator: dockerhub_basics
   with:
-    trust_root: securesystemsengineering_official
+    trustRoot: securesystemsengineering_official
 ```
 
 #### Case: Directly admit own images and deny all others
