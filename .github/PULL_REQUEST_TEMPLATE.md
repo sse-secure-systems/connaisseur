@@ -14,5 +14,5 @@ Fixes #
 - [ ] PR follows [Contributing Guide](https://github.com/sse-secure-systems/connaisseur/blob/master/docs/CONTRIBUTING.md)
 - [ ] Added tests (if necessary)
 - [ ] Extended README/Documentation (if necessary)
-- [ ] Adjusted versions of image and Helm chart in `values.yaml` and `Chart.yaml` (if necessary)
+- [ ] Adjusted versions of image and Helm chart in `Chart.yaml` (if necessary)
 

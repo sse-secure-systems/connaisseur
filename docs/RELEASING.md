@@ -17,8 +17,7 @@ Before starting the release, make sure everything is ready and in order:
 
 - See that all tests are running smoothly.
 - Check that documentation changes show up correctly [here](https://sse-secure-systems.github.io/connaisseur/develop/).
-- Make sure the Connaisseur version is incremented correctly according to the changes.
-- Make sure Connaisseur version in `helm/values.yaml` is matched to the appVersion in `helm/Chart.yaml` and the (chart) version in `helm/Chart.yaml` is increased according to semantic versioning if Helm templates have been touched.
+- Make sure the Connaisseur appVersion in `helm/Chart.yaml` is incremented correctly according to the changes and the (chart) version is increased according to semantic versioning if Helm templates have been touched.
 - See if the docs announcements should be adjusted [here](https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html).
 - Consider making a [GitHub Discussions *announcement*](https://github.com/sse-secure-systems/connaisseur/discussions).
 

@@ -54,11 +54,16 @@ runs:
       uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
       with:
         cmd: yq '.version' helm/Chart.yaml
-    - name: Get original image
-      id: get_original_image
+    - name: Get app version
+      id: get_app_version
       uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
       with:
-        cmd: yq '.deployment.image' helm/values.yaml
+        cmd: yq '.appVersion' helm/Chart.yaml
+    - name: Get original image
+      id: get_original_image_repository
+      uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
+      with:
+        cmd: yq '.deployment.image.repository' helm/values.yaml
     - name: Get context
       id: get_context
       run: |
@@ -66,10 +71,10 @@ runs:
         echo "github.ref is: ${GHREF}"
         CHART_VERSION=${{ steps.get_chart_version.outputs.result }}
         COSIGN_VERSION=$(grep -Eo '^COSIGN_VERSION = .*' Makefile | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
-        ORIGINAL_IMAGE=${{ steps.get_original_image.outputs.result }}
-        ORIGINAL_REGISTRY=$(echo "${ORIGINAL_IMAGE}" | cut -d "/" -f 1)
-        ORIGINAL_REPO=$(echo "${ORIGINAL_IMAGE}" | cut -d "/" -f 2- | cut -d ":" -f 1)
-        ORIGINAL_TAG=$(echo "${ORIGINAL_IMAGE}" | cut -d "/" -f 2- | cut -d ':' -f 2)
+        CONFIGURED_IMAGE_REPO=${{ steps.get_original_image_repository.outputs.result }}
+        ORIGINAL_REGISTRY=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 1)
+        ORIGINAL_REPO=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 2- | cut -d ":" -f 1)
+        ORIGINAL_TAG=v${{ steps.get_app_version.outputs.result }}
         BUILD_REGISTRY=${{ inputs.build_registry }}
         BUILD_REPO=${{ inputs.build_repo }}
         if [[ "${GHREF}" != "refs/heads/master" &&
@@ -84,7 +89,7 @@ runs:
         echo ORIGINAL_REGISTRY=${ORIGINAL_REGISTRY} >> ${GITHUB_OUTPUT}
         echo ORIGINAL_REPO=${ORIGINAL_REPO} >> ${GITHUB_OUTPUT}
         echo ORIGINAL_TAG=${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
-        echo ORIGINAL_IMAGE=${ORIGINAL_IMAGE} >> ${GITHUB_OUTPUT}
+        echo ORIGINAL_IMAGE=${CONFIGURED_IMAGE_REPO}:${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
         echo BUILD_REGISTRY=${BUILD_REGISTRY} >> ${GITHUB_OUTPUT}
         echo BUILD_REPO=${BUILD_REPO} >> ${GITHUB_OUTPUT}
       shell: bash

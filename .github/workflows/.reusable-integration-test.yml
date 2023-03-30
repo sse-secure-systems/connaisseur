@@ -9,8 +9,11 @@ on:
       repo_owner:
         description: 'Name of repository owner, e.g. "inputs.repo_owner" for ghcr.io'
         type: string
-      build_image:
-        description: "Workflow build image used for testing, i.e. registry + repository + tag"
+      build_image_repository:
+        description: "Workflow build image used for testing, excluding the tag i.e. registry + repository"
+        type: string
+      build_tag:
+        description: "Tag of build image used for testing"
         type: string
       skip_integration_tests:
         description: "Want to skip running certain integration tests 'none', 'non-required', 'all'?"
@@ -31,7 +34,8 @@ jobs:
     permissions:
       packages: read
     env:
-      IMAGE: ${{ inputs.build_image }}
+      IMAGE: ${{ inputs.build_image_repository }}
+      TAG: ${{ inputs.build_tag }}
       COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
@@ -96,7 +100,8 @@ jobs:
     permissions:
       packages: read
     env:
-      IMAGE: ${{ inputs.build_image }}
+      IMAGE: ${{ inputs.build_image_repository }}
+      TAG: ${{ inputs.build_tag }}
       COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
@@ -141,7 +146,8 @@ jobs:
     permissions:
       packages: read
     env:
-      IMAGE: ${{ inputs.build_image }}
+      IMAGE: ${{ inputs.build_image_repository }}
+      TAG: ${{ inputs.build_tag }}
       COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false

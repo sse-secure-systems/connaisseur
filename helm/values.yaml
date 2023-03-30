@@ -1,7 +1,12 @@
 # configure Connaisseur deployment
 deployment:
   replicasCount: 3
-  image: docker.io/securesystemsengineering/connaisseur:v2.8.1
+  image:
+    repository: docker.io/securesystemsengineering/connaisseur
+    # Running a different version than the version in the Chart.yaml may not work as the
+    # Connaisseur application version depends on the layout of the Helm deployment
+    # Thus, if unset, we default to the appVersion of the Chart.yaml
+    # tag: v1.2.3
   imagePullPolicy: IfNotPresent
   # imagePullSecrets contains an optional list of Kubernetes Secrets, in Connaisseur namespace,
   # that are needed to access the registry containing Connaisseur image.
