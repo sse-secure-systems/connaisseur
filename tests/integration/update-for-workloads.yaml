@@ -1,5 +1,6 @@
-deployment:
-  replicasCount: 1
+kubernetes:
+  deployment:
+    replicasCount: 1
 validators:
 - name: allow
   type: static

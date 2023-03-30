@@ -8,7 +8,7 @@ metadata:
   annotations:
     checksum/config: {{ include "getConfigChecksum" . }}
 spec:
-  replicas: {{ .Values.deployment.replicasCount }}
+  replicas: {{ .Values.kubernetes.deployment.replicasCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "helm.name" . }}
@@ -20,19 +20,19 @@ spec:
         app.kubernetes.io/instance: {{ .Chart.Name }}
       annotations:
         checksum/config: {{ include "getConfigChecksum" . }}
-        {{- if .Values.deployment.annotations }}
-          {{- toYaml .Values.deployment.annotations | nindent 8 }}
+        {{- if .Values.kubernetes.deployment.annotations }}
+          {{- toYaml .Values.kubernetes.deployment.annotations | nindent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ .Chart.Name }}-serviceaccount
-    {{- with .Values.deployment.imagePullSecrets }}
+    {{- with .Values.kubernetes.deployment.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.deployment.image.repository }}:{{ default (print "v" .Chart.AppVersion) .Values.deployment.image.tag }}"
-          imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
+          image: "{{ .Values.kubernetes.deployment.image.repository }}:{{ default (print "v" .Chart.AppVersion) .Values.kubernetes.deployment.image.tag }}"
+          imagePullPolicy: {{ .Values.kubernetes.deployment.imagePullPolicy }}
           livenessProbe:
             httpGet:
               path: /health
@@ -74,8 +74,8 @@ spec:
               readOnly: false
             {{ include "external-secrets-mount" . | nindent 12}}
             {{ include "cosignCertVolMount" . | nindent 12 }}
-            {{- if .Values.deployment.extraVolumeMounts }}
-            {{ tpl (toYaml .Values.deployment.extraVolumeMounts) . | nindent 12}}
+            {{- if .Values.kubernetes.deployment.extraVolumeMounts }}
+            {{ tpl (toYaml .Values.kubernetes.deployment.extraVolumeMounts) . | nindent 12}}
             {{- end }}
           envFrom:
             - configMapRef:
@@ -88,21 +88,21 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
           resources:
-            {{- toYaml .Values.deployment.resources | nindent 12 }}
+            {{- toYaml .Values.kubernetes.deployment.resources | nindent 12 }}
           securityContext:
-            {{- toYaml .Values.deployment.securityContext | nindent 12 }}
-        {{- if .Values.deployment.extraContainers }}
-        {{ tpl (toYaml .Values.deployment.extraContainers) . | nindent 8}}
+            {{- toYaml .Values.kubernetes.deployment.securityContext | nindent 12 }}
+        {{- if .Values.kubernetes.deployment.extraContainers }}
+        {{ tpl (toYaml .Values.kubernetes.deployment.extraContainers) . | nindent 8}}
         {{- end }}
-      {{- with .Values.deployment.nodeSelector }}
+      {{- with .Values.kubernetes.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.deployment.affinity }}
+    {{- with .Values.kubernetes.deployment.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.deployment.tolerations }}
+    {{- with .Values.kubernetes.deployment.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
@@ -130,6 +130,6 @@ spec:
           emptyDir: {}
         {{ include "external-secrets-vol" . | nindent 8}}
         {{ include "cosignCertVol" . | nindent 8 }}
-        {{- if .Values.deployment.extraVolumes }}
-        {{ tpl (toYaml .Values.deployment.extraVolumes) . | nindent 8}}
+        {{- if .Values.kubernetes.deployment.extraVolumes }}
+        {{ tpl (toYaml .Values.kubernetes.deployment.extraVolumes) . | nindent 8}}
         {{- end }}

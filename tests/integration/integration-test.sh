@@ -524,7 +524,7 @@ case $1 in
 	;;
 "complexity")
 	update_values_minimal
-	update_values '.deployment.replicasCount=3' '.deployment.resources= {"limits": {"cpu":"1000m", "memory":"512Mi"},"requests": {"cpu":"500m", "memory":"512Mi"}}'
+	update_values '.kubernetes.deployment.replicasCount=3' '.kubernetes.deployment.resources= {"limits": {"cpu":"1000m", "memory":"512Mi"},"requests": {"cpu":"500m", "memory":"512Mi"}}'
 	make_install
 	complexity_test
 	;;

@@ -6,9 +6,9 @@ metadata:
   labels:
     {{- include "helm.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.kubernetes.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.kubernetes.service.port }}
       targetPort: 5000
       name: http
   selector:

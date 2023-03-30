@@ -1,5 +1,5 @@
 NAMESPACE = connaisseur
-IMAGE_REPOSITORY := $(shell yq e '.deployment.image.repository' helm/values.yaml)
+IMAGE_REPOSITORY := $(shell yq e '.kubernetes.deployment.image.repository' helm/values.yaml)
 VERSION := $(shell yq e '.appVersion' helm/Chart.yaml)
 COSIGN_VERSION = 1.13.1
 
@@ -21,7 +21,7 @@ install:
 	helm install connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE)
 
 dev-install:
-	helm install --set deployment.replicasCount=1,deployment.imagePullPolicy=Never connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE) 
+	helm install --set kubernetes.deployment.replicasCount=1,kubernetes.deployment.imagePullPolicy=Never connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE)
 
 uninstall:
 	helm uninstall connaisseur -n $(NAMESPACE)

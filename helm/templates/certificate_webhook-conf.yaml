@@ -19,9 +19,9 @@
 {{ $encodedTLSKey := default ($newCertificate.Key | b64enc) (include "getInstalledEncodedTLSKey" .) }}
 
 # If present, use the configured certificate
-{{- if hasKey .Values.deployment "tls" -}}
-  {{- if hasKey .Values.deployment.tls "key" -}}
-    {{- $certByHelmConfig := buildCustomCert (.Values.deployment.tls.cert | b64enc) (.Values.deployment.tls.key | b64enc) -}}
+{{- if hasKey .Values.kubernetes.deployment "tls" -}}
+  {{- if hasKey .Values.kubernetes.deployment.tls "key" -}}
+    {{- $certByHelmConfig := buildCustomCert (.Values.kubernetes.deployment.tls.cert | b64enc) (.Values.kubernetes.deployment.tls.key | b64enc) -}}
     {{- $encodedTLSCert = $certByHelmConfig.Cert | b64enc -}}
     {{- $encodedTLSKey = $certByHelmConfig.Key | b64enc -}}
   {{- end -}}
@@ -59,7 +59,7 @@ metadata:
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
     failurePolicy: Ignore
-    reinvocationPolicy: {{ .Values.deployment.reinvocationPolicy | default "Never" }}
+    reinvocationPolicy: {{ .Values.kubernetes.deployment.reinvocationPolicy | default "Never" }}
     clientConfig:
       service:
         name: {{ .Chart.Name }}-svc
@@ -88,8 +88,8 @@ metadata:
     "helm.sh/hook": post-install, post-upgrade, post-rollback
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
-    failurePolicy: {{ .Values.deployment.failurePolicy | default "Fail" }}
-    reinvocationPolicy: {{ .Values.deployment.reinvocationPolicy | default "Never" }}
+    failurePolicy: {{ .Values.kubernetes.deployment.failurePolicy | default "Fail" }}
+    reinvocationPolicy: {{ .Values.kubernetes.deployment.reinvocationPolicy | default "Never" }}
     clientConfig:
       service:
         name: {{ .Chart.Name }}-svc
