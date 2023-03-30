@@ -1,5 +1,6 @@
 NAMESPACE = connaisseur
-IMAGE := $(shell yq e '.deployment.image' helm/values.yaml)
+IMAGE_REPOSITORY := $(shell yq e '.deployment.image.repository' helm/values.yaml)
+VERSION := $(shell yq e '.appVersion' helm/Chart.yaml)
 COSIGN_VERSION = 1.13.1
 
 .PHONY: all docker install uninstall upgrade annihilate
@@ -7,7 +8,7 @@ COSIGN_VERSION = 1.13.1
 all: docker install
 
 docker:
-	docker build --pull --build-arg COSIGN_VERSION=$(COSIGN_VERSION) -f docker/Dockerfile -t $(IMAGE) .
+	docker build --pull --build-arg COSIGN_VERSION=$(COSIGN_VERSION) -f docker/Dockerfile -t $(IMAGE_REPOSITORY):v$(VERSION) .
 
 install:
 	#

@@ -112,10 +112,12 @@ runs:
         path: build/cosign.pub
     - name: Show build and signature information
       run: |
-        CONFIGURE="yq '. *+ load(\"tests/integration/var-img.yaml\")' tests/integration/ghcr-values.yaml > ghcr.yaml &&\n\t IMAGE=\"${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}\" IMAGEPULLSECRET=\"<ImagePullSecret name>\" envsubst < ghcr.yaml > update &&\n\t yq '. *+ load(\"update\")' -i helm/values.yaml &&\n\t rm ghcr.yaml update"
+        CONFIGURE="yq '. *+ load(\"tests/integration/var-img.yaml\")' tests/integration/ghcr-values.yaml > ghcr.yaml &&\n\t IMAGE=\"${{ inputs.image_registry }}/${{ inputs.image_repo }}\" TAG=\"${{ inputs.image_tag }}\" IMAGEPULLSECRET=\"<ImagePullSecret name>\" envsubst < ghcr.yaml > update &&\n\t yq '. *+ load(\"update\")' -i helm/values.yaml &&\n\t rm ghcr.yaml update"
         CONFIGURE=$(printf -- "${CONFIGURE}")
         PUBLIC_KEY="${{ steps.verify.outputs.public_key }}"
         PUBLIC_KEY="$(printf -- "${PUBLIC_KEY//'<br>'/'\n'}")"
+        HELM_PATCH="yq e '.deployment.image.repository = \"${{ inputs.image_registry }}/${{ inputs.image_repo }}\"' -i helm/values.yaml\nyq e '.deployment.image.tag = \"${{ inputs.image_tag }}\"' -i helm/values.yaml"
+        HELM_PATCH=$(printf -- "${HELM_PATCH}")
         echo "# :building_construction: Build Information" >> ${GITHUB_STEP_SUMMARY}
         echo "<table>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><th>Build artifacts</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
@@ -143,7 +145,7 @@ runs:
         echo "<li><b>Cosign signature</b>: <pre><code>${{ steps.verify.outputs.signature }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li><b>Syft SBOM (cyclonedx-json)</b>: <pre><code>${{ steps.verify.outputs.sbom }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Pull via <b>Docker</b>: <pre lang="bash"><code>docker pull ${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<li>Use in <b>Helm chart</b> (needs <a href='https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/'>imagePullSecret via dockerconfigjson<a> of PAT with package:read permission): <pre lang="bash"><code>yq e '.deployment.image = \"${{ inputs.image_registry }}/${{ inputs.image_repo }}:${{ inputs.image_tag }}\"' -i helm/values.yaml</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<li>Use in <b>Helm chart</b> (needs <a href='https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/'>imagePullSecret via dockerconfigjson<a> of PAT with package:read permission): <pre lang="bash"><code>${HELM_PATCH}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Configure <b>Helm chart</b> for successful validation build image (RUN ONLY ONCE, insert name of <code>imagePullSecret</code> in connaisseur namespace): <pre lang="bash"><code>${CONFIGURE}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "</ul>" >> ${GITHUB_STEP_SUMMARY}
         echo "</details>" >> ${GITHUB_STEP_SUMMARY}
