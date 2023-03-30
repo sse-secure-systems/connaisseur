@@ -9,5 +9,5 @@ validators:
       secret_name: ${IMAGEPULLSECRET}
 
 policy:
-  - pattern: "${IMAGE}"
+  - pattern: "${IMAGE}:${TAG}"
     validator: connaisseur-ghcr

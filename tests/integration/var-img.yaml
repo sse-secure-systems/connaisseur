@@ -1,4 +1,6 @@
 deployment:
-  image: ${IMAGE}
+  image:
+    repository: ${IMAGE}
+    tag: ${TAG}
   imagePullSecrets:
   - name: ${IMAGEPULLSECRET}

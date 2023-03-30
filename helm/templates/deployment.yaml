@@ -31,7 +31,7 @@ spec:
     {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.deployment.image }}"
+          image: "{{ .Values.deployment.image.repository }}:{{ default (print "v" .Chart.AppVersion) .Values.deployment.image.tag }}"
           imagePullPolicy: {{ .Values.deployment.imagePullPolicy }}
           livenessProbe:
             httpGet:
