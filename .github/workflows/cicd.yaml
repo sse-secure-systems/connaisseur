@@ -89,8 +89,8 @@ jobs:
       packages: read
     secrets: inherit
     with:
-      build_registry: ${{ needs.build.outputs.build_registry }}
+      image: ${{ needs.build.outputs.build_image }}
+      registry: ${{ needs.build.outputs.build_registry }}
       repo_owner: ${{ github.repository_owner }}
-      build_image: ${{ needs.build.outputs.build_image }}
       skip_integration_tests: ${{ needs.conditionals.outputs.skip_integration_tests }}
       cosign_public_key: ${{ needs.build.outputs.cosign_public_key }}

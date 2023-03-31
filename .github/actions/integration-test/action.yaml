@@ -1,0 +1,83 @@
+name: integration test
+description: 'action to run full integration tests for different k8s versions and test configs'
+inputs:
+  image:
+    description: 'Image name'
+    required: true
+  registry:
+    description: 'Registry to login to pull image, e.g. "ghcr.io" for GHCR, leave empty if image is public'
+    required: false
+    default: ""
+  repo_owner:
+    description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
+    required: false
+    default: ""
+  repo_token:
+    description: 'Access token for repository owner, e.g. "secrets.GITHUB_TOKEN" for ghcr.io'
+    required: false
+    default: ""
+  cosign_public_key:
+    description: "Cosign public key used for signing the build image"
+    required: false
+    default: ""
+  k8s_version:
+    description: 'k8s version to be tested'
+    default: "v1.25"
+  test_case:
+    description: 'case to be tested'
+    default: "pre-and-workload"
+runs:
+  using: "composite"
+  steps:
+    - name: Install
+      run: |
+        sudo snap install yq > /dev/null
+        sudo apt update  > /dev/null && sudo apt install bash -y > /dev/null
+      shell: bash
+    - name: Login with registry
+      if: inputs.registry != ''
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.repo_owner }}
+        password: ${{ inputs.repo_token }}
+    - name: Set image pull secret reference
+      if: inputs.registry != ''
+      run:
+        echo IPS=dockerconfigjson-ghcr >> ${GITHUB_ENV}
+      shell: bash
+    - name: Setup k8s cluster (${{ inputs.k8s_version }})
+      uses: ./.github/actions/k3s-cluster
+      with:
+        k3s-channel: ${{ inputs.k8s_version }}
+    - name: Adjust Configuration
+      run: |
+        if [[ $(echo "${{ inputs.k8s_version }}" | tail -c 3) -lt "19" ]]; then
+          yq e 'del(.deployment.securityContext.seccompProfile)' -i helm/values.yaml
+          yq e '.deployment.annotations."seccomp.security.alpha.kubernetes.io/pod" = "runtime/default"' -i helm/values.yaml
+        fi
+      shell: bash
+    - name: Get alerting endpoint IP
+      id: get_ip
+      run: |
+        CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
+        CONTAINER_ID=$(echo ${CONTAINER} | jq -r .ID)
+        CONTAINER_NETWORK=$(echo ${CONTAINER} | jq -r .Networks)
+        SEARCH_PATH=.[0].NetworkSettings.Networks.${CONTAINER_NETWORK}.IPAddress
+        IP=$(docker container inspect ${CONTAINER_ID} | jq -r ${SEARCH_PATH} || echo "")
+        echo IP=${IP} >> ${GITHUB_OUTPUT}
+      shell: bash
+    - name: Run test
+      run: |
+        bash tests/integration/integration-test.sh "${{ inputs.test_case }}"
+      env:
+        ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.IP }}
+        IMAGE: ${{ inputs.image }}
+        COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
+        IMAGEPULLSECRET: ${{ env.IPS }}
+      shell: bash
+    - name: Display k8s logs if integration test failed
+      if: failure()
+      run: |
+        kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+      shell: bash
