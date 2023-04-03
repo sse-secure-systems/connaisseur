@@ -152,8 +152,17 @@
                         "then": {
                             "properties": {
                                 "host": {
-                                    "type": "string",
-                                    "pattern": "(https?:\\/\\/)?(([a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5})|(localhost))(:[0-9]{1,5})?(\\/.*)?"
+                                    "type": "object",
+                                    "properties": {
+                                        "rekor": {
+                                            "type": "string",
+                                            "pattern": "(https?:\\/\\/)?(([a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5})|(localhost))(:[0-9]{1,5})?(\\/.*)?"
+                                        },
+                                        "rekor": {
+                                            "type": "string",
+                                            "pattern": "(([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6})|(localhost))(\\:\\d{2,5})?"
+                                        }
+                                    }
                                 },
                                 "trustRoots": {
                                     "type": "array",
@@ -204,10 +213,6 @@
                                 "cert": {
                                     "type": "string",
                                     "pattern": "(?:-+BEGIN\\sCERTIFICATE[-]+)\n(?:(?:[A-Za-z0-9+\/\\s])*={0,4})\n(?:-+END\\sCERTIFICATE[-]+)"
-                                },
-                                "host": {
-                                    "type": "string",
-                                    "pattern": "(([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6})|(localhost))(\\:\\d{2,5})?"
                                 }
                             },
                             "required": [

@@ -93,7 +93,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `type` | | :heavy_check_mark: | `cosign`; the validator type must be set to `cosign`. |
 | `trustRoots[*].name` | | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `trustRoots[*].key` | | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public key from `cosign.pub` file or [KMS URI](https://github.com/sigstore/cosign/blob/main/KMS.md). See additional notes [below](#kms-support). |
-| `host` | | | (EXPERIMENTAL) Rekor url to use for validation against the transparency log (default sigstore instance is `rekor.sigstore.dev`). Setting `host` enforces successful transparency log check to pass verification. See additional notes [below](#transparency-log-verification). |
+| `host.rekor` | | | (EXPERIMENTAL) Rekor url to use for validation against the transparency log (default sigstore instance is `rekor.sigstore.dev`). Setting `host.rekor` enforces successful transparency log check to pass verification. See additional notes [below](#transparency-log-verification). |
 | `auth.` | | | Authentication credentials for private registries. See additional notes [below](#authentication). |
 | `auth.secretName` | | | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#dockerconfigjson). |
 | `auth.k8sKeychain` | false | | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s_keychain). |
@@ -339,10 +339,10 @@ Thus, at least 3 valid signatures are required and `alice` and `bob` must be amo
 > As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
 
 The sigstore project contains a transparency log called [Rekor](https://docs.sigstore.dev/rekor/overview) that provides an immutable, tamper-resistant ledger to record signed metadata to an immutable record.
-While it is possible to run your own instance, a public instance of rekor is available at [rekor.sigstore.dev](https://rekor.sigstore.dev/).
-With Connaisseur it is possible to verify that a signature was added to the transparency log via the validators `host` key (see [cosign docs](https://github.com/sigstore/cosign/tree/main#rekor-support)).
-When the host key is set, e.g. to `rekor.sigstore.dev` for the public instance, Connaisseur requires that a valid signature was added to the transparency log and deny an image otherwise.
-Furthermore, the `host` allows switching to private rekor instances, e.g. for usage with [keyless signatures](#keyless-signatures).
+While it is possible to run your own instance, a public instance of Rekor is available at [rekor.sigstore.dev](https://rekor.sigstore.dev/).
+With Connaisseur it is possible to verify that a signature was added to the transparency log via the validators `host.rekor` key (see [Cosign docs](https://github.com/sigstore/cosign/tree/main#rekor-support)).
+When the `host.rekor` key is set, e.g. to `rekor.sigstore.dev` for the public instance, Connaisseur requires that a valid signature was added to the transparency log and deny an image otherwise.
+Furthermore, the `host.rekor` allows switching to private Rekor instances, e.g. for usage with [keyless signatures](#keyless-signatures).
 
 
 ### Keyless signatures

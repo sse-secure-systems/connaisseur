@@ -30,7 +30,7 @@ class CosignValidator(ValidatorInterface):
     def __init__(
         self,
         name: str,
-        host: str = None,
+        host: dict = None,
         trustRoots: list = None,  # pylint: disable=invalid-name
         auth: dict = None,
         **kwargs,
@@ -38,10 +38,11 @@ class CosignValidator(ValidatorInterface):
         super().__init__(name, **kwargs)
         self.trust_roots = trustRoots
         self.k8s_keychain = False if auth is None else auth.get("k8sKeychain", False)
+        rekor_host = None if host is None else host.get("rekor", None)
         self.rekor_url = (
-            host
-            if host is None or host.startswith(("https://", "http://"))
-            else f"https://{host}"
+            rekor_host
+            if rekor_host is None or rekor_host.startswith(("https://", "http://"))
+            else f"https://{rekor_host}"
         )
 
     async def validate(

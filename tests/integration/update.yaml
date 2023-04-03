@@ -57,7 +57,8 @@ validators:
       -----END PUBLIC KEY-----
 - name: rekor-cosign
   type: cosign
-  host: rekor.sigstore.dev
+  host:
+    rekor: rekor.sigstore.dev
   trustRoots:
   - name: rekored-key
     key: |
