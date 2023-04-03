@@ -338,6 +338,12 @@ update_helm_for_workloads() {
 	rm update
 }
 
+enable_alerting() {
+	envsubst <tests/integration/update-alerting.yaml >update
+	yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
+	rm update
+}
+
 debug_values() { #PATH
 	echo "::group::values.yaml"
 	cat "$1"
@@ -451,6 +457,7 @@ certificate_check() {
 case $1 in
 "regular")
 	update_via_env_vars
+	enable_alerting
 	make_install
 	regular_int_test
 	make_uninstall
