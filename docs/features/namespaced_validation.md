@@ -20,7 +20,7 @@ kubectl namespaces <namespace> securesystemsengineering.connaisseur/webhook=igno
 kubectl namespaces <namespace> securesystemsengineering.connaisseur/webhook=validate
 ```
 
-Configure namespaced validation via the `namespacedValidation` in `helm/values.yaml`.
+Configure namespaced validation via the `namespacedValidation` in `helm/values.yaml` under `application.features`.
 
 ## Configuration options
 
@@ -35,10 +35,12 @@ Configure namespaced validation via the `namespacedValidation` in `helm/values.y
 
 In `helm/values.yaml`:
 
-```
-namespacedValidation:
-  enabled: true
-  mode: validate
+```yaml
+application:
+  features:
+    namespacedValidation:
+      enabled: true
+      mode: validate
 ```
 
 Labelling target namespace to be validated:

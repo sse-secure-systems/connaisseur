@@ -96,7 +96,7 @@ cd connaisseur
 
 Connaisseur is configured via `helm/values.yaml`, so we will start there.
 We need to set Connaisseur to use our previously created public key for validation.
-To do so, go to the `.validators` and find the `default` validator.
+To do so, go to the `.application.validators` and find the `default` validator.
 We need to uncomment the trust root with name `default` and add our previously created public key.
 The result should look similar to this:
 
@@ -156,8 +156,8 @@ The result should look similar to this:
     ```
 
 We have now configured the validator `default` with trust root `default`.
-This will automatically be used if no validator and trust root is specified in the image policy (`.policy`).
-Per default, Connaisseur's image policy under `.policy` in `helm/values.yaml` comes with a pattern `"*:*"` that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
+This will automatically be used if no validator and trust root is specified in the image policy (`.application.policy`).
+Per default, Connaisseur's image policy under `.application.policy` in `helm/values.yaml` comes with a pattern `"*:*"` that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
 Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the [basics](./basics.md) to leverage the full potential of Connaisseur.
 
 ## Deploy Connaisseur

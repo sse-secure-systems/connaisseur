@@ -100,8 +100,8 @@ webhooks:
       - operations: ["CREATE", "UPDATE"]
         apiGroups: ["*"]
         apiVersions: ["*"]
-        {{- if .Values.automaticChildApproval }}
-        {{- if .Values.automaticChildApproval.enabled }}
+        {{- if .Values.application.features.automaticChildApproval }}
+        {{- if .Values.application.features.automaticChildApproval.enabled }}
         resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
         {{- else }}
         resources: ["pods"]
@@ -118,20 +118,20 @@ webhooks:
     {{- else }}
     admissionReviewVersions: ["v1"]
     {{- end }}
-    {{- if .Values.namespacedValidation }}
-    {{- if .Values.namespacedValidation.enabled }}
+    {{- if .Values.application.features.namespacedValidation }}
+    {{- if .Values.application.features.namespacedValidation.enabled }}
     namespaceSelector:
       matchExpressions:
       - key: securesystemsengineering.connaisseur/webhook
-    {{- if not .Values.namespacedValidation.mode}}
+    {{- if not .Values.application.features.namespacedValidation.mode}}
         operator: NotIn
         values:
           - ignore
-    {{- else if eq .Values.namespacedValidation.mode "ignore"}}
+    {{- else if eq .Values.application.features.namespacedValidation.mode "ignore"}}
         operator: NotIn
         values:
           - ignore
-    {{- else if eq .Values.namespacedValidation.mode "validate"}}
+    {{- else if eq .Values.application.features.namespacedValidation.mode "validate"}}
         operator: In
         values:
           - validate

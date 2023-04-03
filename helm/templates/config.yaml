@@ -8,7 +8,7 @@ metadata:
 data:
   config.yaml: |
     validators:
-    {{- range .Values.validators -}}
+    {{- range .Values.application.validators -}}
       {{- $validator := deepCopy . -}}
       {{- if eq $validator.type "notaryv1" -}}
         {{- $_ := unset $validator "auth" -}}
@@ -19,6 +19,6 @@ data:
     - {{- $validator | toYaml | trim | nindent 6 -}}
     {{- end }}
     policy:
-    {{- range $k,$v := .Values.policy }}
+    {{- range $k,$v := .Values.application.policy }}
     - {{- $v | toYaml | trim | nindent 6 -}}
     {{- end }}

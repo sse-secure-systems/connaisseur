@@ -85,112 +85,114 @@ kubernetes:
     type: ClusterIP
     port: 443
 
-### VALIDATORS ###
-# validators are a set of configurations (types, public keys, authentication)
-# that can be used for validating one or multiple images (or image signatures).
-# they are tied to their respective image(s) via the image policy below. there
-# are a few handy validators pre-configured.
-validators:
-  # static validator that allows each image
-  - name: allow
-    type: static
-    approve: true
-  # static validator that denies each image
-  - name: deny
-    type: static
-    approve: false
-  # the `default` validator is used if no validator is specified in image policy
-  - name: default
-    type: notaryv1  # or other supported validator (e.g. "cosign")
-    host: notary.docker.io # configure the notary server for notaryv1 or rekor url for cosign
-    trustRoots:
-    # # the `default` key is used if no key is specified in image policy
-    #- name: default
-    #  key: |  # enter your public key below
-    #    -----BEGIN PUBLIC KEY-----
-    #    <add your public key here>
-    #    -----END PUBLIC KEY-----
-    #cert: |  # in case the trust data host is using a self-signed certificate
-    #  -----BEGIN CERTIFICATE-----
-    #  ...
-    #  -----END CERTIFICATE-----
-    #auth:  # credentials in case the trust data requires authentication
-    #  # either (preferred solution)
-    #  secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
-    #  # or (only for notaryv1 validator)
-    #  username: myuser
-    #  password: mypass
-  # pre-configured nv1 validator for public notary from Docker Hub
-  - name: dockerhub-basics
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots:
-      # public key for official docker images (https://hub.docker.com/search?q=&type=image&image_filter=official)
-      # !if not needed feel free to remove the key!
-      - name: docker-official
-        key: |
-          -----BEGIN PUBLIC KEY-----
-          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-          QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
-          -----END PUBLIC KEY-----
-      # public key securesystemsengineering repo including Connaisseur images
-      # !this key is critical for Connaisseur!
-      - name: securesystemsengineering-official
-        key: |
-          -----BEGIN PUBLIC KEY-----
-          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-          d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-          -----END PUBLIC KEY-----
+application:
+  # Option to configure the log level. Either one of `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Defaults to `INFO`
+  logLevel: INFO
 
-### IMAGE POLICY ###
-# the image policy ties validators and images together whereby always only the most specific rule (pattern)
-# is applied. specify if and how images should be validated by which validator via the validator name.
-policy:
-  - pattern: "*:*"
-  - pattern: "docker.io/library/*:*"
-    validator: dockerhub-basics
-    with:
-      trustRoot: docker-official
-  - pattern: "k8s.gcr.io/*:*"
-    validator: allow
-  - pattern: "docker.io/securesystemsengineering/*:*"
-    validator: dockerhub-basics
-    with:
-      trustRoot: securesystemsengineering-official
+  ### VALIDATORS ###
+  # validators are a set of configurations (types, public keys, authentication)
+  # that can be used for validating one or multiple images (or image signatures).
+  # they are tied to their respective image(s) via the image policy below. there
+  # are a few handy validators pre-configured.
+  validators:
+    # static validator that allows each image
+    - name: allow
+      type: static
+      approve: true
+    # static validator that denies each image
+    - name: deny
+      type: static
+      approve: false
+    # the `default` validator is used if no validator is specified in image policy
+    - name: default
+      type: notaryv1  # or other supported validator (e.g. "cosign")
+      host: notary.docker.io # configure the notary server for notaryv1 or rekor url for cosign
+      trustRoots:
+      # # the `default` key is used if no key is specified in image policy
+      #- name: default
+      #  key: |  # enter your public key below
+      #    -----BEGIN PUBLIC KEY-----
+      #    <add your public key here>
+      #    -----END PUBLIC KEY-----
+      #cert: |  # in case the trust data host is using a self-signed certificate
+      #  -----BEGIN CERTIFICATE-----
+      #  ...
+      #  -----END CERTIFICATE-----
+      #auth:  # credentials in case the trust data requires authentication
+      #  # either (preferred solution)
+      #  secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
+      #  # or (only for notaryv1 validator)
+      #  username: myuser
+      #  password: mypass
+    # pre-configured nv1 validator for public notary from Docker Hub
+    - name: dockerhub-basics
+      type: notaryv1
+      host: notary.docker.io
+      trustRoots:
+        # public key for official docker images (https://hub.docker.com/search?q=&type=image&image_filter=official)
+        # !if not needed feel free to remove the key!
+        - name: docker-official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            -----END PUBLIC KEY-----
+        # public key securesystemsengineering repo including Connaisseur images
+        # !this key is critical for Connaisseur!
+        - name: securesystemsengineering-official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
 
-# in detection mode, deployment will not be denied, but only prompted
-# and logged. this allows testing the functionality without
-# interrupting operation.
-detectionMode: false
+  ### IMAGE POLICY ###
+  # the image policy ties validators and images together whereby always only the most specific rule (pattern)
+  # is applied. specify if and how images should be validated by which validator via the validator name.
+  policy:
+    - pattern: "*:*"
+    - pattern: "docker.io/library/*:*"
+      validator: dockerhub-basics
+      with:
+        trustRoot: docker-official
+    - pattern: "k8s.gcr.io/*:*"
+      validator: allow
+    - pattern: "docker.io/securesystemsengineering/*:*"
+      validator: dockerhub-basics
+      with:
+        trustRoot: securesystemsengineering-official
 
-# namespaced validation allows to restrict the namespaces that will be subject to Connaisseur verification.
-# when enabled, based on namespaced validation mode ('ignore' or 'validate')
-# - either all namespaces with label "securesystemsengineering.connaisseur/webhook=ignore" are ignored
-# - or only namespaces with label "securesystemsengineering.connaisseur/webhook=validate" are validated.
-# warning: enabling namespaced validation, allows roles with edit permission on a namespace to disable
-# validation for that namespace
-namespacedValidation:
-  enabled: false
-  mode: ignore  # 'ignore' or 'validate'
+  features:
+    # in detection mode, deployment will not be denied, but only prompted
+    # and logged. this allows testing the functionality without
+    # interrupting operation.
+    detectionMode: false
 
-# automatic child approval determines how admission of Kubernetes child resources is handled by Connaisseur.
-# per default, Connaisseur validates and mutates all resources, e.g. deployments, replicaSets, pods, and
-# automatically approves child resources of those to avoid duplicate validation and inconsistencies with the
-# image policy. when disabled Connaisseur will only validate and mutate pods. check the docs for more
-# information.
-# NOTE: configuration of automatic child approval is in EXPERIMENTAL state.
-automaticChildApproval:
-  enabled: true
+    # namespaced validation allows to restrict the namespaces that will be subject to Connaisseur verification.
+    # when enabled, based on namespaced validation mode ('ignore' or 'validate')
+    # - either all namespaces with label "securesystemsengineering.connaisseur/webhook=ignore" are ignored
+    # - or only namespaces with label "securesystemsengineering.connaisseur/webhook=validate" are validated.
+    # warning: enabling namespaced validation, allows roles with edit permission on a namespace to disable
+    # validation for that namespace
+    namespacedValidation:
+      enabled: false
+      mode: ignore  # 'ignore' or 'validate'
 
-# automatic unchanged approval determines how certain updates of Kubernetes resources are handled
-# by Connaisseur. when disabled (default), Connaisseur validates and mutates resources whenever they 
-# are created or updated. when enabled, Connaisseur will skip validation on any update request that
-# does not change the image references used by the resource. check the docs for more
-# information.
-automaticUnchangedApproval: false
+    # automatic child approval determines how admission of Kubernetes child resources is handled by Connaisseur.
+    # per default, Connaisseur validates and mutates all resources, e.g. deployments, replicaSets, pods, and
+    # automatically approves child resources of those to avoid duplicate validation and inconsistencies with the
+    # image policy. when disabled Connaisseur will only validate and mutate pods. check the docs for more
+    # information.
+    # NOTE: configuration of automatic child approval is in EXPERIMENTAL state.
+    automaticChildApproval:
+      enabled: true
 
-# Option to configure the log level. Either one of `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Defaults to `INFO`
-logLevel: INFO
+    # automatic unchanged approval determines how certain updates of Kubernetes resources are handled
+    # by Connaisseur. when disabled (default), Connaisseur validates and mutates resources whenever they
+    # are created or updated. when enabled, Connaisseur will skip validation on any update request that
+    # does not change the image references used by the resource. check the docs for more
+    # information.
+    automaticUnchangedApproval: false
 
 # alerting is implemented in form of simple POST requests with JSON payloads
 # you can use and/or adapt the predefined Slack/OpsGenie/Keybase templates and the examples below
