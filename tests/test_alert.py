@@ -23,53 +23,53 @@ with open("tests/data/alerting/alertconfig_schema.json", "r") as readfile:
     alertconfig_schema = json.load(readfile)
 
 opsgenie_receiver_config_throw = {
-    "custom_headers": ["Authorization: GenieKey <Your-Genie-Key>"],
-    "fail_if_alert_sending_fails": True,
-    "payload_fields": {
+    "customHeaders": ["Authorization: GenieKey <Your-Genie-Key>"],
+    "failIfAlertSendingFails": True,
+    "payloadFields": {
         "responders": [{"type": "user", "username": "testuser@testcompany.de"}],
         "tags": ["image_deployed"],
         "visibleTo": [{"type": "user", "username": "testuser@testcompany.de"}],
     },
     "priority": 4,
-    "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+    "receiverUrl": "https://api.eu.opsgenie.com/v2/alerts",
     "template": "opsgenie",
 }
 
 opsgenie_receiver_config = {
-    "custom_headers": ["Authorization: GenieKey <Your-Genie-Key>"],
-    "fail_if_alert_sending_fails": False,
-    "payload_fields": {
+    "customHeaders": ["Authorization: GenieKey <Your-Genie-Key>"],
+    "failIfAlertSendingFails": False,
+    "payloadFields": {
         "responders": [{"type": "user", "username": "testuser@testcompany.de"}],
         "tags": ["image_rejected"],
         "visibleTo": [{"type": "user", "username": "testuser@testcompany.de"}],
     },
     "priority": 4,
-    "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+    "receiverUrl": "https://api.eu.opsgenie.com/v2/alerts",
     "template": "opsgenie",
 }
 
 slack_receiver_config = {
     "priority": 3,
-    "receiver_url": "https://hooks.slack.com/services/123",
+    "receiverUrl": "https://hooks.slack.com/services/123",
     "template": "slack",
 }
 
 custom_receiver_config = {
-    "receiver_url": "this.is.a.testurl.conn",
+    "receiverUrl": "this.is.a.testurl.conn",
     "template": "custom",
 }
 
 keybase_receiver_config = {
-    "custom_headers": ["Content-Language: de-DE"],
-    "fail_if_alert_sending_fails": True,
+    "customHeaders": ["Content-Language: de-DE"],
+    "failIfAlertSendingFails": True,
     "priority": 3,
-    "receiver_url": "https://bots.keybase.io/webhookbot/123",
+    "receiverUrl": "https://bots.keybase.io/webhookbot/123",
     "template": "keybase",
 }
 
 missing_template_receiver_config = {
-    "fail_if_alert_sending_fails": True,
-    "receiver_url": "www.my.custom.rest.endpoint.receiving.connaisseurs.post.requests.io",
+    "failIfAlertSendingFails": True,
+    "receiverUrl": "www.my.custom.rest.endpoint.receiving.connaisseurs.post.requests.io",
     "template": "my_own_custom_endpoint_for_which_I_forgot_to_create_a_payload_template",
 }
 
@@ -148,13 +148,13 @@ def test_alert_config_init(
         (
             "tests/data/alerting/alertconfig.json",
             admission_request_deployment,
-            "admit_request",
+            "admitRequest",
             True,
         ),
         (
             "tests/data/alerting/config_only_send_on_admit/alertconfig.json",
             admission_request_deployment,
-            "reject_request",
+            "rejectRequest",
             False,
         ),
     ],
@@ -232,9 +232,9 @@ def test_alert_init(
             message, receiver_config, AdmissionRequest(admission_request)
         )
         assert alert_.throw_if_alert_sending_fails == receiver_config.get(
-            "fail_if_alert_sending_fails", False
+            "failIfAlertSendingFails", False
         )
-        assert alert_.receiver_url == receiver_config["receiver_url"]
+        assert alert_.receiver_url == receiver_config["receiverUrl"]
         assert alert_.headers == alert_headers
         payload = json.loads(alert_.payload)
         if receiver_config["template"] == "opsgenie":
@@ -285,7 +285,7 @@ def test_alert_send_alert(
     exception,
 ):
     with exception:
-        receiver_config["custom_headers"] = [f"Authorization: {key}"]
+        receiver_config["customHeaders"] = [f"Authorization: {key}"]
         alert_ = alert.Alert(
             "CONNAISSEUR admitted a request.",
             receiver_config,

@@ -1,9 +1,9 @@
 {
-    "reject_request": {
-        "templates": [
+    "rejectRequest": {
+        "receivers": [
             {
-                "receiver_url": "https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>",
-                "fail_if_alert_sending_fails": "i should not be a string",
+                "receiverUrl": "https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>",
+                "failIfAlertSendingFails": "i should not be a string",
                 "priority": 3,
                 "template": "keybase"
             }

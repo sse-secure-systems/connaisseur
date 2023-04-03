@@ -1,12 +1,12 @@
 {
-    "admit_request": {
-        "templates": [
+    "admitRequest": {
+        "receivers": [
             {
-                "custom_headers": [
+                "customHeaders": [
                     "Authorization: GenieKey <Your-Genie-Key>"
                 ],
-                "fail_if_alert_sending_fails": true,
-                "payload_fields": {
+                "failIfAlertSendingFails": true,
+                "payloadFields": {
                     "responders": [
                         {
                             "type": "user",
@@ -24,13 +24,13 @@
                     ]
                 },
                 "priority": 4,
-                "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                "receiverUrl": "https://api.eu.opsgenie.com/v2/alerts",
                 "template": "opsgenie"
             },
             {
-                "fail_if_alert_sending_fails": false,
+                "failIfAlertSendingFails": false,
                 "priority": 3,
-                "receiver_url": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
+                "receiverUrl": "https://hooks.slack.com/services/<Your-Slack-Hook-Path>",
                 "template": "slack"
             }
         ]

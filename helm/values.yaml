@@ -197,26 +197,26 @@ automaticUnchangedApproval: false
 # Option to configure the log level. Either one of `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Defaults to `INFO`
 logLevel: INFO
 
-# alerting is implemented in form of simple POST requests with json payload
+# alerting is implemented in form of simple POST requests with JSON payloads
 # you can use and/or adapt the predefined Slack/OpsGenie/Keybase templates and the examples below
 # to channel alert notifications to Slack/OpsGenie/Keybase or create a custom template for a customized alert
-# payload to use with a simple POST request to the receiver_url to receive alerts.
+# payload to use with a simple POST request to the receiverUrl to receive alerts.
 # Parameters you can use in your templates are "alert_message", "priority", "connaisseur_pod_id", "cluster",
 # "timestamp", "request_id" and "images" each one basically meaning what their names indicate
 #
-# Below is an example config
+# Below is an example config with multiple alert receivers
 
 #alerting:
-#  cluster_identifier: example-cluster-staging-europe # defaults to "not specified"
-#  admit_request:
-#    templates:
+#  clusterIdentifier: example-cluster-staging-europe # defaults to "not specified"
+#  admitRequest:
+#    receivers:
 #      # <template> needs to be chosen such that <template>.json matches one of the file names
 #      # in the ./alert_payload_templates directory
 #      - template: opsgenie #REQUIRED!
-#        receiver_url: https://api.eu.opsgenie.com/v2/alerts #REQUIRED!
+#        receiverUrl: https://api.eu.opsgenie.com/v2/alerts #REQUIRED!
 #        priority: 4 #(defaults to 3)
-#        custom_headers: ["Authorization: GenieKey <Your-Genie-Key>"]
-#        payload_fields:
+#        customHeaders: ["Authorization: GenieKey <Your-Genie-Key>"]
+#        payloadFields:
 #          responders:
 #            - username: "testuser@testcompany.de"
 #              type: user
@@ -225,13 +225,13 @@ logLevel: INFO
 #              type: user
 #          tags:
 #            - "deployed_an_image"
-#        fail_if_alert_sending_fails: True  # (defaults to False, turning it to True will make Connaisseur deny your
+#        failIfAlertSendingFails: True  # (defaults to False, turning it to True will make Connaisseur deny your
 #                                           # deployment (even in detection mode))
 #      - template: slack #REQUIRED!
-#        receiver_url: https://hooks.slack.com/services/<Your-Slack-Hook-Path>
+#        receiverUrl: https://hooks.slack.com/services/<Your-Slack-Hook-Path>
 #        priority: 1
-#  reject_request:
-#    templates:
+#  rejectRequest:
+#    receivers:
 #      - template: keybase  #REQUIRED!
-#        receiver_url: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
-#        fail_if_alert_sending_fails: True
+#        receiverUrl: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
+#        failIfAlertSendingFails: True

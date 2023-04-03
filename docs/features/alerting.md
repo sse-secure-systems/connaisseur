@@ -14,17 +14,17 @@ alerts at the same time.
 
 ## Configuration options
 
-Currently, Connaisseur supports alerting on either admittance of images, denial of images or both. These event categories can be configured independently of each other under the relevant category (i.e. `admit_request` or `reject_request`):
+Currently, Connaisseur supports alerting on either admittance of images, denial of images or both. These event categories can be configured independently of each other under the relevant category (i.e. `admitRequest` or `rejectRequest`):
 
-| Key                                               | Accepted values                                                               | Default           | Required           | Description                                                                                     |
-|---------------------------------------------------|-------------------------------------------------------------------------------|-------------------|--------------------|-------------------------------------------------------------------------------------------------|
-| `alerting.cluster_identifier`                     | string                                                                        | `"not specified"` |                    | Cluster identifier used in alert payload to distinguish between alerts from different clusters. |
-| `alerting.<category>.template`                    | `opsgenie`, `slack`, `keybase`, `msteams`, `ecs-1-12-0` or custom<sup>*</sup> | -                 | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.                   |
-| `alerting.<category>.receiver_url`                | string                                                                        | -                 | :heavy_check_mark: | URL of alert-receiving endpoint.                                                                |
-| `alerting.<category>.priority`                    | int                                                                           | `3`               |                    | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).        |
-| `alerting.<category>.custom_headers`              | list[string]                                                                  | -                 |                    | Additional headers required by alert-receiving endpoint.                                        |
-| `alerting.<category>.payload_fields`              | subyaml                                                                       | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`).                |
-| `alerting.<category>.fail_if_alert_sending_fails` | bool                                                                          | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent. |
+| Key                                                |  Accepted values                                      | Default           | Required           | Description                                                                                        |
+| -------------------------------------------------- | ----------------------------------------------------  | ----------------- | ------------------ | -------------------------------------------------------------------------------------------------- |
+| `alerting.clusterIdentifier`                      | string                                                | `"not specified"` |                    | Cluster identifier used in alert payload to distinguish between alerts from different clusters.     |
+| `alerting.<category>.template`                     | `opsgenie`, `slack`, `keybase`, `msteams`, `ecs-1-12-0` or custom<sup>*</sup>  | -                 | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.           |
+| `alerting.<category>.receiverUrl`                 | string                                                | -                 | :heavy_check_mark: | URL of alert-receiving endpoint.                                                                    |
+| `alerting.<category>.priority`                     | int                                                   | `3`               |                    | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).            |
+| `alerting.<category>.customHeaders`               | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
+| `alerting.<category>.payloadFields`               | subyaml                                               | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`). |
+| `alerting.<category>.failIfAlertSendingFails`  | bool                                                  | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.    |
 
 <sup>*basename of the custom template file in `helm/alerting_payload_templates` without file extension </sup>
 
@@ -35,8 +35,8 @@ _Notes_:
 one it needs to be one of `slack`, `keybase`, `opsgenie`, `msteams` or `ecs-1-12-0`.
 - For Opsgenie you need to configure an additional
   `["Authorization: GenieKey <Your-Genie-Key>"]` header.
-- For [Elastic Common Schema 1.12.0](https://www.elastic.co/guide/en/ecs/1.12/index.html) output, the `receiver_url` has to be an HTTP/S log ingester, such as [Fluentd HTTP input](https://docs.fluentd.org/input/http) or [Logstash HTTP input](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-http.html). Also `custom_headers` needs to be set to `["Content-Type: application/json"]` for Fluentd HTTP endpoints.
-- `fail_if_alert_sending_fails` only comes into play for requests that Connaisseur would have admitted as other requests would have been denied in the first place. The setting can come handy if you want to run Connaisseur in detection mode but still make sure that you get notified about what is going on in your cluster. **However, this setting will significantly impact cluster interaction for everyone (i.e. block any cluster change associated to an image) if the alert sending fails permanently, e.g. accidental deletion of your Slack Webhook App, GenieKey expired...**
+- For [Elastic Common Schema 1.12.0](https://www.elastic.co/guide/en/ecs/1.12/index.html) output, the `receiverUrl` has to be an HTTP/S log ingester, such as [Fluentd HTTP input](https://docs.fluentd.org/input/http) or [Logstash HTTP input](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-http.html). Also `customHeaders` needs to be set to `["Content-Type: application/json"]` for Fluentd HTTP endpoints.
+- `failIfAlertSendingFails` only comes into play for requests that Connaisseur would have admitted as other requests would have been denied in the first place. The setting can come handy if you want to run Connaisseur in detection mode but still make sure that you get notified about what is going on in your cluster. **However, this setting will significantly impact cluster interaction for everyone (i.e. block any cluster change associated to an image) if the alert sending fails permanently, e.g. accidental deletion of your Slack Webhook App, GenieKey expired...**
 
 
 
@@ -46,10 +46,10 @@ For example, if you would like to receive notifications in Keybase whenever Conn
 
 ```
 alerting:
-  admit_request:
-    templates:
+  admitRequest:
+    receivers:
       - template: keybase
-        receiver_url: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
+        receiverUrl: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
 ```
 
 ## Additional notes
@@ -71,9 +71,9 @@ during runtime into the payload:
 
 Referring to any of these variables in the templates works by Jinja2 notation
 (e.g. `{{ timestamp }}`). You can update your payload dynamically by adding payload
-fields in `yaml` representation in the `payload_fields` key which will be translated
+fields in `yaml` representation in the `payloadFields` key which will be translated
 to JSON by Helm as is. If your REST endpoint requires particular headers, you can
-specify them as described above in `custom_headers`.
+specify them as described above in `customHeaders`.
 
 Feel free to make a PR to share with the community if you add new neat templates for other third parties :pray:
 

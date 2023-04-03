@@ -1,9 +1,9 @@
 {
-    "reject_request": {
+    "rejectRequest": {
         "message": "CONNAISSEUR rejected a request",
-        "templates": [
+        "receivers": [
             {
-                "fail_if_alert_sending_fails": false,
+                "failIfAlertSendingFails": false,
                 "priority": 3,
                 "template": "keybase"
             }

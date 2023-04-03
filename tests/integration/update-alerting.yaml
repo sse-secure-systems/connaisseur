@@ -1,14 +1,14 @@
 alerting:
   config_dir_path: "/app/config"
   cluster_name: "minikube"
-  admit_request:
+  admitRequest:
     message: "CONNAISSEUR admitted a request"
-    templates:
+    receivers:
       - template: opsgenie
-        receiver_url: http://${ALERTING_ENDPOINT_IP}:56243/opsgenie
+        receiverUrl: http://${ALERTING_ENDPOINT_IP}:56243/opsgenie
         priority: 4
-        custom_headers: ["Authorization: GenieKey <Your-Genie-Key>"]
-        payload_fields:
+        customHeaders: ["Authorization: GenieKey <Your-Genie-Key>"]
+        payloadFields:
           responders:
             - username: "testuser@testcompany.de"
               type: user
@@ -17,19 +17,19 @@ alerting:
               type: user
           tags:
             - "deployed_an_image"
-        fail_if_alert_sending_fails: True
+        failIfAlertSendingFails: True
       - template: slack
-        receiver_url: http://${ALERTING_ENDPOINT_IP}:56243/slack
+        receiverUrl: http://${ALERTING_ENDPOINT_IP}:56243/slack
         priority: 3
-        fail_if_alert_sending_fails: False
-  reject_request:
+        failIfAlertSendingFails: False
+  rejectRequest:
     message: "CONNAISSEUR rejected a request"
-    templates:
+    receivers:
       - template: keybase
-        receiver_url: http://${ALERTING_ENDPOINT_IP}:56243/keybase
+        receiverUrl: http://${ALERTING_ENDPOINT_IP}:56243/keybase
         priority: 3
-        fail_if_alert_sending_fails: True
+        failIfAlertSendingFails: True
       - template: slack
-        receiver_url: http://${ALERTING_ENDPOINT_IP}:56243/slack
+        receiverUrl: http://${ALERTING_ENDPOINT_IP}:56243/slack
         priority: 3
-        fail_if_alert_sending_fails: False
+        failIfAlertSendingFails: False

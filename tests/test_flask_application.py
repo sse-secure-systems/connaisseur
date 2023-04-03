@@ -113,7 +113,7 @@ def test_mutate_calls_send_alert_for_invalid_admission_request(
         assert admission_response["status"]["code"] == 403
         assert (
             alert.Alert.send_alert.call_count == 2
-        )  # Alerting config has two configured templates
+        )  # Alerting config has two configured receivers
 
 
 def test_healthz():

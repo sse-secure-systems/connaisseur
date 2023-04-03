@@ -22,6 +22,16 @@ class AlertingConfiguration:
     __PATH = "/app/config/alertconfig.json"
     __SCHEMA_PATH = "/app/connaisseur/res/alertconfig_schema.json"
 
+    ADMIT_CATEGORY_KEY = "admitRequest"
+    FAIL_IF_SEND_FAILS_KEY = "failIfAlertSendingFails"
+    HEADER_KEY = "customHeaders"
+    PAYLOAD_FIELDS_KEY = "payloadFields"
+    PRIORITY_KEY = "priority"
+    RECEIVER_KEY = "receivers"
+    REJECT_CATEGORY_KEY = "rejectRequest"
+    TEMPLATE_KEY = "template"
+    URL_KEY = "receiverUrl"
+
     config: dict
 
     def __init__(self):
@@ -92,7 +102,7 @@ class Alert:
 
         self.context = {
             "alert_message": alert_message,
-            "priority": str(receiver_config.get("priority", 3)),
+            "priority": str(receiver_config.get(AlertingConfiguration.PRIORITY_KEY, 3)),
             "connaisseur_pod_id": os.getenv("POD_NAME"),
             "cluster": os.getenv("CLUSTER_NAME"),
             "namespace": namespace,
@@ -100,10 +110,10 @@ class Alert:
             "request_id": request_id or "No given UID",
             "images": images,
         }
-        self.receiver_url = receiver_config["receiver_url"]
-        self.template = receiver_config["template"]
+        self.receiver_url = receiver_config[AlertingConfiguration.URL_KEY]
+        self.template = receiver_config[AlertingConfiguration.TEMPLATE_KEY]
         self.throw_if_alert_sending_fails = receiver_config.get(
-            "fail_if_alert_sending_fails", False
+            AlertingConfiguration.FAIL_IF_SEND_FAILS_KEY, False
         )
         self.payload = self.__construct_payload(receiver_config)
         self.headers = self.__get_headers(receiver_config)
@@ -122,8 +132,10 @@ class Alert:
                 f"Error loading template file {self.template}: {str(err)}"
             ) from err
         payload = self.__render_template(template)
-        if receiver_config.get("payload_fields") is not None:
-            payload.update(receiver_config.get("payload_fields"))
+        if receiver_config.get(AlertingConfiguration.PAYLOAD_FIELDS_KEY) is not None:
+            payload.update(
+                receiver_config.get(AlertingConfiguration.PAYLOAD_FIELDS_KEY)
+            )
         return json.dumps(payload)
 
     def __render_template(self, template):
@@ -155,7 +167,7 @@ class Alert:
     @staticmethod
     def __get_headers(receiver_config):
         headers = {"Content-Type": "application/json"}
-        additional_headers = receiver_config.get("custom_headers")
+        additional_headers = receiver_config.get(AlertingConfiguration.HEADER_KEY)
         if additional_headers is not None:
             for header in additional_headers:
                 key, value = header.split(":", 1)
@@ -184,9 +196,15 @@ def send_alerts(
     admission_request: AdmissionRequest, admit_event: bool, reason: str = None
 ) -> None:
     al_config = AlertingConfiguration()
-    event_category = "admit_request" if admit_event else "reject_request"
+    event_category = (
+        AlertingConfiguration.ADMIT_CATEGORY_KEY
+        if admit_event
+        else AlertingConfiguration.REJECT_CATEGORY_KEY
+    )
     if al_config.alerting_required(event_category):
-        for receiver in al_config.config[event_category]["templates"]:
+        for receiver in al_config.config[event_category][
+            AlertingConfiguration.RECEIVER_KEY
+        ]:
             message = (
                 "CONNAISSEUR admitted a request."
                 if admit_event
@@ -201,9 +219,11 @@ def must_alerting_succeed(admit_event: bool) -> bool:
         return False
     # If image would be admitted, check whether alerting must succeed to actually admit
     al_config = AlertingConfiguration()
-    event_category = "admit_request"
+    event_category = AlertingConfiguration.ADMIT_CATEGORY_KEY
     if al_config.alerting_required(event_category):
-        for receiver in al_config.config[event_category]["templates"]:
-            if receiver.get("fail_if_alert_sending_fails", False):
+        for receiver in al_config.config[event_category][
+            AlertingConfiguration.RECEIVER_KEY
+        ]:
+            if receiver.get(AlertingConfiguration.FAIL_IF_SEND_FAILS_KEY, False):
                 return True
     return False
