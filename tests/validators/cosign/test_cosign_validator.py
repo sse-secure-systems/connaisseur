@@ -34,7 +34,9 @@ static_cosigns = [
         "type": "cosign",
         "trustRoots": [{"name": "test", "key": "..."}],
         "auth": {"k8sKeychain": True},
-        "host": "https://rekor.instance.com",
+        "host": {
+            "rekor": "https://rekor.instance.com",
+        },
     },
     {
         "name": "cosign1",
@@ -44,14 +46,18 @@ static_cosigns = [
             {"name": "test", "key": "..."},
         ],
         "auth": {"k8sKeychain": False},
-        "host": "http://foo.bar",
+        "host": {
+            "rekor": "http://foo.bar",
+        },
     },
     {
         "name": "cosign1",
         "type": "cosign",
         "trustRoots": [],
         "auth": {"secretName": "my-secret"},
-        "host": "rekor.tlog.xyz",
+        "host": {
+            "rekor": "rekor.tlog.xyz",
+        },
     },
     {
         "name": "cosign1",
@@ -65,7 +71,9 @@ static_cosigns = [
     {
         "name": "cosign1",
         "type": "cosign",
-        "host": "rekor.sigstore.dev",
+        "host": {
+            "rekor": "rekor.sigstore.dev",
+        },
         "trustRoots": [{"name": "default", "key": example_key}],
     },
 ]
@@ -532,7 +540,7 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
     config = static_cosigns[0].copy()
     config["auth"] = {"k8sKeychain": k8s_keychain}
     if host:
-        config["host"] = host
+        config["host"] = {"rekor": host}
     val = co.CosignValidator(**config)
     returncode, stdout, stderr = val._CosignValidator__invoke_cosign(im, process_input)
     assert fake_process_calls in fake_process.calls
