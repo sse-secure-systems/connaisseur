@@ -1,12 +1,12 @@
 {
-    "admit_request": {
-        "templates": [
+    "admitRequest": {
+        "receivers": [
             {
-                "custom_headers": [
+                "customHeaders": [
                     "Authorization: GenieKey <Your-Genie-Key>"
                 ],
-                "fail_if_alert_sending_fails": true,
-                "payload_fields": {
+                "failIfAlertSendingFails": true,
+                "payloadFields": {
                     "responders": [
                         {
                             "type": "user",
@@ -24,33 +24,33 @@
                     ]
                 },
                 "priority": 4,
-                "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                "receiverUrl": "https://api.eu.opsgenie.com/v2/alerts",
                 "template": "opsgenie"
             },
             {
                 "priority": 3,
-                "receiver_url": "https://hooks.slack.com/services/123",
+                "receiverUrl": "https://hooks.slack.com/services/123",
                 "template": "slack"
             }
         ]
     },
-    "reject_request": {
-        "templates": [
+    "rejectRequest": {
+        "receivers": [
             {
-                "custom_headers": [
+                "customHeaders": [
                     "Content-Language: de-DE"
                 ],
-                "fail_if_alert_sending_fails": false,
+                "failIfAlertSendingFails": false,
                 "priority": 3,
-                "receiver_url": "https://bots.keybase.io/webhookbot/123",
+                "receiverUrl": "https://bots.keybase.io/webhookbot/123",
                 "template": "keybase"
             },
             {
-                "custom_headers": [
+                "customHeaders": [
                     "Authorization: GenieKey <Your-Genie-Key>"
                 ],
-                "fail_if_alert_sending_fails": false,
-                "payload_fields": {
+                "failIfAlertSendingFails": false,
+                "payloadFields": {
                     "responders": [
                         {
                             "type": "user",
@@ -68,7 +68,7 @@
                     ]
                 },
                 "priority": 4,
-                "receiver_url": "https://api.eu.opsgenie.com/v2/alerts",
+                "receiverUrl": "https://api.eu.opsgenie.com/v2/alerts",
                 "template": "opsgenie"
             }
         ]

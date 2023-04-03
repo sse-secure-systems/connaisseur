@@ -1,10 +1,10 @@
 {
   "type": "object",
   "properties": {
-    "admit_request": {
+    "admitRequest": {
       "type": "object",
       "properties": {
-        "templates": {
+        "receivers": {
           "type": "array",
           "items": {
             "type": "object",
@@ -12,41 +12,41 @@
               "template": {
                 "type": "string"
               },
-              "receiver_url": {
+              "receiverUrl": {
                 "type": "string"
               },
               "priority": {
                 "type": "integer"
               },
-              "custom_headers": {
+              "customHeaders": {
                 "type": "array",
                 "items": {
                   "type": "string"
                 },
                 "minItems": 1
               },
-              "payload_fields": {
+              "payloadFields": {
                 "type": "object"
               },
-              "fail_if_alert_sending_fails": {
+              "failIfAlertSendingFails": {
                 "type": "boolean"
               }
             },
             "required": [
               "template",
-              "receiver_url"
+              "receiverUrl"
             ]
           }
         }
       },
       "required": [
-        "templates"
+        "receivers"
       ]
     },
-    "reject_request": {
+    "rejectRequest": {
       "type": "object",
       "properties": {
-        "templates": {
+        "receivers": {
           "type": "array",
           "items": {
             "type": "object",
@@ -54,35 +54,35 @@
               "template": {
                 "type": "string"
               },
-              "receiver_url": {
+              "receiverUrl": {
                 "type": "string"
               },
               "priority": {
                 "type": "integer"
               },
-              "custom_headers": {
+              "customHeaders": {
                 "type": "array",
                 "items": {
                   "type": "string"
                 },
                 "minItems": 1
               },
-              "payload_fields": {
+              "payloadFields": {
                 "type": "object"
               },
-              "fail_if_alert_sending_fails": {
+              "failIfAlertSendingFails": {
                 "type": "boolean"
               }
             },
             "required": [
               "template",
-              "receiver_url"
+              "receiverUrl"
             ]
           }
         }
       },
       "required": [
-        "templates"
+        "receivers"
       ]
     }
   }
