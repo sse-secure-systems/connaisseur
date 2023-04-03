@@ -52,7 +52,7 @@ Extract Kubernetes Minor Version.
 
 {{- define "config-secrets" -}}
 {{- $secret_dict := dict -}}
-{{- range .Values.validators -}}
+{{- range .Values.application.validators -}}
     {{- $validator := deepCopy . -}}
     {{- if eq $validator.type "notaryv1" -}}
         {{- if $validator.auth -}}
@@ -72,7 +72,7 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "hasConfigSecrets" -}}
-{{- range .Values.validators -}}
+{{- range .Values.application.validators -}}
     {{- if and (and (eq .type "notaryv1") (hasKey . "auth") not (hasKey . "auth.secretName" )) -}}
         1
     {{- end -}}
@@ -85,7 +85,7 @@ Extract Kubernetes Minor Version.
 
 {{- define "external-secrets-vol" -}}
 {{- $external_secret := dict -}}
-{{- range .Values.validators -}}
+{{- range .Values.application.validators -}}
     {{- $validator := deepCopy . -}}
     {{- if eq $validator.type "notaryv1" -}}
         {{- if $validator.auth -}}
@@ -114,7 +114,7 @@ Extract Kubernetes Minor Version.
 
 {{- define "external-secrets-mount" -}}
 {{- $external_secret := dict -}}
-{{ range .Values.validators }}
+{{ range .Values.application.validators }}
     {{- $validator := deepCopy . -}}
     {{- if eq $validator.type "notaryv1" -}}
         {{- if $validator.auth -}}
@@ -184,7 +184,7 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "hasCosignCerts" -}}  
-{{- range .Values.validators -}}
+{{- range .Values.application.validators -}}
     {{- if and (eq .type "cosign") (hasKey . "cert") -}}
         1
     {{- end -}}
@@ -193,7 +193,7 @@ Extract Kubernetes Minor Version.
 
 
 {{- define "getCosignCerts" -}}
-{{- range .Values.validators -}}
+{{- range .Values.application.validators -}}
     {{- if and (eq .type "cosign") (hasKey . "cert") }}
     {{ .name }}.crt: {{ .cert | b64enc -}}
     {{- end -}}

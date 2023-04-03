@@ -17,7 +17,7 @@ RETRY=3
 cp helm/values.yaml values.yaml.Backup
 
 ## LOAD PUBLIC KEY
-COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n          }")"
+COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n            }")"
 
 ## Join ghcr integration yaml
 if [[ -n "${IMAGE+x}" && -n "${IMAGEPULLSECRET+x}" ]]; then
@@ -415,7 +415,7 @@ namespace_val_int_test() {
 	echo -e "${SUCCESS}"
 
 	multi_test "ignore-namespace-val"
-	update_values '.namespacedValidation.mode="validate"'
+	update_values '.application.features.namespacedValidation.mode="validate"'
 	make_upgrade # upgrade Connaisseur installation
 	multi_test "validate-namespace-val"
 }
@@ -478,7 +478,7 @@ case $1 in
 	;;
 "namespace-val")
 	update_via_env_vars
-	update_values '.namespacedValidation.enabled=true'
+	update_values '.application.features.namespacedValidation.enabled=true'
 	make_install
 	namespace_val_int_test
 	;;
@@ -507,7 +507,7 @@ case $1 in
 	;;
 "deployment")
 	update_via_env_vars
-	update_values '.policy += {"pattern": "docker.io/library/*:*", "validator": "dockerhub-basics", "with": {"trustRoot": "docker-official"}}'
+	update_values '.application.policy += {"pattern": "docker.io/library/*:*", "validator": "dockerhub-basics", "with": {"trustRoot": "docker-official"}}'
 	make_install
 	deployment_int_test
 	;;

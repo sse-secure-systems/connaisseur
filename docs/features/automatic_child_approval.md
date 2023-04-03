@@ -25,7 +25,7 @@ The extension of the feature (disabling, caching) is currently under development
 
 ## Configuration options
 
-`automaticChildApproval` in `helm/values.yaml` supports the following keys:
+`automaticChildApproval` in `helm/values.yaml` under `application.features` supports the following keys:
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -36,9 +36,11 @@ The extension of the feature (disabling, caching) is currently under development
 
 In `helm/values.yaml`:
 
-```
-automaticChildApproval:
-  enabled: true
+```yaml
+application:
+  features:
+    automaticChildApproval:
+      enabled: true
 ```
 
 ## Additional notes

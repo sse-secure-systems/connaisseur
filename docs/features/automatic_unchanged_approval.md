@@ -19,7 +19,7 @@ The creation of resources on the other hand remains unchanged and will enforce v
 
 ## Configuration options
 
-`automaticUnchangedApproval` in `helm/value.yaml` supports the following keys:
+`automaticUnchangedApproval` in `helm/value.yaml` under `application.features` supports the following keys:
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -30,5 +30,7 @@ The creation of resources on the other hand remains unchanged and will enforce v
 In `helm/values.yaml`:
 
 ```yaml
-automaticUnchangedApproval: true
+application:
+  features:
+    automaticUnchangedApproval: true
 ```

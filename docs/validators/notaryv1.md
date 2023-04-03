@@ -18,7 +18,7 @@ While DCT relies on *trust on first use* (TOFU) for repositories' public root ke
 
 ## Basic usage
 
-In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the public root key of other images and configure Connaisseur via `validators[*].trustRoots[*].key` in `helm/values.yaml` to pin trust to those keys.
+In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the public root key of other images and configure Connaisseur via `application.validators[*].trustRoots[*].key` in `helm/values.yaml` to pin trust to those keys.
 Both is described below.
 However, there is also step-by-step instructions for using Notary in the [getting started guide](../getting_started.md).
 
@@ -42,7 +42,7 @@ YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==
 -----END PUBLIC KEY-----
 ```
 
-You will only need the actual base64 encoded part for configuring the `validators[*].trustRoots[*].key` in `helm/values.yaml` of Connaisseur to validate your images.
+You will only need the actual base64 encoded part for configuring the `application.validators[*].trustRoots[*].key` in `helm/values.yaml` of Connaisseur to validate your images.
 How to extract the public root key for any image is described [below](#getting-the-public-root-key).
 
 ### Creating signatures
@@ -104,7 +104,7 @@ The public repository root key resides with the signature data in the Notary ins
 ### Configuring and running Connaisseur
 
 Now that you either created your own keys and signed images or extracted the public key of other images, you will need to configure Connaisseur to use those keys for validation.
-This is done via `validators` in `helm/values.yaml`.
+This is done via `application.validators` in `helm/values.yaml`.
 The corresponding entry should look similar to the following (using the extracted public key as trust root):
 
 ```yaml
@@ -120,7 +120,7 @@ The corresponding entry should look similar to the following (using the extracte
       -----END PUBLIC KEY-----
 ```
 
-You also need to create a corresponding entry in the image policy via `policy` in `helm/values.yaml`, for example:
+You also need to create a corresponding entry in the image policy via `application.policy` in `helm/values.yaml`, for example:
 
 ```yaml
 - pattern: "docker.io/<REPOSITORY>/<IMAGE>:*"  # THE DESIRED REPOSITORY
@@ -169,7 +169,7 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 
 ## Configuration options
 
-`.validators[*]` in `helm/values.yaml` supports the following keys for Notary (V1) (refer to [basics](../basics.md#validators) for more information on default keys):
+`.application.validators[*]` in `helm/values.yaml` supports the following keys for Notary (V1) (refer to [basics](../basics.md#validators) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -185,7 +185,7 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 | `cert` | - | | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
 | `isAcr` | `false` | | `true` if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs. |
 
-`.policy[*]` in `helm/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
+`.application.policy[*]` in `helm/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -194,26 +194,27 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 ### Example
 
 ```yaml
-validators:
-- name: docker_essentials
-  type: notaryv1
-  host: notary.docker.io
-  trustRoots:
-  - name: sse
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-      -----END PUBLIC KEY-----
+application:
+  validators:
+  - name: docker_essentials
+    type: notaryv1
+    host: notary.docker.io
+    trustRoots:
+    - name: sse
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+        qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+        -----END PUBLIC KEY-----
 
-policy:
-- pattern: "docker.io/securesystemsengineering/connaisseur:*"
-  validator: docker_essentials
-  with:
-    key: sse
-    delegations:
-    - belitzphilipp
-    - starkteetje
+  policy:
+  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
+    validator: docker_essentials
+    with:
+      key: sse
+      delegations:
+      - belitzphilipp
+      - starkteetje
 ```
 
 ## Additional notes
@@ -266,12 +267,13 @@ Simply add the signer's name to the list.
 You can also add multiple signer names to the list in which case Connaisseur will enforce that *all* delegations must have signed a matching image.
 
 ```yaml
-policy:
-- pattern: "<your-repo>/busybox:*"
-  with:
-    delegations:
-    - <key-name>
-    - <other-key-name>
+application:
+  policy:
+  - pattern: "<your-repo>/busybox:*"
+    with:
+      delegations:
+      - <key-name>
+      - <other-key-name>
 ```
 
 The delegation feature can be useful in complex organisations where certain people may be required to sign specific critical images.

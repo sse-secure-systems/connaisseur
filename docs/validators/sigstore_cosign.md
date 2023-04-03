@@ -37,7 +37,7 @@ cosign verify -key cosign.pub ${IMAGE}
 ```
 
 To use Connaisseur with Cosign, configure a validator in `helm/values.yaml` with the generated public key (`cosign.pub`) as a trust root.
-The entry in `.validators` should look something like this (make sure to add your own public key to trust root `default`):
+The entry in `.application.validators` should look something like this (make sure to add your own public key to trust root `default`):
 
 ```yaml
 - name: customvalidator
@@ -51,7 +51,7 @@ The entry in `.validators` should look something like this (make sure to add you
       -----END PUBLIC KEY-----
 ```
 
-In `.policy`, add a pattern to match your public key to your own repository:
+In `.application.policy`, add a pattern to match your public key to your own repository:
 
 ```yaml
 - pattern: "docker.io/securesystemsengineering/testimage:co*"  # YOUR REPOSITORY
@@ -85,7 +85,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 
 ## Configuration options
 
-`.validators[*]` in `helm/values.yaml` supports the following keys for Cosign (refer to [basics](../basics.md#validators) for more information on default keys):
+`.application.validators[*]` in `helm/values.yaml` supports the following keys for Cosign (refer to [basics](../basics.md#validators) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -99,7 +99,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `auth.k8sKeychain` | false | | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s_keychain). |
 | `cert` | | | A certificate in PEM format for private registries. |
 
-`.policy[*]` in `helm/values.yaml` supports the following additional keys and modifications for sigstore/Cosign (refer to [basics](../basics.md#image-policy) for more information on default keys):
+`.application.policy[*]` in `helm/values.yaml` supports the following additional keys and modifications for sigstore/Cosign (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -111,22 +111,23 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 ### Example
 
 ```yaml
-validators:
-- name: myvalidator
-  type: cosign
-  trustRoots:
-  - name: mykey
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-      qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-      -----END PUBLIC KEY-----
+application:
+  validators:
+  - name: myvalidator
+    type: cosign
+    trustRoots:
+    - name: mykey
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+        qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+        -----END PUBLIC KEY-----
 
-policy:
-- pattern: "docker.io/securesystemsengineering/testimage:co-*"
-  validator: myvalidator
-  with:
-    key: mykey
+  policy:
+  - pattern: "docker.io/securesystemsengineering/testimage:co-*"
+    validator: myvalidator
+    with:
+      key: mykey
 ```
 
 
@@ -262,31 +263,32 @@ Multi-signature verification is scoped to the trust roots specified within a ref
 Consider the following validator configuration:
 
 ```yaml
-validators:
-- name: multicosigner
-  type: cosign
-  trustRoots:
-  - name: alice
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ
-      wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==
-      -----END PUBLIC KEY-----
-  - name: bob
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o
-      EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==
-      -----END PUBLIC KEY-----
-  - name: charlie
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4
-      ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==
-      -----END PUBLIC KEY-----
+application:
+  validators:
+  - name: multicosigner
+    type: cosign
+    trustRoots:
+    - name: alice
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ
+        wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==
+        -----END PUBLIC KEY-----
+    - name: bob
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o
+        EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==
+        -----END PUBLIC KEY-----
+    - name: charlie
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4
+        ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==
+        -----END PUBLIC KEY-----
 ```
 
-The trust roots `alice`, `bob`, and `charlie` are all included for verification in case `.policy[*].with.trustRoot` is set to `"*"` (note that this is a special flag, not a real wildcard):
+The trust roots `alice`, `bob`, and `charlie` are all included for verification in case `.application.policy[*].with.trustRoot` is set to `"*"` (note that this is a special flag, not a real wildcard):
 
 ```yaml
 - pattern: "*:*"
