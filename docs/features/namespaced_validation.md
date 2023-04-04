@@ -28,8 +28,9 @@ Configure namespaced validation via the `namespacedValidation` in `helm/values.y
 
 | Key | Default | Required | Description |
 | - | - | - | - |
-| `enabled` | false | | `true` or `false`; enable namespaced validation otherwise images in all namespaces will be validated. |
-| `mode` | ignore | | `ignore` or `validate`; configure mode of exclusion to either ignore all namespaces with label `securesystemsengineering.connaisseur/webhook` set to `ignore` or only validate namespaces with the label set to `validate`. |
+| `mode` | - | | `ignore` or `validate`; configure mode of exclusion to either ignore all namespaces with label `securesystemsengineering.connaisseur/webhook` set to `ignore` or only validate namespaces with the label set to `validate`. |
+
+If the `namespacedValidation` key is not set, all namespaces are validated.
 
 ## Example
 
@@ -39,7 +40,6 @@ In `helm/values.yaml`:
 application:
   features:
     namespacedValidation:
-      enabled: true
       mode: validate
 ```
 

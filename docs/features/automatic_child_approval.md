@@ -25,12 +25,12 @@ The extension of the feature (disabling, caching) is currently under development
 
 ## Configuration options
 
-`automaticChildApproval` in `helm/values.yaml` under `application.features` supports the following keys:
+`automaticChildApproval` in `helm/values.yaml` under `application.features` supports the following values:
 
 | Key | Default | Required | Description |
 | - | - | - | - |
-| `enabled` | true | | `true` or `false`; when `false`, Connaisseur will disable automatic child approval |
-| `ttl` | ? | | Not yet implemented. See [below](#caching-ttl) |
+| `automaticChildApproval` | true | | `true` or `false`; when `false`, Connaisseur will disable automatic child approval |
+| `automaticChildApproval.ttl` | ? | | Not yet implemented. See [below](#caching-ttl). If set, will enable automatic child approval |
 
 ## Example
 
@@ -39,8 +39,7 @@ In `helm/values.yaml`:
 ```yaml
 application:
   features:
-    automaticChildApproval:
-      enabled: true
+    automaticChildApproval: true
 ```
 
 ## Additional notes

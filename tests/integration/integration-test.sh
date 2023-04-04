@@ -478,7 +478,7 @@ case $1 in
 	;;
 "namespace-val")
 	update_via_env_vars
-	update_values '.application.features.namespacedValidation.enabled=true'
+	update_values '.application.features.namespacedValidation.mode="ignore"'
 	make_install
 	namespace_val_int_test
 	;;
