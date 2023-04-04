@@ -176,9 +176,8 @@ application:
     # - or only namespaces with label "securesystemsengineering.connaisseur/webhook=validate" are validated.
     # warning: enabling namespaced validation, allows roles with edit permission on a namespace to disable
     # validation for that namespace
-    namespacedValidation:
-      enabled: false
-      mode: ignore  # 'ignore' or 'validate'
+    # namespacedValidation:
+    #   mode: ignore  # 'ignore' or 'validate'
 
     # automatic child approval determines how admission of Kubernetes child resources is handled by Connaisseur.
     # per default, Connaisseur validates and mutates all resources, e.g. deployments, replicaSets, pods, and
@@ -186,8 +185,7 @@ application:
     # image policy. when disabled Connaisseur will only validate and mutate pods. check the docs for more
     # information.
     # NOTE: configuration of automatic child approval is in EXPERIMENTAL state.
-    automaticChildApproval:
-      enabled: true
+    automaticChildApproval: true
 
     # automatic unchanged approval determines how certain updates of Kubernetes resources are handled
     # by Connaisseur. when disabled (default), Connaisseur validates and mutates resources whenever they

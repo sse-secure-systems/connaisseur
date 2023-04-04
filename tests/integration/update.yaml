@@ -113,8 +113,4 @@ application:
       delegations: ["belitzphilipp", "starkteetje"]
   features:
     detectionMode: false
-    namespacedValidation:
-      enabled: false
-      mode: ignore
-    automaticChildApproval:
-      enabled: true
+    automaticChildApproval: true

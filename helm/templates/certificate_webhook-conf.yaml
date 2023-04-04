@@ -101,13 +101,9 @@ webhooks:
         apiGroups: ["*"]
         apiVersions: ["*"]
         {{- if .Values.application.features.automaticChildApproval }}
-        {{- if .Values.application.features.automaticChildApproval.enabled }}
         resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
         {{- else }}
         resources: ["pods"]
-        {{- end }}
-        {{- else }}
-        resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
         {{- end }}
     sideEffects: None
     {{- if gt ($k8sMinor | int) 13 }}
@@ -119,14 +115,11 @@ webhooks:
     admissionReviewVersions: ["v1"]
     {{- end }}
     {{- if .Values.application.features.namespacedValidation }}
-    {{- if .Values.application.features.namespacedValidation.enabled }}
     namespaceSelector:
       matchExpressions:
       - key: securesystemsengineering.connaisseur/webhook
     {{- if not .Values.application.features.namespacedValidation.mode}}
-        operator: NotIn
-        values:
-          - ignore
+    {{ fail "Helm defines a namespacedValidation, but no mode" -}}
     {{- else if eq .Values.application.features.namespacedValidation.mode "ignore"}}
         operator: NotIn
         values:
@@ -135,6 +128,5 @@ webhooks:
         operator: In
         values:
           - validate
-   {{- end }}
    {{- end }}
    {{- end }}

@@ -15,7 +15,7 @@ To activate the detection mode, set the `detectionMode` flag to `true` in `helm/
 
 ## Configuration options
 
-`detectionMode` in `helm/values.yaml` under `application.features` supports the following keys:
+`detectionMode` in `helm/values.yaml` under `application.features` supports the following values:
 
 | Key | Default | Required | Description |
 | - | - | - | - |
