@@ -13,13 +13,6 @@ kubernetes:
     # that are needed to access the registry containing Connaisseur image.
     # imagePullSecrets:
     # - name: "my-container-secret"
-    failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
-    # Use 'reinvocationPolicy: IfNeeded' to be called again as part of the admission evaluation if the object
-    # being admitted is modified by other admission plugins after the initial webhook call
-    # Note that if Connaisseur is invoked a second time, the policy to be applied might change in between.
-    # Make sure, your Connaisseur policies are set up to handle multiple mutations of the image originally
-    # specified in the manifest, e.g. my.private.registry/image:1.0.0 and my.private.registry/image@sha256:<hash-of-1.0.0-image>
-    reinvocationPolicy: Never
     resources:
       limits:
         cpu: 1000m
@@ -84,6 +77,15 @@ kubernetes:
   service:
     type: ClusterIP
     port: 443
+
+  webhook:
+    failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
+    # Use 'reinvocationPolicy: IfNeeded' to be called again as part of the admission evaluation if the object
+    # being admitted is modified by other admission plugins after the initial webhook call
+    # Note that if Connaisseur is invoked a second time, the policy to be applied might change in between.
+    # Make sure, your Connaisseur policies are set up to handle multiple mutations of the image originally
+    # specified in the manifest, e.g. my.private.registry/image:1.0.0 and my.private.registry/image@sha256:<hash-of-1.0.0-image>
+    reinvocationPolicy: Never
 
 application:
   # Option to configure the log level. Either one of `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Defaults to `INFO`

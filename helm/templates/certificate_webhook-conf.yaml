@@ -59,7 +59,7 @@ metadata:
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
     failurePolicy: Ignore
-    reinvocationPolicy: {{ .Values.kubernetes.deployment.reinvocationPolicy | default "Never" }}
+    reinvocationPolicy: {{ .Values.kubernetes.webhook.reinvocationPolicy | default "Never" }}
     clientConfig:
       service:
         name: {{ .Chart.Name }}-svc
@@ -88,8 +88,8 @@ metadata:
     "helm.sh/hook": post-install, post-upgrade, post-rollback
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
-    failurePolicy: {{ .Values.kubernetes.deployment.failurePolicy | default "Fail" }}
-    reinvocationPolicy: {{ .Values.kubernetes.deployment.reinvocationPolicy | default "Never" }}
+    failurePolicy: {{ .Values.kubernetes.webhook.failurePolicy | default "Fail" }}
+    reinvocationPolicy: {{ .Values.kubernetes.webhook.reinvocationPolicy | default "Never" }}
     clientConfig:
       service:
         name: {{ .Chart.Name }}-svc
