@@ -346,7 +346,7 @@ enable_alerting() {
 
 debug_values() { #PATH
 	echo "::group::values.yaml"
-	cat "$1"
+	yq '... comments=""' "$1"
 	echo "::endgroup::"
 }
 
