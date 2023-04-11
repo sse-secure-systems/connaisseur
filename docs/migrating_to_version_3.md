@@ -2,7 +2,7 @@
 
 It's been a while since our last major update, but it is time again :tada:
 Connaisseur version 3.0 is out and brings along many new features, but also breaking changes :boom:
-For those breaking changes, we've set up a [script](TODO) that migrates your existing Connaisseur configuration. TODO is it complete?
+For those breaking changes, we've set up a [script](../scripts/upgrade_to_version_3.py) that migrates your existing Connaisseur configuration.
 Read on for the list of most interesting changes.
 
 ## Major changes
@@ -13,7 +13,7 @@ Read on for the list of most interesting changes.
 - NEW: Support for Notary v2 (Notation)
 - [Changes](#api-changes) to the Helm `values.yaml` file
     - :boom: This is a breaking change as we touched quite a bunch of configuration keys to make the configuration API more consistent and more intuitive
-    - :robot: We've prepared a [script](TODO) that migrates your existing Connaisseur configuration to the new format
+    - :robot: We've prepared a [script](../scripts/upgrade_to_version_3.py) that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments :cry: Simply run `python3 scripts/upgrade_to_version_3.py` and your `helm/values.yaml` will be updated (and we'll store a backup of your previous config in `helm/values.yaml.old`)
 
 ## API changes
 
@@ -36,7 +36,7 @@ Here's the list of changes we made to the Helm `values.yaml`:
 - Consistent naming of variables
     - Previously, due to some configuration keys being directly used within our Python application, we named them according to pythonic snake_case.
     Since the main interaction of users is through the Helm `values.yaml`, having inconsistent casing there is worse than dealing with a few misnamed keys in our Python stack.
-    Accordingly, we migrated all configuration keys_with_underscores to dromedaryKeys.
+    Accordingly, we migrated all configuration keys_with_snake_case to dromedaryKeys.
 - Group features in `features` key
     - Previously, we had top-level configurations for all features changing Connaisseur's verification behavior.
     We grouped them below a common `features` key below the new `application` key.
