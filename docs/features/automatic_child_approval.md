@@ -29,8 +29,8 @@ The extension of the feature (disabling, caching) is currently under development
 
 | Key | Default | Required | Description |
 | - | - | - | - |
-| `automaticChildApproval` | true | | `true` or `false`; when `false`, Connaisseur will disable automatic child approval |
-| `automaticChildApproval.ttl` | ? | | Not yet implemented. See [below](#caching-ttl). If set, will enable automatic child approval |
+| `automaticChildApproval` | true | - | `true` or `false`; when `false`, Connaisseur will disable automatic child approval |
+| `automaticChildApproval.ttl` | ? | - | Not yet implemented. See [below](#caching-ttl). If set, will enable automatic child approval |
 
 ## Example
 

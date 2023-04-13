@@ -225,7 +225,7 @@ The special case of static validators used to simply allow or deny images withou
 | `trustRoots` | - | :heavy_check_mark: | List of trust anchors to validate the signatures against. In practice, this is typically a list of public keys. |
 | `trustRoots[*].name` | - | :heavy_check_mark: | Name of the trust anchor, which is referenced in the image policy. If the name is `default`, it will be used if no key is specified. |
 | `trustRoots[*].key` | - | :heavy_check_mark: | Value of the trust anchor, most commonly a PEM encoded public key. |
-| `auth`| - | | Credentials that should be used in case authentication is required for validation. Details are provided on validator-specific pages. |
+| `auth`| - | - | Credentials that should be used in case authentication is required for validation. Details are provided on validator-specific pages. |
 
 *Further configuration fields specific to the validator type are described in the [respective section](validators/README.md).*
 
@@ -358,9 +358,9 @@ There is two rules that should remain intact in some form in order to not brick 
 | Key  | Default | Required | Description |
 | - | - | - | - |
 | `pattern` | - | :heavy_check_mark: | Globbing pattern to match an image name against. |
-| `validator` | `default` | | Name of a validator in the `validators` list. If not provided, the validator with name `default` is used if it exists. |
-| `with` | - | | Additional parameters to use for a validator. See more specifics in [validator section](validators/README.md). |
-|`with.trustRoot`| `default` | | Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. |
+| `validator` | `default` | - | Name of a validator in the `validators` list. If not provided, the validator with name `default` is used if it exists. |
+| `with` | - | - | Additional parameters to use for a validator. See more specifics in [validator section](validators/README.md). |
+|`with.trustRoot`| `default` | - | Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. |
 
 #### Example
 

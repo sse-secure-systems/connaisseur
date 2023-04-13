@@ -178,18 +178,18 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 | `host` | - | :heavy_check_mark: | URL of the Notary instance, in which the signatures reside, e.g. `notary.docker.io`. |
 | `trustRoots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `trustRoots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public root key. |
-| `auth` | - | | Authentication credentials for the Notary server in case the trust data is not public. |
-| `auth.secretName` | - | | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file `auth.yaml` containing:<br/>&nbsp; `username: <user>` <br/>&nbsp; `password: <password>` <br/>Run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml -n connaisseur` to create the secret.|
-| `auth.username` | - | | Username to authenticate with. It is recommended to use `auth.secretName` instead. |
-| `auth.password` | - | | Password or access token to authenticate with. It is recommended to use `auth.secretName` instead. |
-| `cert` | - | | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
-| `isAcr` | `false` | | `true` if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs. |
+| `auth` | - | - | Authentication credentials for the Notary server in case the trust data is not public. |
+| `auth.secretName` | - | - | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file `auth.yaml` containing:<br/>&nbsp; `username: <user>` <br/>&nbsp; `password: <password>` <br/>Run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml -n connaisseur` to create the secret.|
+| `auth.username` | - | - | Username to authenticate with. It is recommended to use `auth.secretName` instead. |
+| `auth.password` | - | - | Password or access token to authenticate with. It is recommended to use `auth.secretName` instead. |
+| `cert` | - | - | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
+| `isAcr` | `false` | - | `true` if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs. |
 
 `.application.policy[*]` in `helm/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
-| `with.delegations` | - | | List of delegation names to enforce specific signers to be present. Refer to section on [enforcing delegations](#enforcing-delegations) for more information. |
+| `with.delegations` | - | - | List of delegation names to enforce specific signers to be present. Refer to section on [enforcing delegations](#enforcing-delegations) for more information. |
 
 ### Example
 
