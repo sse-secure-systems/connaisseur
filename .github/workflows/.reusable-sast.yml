@@ -128,7 +128,7 @@ jobs:
           helm template helm > deployment/deployment.yaml
         shell: bash
       - name: Scan
-        uses: bridgecrewio/checkov-action@6bb9c070f99993afe075642c50f1c03d6aae924f # v12.2223.0
+        uses: bridgecrewio/checkov-action@0db028a5c500a0930c20cbc721c576c2898d67e7 # v12.2266.0
         with:
           soft_fail: true
           output_format: cli,sarif
