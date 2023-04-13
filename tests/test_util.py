@@ -101,10 +101,8 @@ admission_review_msg_patch = {
 )
 def test_get_admission_review(monkeypatch, uid, allowed, patch, msg, dm, review):
     monkeypatch.setenv("KUBE_VERSION", "v1.20.0")
-    assert (
-        ut.get_admission_review(uid, allowed, patch=patch, msg=msg, detection_mode=dm)
-        == review
-    )
+    monkeypatch.setenv("DETECTION_MODE", str(dm))
+    assert ut.get_admission_review(uid, allowed, patch=patch, msg=msg) == review
 
 
 @pytest.mark.parametrize(
@@ -145,3 +143,34 @@ def test_validate_schema(
 def test_get_kube_version(monkeypatch, major, minor, patch, set_version):
     monkeypatch.setenv("KUBE_VERSION", set_version)
     assert ut.get_kube_version() == (major, minor, patch)
+
+
+@pytest.mark.parametrize(
+    "flag, value, expected_value, exception",
+    [
+        ("FLAG", True, True, fix.no_exc()),
+        ("FLAG", "True", True, fix.no_exc()),
+        ("FLAG", "False", False, fix.no_exc()),
+        (
+            "FLAG",
+            None,
+            False,
+            pytest.raises(
+                exc.BaseConnaisseurException, match=r"No or wrong value for feature .*"
+            ),
+        ),
+        (
+            "FLAG",
+            "excuse_me_?",
+            False,
+            pytest.raises(
+                exc.BaseConnaisseurException, match=r"No or wrong value for feature .*"
+            ),
+        ),
+    ],
+)
+def test_feature_flag_on(monkeypatch, flag, value, expected_value, exception):
+    with exception:
+        if value is not None:
+            monkeypatch.setenv(flag, value)
+        assert ut.feature_flag_on(flag) == expected_value

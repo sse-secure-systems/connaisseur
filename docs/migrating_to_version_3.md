@@ -49,9 +49,11 @@ Here's the list of changes we made to the Helm `values.yaml`:
     The idea was based around whether the feature would have further configuration or not.
     However, having configuration for a disabled feature doesn't really make sense, so we changed it to be the following:
         - If a feature has configuration, i.e. `<featureName>.<someConfigKey>` is set, it is enabled.
-        - If a feature is set, i.e. `<featureName>: true`  it is enabled and an error is thrown if it needed configuration but doesn't have any.
-        - If a feature is false, i.e. `<featureName>: false`  it is disabled.
+        - If a feature is set, i.e. `<featureName>: true` it is enabled and an error is thrown if it needs configuration but doesn't have any.
+        - If a feature is false, i.e. `<featureName>: false` it is disabled.
         - If a feature is not set at all, i.e. `features` doesn't have a `<featureName>` key, its default configuration is chosen.
+        - If a feature has no configuration, i.e. `<featureName>: true`, the only allowed values are `true` or `false`.
+        Otherwise an error is thrown at time of deployment.
 - Alerting `receivers`
     - We renamed `alerting.templates` to `alerting.receivers` as each receiver has inherently a template and multiple receivers can have the same template.
     As such `templates` wasn't a fitting name.

@@ -217,3 +217,11 @@ Extract Kubernetes Minor Version.
   readOnly: true
 {{- end -}}
 {{- end -}}
+
+{{- define "checkFalseTrue" -}}
+{{- if (eq .input "true") | or (eq .input "false") -}}
+{{ .input }}
+{{- else -}}
+{{- fail "wrong value" -}}
+{{- end -}}
+{{- end -}}

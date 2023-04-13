@@ -1,5 +1,7 @@
 import os
 
+import connaisseur.constants as const
+
 
 class BaseConnaisseurException(Exception):
     """
@@ -13,7 +15,10 @@ class BaseConnaisseurException(Exception):
 
     def __init__(self, message: str = default_message, **kwargs):
         self.message = message.format(**kwargs)
-        self.detection_mode = os.environ.get("DETECTION_MODE", "0") == "1"
+        # can't use feature flag, because of circular import
+        self.detection_mode = (
+            os.environ.get(const.DETECTION_MODE, "false").lower() == "true"
+        )
         self.context = {**kwargs, "detection_mode": self.detection_mode}
         super().__init__()
 

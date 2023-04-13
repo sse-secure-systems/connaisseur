@@ -67,9 +67,16 @@ def m_config(monkeypatch, sample_nv1):
     pytest.fa = fa
 
 
+@pytest.fixture(autouse=True)
+def set_envs(monkeypatch):
+    monkeypatch.setenv("AUTOMATIC_CHILD_APPROVAL", "true")
+    monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", "true")
+    monkeypatch.setenv("DETECTION_MODE", "false")
+
+
 @pytest.mark.parametrize(
     "index, allowed, status_code, detection_mode",
-    [(0, True, 202, 0), (5, False, 403, 0)],
+    [(0, True, 202, False), (5, False, 403, False)],
 )
 def test_mutate(
     monkeypatch,
@@ -101,7 +108,7 @@ def test_mutate_calls_send_alert_for_invalid_admission_request(
 ):
     with aioresponses() as aio:
         aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-        monkeypatch.setenv("DETECTION_MODE", "0")
+        monkeypatch.setenv("DETECTION_MODE", "false")
         client = pytest.fa.APP.test_client()
         response = client.post("/mutate", json=adm_req_samples[7])
         admission_response = response.get_json()["response"]
@@ -206,7 +213,7 @@ async def test_admit(
     session = aiohttp.ClientSession()
     with exception:
         if index == 8:
-            monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", "1")
+            monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", "true")
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
             response = await pytest.fa.__admit(

@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 import traceback
 
 import aiohttp
@@ -16,7 +15,7 @@ from connaisseur.exceptions import (
     BaseConnaisseurException,
     ConfigurationError,
 )
-from connaisseur.util import get_admission_review
+from connaisseur.util import feature_flag_on, get_admission_review
 
 APP = Flask(__name__)
 """
@@ -24,7 +23,6 @@ Flask application that admits the request send to the k8s cluster, validates it 
 sends its response back.
 """
 CONFIG = Config()
-DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
 
 metrics = PrometheusMetrics(
     APP,
@@ -129,9 +127,7 @@ async def __async_mutate():
             dispatch_alerts(admission_request, False, msg)
             logging.error(err_log)
             uid = admission_request.uid if admission_request else ""
-            return jsonify(
-                get_admission_review(uid, False, msg=msg, detection_mode=DETECTION_MODE)
-            )
+            return jsonify(get_admission_review(uid, False, msg=msg))
 
 
 async def __admit(admission_request: AdmissionRequest, session: aiohttp.ClientSession):
@@ -167,8 +163,10 @@ async def __validate_image(
     # if automatic_unchanged_approval is enabled, admit resource updates
     # if they do not alter the resource's image reference(s)
     # https://github.com/sse-secure-systems/connaisseur/issues/820
-    unchanged_approval_on = os.environ.get("AUTOMATIC_UNCHANGED_APPROVAL", "0") == "1"
-    if unchanged_approval_on and admission_request.operation.upper() == "UPDATE":
+    if (
+        feature_flag_on(const.AUTOMATIC_UNCHANGED_APPROVAL)
+        and admission_request.operation.upper() == "UPDATE"
+    ):
         old_images = admission_request.old_wl_object.containers.values()
         if image in old_images:
             logging.info(
@@ -183,9 +181,7 @@ async def __validate_image(
     # lookups for already approved images. so child resources are automatically
     # approved without further check ups, if their parents were approved
     # earlier.
-    child_approval_on = os.environ.get("AUTOMATIC_CHILD_APPROVAL_ENABLED", "1") == "1"
-
-    if child_approval_on & (
+    if feature_flag_on(const.AUTOMATIC_CHILD_APPROVAL) and (
         image in admission_request.wl_object.parent_containers.values()
     ):
         logging.info(

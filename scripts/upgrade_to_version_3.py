@@ -41,15 +41,15 @@ if __name__ == "__main__":
     validators = config.pop("validators")
     policy = config.pop("policy")
 
-    detection_mode = config.pop("detectionMode", False)
+    detection_mode = bool(config.pop("detectionMode", False))
     namespaced_validation = config.pop("namespacedValidation", {"enabled": False})
     # check explicitly disabled config won't be taken as enabled
     if not namespaced_validation.pop("enabled"):
         namespaced_validation = False
-    child_approval = config.pop("automaticChildApproval", {"enabled": True}).get(
-        "enabled"
+    child_approval = bool(
+        config.pop("automaticChildApproval", {"enabled": True}).get("enabled")
     )
-    unchanged_approval = config.pop("automaticUnchangedApproval", False)
+    unchanged_approval = bool(config.pop("automaticUnchangedApproval", False))
     features = {
         "detectionMode": detection_mode,
         "namespacedValidation": namespaced_validation,

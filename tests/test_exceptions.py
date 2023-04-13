@@ -8,16 +8,16 @@ import connaisseur.exceptions as exc
 @pytest.mark.parametrize(
     "message, kwargs, detection_mode, ex_msg",
     [
-        ("Error.", {"reason": "fate"}, 0, "Error."),
+        ("Error.", {"reason": "fate"}, False, "Error."),
         (
             "How the {tables} have {turned}.",
             {"tables": "turns", "turned": "tabled"},
-            0,
+            False,
             "How the turns have tabled.",
         ),
-        ("", {}, 0, "An error occurred."),
-        ("", {"bad": "guy"}, 0, "An error occurred."),
-        ("", {}, 1, "An error occurred."),
+        ("", {}, False, "An error occurred."),
+        ("", {"bad": "guy"}, False, "An error occurred."),
+        ("", {}, True, "An error occurred."),
     ],
 )
 def test_exceptions(monkeypatch, message, kwargs, detection_mode, ex_msg):
@@ -28,7 +28,7 @@ def test_exceptions(monkeypatch, message, kwargs, detection_mode, ex_msg):
         ex = exc.BaseConnaisseurException(**kwargs)
     assert ex.message == ex_msg
     assert ex.context == dict(**kwargs, detection_mode=ex.detection_mode)
-    assert ex.detection_mode is bool(detection_mode)
+    assert ex.detection_mode == detection_mode
 
 
 def test_exception_str():
@@ -44,8 +44,8 @@ def test_exception_str():
 @pytest.mark.parametrize(
     "msg, dm, out",
     [
-        ("hello there.", "0", "hello there."),
-        ("hello there.", "1", "hello there. (not denied due to DETECTION_MODE)"),
+        ("hello there.", "false", "hello there."),
+        ("hello there.", "true", "hello there. (not denied due to DETECTION_MODE)"),
     ],
 )
 def test_exception_user_msg(monkeypatch, msg, dm, out):

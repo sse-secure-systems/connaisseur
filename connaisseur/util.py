@@ -7,7 +7,8 @@ from typing import Optional
 import yaml
 from jsonschema import FormatChecker, ValidationError, validate
 
-from connaisseur.exceptions import PathTraversalError
+import connaisseur.constants as const
+from connaisseur.exceptions import BaseConnaisseurException, PathTraversalError
 
 
 def safe_path_func(callback: callable, base_dir: str, path: str, *args, **kwargs):
@@ -32,7 +33,6 @@ def get_admission_review(
     allowed: bool,
     patch: Optional[list] = None,
     msg: Optional[str] = None,
-    detection_mode: bool = False,
 ):
     """
     Get a standardized response object with patching instructions for the
@@ -51,9 +51,6 @@ def get_admission_review(
     msg : str (optional)
         The error message, which will be displayed, should allowed be
         'False'.
-    detection_mode : bool (optional)
-        If set to True, Connaisseur will admit images even if they fail
-        validation, but will log a warning instead.
 
     Return
     ----------
@@ -77,6 +74,7 @@ def get_admission_review(
           }
         }
     """
+    detection_mode = feature_flag_on(const.DETECTION_MODE)
     _, minor, _ = get_kube_version()
     api = "v1beta1" if int(minor) < 17 else "v1"
     review = {
@@ -130,3 +128,14 @@ def get_kube_version():
     regex = r"v(\d)\.(\d{1,2})\.(.*)"
     match = re.match(regex, version)
     return match.groups() if match else ("0", "0", "0")
+
+
+def feature_flag_on(flag: str):
+    env = os.environ.get(flag, "")
+
+    if env.lower() == "true":
+        return True
+    elif env.lower() == "false":
+        return False
+
+    raise BaseConnaisseurException(f"No or wrong value for feature {flag}.")

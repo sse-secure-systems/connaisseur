@@ -366,7 +366,7 @@ def m_safe_path_func(monkeypatch):
 
 @pytest.fixture
 def m_alerting(monkeypatch, m_safe_path_func):
-    monkeypatch.setenv("DETECTION_MODE", "0")
+    monkeypatch.setenv("DETECTION_MODE", "false")
     monkeypatch.setenv("POD_NAME", "connaisseur-pod-123")
     monkeypatch.setenv("CLUSTER_NAME", "minikube")
     connaisseur.alert.AlertingConfiguration._AlertingConfiguration__PATH = (
@@ -380,7 +380,7 @@ def m_alerting(monkeypatch, m_safe_path_func):
 
 @pytest.fixture
 def m_alerting_without_send(monkeypatch, m_safe_path_func, mocker):
-    monkeypatch.setenv("DETECTION_MODE", "0")
+    monkeypatch.setenv("DETECTION_MODE", "false")
     monkeypatch.setenv("POD_NAME", "connaisseur-pod-123")
     monkeypatch.setenv("CLUSTER_NAME", "minikube")
     monkeypatch.setattr(
