@@ -28,7 +28,7 @@ Configure namespaced validation via the `namespacedValidation` in `helm/values.y
 
 | Key | Default | Required | Description |
 | - | - | - | - |
-| `mode` | - | | `ignore` or `validate`; configure mode of exclusion to either ignore all namespaces with label `securesystemsengineering.connaisseur/webhook` set to `ignore` or only validate namespaces with the label set to `validate`. |
+| `mode` | - | - | `ignore` or `validate`; configure mode of exclusion to either ignore all namespaces with label `securesystemsengineering.connaisseur/webhook` set to `ignore` or only validate namespaces with the label set to `validate`. |
 
 If the `namespacedValidation` key is not set, all namespaces are validated.
 
