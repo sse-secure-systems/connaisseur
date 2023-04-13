@@ -19,12 +19,12 @@ Currently, Connaisseur supports alerting on either admittance of images, denial 
 | Key                                                |  Accepted values                                      | Default           | Required           | Description                                                                                        |
 | -------------------------------------------------- | ----------------------------------------------------  | ----------------- | ------------------ | -------------------------------------------------------------------------------------------------- |
 | `alerting.clusterIdentifier`                      | string                                                | `"not specified"` |                    | Cluster identifier used in alert payload to distinguish between alerts from different clusters.     |
-| `alerting.<category>.template`                     | `opsgenie`, `slack`, `keybase`, `ecs-1-12-0` or custom<sup>*</sup>  | -                 | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.           |
-| `alerting.<category>.receiverUrl`                 | string                                                | -                 | :heavy_check_mark: | URL of alert-receiving endpoint.                                                                    |
-| `alerting.<category>.priority`                     | int                                                   | `3`               |                    | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).            |
-| `alerting.<category>.customHeaders`               | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
-| `alerting.<category>.payloadFields`               | subyaml                                               | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`). |
-| `alerting.<category>.failIfAlertSendingFails`  | bool                                                  | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.    |
+| `alerting.<category>.receivers.[].template`                     | `opsgenie`, `slack`, `keybase`, `ecs-1-12-0` or custom<sup>*</sup>  | -                 | :heavy_check_mark: | File in `helm/alert_payload_templates/` to be used as alert payload template.           |
+| `alerting.<category>.receivers.[].receiverUrl`                 | string                                                | -                 | :heavy_check_mark: | URL of alert-receiving endpoint.                                                                    |
+| `alerting.<category>.receivers.[].priority`                     | int                                                   | `3`               |                    | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).            |
+| `alerting.<category>.receivers.[].customHeaders`               | list[string]                                          | -                 |                    | Additional headers required by alert-receiving endpoint.                                            |
+| `alerting.<category>.receivers.[].payloadFields`               | subyaml                                               | -                 |                    | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`). |
+| `alerting.<category>.receivers.[].failIfAlertSendingFails`  | bool                                                  | `False`           |                    | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent.    |
 
 <sup>*basename of the custom template file in `helm/alerting_payload_templates` without file extension </sup>
 
@@ -75,4 +75,3 @@ to JSON by Helm as is. If your REST endpoint requires particular headers, you ca
 specify them as described above in `customHeaders`.
 
 Feel free to make a PR to share with the community if you add new neat templates for other third parties :pray:
-
