@@ -24,7 +24,7 @@ Currently, Connaisseur supports alerting on either admittance of images, denial 
 | `alerting.<category>.receivers.[].priority`                | int                                                                | `3`               | -                  | Priority of alert (to enable fitting Connaisseur alerts into alerts from other sources).        |
 | `alerting.<category>.receivers.[].customHeaders`           | list[string]                                                       | -                 | -                  | Additional headers required by alert-receiving endpoint.                                        |
 | `alerting.<category>.receivers.[].payloadFields`           | subyaml                                                            | -                 | -                  | Additional (`yaml`) key-value pairs to be appended to alert payload (as `json`).                |
-| `alerting.<category>.receivers.[].failIfAlertSendingFails` | bool                                                               | `False`           | -                  | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent. |
+| `alerting.<category>.receivers.[].failIfAlertSendingFails` | bool                                                               | `false`           | -                  | Whether to make Connaisseur deny images if the corresponding alert cannot be successfully sent. |
 
 <sup>*basename of the custom template file in `helm/alerting_payload_templates` without file extension </sup>
 
