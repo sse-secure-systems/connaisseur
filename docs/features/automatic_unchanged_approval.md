@@ -23,7 +23,7 @@ The creation of resources on the other hand remains unchanged and will enforce v
 
 | Key | Default | Required | Description |
 | - | - | - | - |
-| `automaticUnchangedApproval` | false | - | `true` or `false` ; when `true`, Connaisseur will enable automatic unchanged approval |
+| `automaticUnchangedApproval` | `false` | - | `true` or `false` ; when `true`, Connaisseur will enable automatic unchanged approval |
 
 ## Example
 
