@@ -111,21 +111,21 @@ application:
       host: notary.docker.io # configure the notary server for notaryv1 or rekor url for cosign
       trustRoots:
       # # the `default` key is used if no key is specified in image policy
-      #- name: default
-      #  key: |  # enter your public key below
-      #    -----BEGIN PUBLIC KEY-----
-      #    <add your public key here>
-      #    -----END PUBLIC KEY-----
-      #cert: |  # in case the trust data host is using a self-signed certificate
-      #  -----BEGIN CERTIFICATE-----
-      #  ...
-      #  -----END CERTIFICATE-----
-      #auth:  # credentials in case the trust data requires authentication
-      #  # either (preferred solution)
-      #  secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
-      #  # or (only for notaryv1 validator)
-      #  username: myuser
-      #  password: mypass
+      # - name: default
+      #   key: |  # enter your public key below
+      #     -----BEGIN PUBLIC KEY-----
+      #     <add your public key here>
+      #     -----END PUBLIC KEY-----
+      # cert: |  # in case the trust data host is using a self-signed certificate
+      #   -----BEGIN CERTIFICATE-----
+      #   ...
+      #   -----END CERTIFICATE-----
+      # auth:  # credentials in case the trust data requires authentication
+      #   # either (preferred solution)
+      #   secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)
+      #   # or (only for notaryv1 validator)
+      #   username: myuser
+      #   password: mypass
     # pre-configured nv1 validator for public notary from Docker Hub
     - name: dockerhub-basics
       type: notaryv1
