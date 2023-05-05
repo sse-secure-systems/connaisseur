@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup test images in 'connaisseur-test'
-        uses: snok/container-retention-policy@482ce28159f65a8bfad986da1fedcef40169aa75 # v2.0.0
+        uses: snok/container-retention-policy@f617f1ca161a52bce48417eedd76924e71d0b4d9 # v2.1.0
         with:
           image-names: connaisseur-test
           cut-off: three weeks ago UTC+1
@@ -19,7 +19,7 @@ jobs:
           org-name: sse-secure-systems
           token: ${{ secrets.GHCR_PAT }}
       - name: Cleanup dangling images without tag
-        uses: snok/container-retention-policy@482ce28159f65a8bfad986da1fedcef40169aa75 # v2.0.0
+        uses: snok/container-retention-policy@f617f1ca161a52bce48417eedd76924e71d0b4d9 # v2.1.0
         with:
           image-names: connaisseur*
           untagged-only: true
@@ -29,7 +29,7 @@ jobs:
           org-name: sse-secure-systems
           token: ${{ secrets.GHCR_PAT }}
       - name: Cleanup all connaisseur images
-        uses: snok/container-retention-policy@482ce28159f65a8bfad986da1fedcef40169aa75 # v2.0.0
+        uses: snok/container-retention-policy@f617f1ca161a52bce48417eedd76924e71d0b4d9 # v2.1.0
         with:
           image-names: connaisseur
           skip-tags: master, develop, v*, sha256-*
