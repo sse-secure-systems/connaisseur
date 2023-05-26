@@ -25,7 +25,7 @@ jobs:
           repo_token: ${{ secrets.SCORECARD_TOKEN }}
           publish_results: ${{ github.ref_name == 'master' }}
       - name: Upload
-        uses: github/codeql-action/upload-sarif@67a35a08586135a9573f4327e904ecbf517a882d # v2.2.8
+        uses: github/codeql-action/upload-sarif@0225834cc549ee0ca93cb085b92954821a145866 # v2.3.5
         with:
           sarif_file: results.sarif
 
