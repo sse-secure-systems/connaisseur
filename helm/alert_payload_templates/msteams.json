@@ -1,0 +1,42 @@
+{
+  "@type": "MessageCard",
+  "@context": "http://schema.org/extensions",
+  "summary": "{{ alert_message }}",
+  "title": "Connaisseur Alert",
+  "sections": [
+    {
+      "activityTitle": "{{ alert_message }}",
+      "facts": [
+        {
+          "name": "cluster",
+          "value": "{{ cluster }}"
+        },
+        {
+          "name": "namespace",
+          "value": "{{ namespace }}"
+        },
+        {
+          "name": "connaisseur_pod_id",
+          "value": "{{ connaisseur_pod_id }}"
+        },
+        {
+          "name": "request_id",
+          "value": "{{ request_id }}"
+        },
+        {
+          "name": "timestamp",
+          "value": "{{ timestamp }}"
+        },
+        {
+          "name": "images",
+          "value": "{{ images }}"
+        },
+        {
+          "name": "priority",
+          "value": "{{ priority }}"
+        }
+      ],
+      "markdown": true
+    }
+  ]
+}
