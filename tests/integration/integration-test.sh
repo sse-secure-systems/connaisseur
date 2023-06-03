@@ -27,6 +27,7 @@ if [[ -n "${IMAGE+x}" && -n "${IMAGEPULLSECRET+x}" && "${GITHUB_WORKFLOW}" != "r
 	rm ghcr-tmp
 else
 	echo "" >ghcr-values
+	echo "" >ghcr-validator
 fi
 
 ### SINGLE TEST CASE ####################################
