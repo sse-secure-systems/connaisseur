@@ -20,7 +20,7 @@ cp helm/values.yaml values.yaml.Backup
 COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n          }")"
 
 ## Join ghcr integration yaml
-if [[ -n "${IMAGE+x}" && -n "${IMAGEPULLSECRET+x}" ]]; then
+if [[ -n "${IMAGE+x}" && -n "${IMAGEPULLSECRET+x}" && "${GITHUB_WORKFLOW}" != "release" ]]; then
 	yq '. *+ load("tests/integration/var-img.yaml")' tests/integration/ghcr-values.yaml >ghcr-tmp
 	envsubst <ghcr-tmp >ghcr-values
 	envsubst <tests/integration/ghcr-values.yaml >ghcr-validator
