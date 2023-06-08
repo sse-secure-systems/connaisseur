@@ -1002,7 +1002,7 @@ You're not viewing the docs of the latest version.
 <p>Connaisseur can send notifications on admission decisions to basically every REST
 endpoint that accepts JSON payloads.</p>
 <h2 id="supported-interfaces">Supported interfaces<a class="headerlink" href="#supported-interfaces" title="Permanent link">⚓︎</a></h2>
-<p>Slack, Opsgenie and Keybase have pre-configured payloads that are ready to use.
+<p>Slack, Opsgenie, Keybase and Microsoft Teams have pre-configured payloads that are ready to use.
 However, you can use the existing payload templates as an example how to model your
 own custom one.
 It is also possible to configure multiple interfaces for receiving
@@ -1029,7 +1029,7 @@ alerts at the same time.</p>
 </tr>
 <tr>
 <td><code>alerting.&lt;category&gt;.template</code></td>
-<td><code>opsgenie</code>, <code>slack</code>, <code>keybase</code>, <code>ecs-1-12-0</code> or custom<sup>*</sup></td>
+<td><code>opsgenie</code>, <code>slack</code>, <code>keybase</code>, <code>msteams</code>, <code>ecs-1-12-0</code> or custom<sup>*</sup></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>File in <code>helm/alert_payload_templates/</code> to be used as alert payload template.</td>
@@ -1076,7 +1076,7 @@ alerts at the same time.</p>
 <ul>
 <li>The value for <code>template</code> needs to match an existing file of the pattern
 <code>helm/alert_payload_templates/&lt;template&gt;.json</code>; so if you want to use a predefined
-one it needs to be one of <code>slack</code>, <code>keybase</code>, <code>opsgenie</code> or <code>ecs-1-12-0</code>.</li>
+one it needs to be one of <code>slack</code>, <code>keybase</code>, <code>opsgenie</code>, <code>msteams</code> or <code>ecs-1-12-0</code>.</li>
 <li>For Opsgenie you need to configure an additional
   <code>["Authorization: GenieKey &lt;Your-Genie-Key&gt;"]</code> header.</li>
 <li>For <a href="https://www.elastic.co/guide/en/ecs/1.12/index.html">Elastic Common Schema 1.12.0</a> output, the <code>receiver_url</code> has to be an HTTP/S log ingester, such as <a href="https://docs.fluentd.org/input/http">Fluentd HTTP input</a> or <a href="https://www.elastic.co/guide/en/logstash/current/plugins-inputs-http.html">Logstash HTTP input</a>. Also <code>custom_headers</code> needs to be set to <code>["Content-Type: application/json"]</code> for Fluentd HTTP endpoints.</li>
@@ -1099,6 +1099,7 @@ during runtime into the payload:</p>
 <li><code>alert_message</code></li>
 <li><code>priority</code></li>
 <li><code>connaisseur_pod_id</code></li>
+<li><code>namespace</code></li>
 <li><code>cluster</code></li>
 <li><code>timestamp</code></li>
 <li><code>request_id</code></li>
