@@ -73,7 +73,7 @@ Extract Kubernetes Minor Version.
 
 {{- define "hasConfigSecrets" -}}
 {{- range .Values.validators -}}
-    {{- if and (and (eq .type "notaryv1") (hasKey . "auth") not (hasKey . "auth.secret_name" )) -}}
+    {{- if and (and (eq .type "notaryv1") (hasKey . "auth") (not (hasKey .auth "secret_name" ))) -}}
         1
     {{- end -}}
     {{- if and (eq .type "cosign") (hasKey . "cert") -}}
