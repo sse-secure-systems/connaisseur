@@ -134,10 +134,6 @@ async def __async_mutate():
             )
 
 
-def __create_logging_msg(msg: str, **kwargs):
-    return str({"message": msg, "context": {**kwargs}})
-
-
 async def __admit(admission_request: AdmissionRequest, session: aiohttp.ClientSession):
     patches = asyncio.gather(
         *[
@@ -175,8 +171,11 @@ async def __validate_image(
     if unchanged_approval_on and admission_request.operation.upper() == "UPDATE":
         old_images = admission_request.old_wl_object.containers.values()
         if image in old_images:
-            msg = f'automatic approval for unchanged image "{original_image}".'
-            logging.info(__create_logging_msg(msg, **logging_context))
+            logging.info(
+                'automatic approval for unchanged image "%s".',
+                original_image,
+                extra=logging_context,
+            )
             return
 
     # child resources have mutated image names, as their parents got mutated
@@ -189,23 +188,26 @@ async def __validate_image(
     if child_approval_on & (
         image in admission_request.wl_object.parent_containers.values()
     ):
-        msg = f'automatic child approval for "{original_image}".'
-        logging.info(__create_logging_msg(msg, **logging_context))
+        logging.info(
+            'automatic child approval for "%s".', original_image, extra=logging_context
+        )
         return
 
     try:
         policy_rule = CONFIG.get_policy_rule(image)
         validator = CONFIG.get_validator(policy_rule.validator)
 
-        msg = (
-            f'starting verification of image "{original_image}" using rule '
-            f'"{str(policy_rule)}" with arguments {str(policy_rule.arguments)}'
-            f' and validator "{str(validator)}".'
-        )
         logging.debug(
-            __create_logging_msg(
-                msg, **logging_context, policy_rule=policy_rule, validator=validator
-            )
+            'starting verification of image "%s" using rule "%s" with arguments %s and validator "%s".',
+            original_image,
+            str(policy_rule),
+            str(policy_rule.arguments),
+            str(validator),
+            extra={
+                "policy_rule": policy_rule,
+                "validator": validator,
+                **logging_context,
+            },
         )
 
         validator_arguments = policy_rule.arguments.copy()
@@ -215,8 +217,9 @@ async def __validate_image(
         # add contextual information to all errors
         err.update_context(**logging_context)
         raise err
-    msg = f'successful verification of image "{original_image}"'
-    logging.info(__create_logging_msg(msg, **logging_context))
+    logging.info(
+        'successful verification of image "%s"', original_image, extra=logging_context
+    )
     if trusted_digest:
         image.digest, image.digest_algo = trusted_digest, const.SHA256
         return admission_request.wl_object.get_json_patch(image, type_, index)

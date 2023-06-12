@@ -1,36 +1,8 @@
-import time
-
 import pytest
 
-import connaisseur.logging_wrapper as lw
+import connaisseur.logging as lw
 
 from . import conftest as fix
-
-
-@pytest.fixture
-def mock_time(monkeypatch):
-    monkeypatch.setattr(time, "strftime", lambda X, y: "1/1/1970 00:00:00")
-
-
-@pytest.mark.parametrize(
-    "status_code, environ, out",
-    [
-        (
-            200,
-            {
-                "REMOTE_ADDR": "127.0.0.1",
-                "REQUEST_METHOD": "POST",
-                "PATH_INFO": "/straight/outta/compton",
-                "QUERY_STRING": "who_let_out=dogs",
-                "SERVER_PROTOCOL": "HTTP",
-            },
-            '127.0.0.1 - - [1/1/1970 00:00:00] "POST /straight/outta/compton?who_let_out=dogs HTTP" 200 -',
-        ),
-        (500, {}, ' - - [1/1/1970 00:00:00] "  " 500 -'),
-    ],
-)
-def test_format_log(mock_time, status_code, environ, out):
-    assert lw._format_log(status_code, environ) == out
 
 
 @pytest.mark.parametrize(
@@ -60,3 +32,13 @@ def test_call():
 
     lo = lw.ConnaisseurLoggingWrapper(test_app, "INFO")
     assert lo.__call__({}, start_func) == "wayne"
+
+
+# don't know how to properly test the logging :(
+# pytest supports a fixture (caplog), but this only captures
+# the input for the log call, but not the resulting string/JSON
+# object. the result is actually printed to stderr, according to
+# pytest, but when reading stderr, it's empty. skipping the test
+# for now.
+# def test_json_log():
+#     pass

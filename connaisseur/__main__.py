@@ -9,7 +9,7 @@ from cheroot.ssl.builtin import BuiltinSSLAdapter
 from cheroot.wsgi import Server
 
 from connaisseur.flask_application import APP
-from connaisseur.logging_wrapper import ConnaisseurLoggingWrapper
+from connaisseur.logging import ConnaisseurLoggingWrapper
 
 if __name__ == "__main__":
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
@@ -18,14 +18,14 @@ if __name__ == "__main__":
         {
             "version": 1,
             "formatters": {
-                "default": {"format": "[%(asctime)s] %(levelname)s: %(message)s"}
+                "json": {"class": "connaisseur.logging.JsonLogFormatter"},
             },
             "handlers": {
                 "wsgi": {
                     "class": "logging.StreamHandler",
                     "stream": "ext://sys.stdout",
-                    "formatter": "default",
-                }
+                    "formatter": "json",
+                },
             },
             "root": {"level": LOG_LEVEL, "handlers": ["wsgi"]},
         }

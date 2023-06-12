@@ -24,12 +24,17 @@ class AdmissionRequest:
 
     @property
     def context(self):
+        # for logging, the logged json object cannot have a
+        # name field on top-level. thus the context is encapsuled
+        # in "admission_review"
         return {
-            "user": self.user,
-            "operation": self.operation,
-            "kind": self.kind,
-            "name": self.wl_object.name,
-            "namespace": self.namespace,
+            "admission_review": {
+                "user": self.user,
+                "operation": self.operation,
+                "kind": self.kind,
+                "name": self.wl_object.name,
+                "namespace": self.namespace,
+            }
         }
 
     @cached_property

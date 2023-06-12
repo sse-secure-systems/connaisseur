@@ -9,7 +9,6 @@ import connaisseur.alert as alert
 import connaisseur.config as co
 import connaisseur.exceptions as exc
 from connaisseur.admission_request import AdmissionRequest
-from connaisseur.image import Image
 from connaisseur.validators.static.static_validator import StaticValidator
 
 from . import conftest as fix
@@ -124,20 +123,6 @@ def test_healthz():
 def test_readyz():
     with pytest.fa.APP.test_request_context():
         assert pytest.fa.readyz() == ("", 200)
-
-
-@pytest.mark.parametrize(
-    "msg, kwargs, out",
-    [
-        (
-            "message",
-            {"kw1": "value1"},
-            {"message": "message", "context": {"kw1": "value1"}},
-        )
-    ],
-)
-def test_create_logging_msg(msg, kwargs, out):
-    assert pytest.fa.__create_logging_msg(msg, **kwargs) == str(out)
 
 
 @pytest.mark.asyncio

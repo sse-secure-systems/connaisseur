@@ -14,6 +14,11 @@ Read on for the list of most interesting changes.
     - :boom: This is a breaking change as we touched quite a bunch of configuration keys to make the configuration API more consistent and more intuitive
     - :robot: We've prepared a [script](../scripts/upgrade_to_version_3.py) that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments :cry: Simply run `python3 scripts/upgrade_to_version_3.py` and your `helm/values.yaml` will be updated (and we'll store a backup of your previous config in `helm/values.yaml.old`)
 
+## Minor changes
+
+- Changed the log format to JSON :sunglasses:
+    - The logging format of Connaisseur is now fully transformed into JSON. It includes a `timestamp` and a `message` field, next to additional fields depending on the context. Logs of the HTTP request do not contain a `message` field.
+
 ## API changes
 
 Here's the list of changes we made to the Helm `values.yaml`:

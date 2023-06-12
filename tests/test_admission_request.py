@@ -58,18 +58,22 @@ def test_validate(adm_req_samples, index, exception):
 
 static_context = [
     {
-        "user": "admin",
-        "operation": "CREATE",
-        "kind": "Deployment",
-        "name": "charlie-deployment",
-        "namespace": "test-connaisseur",
+        "admission_review": {
+            "user": "admin",
+            "operation": "CREATE",
+            "kind": "Deployment",
+            "name": "charlie-deployment",
+            "namespace": "test-connaisseur",
+        }
     },
     {
-        "user": "system:serviceaccount:kube-system:replicaset-controller",
-        "operation": "CREATE",
-        "kind": "Pod",
-        "name": "charlie-deployment-76fbf58b7d-",
-        "namespace": "test-connaisseur",
+        "admission_review": {
+            "user": "system:serviceaccount:kube-system:replicaset-controller",
+            "operation": "CREATE",
+            "kind": "Pod",
+            "name": "charlie-deployment-76fbf58b7d-",
+            "namespace": "test-connaisseur",
+        }
     },
 ]
 

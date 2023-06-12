@@ -1,5 +1,7 @@
 import logging
-import time
+from datetime import datetime as dt
+
+from pythonjsonlogger import jsonlogger
 
 
 class ConnaisseurLoggingWrapper:
@@ -9,7 +11,7 @@ class ConnaisseurLoggingWrapper:
 
     def __init__(self, app, log_level):
         self.logger = logging.getLogger(
-            "connaisseurRequestLogger"
+            "wsgi"
         )  # has no handler and hence propagates logs to root logger
         self.logger.setLevel(log_level)
         self.app = app
@@ -31,24 +33,33 @@ class ConnaisseurLoggingWrapper:
         result = self.app(environ, custom_start_response)
         # the server can "change it's mind" before sending the first response if exc_info is provided
         # hence we need to use the last status code provided
+
+        extra_logs = {
+            "client_ip": environ.get("REMOTE_ADDR", ""),
+            "method": environ.get("REQUEST_METHOD", ""),
+            "path": environ.get("PATH_INFO", ""),
+            "query": environ.get("QUERY_STRING", ""),
+            "protocol": environ.get("SERVER_PROTOCOL", ""),
+            "status_code": status_codes[-1],
+        }
+
         if environ.get("REQUEST_URI") in ["/ready", "/health"]:
-            self.logger.debug(_format_log(status_codes[-1], environ))
+            self.logger.debug("request log", extra=extra_logs)
         else:
-            self.logger.info(_format_log(status_codes[-1], environ))
+            self.logger.info("request log", extra=extra_logs)
         return result
 
 
-def _format_log(status_code, environ):
-    """
-    Recreate the Flask logging format
-    """
-    # See https://www.python.org/dev/peps/pep-0333/#environ-variables
-    # and https://datatracker.ietf.org/doc/html/rfc3875#section-4.1
-    client_ip = environ.get("REMOTE_ADDR", "")
-    timestamp = time.strftime("%d/%b/%Y %H:%M:%S", time.localtime())
-    method = environ.get("REQUEST_METHOD", "")
-    path = environ.get("PATH_INFO", "")
-    query = environ.get("QUERY_STRING", "")
-    query = f"?{query}" if query else ""
-    protocol = environ.get("SERVER_PROTOCOL", "")
-    return f'{client_ip} - - [{timestamp}] "{method} {path}{query} {protocol}" {status_code} -'
+class JsonLogFormatter(jsonlogger.JsonFormatter):
+    def add_fields(self, log_record, record, message_dict):
+        if "timestamp" not in log_record:
+            log_record["timestamp"] = str(dt.utcnow())
+
+        for field in self._required_fields:
+            log_record[field] = record.__dict__.get(field)
+        log_record.update(message_dict)
+
+        if log_record["message"] == "request log":
+            del log_record["message"]
+
+        jsonlogger.merge_record_extra(record, log_record, reserved=self._skip_fields)
