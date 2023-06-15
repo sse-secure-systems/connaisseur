@@ -10,27 +10,23 @@
       
       
       
-        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/features/detection_mode/">
+        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/migrating_to_version_3/">
       
       
-        <link rel="prev" href="../alerting/">
       
-      
-        <link rel="next" href="../namespaced_validation/">
-      
-      <link rel="icon" href="../../assets/favicon.svg">
+      <link rel="icon" href="../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
-        <title>Detection Mode - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>Migrate to Connaisseur version 3.0 - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.26e3688c.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ecc896b0.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -46,7 +42,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -71,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#detection-mode" class="md-skip">
+        <a href="#migrate-to-connaisseur-version-30" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +94,7 @@
             <div class="md-banner__inner md-grid md-typeset">
               
 You're not viewing the docs of the latest version.
-<a href="../../.."><strong>Click here to go to the latest version.</strong></a>
+<a href="../.."><strong>Click here to go to the latest version.</strong></a>
 
             </div>
             <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
@@ -113,9 +109,9 @@ You're not viewing the docs of the latest version.
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -131,7 +127,7 @@ You're not viewing the docs of the latest version.
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Detection Mode
+              Migrate to Connaisseur version 3.0
             
           </span>
         </div>
@@ -212,9 +208,9 @@ You're not viewing the docs of the latest version.
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
     CONNAISSEUR - Verify Container Image Signatures in Kubernetes
@@ -242,7 +238,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         Overview
       </a>
     </li>
@@ -257,7 +253,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/" class="md-nav__link">
+      <a href="../getting_started/" class="md-nav__link">
         Getting Started
       </a>
     </li>
@@ -270,16 +266,14 @@ You're not viewing the docs of the latest version.
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
       
       
       
@@ -288,7 +282,7 @@ You're not viewing the docs of the latest version.
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Usage
@@ -301,7 +295,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../basics/" class="md-nav__link">
+      <a href="../basics/" class="md-nav__link">
         Basics
       </a>
     </li>
@@ -342,7 +336,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../validators/" class="md-nav__link">
+      <a href="../validators/" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -356,7 +350,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../validators/notaryv1/" class="md-nav__link">
+      <a href="../validators/notaryv1/" class="md-nav__link">
         Notary (V1) / DCT
       </a>
     </li>
@@ -370,7 +364,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../validators/sigstore_cosign/" class="md-nav__link">
+      <a href="../validators/sigstore_cosign/" class="md-nav__link">
         sigstore / Cosign
       </a>
     </li>
@@ -384,7 +378,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../validators/notaryv2/" class="md-nav__link">
+      <a href="../validators/notaryv2/" class="md-nav__link">
         Notary V2
       </a>
     </li>
@@ -403,16 +397,14 @@ You're not viewing the docs of the latest version.
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
       
       
       
@@ -421,7 +413,7 @@ You're not viewing the docs of the latest version.
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_3">
           <span class="md-nav__icon md-icon"></span>
           Features
@@ -434,7 +426,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../features/" class="md-nav__link">
         Overview
       </a>
     </li>
@@ -448,7 +440,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../metrics/" class="md-nav__link">
+      <a href="../features/metrics/" class="md-nav__link">
         Metrics
       </a>
     </li>
@@ -462,7 +454,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../alerting/" class="md-nav__link">
+      <a href="../features/alerting/" class="md-nav__link">
         Alerting
       </a>
     </li>
@@ -474,79 +466,11 @@ You're not viewing the docs of the latest version.
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Detection Mode
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../features/detection_mode/" class="md-nav__link">
         Detection Mode
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    Configuration options
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#additional-notes" class="md-nav__link">
-    Additional notes
-  </a>
-  
-    <nav class="md-nav" aria-label="Additional notes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#failure-policy-vs-detection-mode" class="md-nav__link">
-    Failure policy vs. detection mode
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -558,7 +482,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../namespaced_validation/" class="md-nav__link">
+      <a href="../features/namespaced_validation/" class="md-nav__link">
         Namespaced Validation
       </a>
     </li>
@@ -572,7 +496,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../automatic_child_approval/" class="md-nav__link">
+      <a href="../features/automatic_child_approval/" class="md-nav__link">
         Automatic Child Approval
       </a>
     </li>
@@ -586,7 +510,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../automatic_unchanged_approval/" class="md-nav__link">
+      <a href="../features/automatic_unchanged_approval/" class="md-nav__link">
         Automatic Unchanged Approval
       </a>
     </li>
@@ -642,7 +566,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../threat_model/" class="md-nav__link">
+      <a href="../threat_model/" class="md-nav__link">
         Threat Model
       </a>
     </li>
@@ -656,7 +580,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../SECURITY/" class="md-nav__link">
+      <a href="../SECURITY/" class="md-nav__link">
         Security Policy
       </a>
     </li>
@@ -705,7 +629,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../CONTRIBUTING/" class="md-nav__link">
+      <a href="../CONTRIBUTING/" class="md-nav__link">
         Contributing
       </a>
     </li>
@@ -719,7 +643,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../RELEASING/" class="md-nav__link">
+      <a href="../RELEASING/" class="md-nav__link">
         Releasing
       </a>
     </li>
@@ -760,7 +684,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/" class="md-nav__link">
+      <a href="../adr/" class="md-nav__link">
         Architecture Decision Records
       </a>
     </li>
@@ -774,7 +698,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
+      <a href="../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
         ADR 1: Bootstrap Sentinel
       </a>
     </li>
@@ -788,7 +712,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-2_release-management/" class="md-nav__link">
+      <a href="../adr/ADR-2_release-management/" class="md-nav__link">
         ADR 2: Release Management
       </a>
     </li>
@@ -802,7 +726,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-3_multi_notary_config/" class="md-nav__link">
+      <a href="../adr/ADR-3_multi_notary_config/" class="md-nav__link">
         ADR 3: Multiple Notary Configuration
       </a>
     </li>
@@ -816,7 +740,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
+      <a href="../adr/ADR-4_modular/" class="md-nav__link">
         ADR 4: Modular Validation
       </a>
     </li>
@@ -830,7 +754,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
+      <a href="../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
         ADR 5: No More Bootstrap Pods
       </a>
     </li>
@@ -844,7 +768,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-6_dynamic-config/" class="md-nav__link">
+      <a href="../adr/ADR-6_dynamic-config/" class="md-nav__link">
         ADR 6: Dynamic Configuration
       </a>
     </li>
@@ -858,7 +782,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-7_wsgi-server/" class="md-nav__link">
+      <a href="../adr/ADR-7_wsgi-server/" class="md-nav__link">
         ADR 7: WSGI Server
       </a>
     </li>
@@ -936,36 +860,23 @@ You're not viewing the docs of the latest version.
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    Configuration options
+  <a href="#major-changes" class="md-nav__link">
+    Major changes
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#minor-changes" class="md-nav__link">
+    Minor changes
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#additional-notes" class="md-nav__link">
-    Additional notes
+  <a href="#api-changes" class="md-nav__link">
+    API changes
   </a>
-  
-    <nav class="md-nav" aria-label="Additional notes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#failure-policy-vs-detection-mode" class="md-nav__link">
-    Failure policy vs. detection mode
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -984,54 +895,92 @@ You're not viewing the docs of the latest version.
                   
 
 
-<h1 id="detection-mode">Detection Mode<a class="headerlink" href="#detection-mode" title="Permanent link">⚓︎</a></h1>
-<p>A detection mode is available in order to avoid interruptions of a running cluster, to support initial rollout or for testing purposes.
-In detection mode, Connaisseur admits all images to the cluster, but issues a warning<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> and logs an error message for images that do not comply with the policy or in case of other unexpected failures:</p>
-<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>unsigned<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
-&gt;<span class="w"> </span>Warning:<span class="w"> </span>Unable<span class="w"> </span>to<span class="w"> </span>find<span class="w"> </span>signed<span class="w"> </span>digest<span class="w"> </span><span class="k">for</span><span class="w"> </span>image<span class="w"> </span>docker.io/securesystemsengineering/testimage:unsigned.<span class="w"> </span><span class="o">(</span>not<span class="w"> </span>denied<span class="w"> </span>due<span class="w"> </span>to<span class="w"> </span>DETECTION_MODE<span class="o">)</span>
-&gt;<span class="w"> </span>pod/unsigned<span class="w"> </span>created
-</code></pre></div>
-<p>To activate the detection mode, set the <code>detectionMode</code> flag to <code>true</code> in <code>helm/values.yaml</code>.</p>
-<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>detectionMode</code> in <code>helm/values.yaml</code> under <code>application.features</code> supports the following values:</p>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Default</th>
-<th>Required</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>detectionMode</code></td>
-<td><code>false</code></td>
-<td>-</td>
-<td><code>true</code> or <code>false</code>; when detection mode is enabled, Connaisseur will warn but not deny requests with untrusted images.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
-<p>In <code>helm/values.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code>application:
-  features:
-    detectionMode: true
-</code></pre></div>
-<h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
-<h3 id="failure-policy-vs-detection-mode">Failure policy vs. detection mode<a class="headerlink" href="#failure-policy-vs-detection-mode" title="Permanent link">⚓︎</a></h3>
-<p>The detection mode is not to be confused with the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> (<code>kubernetes.webhook.failurePolicy</code> in <code>helm/values.yaml</code>) for the mutating admission controller:
-In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.
-As such, both options are disjoint.
-While in default configuration, requests will be denied if either no valid image signature exists or the Connaisseur service is unavailable, setting <code>failurePolicy</code> to <code>Ignore</code> and <code>detectionMode</code> to <code>true</code> ensures that Connaisseur never blocks a request.</p>
-<div class="footnote">
-<hr />
-<ol>
-<li id="fn:1">
-<p>The feature to send warnings to API clients as shown above was only <a href="https://kubernetes.io/blog/2020/09/03/warnings/#:~:text=In%20Kubernetes%20v1.,response%20body%20in%20any%20way.&amp;text=The%20k8s.io%2Fclient%2Dgo%20behavior%20can%20be%20overridden,%2Dprocess%20or%20per%2Dclient.">introduced in Kubernetes v1.19</a>. However, warnings are only surfaced by <code>kubectl</code> in <code>stderr</code> to improve usability. Except for testing purposes, the respective error messages should either be handled via the cluster's log monitoring solution or by making use of Connaisseur's <a href="../alerting/">alerting feature</a>.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<h1 id="migrate-to-connaisseur-version-30">Migrate to Connaisseur version 3.0<a class="headerlink" href="#migrate-to-connaisseur-version-30" title="Permanent link">⚓︎</a></h1>
+<p>It's been a while since our last major update, but it is time again <img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" />
+Connaisseur version 3.0 is out and brings along many new features, but also breaking changes <img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f4a5.svg" title=":boom:" />
+For those breaking changes, we've set up a <a href="../scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration.
+Read on for the list of most interesting changes.</p>
+<h2 id="major-changes">Major changes<a class="headerlink" href="#major-changes" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li>NEW: Support for Cosign 2.0<ul>
+<li><img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f4a5.svg" title=":boom:" /> This is a breaking change, because Connaisseur now supports transparency log verification by default.
+If all your Cosign signature artifacts are already part of Rekor's default transparency log (or part of your configured Rekor host) or you don't use Cosign, this is not breaking for you.</li>
+</ul>
 </li>
-</ol>
-</div>
+<li><a href="#api-changes">Changes</a> to the Helm <code>values.yaml</code> file<ul>
+<li><img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f4a5.svg" title=":boom:" /> This is a breaking change as we touched quite a bunch of configuration keys to make the configuration API more consistent and more intuitive</li>
+<li><img alt="🤖" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f916.svg" title=":robot:" /> We've prepared a <a href="../scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments <img alt="😢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f622.svg" title=":cry:" /> Simply run <code>python3 scripts/upgrade_to_version_3.py</code> and your <code>helm/values.yaml</code> will be updated (and we'll store a backup of your previous config in <code>helm/values.yaml.old</code>)</li>
+</ul>
+</li>
+</ul>
+<h2 id="minor-changes">Minor changes<a class="headerlink" href="#minor-changes" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li>Changed the log format to JSON <img alt="😎" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f60e.svg" title=":sunglasses:" /><ul>
+<li>The logging format of Connaisseur is now fully transformed into JSON. It includes a <code>timestamp</code> and a <code>message</code> field, next to additional fields depending on the context. Logs of the HTTP request do not contain a <code>message</code> field.</li>
+</ul>
+</li>
+</ul>
+<h2 id="api-changes">API changes<a class="headerlink" href="#api-changes" title="Permanent link">⚓︎</a></h2>
+<p>Here's the list of changes we made to the Helm <code>values.yaml</code>:</p>
+<ul>
+<li>Top-level <code>kubernetes</code> key<ul>
+<li>Previously, there were top-level <code>deployment</code> and <code>service</code> keys, both of which concerned themselves with the respective<sup>*</sup> Kubernetes resources.
+We moved them below a common <code>kubernetes</code> key.</li>
+</ul>
+</li>
+<li>Split <code>kubernetes</code> keys by resource<ul>
+<li>Previously, <code>deployment</code> contained mostly keys that could be applied to Connaisseur's Kubernetes Deployment resource.
+Notable exceptions were the configuration keys <code>failurePolicy</code> and <code>reinvocationPolicy</code>, which pertain to the admission controllers webhook.
+We moved them below a <code>webhook</code> key below <code>kubernetes</code>.</li>
+</ul>
+</li>
+<li>Split image repository and tag<ul>
+<li>Previously, we had a <code>deployment.image</code> key, which held the fully qualified reference of the Connaisseur image. Since not every application logic works with every Helm chart version, we now default to using the tag equal to the chart's <code>appVersion</code> (prepended with <code>v</code>) and explicitly discourage setting (and do not support arbitrary combinations of) <code>kubernetes.deployment.image.tag</code>. However, having this key, and taking into account the top-level <code>kubernetes</code> key, the repository (or more correctly, registry, namespace and repository) are configured as <code>kubernetes.deployment.image.repository</code>.</li>
+</ul>
+</li>
+<li>Top-level <code>application</code> key<ul>
+<li>Previously, we had a host of configuration keys that pertained to the actual configuration of the Connaisseur application, e.g. the log level, which validators were configured and which features are enabled.
+We moved them below a common <code>application</code> key.</li>
+</ul>
+</li>
+<li>Remove <code>debug</code> key<ul>
+<li>The <code>debug</code> key was made redundant by the <code>logLevel</code> key, which could be set to <code>DEBUG</code>.</li>
+</ul>
+</li>
+<li>Consistent naming of variables<ul>
+<li>Previously, due to some configuration keys being directly used within our Python application, we named them according to pythonic snake_case.
+Since the main interaction of users is through the Helm <code>values.yaml</code>, having inconsistent casing there is worse than dealing with a few misnamed keys in our Python stack.
+Accordingly, we migrated all configuration keys_with_snake_case to dromedaryKeys.</li>
+</ul>
+</li>
+<li>Group features in <code>features</code> key<ul>
+<li>Previously, we had top-level configurations for all features changing Connaisseur's verification behavior.
+We grouped them below a common <code>features</code> key below the new <code>application</code> key.</li>
+</ul>
+</li>
+<li>Consistent feature toggles<ul>
+<li>Previously, some features had an <code>enable</code> key, while others simply featured a boolean.
+The idea was based around whether the feature would have further configuration or not.
+However, having configuration for a disabled feature doesn't really make sense, so we changed it to be the following:<ul>
+<li>If a feature has configuration, i.e. <code>&lt;featureName&gt;.&lt;someConfigKey&gt;</code> is set, it is enabled.</li>
+<li>If a feature is set, i.e. <code>&lt;featureName&gt;: true</code>  it is enabled and an error is thrown if it needed configuration but doesn't have any.</li>
+<li>If a feature is false, i.e. <code>&lt;featureName&gt;: false</code>  it is disabled.</li>
+<li>If a feature is not set at all, i.e. <code>features</code> doesn't have a <code>&lt;featureName&gt;</code> key, its default configuration is chosen.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Alerting <code>receivers</code><ul>
+<li>We renamed <code>alerting.templates</code> to <code>alerting.receivers</code> as each receiver has inherently a template and multiple receivers can have the same template.
+As such <code>templates</code> wasn't a fitting name.</li>
+</ul>
+</li>
+<li>Cosign validator <code>host.rekor</code> key<ul>
+<li>Previously, a Cosign validator could have a <code>host</code> key, which determined the remote host of a Rekor transparency log to validate against.
+Since <code>host</code> is both imprecise for this use and may be used in the future for other hosts (e.g. keyless) for the same validator, we moved this value to a subkey <code>host.rekor</code>.</li>
+</ul>
+</li>
+</ul>
 
 
 
@@ -1154,10 +1103,10 @@ While in default configuration, requests will be denied if either no valid image
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../assets/javascripts/bundle.b4d07000.min.js"></script>
       
     
   </body>

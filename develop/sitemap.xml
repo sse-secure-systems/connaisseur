@@ -2,137 +2,142 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/CODE_OF_CONDUCT/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/CONTRIBUTING/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/RELEASING/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/SECURITY/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/basics/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/getting_started/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://sse-secure-systems.github.io/connaisseur/develop/migrating_to_version_3/</loc>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/threat_model/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-1_bootstrap-sentinel/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-2_release-management/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-3_multi_notary_config/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-4_modular/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-5_no-more-bootstrap/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-6_dynamic-config/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/adr/ADR-7_wsgi-server/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/alerting/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/automatic_child_approval/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/automatic_unchanged_approval/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/detection_mode/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/metrics/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/features/namespaced_validation/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/validators/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/validators/notaryv1/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/validators/notaryv2/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://sse-secure-systems.github.io/connaisseur/develop/validators/sigstore_cosign/</loc>
-         <lastmod>2023-06-09</lastmod>
+         <lastmod>2023-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

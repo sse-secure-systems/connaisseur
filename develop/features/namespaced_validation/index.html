@@ -962,7 +962,7 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
 # or
 kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhook=validate
 </code></pre></div>
-<p>Configure namespaced validation via the <code>namespacedValidation</code> in <code>helm/values.yaml</code>.</p>
+<p>Configure namespaced validation via the <code>namespacedValidation</code> in <code>helm/values.yaml</code> under <code>application.features</code>.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
 <p><code>namespacedValidation</code> in <code>helm/values.yaml</code> supports the following keys:</p>
 <table>
@@ -976,24 +976,20 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
 </thead>
 <tbody>
 <tr>
-<td><code>enabled</code></td>
-<td>false</td>
-<td></td>
-<td><code>true</code> or <code>false</code>; enable namespaced validation otherwise images in all namespaces will be validated.</td>
-</tr>
-<tr>
 <td><code>mode</code></td>
-<td>ignore</td>
-<td></td>
+<td>-</td>
+<td>-</td>
 <td><code>ignore</code> or <code>validate</code>; configure mode of exclusion to either ignore all namespaces with label <code>securesystemsengineering.connaisseur/webhook</code> set to <code>ignore</code> or only validate namespaces with the label set to <code>validate</code>.</td>
 </tr>
 </tbody>
 </table>
+<p>If the <code>namespacedValidation</code> key is not set, all namespaces are validated.</p>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
 <p>In <code>helm/values.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code>namespacedValidation:
-  enabled: true
-  mode: validate
+<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">features</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">namespacedValidation</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">validate</span>
 </code></pre></div>
 <p>Labelling target namespace to be validated:</p>
 <div class="highlight"><pre><span></span><code>kubectl namespaces validateme securesystemsengineering.connaisseur/webhook=validate

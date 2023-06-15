@@ -1071,7 +1071,7 @@ Let's first clone the repository:</p>
 </code></pre></div>
 <p>Connaisseur is configured via <code>helm/values.yaml</code>, so we will start there.
 We need to set Connaisseur to use our previously created public key for validation.
-To do so, go to the <code>.validators</code> and find the <code>default</code> validator.
+To do so, go to the <code>.application.validators</code> and find the <code>default</code> validator.
 We need to uncomment the trust root with name <code>default</code> and add our previously created public key.
 The result should look similar to this:</p>
 <div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Docker Content Trust</label><div class="tabbed-content">
@@ -1079,7 +1079,7 @@ The result should look similar to this:</p>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
 <span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"> </span><span class="c1"># configure the notary server to be used</span>
-<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">trustRoots</span><span class="p">:</span>
 <span class="w">  </span><span class="c1"># the `default` key is used if no key is specified in image policy</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># enter your key below</span>
@@ -1093,7 +1093,7 @@ The result should look similar to this:</p>
 <span class="w">  </span><span class="c1">#  -----END CERTIFICATE-----</span>
 <span class="w">  </span><span class="c1">#auth:  # credentials in case the trust data requires authentication</span>
 <span class="w">  </span><span class="c1">#  # either (preferred solution)</span>
-<span class="w">  </span><span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span>
+<span class="w">  </span><span class="c1">#  secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span>
 <span class="w">  </span><span class="c1">#  # or (only for notaryv1 validator)</span>
 <span class="w">  </span><span class="c1">#  username: myuser</span>
 <span class="w">  </span><span class="c1">#  password: mypass</span>
@@ -1104,7 +1104,7 @@ The result should look similar to this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
-<span class="w">  </span><span class="nt">trust_roots</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">trustRoots</span><span class="p">:</span>
 <span class="w">  </span><span class="c1"># the `default` key is used if no key is specified in image policy</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w">  </span><span class="c1"># enter your key below</span>
@@ -1118,7 +1118,7 @@ The result should look similar to this:</p>
 <span class="w">  </span><span class="c1">#  -----END CERTIFICATE-----</span>
 <span class="w">  </span><span class="c1">#auth:  # credentials in case the trust data requires authentication</span>
 <span class="w">  </span><span class="c1">#  # either (preferred solution)</span>
-<span class="w">  </span><span class="c1">#  secret_name: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span>
+<span class="w">  </span><span class="c1">#  secretName: mysecret  # reference a k8s secret in the form required by the validator type (check the docs)</span>
 <span class="w">  </span><span class="c1">#  # or (only for notaryv1 validator)</span>
 <span class="w">  </span><span class="c1">#  username: myuser</span>
 <span class="w">  </span><span class="c1">#  password: mypass</span>
@@ -1126,8 +1126,8 @@ The result should look similar to this:</p>
 </div>
 </div>
 <p>We have now configured the validator <code>default</code> with trust root <code>default</code>.
-This will automatically be used if no validator and trust root is specified in the image policy (<code>.policy</code>).
-Per default, Connaisseur's image policy under <code>.policy</code> in <code>helm/values.yaml</code> comes with a pattern <code>"*:*"</code> that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
+This will automatically be used if no validator and trust root is specified in the image policy (<code>.application.policy</code>).
+Per default, Connaisseur's image policy under <code>.application.policy</code> in <code>helm/values.yaml</code> comes with a pattern <code>"*:*"</code> that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
 Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the <a href="../basics/">basics</a> to leverage the full potential of Connaisseur.</p>
 <h2 id="deploy-connaisseur">Deploy Connaisseur<a class="headerlink" href="#deploy-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>So let's deploy Connaisseur to the cluster:</p>
