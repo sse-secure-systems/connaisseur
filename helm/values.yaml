@@ -78,6 +78,11 @@ kubernetes:
     type: ClusterIP
     port: 443
 
+  # configure Connaisseur serviceaccount (so you can do IRSA, for example)
+  serviceaccount:
+    annotations:
+      # eks.amazonaws.com/role-arn: arn:aws:iam::XXX:role/myrole
+
   webhook:
     failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
     # Use 'reinvocationPolicy: IfNeeded' to be called again as part of the admission evaluation if the object
