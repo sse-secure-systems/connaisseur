@@ -44,14 +44,14 @@ kubernetes:
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      runAsUser: 10001  # remove when using openshift or OKD 4
-      runAsGroup: 20001  # remove when using openshift or OKD 4
-      seccompProfile:  # remove when using Kubernetes prior v1.19, openshift or OKD 4
-        type: RuntimeDefault  # remove when using Kubernetes prior v1.19, openshift or OKD 4
+      runAsUser: 10001 # remove when using openshift or OKD 4
+      runAsGroup: 20001 # remove when using openshift or OKD 4
+      seccompProfile: # remove when using Kubernetes prior v1.19, openshift or OKD 4
+        type: RuntimeDefault # remove when using Kubernetes prior v1.19, openshift or OKD 4
     # PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25
     podSecurityPolicy:
       enabled: false
-      name: ["connaisseur-psp"]  # list of PSPs to use, "connaisseur-psp" is the project-provided default
+      name: ["connaisseur-psp"] # list of PSPs to use, "connaisseur-psp" is the project-provided default
     envs: {} # dict of additional environment variables, which will be stored as a secret and injected into the Connaisseur pods
     # Extra config
     extraContainers: []
@@ -78,8 +78,13 @@ kubernetes:
     type: ClusterIP
     port: 443
 
+  # configure Connaisseur serviceaccount (so you can do IRSA, for example)
+  # serviceaccount:
+  #   annotations:
+  #     eks.amazonaws.com/role-arn: arn:aws:iam::XXX:role/myrole
+
   webhook:
-    failurePolicy: Fail  # use 'Ignore' to fail open if Connaisseur becomes unavailable
+    failurePolicy: Fail # use 'Ignore' to fail open if Connaisseur becomes unavailable
     # Use 'reinvocationPolicy: IfNeeded' to be called again as part of the admission evaluation if the object
     # being admitted is modified by other admission plugins after the initial webhook call
     # Note that if Connaisseur is invoked a second time, the policy to be applied might change in between.
@@ -107,7 +112,7 @@ application:
       approve: false
     # the `default` validator is used if no validator is specified in image policy
     - name: default
-      type: notaryv1  # or other supported validator (e.g. "cosign")
+      type: notaryv1 # or other supported validator (e.g. "cosign")
       host: notary.docker.io # configure the notary server for notaryv1 or rekor url for cosign
       trustRoots:
       # # the `default` key is used if no key is specified in image policy
@@ -193,7 +198,6 @@ application:
     # does not change the image references used by the resource. check the docs for more
     # information.
     automaticUnchangedApproval: false
-
 # alerting is implemented in form of simple POST requests with JSON payloads
 # you can use and/or adapt the predefined Slack/OpsGenie/Keybase templates and the examples below
 # to channel alert notifications to Slack/OpsGenie/Keybase or create a custom template for a customized alert
