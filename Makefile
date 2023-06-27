@@ -21,7 +21,7 @@ install:
 	helm install connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE)
 
 dev-install:
-	helm install --set kubernetes.deployment.replicasCount=1,kubernetes.deployment.imagePullPolicy=Never connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE)
+	helm install --set kubernetes.deployment.replicasCount=1,kubernetes.deployment.imagePullPolicy=Never,application.logLevel=DEBUG connaisseur helm --atomic --create-namespace --namespace $(NAMESPACE)
 
 uninstall:
 	helm uninstall connaisseur -n $(NAMESPACE)
