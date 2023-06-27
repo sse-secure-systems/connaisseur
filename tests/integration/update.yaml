@@ -67,6 +67,20 @@ application:
         MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqxgd/RqCdPnafQmlmX71eICGRBqu
         USHEjAv3FZCROHLYts11xR6Peu8ZEvMXOR46L7+z84DRFK6gnTInbIGFmg==
         -----END PUBLIC KEY-----
+  - name: rsa
+    type: cosign
+    trustRoots:
+     - name: default
+       key: |
+        -----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxmEXG8savZ/Q8IJB8dBT
+        YCKV/ECwkj8zBInilrWSipsKiBwGTugAgKHj7Nvo6pg91DTESpfnryL+UUwAyJ1C
+        irdUThCZa90vC9SlwYUhC/ftz/dwU8KaiVcWJHCbj4VLLCD7xVKPh65j4x65D8bL
+        ohbrpZFfboXgG/gJHYhU18q0nmGzuQyGWSxAYcsh8qVcaNa68TvZLqecq/AYvspI
+        qNIGWekU1BYXoUVt6kBx/fwEKtxESRbgsT1R8ha+q1HTGLMtj71LfWfX9d1bbNeq
+        2+pXRO8Ut8km2lGEekRNXYb2C+sOX7uA1MSv+gm2JCoVzep69fGTHbqOwf4tm2Qh
+        AwIDAQAB
+        -----END PUBLIC KEY-----
   policy:
   - pattern: "*:*"
     validator: dockerhub-basics
@@ -116,6 +130,10 @@ application:
     with:
       trustRoot: securesystemsengineering-official
       delegations: ["belitzphilipp", "starkteetje"]
+  - pattern: "docker.io/securesystemsengineering/testimage:rsa-*"
+    validator: rsa
+    with:
+      verifyInTransparencyLog: false
   features:
     detectionMode: false
     automaticChildApproval: true

@@ -89,6 +89,13 @@ test_cases:
     txt: Testing signed cosign image with tag and digest...
     type: deploy
     ref: securesystemsengineering/testimage:co-signed@sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7
+  - id: crsa
+    txt: Testing signed cosign image, signed with RSA key
+    type: deploy
+    ref: securesystemsengineering/testimage:rsa-co-signed
+    namespace: default
+    expected_msg: pod/pod-crsa-${RAND} created
+    expected_result: null
   multi-cosigned:
   - id: mc-u
     txt: Testing multi-cosigned image `threshold` => undefined, not reached...

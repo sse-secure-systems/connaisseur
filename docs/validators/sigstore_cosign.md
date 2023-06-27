@@ -92,7 +92,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `type` | - | :heavy_check_mark: | `cosign`; the validator type must be set to `cosign`. |
 | `trustRoots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
-| `trustRoots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public key from `cosign.pub` file or [KMS URI](https://github.com/sigstore/cosign/blob/main/KMS.md). See additional notes [below](#kms-support). |
+| `trustRoots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA/RSA public key from `cosign.pub` file or [KMS URI](https://github.com/sigstore/cosign/blob/main/KMS.md). See additional notes [below](#kms-support). |
 | `host.rekor` | `rekor.sigstore.dev` | - | Rekor URL to use for validation against the transparency log (default sigstore instance is `rekor.sigstore.dev`). Setting `host` enforces successful transparency log check to pass verification. See additional notes [below](#transparency-log-verification). |
 | `auth.` | - | - | Authentication credentials for registries with restricted access (e.g. private registries or ratelimiting). See additional notes [below](#authentication). |
 | `auth.secretName` | - | - | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#dockerconfigjson). |
