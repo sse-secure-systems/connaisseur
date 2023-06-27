@@ -76,10 +76,16 @@ class ECDSAKey(TrustRootInterface):
     def __str__(self) -> str:
         return base64.b64encode(self.value.to_der()).decode("utf-8")
 
+    def pem(self):
+        return self.value.to_pem()
+
 
 class RSAKey(TrustRootInterface):
     def __str__(self) -> str:
         return base64.b64encode(self.value.save_pkcs1("DER")).decode("utf-8")
+
+    def pem(self):
+        return self.value.save_pkcs1("PEM")
 
 
 class KMSKey(TrustRootInterface):

@@ -16,7 +16,7 @@ from connaisseur.exceptions import (
     WrongKeyError,
 )
 from connaisseur.image import Image
-from connaisseur.trust_root import ECDSAKey, KMSKey, TrustRoot
+from connaisseur.trust_root import ECDSAKey, KMSKey, RSAKey, TrustRoot
 from connaisseur.util import safe_path_func  # nosec
 from connaisseur.validators.interface import ValidatorInterface
 
@@ -213,7 +213,11 @@ class CosignValidator(ValidatorInterface):
                 image=str(image),
                 trust_root=values["name"],
             )
-        elif "Error: no matching signatures:\n\nmain.go:" in stderr:
+        elif (
+            "Error: no matching signatures:\n\nmain.go:" in stderr
+            or "Error: no matching signatures:\ncrypto/rsa: verification error"
+            in stderr
+        ):
             msg = 'No trust data for image "{image}".'
             raise NotFoundException(
                 message=msg,
@@ -269,13 +273,13 @@ class CosignValidator(ValidatorInterface):
         # reminder when implementing Keyless validation:
         # ["--cert-email", self.value, b""]
 
-        if isinstance(trust_root, ECDSAKey):
+        if isinstance(trust_root, (ECDSAKey, RSAKey)):
             return await self.__invoke_cosign(
                 image,
                 {
                     "option_kword": "--key",
                     "inline_tr": "/dev/stdin",
-                    "trust_root": trust_root.value.to_pem(),
+                    "trust_root": trust_root.pem(),
                 },
                 verify_tlog,
             )

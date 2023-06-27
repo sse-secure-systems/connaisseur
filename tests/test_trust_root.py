@@ -25,6 +25,10 @@ sample_mail = "mail@example.com"
 
 sample_ecdsa2 = "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEi2WD/E/UXF4+yoE5e4cjpJMNgQw\n8PAVALRX+8f8I8B+XneAtnOHDTI8L6wBeFRTzl6G4OmgDyCRYTb5MV3hog==\n-----END PUBLIC KEY-----"
 
+ecdsa_bytes = b"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f\nQQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==\n-----END PUBLIC KEY-----\n"
+# Due to the sample being PKCS#8 (general public key crypto) encoded and the library exporting PKCS#1 (RSA only) encoded keys
+rsa_bytes = b"-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAs5pC7R5OTSTUMJHUniPkrLfmGDAUxZtRlvIE+pGPCD6cUXH22adv\nkK87xwpupjxdVYuKTFnWHUIyFJwjI3vusievezcAr0E/xxyeo49tWog9kFoooK3q\nmXjpETC8OpvNROZ0K3qhlm9PZkGo3gSJ/B4rMU/d+jkCI8eiUPpdVQOczdBoD5nz\nQAF1mfmffWGsbKY+d8/l77Vset0GXExRzUtnglMhREyHNpDeQUg5OEn+kuGLlTzI\nxpIF+MlbzP3+xmNEzH2iafr0ae2g5kX2880priXpxG8GXW2ybZmPvchclnvFu4Zf\nZcM10FpgYJFvR/9iofFeAka9u5z6VZccmQIDAQAB\n-----END RSA PUBLIC KEY-----\n"
+
 
 def cb(image, key_args):
     return key_args[:2]
@@ -82,3 +86,17 @@ def test_keys(data, class_, exception):
 def test_str(key, out):
     k = trust_root.TrustRoot(key)
     assert str(k) == out
+
+
+@pytest.mark.parametrize(
+    "key, out, exception",
+    [
+        (sample_ecdsa, ecdsa_bytes, fix.no_exc()),
+        (sample_rsa, rsa_bytes, fix.no_exc()),
+        (sample_mail, b"", pytest.raises(AttributeError)),
+    ],
+)
+def test_pem(key, out, exception):
+    k = trust_root.TrustRoot(key)
+    with exception:
+        assert k.pem() == out
