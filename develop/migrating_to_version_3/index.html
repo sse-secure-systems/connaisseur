@@ -963,9 +963,11 @@ We grouped them below a common <code>features</code> key below the new <code>app
 The idea was based around whether the feature would have further configuration or not.
 However, having configuration for a disabled feature doesn't really make sense, so we changed it to be the following:<ul>
 <li>If a feature has configuration, i.e. <code>&lt;featureName&gt;.&lt;someConfigKey&gt;</code> is set, it is enabled.</li>
-<li>If a feature is set, i.e. <code>&lt;featureName&gt;: true</code>  it is enabled and an error is thrown if it needed configuration but doesn't have any.</li>
-<li>If a feature is false, i.e. <code>&lt;featureName&gt;: false</code>  it is disabled.</li>
+<li>If a feature is set, i.e. <code>&lt;featureName&gt;: true</code> it is enabled and an error is thrown if it needs configuration but doesn't have any.</li>
+<li>If a feature is false, i.e. <code>&lt;featureName&gt;: false</code> it is disabled.</li>
 <li>If a feature is not set at all, i.e. <code>features</code> doesn't have a <code>&lt;featureName&gt;</code> key, its default configuration is chosen.</li>
+<li>If a feature has no configuration, i.e. <code>&lt;featureName&gt;: true</code>, the only allowed values are <code>true</code> or <code>false</code>.
+Otherwise an error is thrown at time of deployment.</li>
 </ul>
 </li>
 </ul>
