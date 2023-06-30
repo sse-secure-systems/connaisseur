@@ -28,7 +28,7 @@ uninstall:
 	kubectl delete ns $(NAMESPACE)
 
 upgrade:
-	helm upgrade connaisseur helm  -n $(NAMESPACE) --wait
+	helm upgrade connaisseur helm -n $(NAMESPACE) --wait
 
 annihilate:
 	kubectl delete all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,secrets,serviceaccounts,crds -lapp.kubernetes.io/instance=connaisseur -n $(NAMESPACE)

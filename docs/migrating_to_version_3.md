@@ -5,6 +5,14 @@ Connaisseur version 3.0 is out and brings along many new features, but also brea
 For those breaking changes, we've set up a [script](https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py) that migrates your existing Connaisseur configuration.
 Read on for the list of most interesting changes.
 
+## How to migrate
+
+0. Read the [Major changes](#major-changes) and [API changes](#api-changes) sections to get an overview of what's new
+1. Run `python3 scripts/upgrade_to_version_3.py`
+2. Check the diff of your `helm/values.yaml` and make sure everything is as expected
+3. Run `make upgrade` or alternatively `helm upgrade connaisseur helm -n <your-namespace> --wait`
+4. Enjoy the new version :tada: :crossed_fingers:
+
 ## Major changes
 
 - NEW: Support for Cosign 2.0
