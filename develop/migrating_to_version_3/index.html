@@ -861,6 +861,13 @@ You're not viewing the docs of the latest version.
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#how-to-migrate" class="md-nav__link">
+    How to migrate
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#major-changes" class="md-nav__link">
     Major changes
   </a>
@@ -901,6 +908,14 @@ You're not viewing the docs of the latest version.
 Connaisseur version 3.0 is out and brings along many new features, but also breaking changes <img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f4a5.svg" title=":boom:" />
 For those breaking changes, we've set up a <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration.
 Read on for the list of most interesting changes.</p>
+<h2 id="how-to-migrate">How to migrate<a class="headerlink" href="#how-to-migrate" title="Permanent link">⚓︎</a></h2>
+<ol>
+<li>Read the <a href="#major-changes">Major changes</a> and <a href="#api-changes">API changes</a> sections to get an overview of what's new</li>
+<li>Run <code>python3 scripts/upgrade_to_version_3.py</code></li>
+<li>Check the diff of your <code>helm/values.yaml</code> and make sure everything is as expected</li>
+<li>Run <code>make upgrade</code> or alternatively <code>helm upgrade connaisseur helm -n &lt;your-namespace&gt; --wait</code></li>
+<li>Enjoy the new version <img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> :crossed_fingers:</li>
+</ol>
 <h2 id="major-changes">Major changes<a class="headerlink" href="#major-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li>NEW: Support for Cosign 2.0<ul>
