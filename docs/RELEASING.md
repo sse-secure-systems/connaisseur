@@ -23,8 +23,8 @@ Before starting the release, make sure everything is ready and in order:
 
 ## Add new tag
 
-Before adding the new tag, make sure the Connaisseur version is updated in the `helm/values.yaml` and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version.
-Then add the tag (on `develop` branch) with `git tag v<new-conny-version>` (e.g. `git tag v1.4.6`).
+Before adding the new tag, make sure the Connaisseur version is updated in the `helm/Chart.yaml` and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version.
+Then add the tag (on `develop` branch) with `git tag v<new-connaisseur-version>` (e.g. `git tag v1.4.6`).
 
 ## Create changelog
 
