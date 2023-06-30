@@ -81,7 +81,7 @@
   <!-- Add your announcement here, including arbitrary HTML -->
    <header style="font-size:17px">
         <!-- <center>&#11088; <strong> If you like Connaisseur, give it a star on <a href="https://github.com/sse-secure-systems/connaisseur">GitHub</a> or share your <a href="https://github.com/sse-secure-systems/connaisseur/discussions">feedback</a>!</strong> &#11088;</center> -->
-        <center>&#128680; <strong> Connaisseur 3.0 was released! Read about all <a ref="../../migrating_to_version_3">important changes</a>! </strong> &#128680;</center>
+        <center>&#128680; <strong> Connaisseur 3.0 was released! Read about all <a href="../../latest/migrating_to_version_3">important changes</a>! </strong> &#128680;</center>
 
           </div>
           
@@ -899,7 +899,7 @@ You're not viewing the docs of the latest version.
 <h1 id="migrate-to-connaisseur-version-30">Migrate to Connaisseur version 3.0<a class="headerlink" href="#migrate-to-connaisseur-version-30" title="Permanent link">⚓︎</a></h1>
 <p>It's been a while since our last major update, but it is time again <img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" />
 Connaisseur version 3.0 is out and brings along many new features, but also breaking changes <img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f4a5.svg" title=":boom:" />
-For those breaking changes, we've set up a <a href="../scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration.
+For those breaking changes, we've set up a <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration.
 Read on for the list of most interesting changes.</p>
 <h2 id="major-changes">Major changes<a class="headerlink" href="#major-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
@@ -910,7 +910,7 @@ If all your Cosign signature artifacts are already part of Rekor's default trans
 </li>
 <li><a href="#api-changes">Changes</a> to the Helm <code>values.yaml</code> file<ul>
 <li><img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f4a5.svg" title=":boom:" /> This is a breaking change as we touched quite a bunch of configuration keys to make the configuration API more consistent and more intuitive</li>
-<li><img alt="🤖" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f916.svg" title=":robot:" /> We've prepared a <a href="../scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments <img alt="😢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f622.svg" title=":cry:" /> Simply run <code>python3 scripts/upgrade_to_version_3.py</code> and your <code>helm/values.yaml</code> will be updated (and we'll store a backup of your previous config in <code>helm/values.yaml.old</code>)</li>
+<li><img alt="🤖" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f916.svg" title=":robot:" /> We've prepared a <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments <img alt="😢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f622.svg" title=":cry:" /> Simply run <code>python3 scripts/upgrade_to_version_3.py</code> and your <code>helm/values.yaml</code> will be updated (and we'll store a backup of your previous config in <code>helm/values.yaml.old</code>)</li>
 </ul>
 </li>
 </ul>
