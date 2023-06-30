@@ -2,7 +2,7 @@
 
 It's been a while since our last major update, but it is time again :tada:
 Connaisseur version 3.0 is out and brings along many new features, but also breaking changes :boom:
-For those breaking changes, we've set up a [script](../scripts/upgrade_to_version_3.py) that migrates your existing Connaisseur configuration.
+For those breaking changes, we've set up a [script](https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py) that migrates your existing Connaisseur configuration.
 Read on for the list of most interesting changes.
 
 ## Major changes
@@ -12,7 +12,7 @@ Read on for the list of most interesting changes.
     If all your Cosign signature artifacts are already part of Rekor's default transparency log (or part of your configured Rekor host) or you don't use Cosign, this is not breaking for you.
 - [Changes](#api-changes) to the Helm `values.yaml` file
     - :boom: This is a breaking change as we touched quite a bunch of configuration keys to make the configuration API more consistent and more intuitive
-    - :robot: We've prepared a [script](../scripts/upgrade_to_version_3.py) that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments :cry: Simply run `python3 scripts/upgrade_to_version_3.py` and your `helm/values.yaml` will be updated (and we'll store a backup of your previous config in `helm/values.yaml.old`)
+    - :robot: We've prepared a [script](https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py) that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments :cry: Simply run `python3 scripts/upgrade_to_version_3.py` and your `helm/values.yaml` will be updated (and we'll store a backup of your previous config in `helm/values.yaml.old`)
 
 ## Minor changes
 
