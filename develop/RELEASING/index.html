@@ -1049,8 +1049,8 @@ You're not viewing the docs of the latest version.
 <li>Consider making a <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions <em>announcement</em></a>.</li>
 </ul>
 <h2 id="add-new-tag">Add new tag<a class="headerlink" href="#add-new-tag" title="Permanent link">⚓︎</a></h2>
-<p>Before adding the new tag, make sure the Connaisseur version is updated in the <code>helm/values.yaml</code> and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version.
-Then add the tag (on <code>develop</code> branch) with <code>git tag v&lt;new-conny-version&gt;</code> (e.g. <code>git tag v1.4.6</code>).</p>
+<p>Before adding the new tag, make sure the Connaisseur version is updated in the <code>helm/Chart.yaml</code> and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version.
+Then add the tag (on <code>develop</code> branch) with <code>git tag v&lt;new-connaisseur-version&gt;</code> (e.g. <code>git tag v1.4.6</code>).</p>
 <h2 id="create-changelog">Create changelog<a class="headerlink" href="#create-changelog" title="Permanent link">⚓︎</a></h2>
 <p>A changelog text, including all new commits from one to another version, can be automatically generated using the <code>scrips/changelogger.py</code> script.
 Run <code>python scripts/changelogger.py &gt; CHANGELOG.md</code> to get the changelog between the two latest tags.
