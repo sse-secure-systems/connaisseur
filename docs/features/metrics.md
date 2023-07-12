@@ -70,8 +70,8 @@ http_request_created{method="POST",status="200"} 1.6436681947581613e+09
 # TYPE http_request_exceptions_total counter
 # HELP mutate_requests_total Total number of mutate requests
 # TYPE mutate_requests_total counter
-mutate_requests_total{allowed="False",status_code="403"} 4.0
-mutate_requests_total{allowed="True",status_code="202"} 5.0
+mutate_requests_total{allowed="False",status_code="403",warnings="False"} 4.0
+mutate_requests_total{allowed="True",status_code="202",warnings="False"} 5.0
 # HELP mutate_requests_created Total number of mutate requests
 # TYPE mutate_requests_created gauge
 mutate_requests_created{allowed="False",status_code="403"} 1.643760946491879e+09
