@@ -56,6 +56,7 @@ def handle_alert_config_error(err):
     labels={
         "allowed": lambda r: metrics_label(r, "allowed"),
         "status_code": lambda r: metrics_label(r, "status_code"),
+        "warnings": lambda r: metrics_label(r, "warnings"),
     },
 )
 def mutate():
@@ -73,6 +74,8 @@ def metrics_label(response, label):
             return json_response["response"]["allowed"]
         elif label == "status_code":
             return json_response["response"]["status"]["code"]
+        elif label == "warnings":
+            return "warnings" in json_response["response"]
     return json_response
 
 
