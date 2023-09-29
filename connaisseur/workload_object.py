@@ -22,11 +22,13 @@ class WorkloadObject:
     def __new__(
         cls, request_object: dict, namespace: str
     ):  # pylint: disable=unused-argument
-        if request_object["kind"] == "Pod":
-            return super(WorkloadObject, cls).__new__(Pod)
-        elif request_object["kind"] == "CronJob":
-            return super(WorkloadObject, cls).__new__(CronJob)
-        return super(WorkloadObject, cls).__new__(WorkloadObject)
+        workload_object_class = {
+            "CronJob": CronJob,
+            "Deployment": WorkloadObjectWithReplicas,
+            "Pod": Pod,
+            "ReplicaSet": WorkloadObjectWithReplicas,
+        }.get(request_object["kind"], WorkloadObject)
+        return super(WorkloadObject, cls).__new__(workload_object_class)
 
     def __init__(self, request_object: dict, namespace: str):
         self.kind = request_object["kind"]
@@ -125,3 +127,9 @@ class CronJob(WorkloadObject):
     @property
     def spec(self):
         return self._spec["jobTemplate"]["spec"]["template"]["spec"]
+
+
+class WorkloadObjectWithReplicas(WorkloadObject):
+    @property
+    def replicas(self):
+        return self._spec.get("replicas")

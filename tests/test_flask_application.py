@@ -17,7 +17,11 @@ from . import conftest as fix
 @pytest.fixture(autouse=True)
 def m_config(monkeypatch, sample_nv1):
     def mock_init(self):
-        self.validators = [sample_nv1, StaticValidator("allow", True)]
+        self.validators = [
+            sample_nv1,
+            StaticValidator("allow", True),
+            StaticValidator("deny", False),
+        ]
         self.policy = [
             {
                 "pattern": "*:*",
@@ -56,6 +60,10 @@ def m_config(monkeypatch, sample_nv1):
             {
                 "pattern": "docker.io/securesystemsengineering/alice-image",
                 "validator": "dockerhub",
+            },
+            {
+                "pattern": "docker.io/test/deny-image:*",
+                "validator": "deny",
             },
         ]
 
@@ -134,10 +142,11 @@ def test_readyz():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "index, out, exception",
+    "index, update_approval, out, exception",
     [
         (
             0,
+            True,
             {
                 "apiVersion": "admission.k8s.io/v1",
                 "kind": "AdmissionReview",
@@ -160,6 +169,7 @@ def test_readyz():
         ),
         (
             1,
+            True,
             {
                 "apiVersion": "admission.k8s.io/v1",
                 "kind": "AdmissionReview",
@@ -171,9 +181,10 @@ def test_readyz():
             },
             fix.no_exc(),
         ),
-        (5, {}, pytest.raises(exc.BaseConnaisseurException)),
+        (5, True, {}, pytest.raises(exc.BaseConnaisseurException)),
         (
             6,
+            True,
             {
                 "apiVersion": "admission.k8s.io/v1",
                 "kind": "AdmissionReview",
@@ -187,11 +198,52 @@ def test_readyz():
         ),
         (
             8,
+            True,
             {
                 "apiVersion": "admission.k8s.io/v1",
                 "kind": "AdmissionReview",
                 "response": {
                     "uid": "6418f614-b7f1-4c57-94bf-14fc30b2d791",
+                    "allowed": True,
+                    "status": {"code": 202},
+                },
+            },
+            fix.no_exc(),
+        ),
+        (
+            9,
+            False,
+            {
+                "apiVersion": "admission.k8s.io/v1",
+                "kind": "AdmissionReview",
+                "response": {
+                    "uid": "8c6c8be6-479d-41f4-82ba-158998cdcbf8",
+                    "allowed": True,
+                    "status": {"code": 202},
+                },
+            },
+            fix.no_exc(),
+        ),
+        (
+            10,
+            True,
+            {},
+            pytest.raises(exc.ValidationError),
+        ),
+        (
+            10,
+            False,
+            {},
+            pytest.raises(exc.ValidationError),
+        ),
+        (
+            11,
+            True,
+            {
+                "apiVersion": "admission.k8s.io/v1",
+                "kind": "AdmissionReview",
+                "response": {
+                    "uid": "8c6c8be6-479d-41f4-82ba-158998cdcbf8",
                     "allowed": True,
                     "status": {"code": 202},
                 },
@@ -207,13 +259,13 @@ async def test_admit(
     m_request,
     m_expiry,
     m_trust_data,
+    update_approval,
     out,
     exception,
 ):
     session = aiohttp.ClientSession()
+    monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", str(update_approval))
     with exception:
-        if index == 8:
-            monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", "true")
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
             response = await pytest.fa.__admit(

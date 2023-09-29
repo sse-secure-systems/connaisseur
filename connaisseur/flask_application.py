@@ -173,18 +173,28 @@ async def __validate_image(
     # if automatic_unchanged_approval is enabled, admit resource updates
     # if they do not alter the resource's image reference(s)
     # https://github.com/sse-secure-systems/connaisseur/issues/820
+    # exception: if a resource increases its replicas from 0 to >0, it is
+    # not automatically approved, even if the image reference is unchanged.
+    # this is because the resource may have previously been set to 0 and
+    # also changed its image reference, which would have been skipped (see
+    # below). if the replicas are now increased, the image reference would
+    # not be checked, which is not desired.
     if (
         feature_flag_on(const.AUTOMATIC_UNCHANGED_APPROVAL)
         and admission_request.operation.upper() == "UPDATE"
+        and not (
+            admission_request.wl_object.kind in ["ReplicaSet", "Deployment"]
+            and admission_request.wl_object.replicas > 0
+            and admission_request.old_wl_object.replicas == 0
+        )
+        and image in admission_request.old_wl_object.containers.values()
     ):
-        old_images = admission_request.old_wl_object.containers.values()
-        if image in old_images:
-            logging.info(
-                'automatic approval for unchanged image "%s".',
-                original_image,
-                extra=logging_context,
-            )
-            return
+        logging.info(
+            'automatic approval for unchanged image "%s".',
+            original_image,
+            extra=logging_context,
+        )
+        return
 
     # child resources have mutated image names, as their parents got mutated
     # before their creation. this may result in mismatch of rules or duplicate
@@ -196,6 +206,22 @@ async def __validate_image(
     ):
         logging.info(
             'automatic child approval for "%s".', original_image, extra=logging_context
+        )
+        return
+
+    # if replicas are set to 0, skip verification, since no pods will be created.
+    # otherwise we might run into problems with replicasets having an image
+    # without signature. then reducing the replicas to 0 will never be allowed
+    # by Connaisseur.
+    if (
+        admission_request.operation.upper() == "UPDATE"
+        and admission_request.kind in ["ReplicaSet", "Deployment"]
+        and admission_request.wl_object.replicas == 0
+    ):
+        logging.info(
+            'replicas set to 0. skipping verification of "%s".',
+            original_image,
+            extra=logging_context,
         )
         return
 

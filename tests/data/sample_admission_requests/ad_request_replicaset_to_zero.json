@@ -1,0 +1,182 @@
+{
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1",
+    "request": {
+        "uid": "8c6c8be6-479d-41f4-82ba-158998cdcbf8",
+        "kind": {
+            "group": "apps",
+            "version": "v1",
+            "kind": "ReplicaSet"
+        },
+        "resource": {
+            "group": "apps",
+            "version": "v1",
+            "resource": "replicasets"
+        },
+        "requestKind": {
+            "group": "apps",
+            "version": "v1",
+            "kind": "ReplicaSet"
+        },
+        "requestResource": {
+            "group": "apps",
+            "version": "v1",
+            "resource": "replicasets"
+        },
+        "name": "test-deploy-85597768cc",
+        "namespace": "default",
+        "operation": "UPDATE",
+        "userInfo": {
+            "username": "system:serviceaccount:kube-system:deployment-controller",
+            "uid": "3b24cf0d-787d-4f00-88cc-bfebff939a49",
+            "groups": [
+                "system:serviceaccounts",
+                "system:serviceaccounts:kube-system",
+                "system:authenticated"
+            ]
+        },
+        "object": {
+            "kind": "ReplicaSet",
+            "apiVersion": "apps/v1",
+            "metadata": {
+                "name": "test-deploy-85597768cc",
+                "namespace": "default",
+                "uid": "4cce84d2-9bef-4836-8f59-966f86f72cef",
+                "resourceVersion": "119523",
+                "generation": 1,
+                "creationTimestamp": "2023-09-29T08:21:21Z",
+                "labels": {
+                    "app": "test-deploy",
+                    "pod-template-hash": "85597768cc"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1"
+                },
+                "ownerReferences": []
+            },
+            "spec": {
+                "replicas": 0,
+                "selector": {
+                    "matchLabels": {
+                        "app": "test-deploy",
+                        "pod-template-hash": "85597768cc"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "test-deploy",
+                            "pod-template-hash": "85597768cc"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "node",
+                                "image": "node:alpine",
+                                "command": [
+                                    "ash",
+                                    "-c",
+                                    "sleep 300000"
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        },
+        "oldObject": {
+            "kind": "ReplicaSet",
+            "apiVersion": "apps/v1",
+            "metadata": {
+                "name": "test-deploy-85597768cc",
+                "namespace": "default",
+                "uid": "4cce84d2-9bef-4836-8f59-966f86f72cef",
+                "resourceVersion": "119523",
+                "generation": 1,
+                "creationTimestamp": "2023-09-29T08:21:21Z",
+                "labels": {
+                    "app": "test-deploy",
+                    "pod-template-hash": "85597768cc"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1"
+                },
+                "ownerReferences": []
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app": "test-deploy",
+                        "pod-template-hash": "85597768cc"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "test-deploy",
+                            "pod-template-hash": "85597768cc"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "node",
+                                "image": "node:alpine",
+                                "command": [
+                                    "ash",
+                                    "-c",
+                                    "sleep 300000"
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        },
+        "dryRun": false,
+        "options": {
+            "kind": "UpdateOptions",
+            "apiVersion": "meta.k8s.io/v1"
+        }
+    }
+}

@@ -352,6 +352,9 @@ def adm_req_samples(m_ad_schema_path):
             "auto_approval",
             "invalid",
             "auto_update_approval",
+            "replicaset_to_zero",
+            "replicaset_from_zero",
+            "replica_from_non_zero",
         )
     ]
 
