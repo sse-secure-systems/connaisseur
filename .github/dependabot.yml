@@ -8,6 +8,10 @@ updates:
       prefix: "update"
     insecure-external-code-execution: "deny"
     target-branch: "develop"
+    groups:
+      pip-packages:
+        patterns:
+          - "*"
   - package-ecosystem: "docker"
     directory: "/docker"
     schedule:
@@ -15,6 +19,10 @@ updates:
     commit-message:
       prefix: "update"
     target-branch: "develop"
+    groups:
+      docker-packages:
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -22,4 +30,8 @@ updates:
     commit-message:
       prefix: "update"
     target-branch: "develop"
+    groups:
+      gh-actions-packages:
+        patterns:
+          - "*"
 
