@@ -279,6 +279,8 @@ def test_error_handler(
     mock_function = mocker.patch(**function)
     with pytest.fa.APP.test_request_context():
         client = pytest.fa.APP.test_client()
+        pytest.fa.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(pytest.fa.loop)
         mock_request_data = fix.get_admreq("deployments")
         response = client.post("/mutate", json=mock_request_data)
         assert response.status_code == status
