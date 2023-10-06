@@ -1,4 +1,4 @@
-FROM python:alpine as base
+FROM python:3.11-alpine as base
 
 # Build dependencies
 FROM base as builder

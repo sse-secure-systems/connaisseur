@@ -134,7 +134,7 @@ class CosignValidator(ValidatorInterface):
             values["digest"] = await self.__get_cosign_validated_digests(image, values)
         except Exception as err:
             values["error"] = err
-            logging.info(err)
+            logging.debug(err)
 
         return {trust_root: values}
 
@@ -147,7 +147,7 @@ class CosignValidator(ValidatorInterface):
         returncode, stdout, stderr = await self.__validate_using_trust_root(
             image, values["trust_root"], values["verify_tlog"]
         )
-        logging.info(
+        logging.debug(
             "COSIGN output of trust root '%s' for image'%s': RETURNCODE: %s; STDOUT: %s; STDERR: %s",
             values["name"],
             str(image),

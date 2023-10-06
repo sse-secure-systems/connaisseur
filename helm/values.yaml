@@ -36,6 +36,7 @@ kubernetes:
             weight: 100
     #annotations:  # uncomment when using Kubernetes prior v1.19
     #  seccomp.security.alpha.kubernetes.io/pod: runtime/default  # uncomment when using Kubernetes prior v1.19
+    # container wide security context
     securityContext:
       allowPrivilegeEscalation: false
       capabilities:
@@ -48,6 +49,8 @@ kubernetes:
       runAsGroup: 20001 # remove when using openshift or OKD 4
       seccompProfile: # remove when using Kubernetes prior v1.19, openshift or OKD 4
         type: RuntimeDefault # remove when using Kubernetes prior v1.19, openshift or OKD 4
+    # pod wide security context
+    podSecurityContext: {}
     # PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25
     podSecurityPolicy:
       enabled: false

@@ -14,7 +14,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
         with:
           persist-credentials: false
       - name: Analyze
@@ -25,7 +25,7 @@ jobs:
           repo_token: ${{ secrets.SCORECARD_TOKEN }}
           publish_results: ${{ github.ref_name == 'master' }}
       - name: Upload
-        uses: github/codeql-action/upload-sarif@f6e388ebf0efc915c6c5b165b019ee61a6746a38 # v2.20.1
+        uses: github/codeql-action/upload-sarif@ddccb873888234080b77e9bc2d4764d5ccaaccf9 # v2.21.9
         with:
           sarif_file: results.sarif
 
@@ -37,9 +37,9 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - name: Review
-        uses: actions/dependency-review-action@1360a344ccb0ab6e9475edef90ad2f46bf8003b1 # v3.0.6
+        uses: actions/dependency-review-action@6c5ccdad469c9f8a2996bfecaec55a631a347034 # v3.1.0
 
   check-commit-message:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }} # Only run on PRs
     steps:
       - name: Checkout code
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
         with:
           ref: ${{ github.event.pull_request.head.sha }} # Otherwise will checkout merge commit, which isn't conform
           fetch-depth: ${{ github.event.pull_request.commits }} # Fetch all commits of the MR, but only those

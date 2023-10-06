@@ -24,6 +24,12 @@ sends its response back.
 """
 CONFIG = Config()
 
+"""
+Initiating and setting an event loop,
+"""
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+
 metrics = PrometheusMetrics(
     APP,
     defaults_prefix=NO_PREFIX,
@@ -56,6 +62,7 @@ def handle_alert_config_error(err):
     labels={
         "allowed": lambda r: metrics_label(r, "allowed"),
         "status_code": lambda r: metrics_label(r, "status_code"),
+        "warnings": lambda r: metrics_label(r, "warnings"),
     },
 )
 def mutate():
@@ -63,7 +70,8 @@ def mutate():
     Handle the '/mutate' path and accept CREATE and UPDATE requests.
     Send a response back, which either denies or allows the request.
     """
-    return asyncio.run(__async_mutate())
+    result = loop.run_until_complete(__async_mutate())
+    return result
 
 
 def metrics_label(response, label):
@@ -73,6 +81,8 @@ def metrics_label(response, label):
             return json_response["response"]["allowed"]
         elif label == "status_code":
             return json_response["response"]["status"]["code"]
+        elif label == "warnings":
+            return "warnings" in json_response["response"]
     return json_response
 
 

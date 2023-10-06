@@ -2,7 +2,7 @@ apiVersion: v2
 name: connaisseur
 description: Helm chart for Connaisseur - a Kubernetes admission controller to integrate container image signature verification and trust pinning into a cluster.
 type: application
-version: 2.0.0
+version: 2.1.0
 appVersion: 3.0.0
 keywords:
   - container image
