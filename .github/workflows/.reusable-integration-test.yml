@@ -119,6 +119,7 @@ jobs:
             "v1.24",
             "v1.25",
             "v1.26",
+            "v1.27",
           ]
     steps:
       - name: Checkout code
