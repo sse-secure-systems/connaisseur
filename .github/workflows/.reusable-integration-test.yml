@@ -90,11 +90,14 @@ jobs:
           echo "::group::values.yaml"
           yq e '... comments=""' helm/values.yaml
           echo "::endgroup::"
-      - name: Display k8s state and logs if integration test failed
+      - name: Display k8s state if integration test failed
         if: failure()
         run: |
           kubectl describe deployments.apps -n connaisseur -lapp.kubernetes.io/name=connaisseur
           kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur
+      - name: Display logs if integration test failed
+        if: failure()
+        run: |
           kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
 
   k8s-versions:
