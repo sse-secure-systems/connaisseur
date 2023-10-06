@@ -111,33 +111,33 @@ async def __async_mutate():
     # k8s will report that Connaisseur was unresponsive, which isn't quite true
     # thus we timeout slightly earlier
     # https://github.com/sse-secure-systems/connaisseur/issues/448
-    timeout = aiohttp.ClientTimeout(total=const.AIO_TIMEOUT_SECONDS)
-    async with aiohttp.ClientSession(timeout=timeout) as session:
-        admission_request = None
-        try:
+    try:
+        timeout = aiohttp.ClientTimeout(total=const.AIO_TIMEOUT_SECONDS)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            admission_request = None
             logging.debug(request.json)
             admission_request = AdmissionRequest(request.json)
             response = await __admit(admission_request, session)
             # Depending on whether alerting must succeed, run it synchronously or in the background
             dispatch_alerts(admission_request, True)
             return jsonify(response)
-        except Exception as err:
-            if isinstance(err, BaseConnaisseurException):
-                err_log = str(err)
-                msg = err.user_msg  # pylint: disable=no-member
-            elif isinstance(err, asyncio.TimeoutError):
-                err_log = str(traceback.format_exc())
-                msg = (
-                    "couldn't retrieve the necessary trust data for verification within 30s. most likely"
-                    + " there was a network failure. check connectivity to external servers or retry"
-                )
-            else:
-                err_log = str(traceback.format_exc())
-                msg = "unknown error. please check the logs."
-            dispatch_alerts(admission_request, False, msg)
-            logging.error(err_log)
-            uid = admission_request.uid if admission_request else ""
-            return jsonify(get_admission_review(uid, False, msg=msg))
+    except Exception as err:
+        if isinstance(err, BaseConnaisseurException):
+            err_log = str(err)
+            msg = err.user_msg  # pylint: disable=no-member
+        elif isinstance(err, asyncio.TimeoutError):
+            err_log = str(traceback.format_exc())
+            msg = (
+                "couldn't retrieve the necessary trust data for verification within 30s. most likely"
+                + " there was a network failure. check connectivity to external servers or retry"
+            )
+        else:
+            err_log = str(traceback.format_exc())
+            msg = "unknown error. please check the logs."
+        dispatch_alerts(admission_request, False, msg)
+        logging.error(err_log)
+        uid = admission_request.uid if admission_request else ""
+        return jsonify(get_admission_review(uid, False, msg=msg))
 
 
 async def __admit(admission_request: AdmissionRequest, session: aiohttp.ClientSession):
