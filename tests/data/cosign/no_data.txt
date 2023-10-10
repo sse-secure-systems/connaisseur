@@ -1,3 +1,3 @@
-Error: no matching signatures:
-
-main.go:48: error during command execution: no matching signatures:
+Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: Unexpected Cosign exception for image "docker.io/securesystemsengineering/testimage:co-unsigned": WARNING: Skipping tlog verification is an insecure practice that lacks of transparency and auditability verification for the signature.
+Error: no matching signatures
+main.go:69: error during command execution: no matching signatures

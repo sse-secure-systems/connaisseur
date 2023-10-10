@@ -1,2 +1,1 @@
-Error: no matching signatures:
-invalid signature when validating ASN.1 encoded signature
+Error: no matching signatures: invalid signature when validating ASN.1 encoded signature

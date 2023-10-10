@@ -1,2 +1,2 @@
-Error: no matching signatures:
-signature not found in transparency log
+Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request: Unexpected Cosign exception for image "docker.io/securesystemsengineering/testimage:rekor-cosigned-notl": Error: no matching signatures: signature not found in transparency log
+main.go:69: error during command execution: no matching signatures: signature not found in transparency log

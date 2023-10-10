@@ -190,7 +190,7 @@ class CosignValidator(ValidatorInterface):
                     logging.info("non-json signature data from Cosign: %s", sig)
                     pass
         elif (
-            "Error: no matching signatures:\ninvalid signature when validating ASN.1 encoded signature\n"
+            "Error: no matching signatures: invalid signature when validating ASN.1 encoded signature\n"
             in stderr
         ):
             msg = "Failed to verify signature of trust data."
@@ -202,7 +202,7 @@ class CosignValidator(ValidatorInterface):
                 trust_root=values["name"],
             )
         elif (
-            "Error: no matching signatures:\nsignature not found in transparency log"
+            "Error: no matching signatures: signature not found in transparency log\nmain.go:"
             in stderr
         ):
             msg = "Failed to find signature in transparency log."
@@ -214,7 +214,7 @@ class CosignValidator(ValidatorInterface):
                 trust_root=values["name"],
             )
         elif (
-            "Error: no matching signatures:\n\nmain.go:" in stderr
+            "Error: no matching signatures\nmain.go:" in stderr
             or "Error: no matching signatures:\ncrypto/rsa: verification error"
             in stderr
         ):
