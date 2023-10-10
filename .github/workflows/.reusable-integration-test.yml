@@ -29,8 +29,81 @@ env:
 
 jobs:
   integration-test:
-    name: integration test
+    name: functional
     runs-on: ubuntu-latest
+    if: inputs.skip_integration_tests != 'all'
+    permissions:
+      packages: read
+    env:
+      IMAGE: ${{ inputs.build_image_repository }}
+      TAG: ${{ inputs.build_tag }}
+      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
+    strategy:
+      fail-fast: false
+      matrix:
+        integration-test-arg:
+          [
+            "regular",
+            "cosign",
+            "multi-cosigned",
+            "rekor-cosigned",
+            "namespace-val",
+            "deployment",
+            "pre-config",
+            "other-ns",
+            "configured-cert",
+          ]
+    services:
+      alerting-endpoint:
+        image: securesystemsengineering/alerting-endpoint
+        ports:
+          - 56243:56243
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - name: Login with registry
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ inputs.build_registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: v1.25
+      - name: Get alerting endpoint IP
+        id: get_ip
+        uses: ./.github/actions/alerting-endpoint
+      - name: Run test
+        run: |
+          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+        env:
+          ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
+      - name: Display Connaisseur configuration
+        if: always()
+        run: |
+          echo "::group::values.yaml"
+          yq e '... comments=""' helm/values.yaml
+          echo "::endgroup::"
+      - name: Display k8s state if integration test failed
+        if: failure()
+        run: |
+          kubectl describe deployments.apps -n connaisseur -lapp.kubernetes.io/name=connaisseur
+          kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur
+      - name: Display logs if integration test failed
+        if: failure()
+        run: |
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+
+  optional-integration-test:
+    name: optional
+    runs-on: ubuntu-latest
+    if: |
+      inputs.skip_integration_tests != 'non-required' &&
+      inputs.skip_integration_tests != 'all'
     permissions:
       packages: read
     env:
@@ -44,15 +117,6 @@ jobs:
           [
             "complexity",
             "load",
-            "regular",
-            "cosign",
-            "multi-cosigned",
-            "rekor-cosigned",
-            "namespace-val",
-            "deployment",
-            "pre-config",
-            "other-ns",
-            "configured-cert",
             "upgrade",
           ]
     services:
@@ -101,7 +165,9 @@ jobs:
           kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
 
   k8s-versions:
+    name: k8s versions
     runs-on: ubuntu-latest
+    if: inputs.skip_integration_tests != 'all'
     permissions:
       packages: read
     env:

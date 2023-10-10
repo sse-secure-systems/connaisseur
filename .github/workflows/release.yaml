@@ -51,7 +51,6 @@ jobs:
   integration-test:
     uses: ./.github/workflows/.reusable-integration-test.yml
     needs: [conditionals, build, version-match]
-    if: needs.conditionals.outputs.skip_integration_tests != 'all'
     permissions:
       packages: read
     secrets: inherit
