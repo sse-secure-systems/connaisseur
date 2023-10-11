@@ -30,6 +30,8 @@ theme:
   favicon: 'assets/favicon.svg'
   features:
     - navigation.top
+    - content.code.copy
+    - content.tabs.link
 
 # Extensions
 markdown_extensions:
@@ -39,8 +41,9 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-  - pymdownx.tabbed
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
         permalink: ⚓︎
 
