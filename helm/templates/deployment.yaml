@@ -33,6 +33,9 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.kubernetes.deployment.image.repository }}:{{ default (print "v" .Chart.AppVersion) .Values.kubernetes.deployment.image.tag }}"
           imagePullPolicy: {{ .Values.kubernetes.deployment.imagePullPolicy }}
+          ports:
+            - containerPort: 5000
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /health
