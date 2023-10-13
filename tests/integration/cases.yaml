@@ -59,7 +59,7 @@ test_cases:
   - id: rstd
     txt: Testing signed image with tag and digest...
     type: deploy
-    ref: securesystemsengineering/testimage:signed@sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7
+    ref: securesystemsengineering/testimage:signed@sha256:fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b
     namespace: default
     expected_msg: pod/pod-rstd-${RAND} created
     expected_result: VALID

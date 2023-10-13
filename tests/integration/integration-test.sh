@@ -358,7 +358,7 @@ regular_int_test() {
 	echo -n "[edge1] Testing edge case of tag defined in both targets and release json file..."
 	POD=$(kubectl get pods -o name | grep "pod-rs-")
 	DEPLOYED_SHA=$(kubectl get "${POD}" -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://')
-	if [[ "${DEPLOYED_SHA}" != 'c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7' ]]; then
+	if [[ "${DEPLOYED_SHA}" != 'fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b' ]]; then
 		echo -e "${FAILED}"
 		EXIT="1"
 	else
