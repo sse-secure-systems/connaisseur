@@ -74,9 +74,9 @@ black <path-to-repository>/connaisseur
 Changes can also be tested locally.
 We recommend the following approach for running pytest in a container:
 ```
-docker run -it --rm -v <path-to-repository>:/data --entrypoint=ash python:alpine
+docker run -it --rm -v <path-to-repository>:/data --entrypoint=bash python:3.11
 cd data
-YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
+pip3 install -r requirements_dev.txt
 pytest --cov=connaisseur --cov-report=xml tests/
 ```
 
