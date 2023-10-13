@@ -1317,9 +1317,9 @@ To autoformat the code:
 </code></pre></div></p>
 <p>Changes can also be tested locally.
 We recommend the following approach for running pytest in a container:
-<div class="highlight"><pre><span></span><code>docker run -it --rm -v &lt;path-to-repository&gt;:/data --entrypoint=ash python:alpine
+<div class="highlight"><pre><span></span><code>docker run -it --rm -v &lt;path-to-repository&gt;:/data --entrypoint=bash python:3.11
 cd data
-YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3 install -r requirements_dev.txt
+pip3 install -r requirements_dev.txt
 pytest --cov=connaisseur --cov-report=xml tests/
 </code></pre></div></p>
 <p>This helps identify bugs in changes before pushing.</p>
