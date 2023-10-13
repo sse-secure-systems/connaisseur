@@ -1618,7 +1618,7 @@ However, other ways to implement such trust pinning exist and as a consequence w
 <p>Using Connaisseur requires a <a href="https://kubernetes.io/">Kubernetes</a> cluster, <a href="https://helm.sh/">Helm</a> and, if installing from source, <a href="https://git-scm.com/">Git</a> to be installed and set up.</p>
 <h3 id="get-the-codechart">Get the code/chart<a class="headerlink" href="#get-the-codechart" title="Permanent link">⚓︎</a></h3>
 <p>Download the Connaisseur resources required for installation either by cloning the source code via Git or directly add the chart repository via Helm.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Clone via Git</label><label for="__tabbed_1_2">Add via Helm</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Git repo</label><label for="__tabbed_1_2">Helm chart</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>The Connaisseur source code can be cloned directly from GitHub and includes the application and Helm charts in a single repository:</p>
@@ -1649,7 +1649,7 @@ Other features are described on the <a href="../features/">respective pages</a>.
 However, validating your own images requires additional configuration.</p>
 <h3 id="deploy">Deploy<a class="headerlink" href="#deploy" title="Permanent link">⚓︎</a></h3>
 <p>Install Connaisseur via Helm:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Cloned via Git</label><label for="__tabbed_2_2">Added via Helm</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Git repo</label><label for="__tabbed_2_2">Helm chart</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Install Connaisseur by using the Helm template definition files in the <code>helm</code> directory:</p>
@@ -1697,7 +1697,7 @@ kubectl<span class="w"> </span>run<span class="w"> </span>hello-world<span class
 </code></pre></div>
 <h3 id="upgrade">Upgrade<a class="headerlink" href="#upgrade" title="Permanent link">⚓︎</a></h3>
 <p>A running Connaisseur instance can be updated by a Helm upgrade of the current release:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Cloned via Git</label><label for="__tabbed_3_2">Added via Helm</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Git repo</label><label for="__tabbed_3_2">Helm chart</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Adjust configuration in <code>helm/values.yaml</code> as required and upgrade via:</p>
