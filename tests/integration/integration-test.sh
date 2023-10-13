@@ -40,6 +40,9 @@ single_test() { # ID TXT TYP REF NS MSG RES
 		i=$((i + 1))
 		if [[ "$3" == "deploy" ]]; then
 			kubectl run pod-$1-${RAND} --image="$4" --namespace="$5" -luse="connaisseur-integration-test" >output.log 2>&1 || true
+		elif [[ "$3" == "debug" ]]; then
+			kubectl run will-be-debugged-${RAND} --image="securesystemsengineering/testimage:signed" --namespace="$5" -luse="connaisseur-integration-test" >/dev/null 2>&1 || true
+			kubectl debug will-be-debugged-${RAND} --image="$4" --namespace="$5" >output.log 2>&1 || true
 		elif [[ "$3" == "workload" ]]; then
 			envsubst <tests/integration/workload-objects/$4.yaml | kubectl apply -f - >output.log 2>&1 || true
 		else
@@ -48,6 +51,10 @@ single_test() { # ID TXT TYP REF NS MSG RES
 		# if the webhook couldn't be called, try again.
 		[[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt $RETRY ]] || break
 	done
+	if [[ "$3" == "debug" ]]; then
+		# account for extra deployed pod for attaching ephemeral container to
+		DEPLOYMENT_RES["VALID"]=$((${DEPLOYMENT_RES["VALID"]} + 1))
+	fi
 	if [[ ! "$(cat output.log)" =~ "${MSG}" ]]; then
 		echo -e ${FAILED}
 		echo "::group::Output"
@@ -56,7 +63,17 @@ single_test() { # ID TXT TYP REF NS MSG RES
 		echo "::endgroup::"
 		EXIT="1"
 	else
-		echo -e "${SUCCESS}"
+		# account for expected valid ephemeral container failing (success message is subset of failure message)
+		if [[ "$3" == "debug" && "$7" != "INVALID" && $(cat output.log | grep -i "error") ]]; then
+			echo -e ${FAILED}
+			echo "::group::Output"
+			cat output.log
+			kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur
+			echo "::endgroup::"
+			EXIT="1"
+		else
+			echo -e "${SUCCESS}"
+		fi
 	fi
 	rm output.log
 

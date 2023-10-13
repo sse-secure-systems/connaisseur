@@ -250,6 +250,26 @@ def test_readyz():
             },
             fix.no_exc(),
         ),
+        (
+            12,
+            True,
+            {},
+            pytest.raises(exc.ValidationError),
+        ),
+        (
+            13,
+            True,
+            {
+                "apiVersion": "admission.k8s.io/v1",
+                "kind": "AdmissionReview",
+                "response": {
+                    "uid": "32559dae-5ddd-4c51-843d-a833c0670f2c",
+                    "allowed": True,
+                    "status": {"code": 202},
+                },
+            },
+            fix.no_exc(),
+        ),
     ],
 )
 async def test_admit(

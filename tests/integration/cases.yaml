@@ -63,6 +63,20 @@ test_cases:
     namespace: default
     expected_msg: pod/pod-rstd-${RAND} created
     expected_result: VALID
+  - id: recu
+    txt: Testing ephemeral container with unsigned image...
+    type: debug
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
+    expected_result: INVALID
+  - id: recs
+    txt: Testing ephemeral container with signed image...
+    type: debug
+    ref: securesystemsengineering/testimage:signed@sha256:fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b
+    namespace: default
+    expected_msg: Defaulting debug container name to debugger-
+    expected_result: VALID
   cosign:
   - id: cu
     txt: Testing unsigned cosign image...

@@ -99,7 +99,11 @@ class WorkloadObject:
     def containers(self):
         return {
             (container_type, index): Image(container["image"])
-            for container_type in ["containers", "initContainers"]
+            for container_type in [
+                "containers",
+                "initContainers",
+                "ephemeralContainers",
+            ]
             for index, container in enumerate(self.spec.get(container_type, []))
         }
 

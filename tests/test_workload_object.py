@@ -53,6 +53,8 @@ def adm_req_sample_objects():
             "wrong_version",
             "deployments_multi_image",
             "pods_unknownparent",
+            "ephemeral_container",
+            "ephemeral_container_unchanged",
         )
     ]
 
@@ -141,6 +143,25 @@ def test_k8s_object_parent_containers(
                 ("containers", 0): Image("redis:alpine"),
                 ("containers", 1): Image("mysql:8"),
                 ("initContainers", 0): Image("busybox:1.32"),
+            },
+        ),
+        (
+            7,
+            {
+                ("containers", 0): Image(
+                    "securesystemsengineering/testimage:signed@sha256:fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b"
+                ),
+                ("ephemeralContainers", 0): Image("busybox"),
+                ("ephemeralContainers", 1): Image("docker.io/test/deny-image"),
+            },
+        ),
+        (
+            8,
+            {
+                ("containers", 0): Image(
+                    "securesystemsengineering/testimage:signed@sha256:fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b"
+                ),
+                ("ephemeralContainers", 0): Image("docker.io/test/deny-image"),
             },
         ),
     ],

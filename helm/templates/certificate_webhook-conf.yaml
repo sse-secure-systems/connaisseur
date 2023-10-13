@@ -101,9 +101,9 @@ webhooks:
         apiGroups: ["*"]
         apiVersions: ["*"]
         {{- if .Values.application.features.automaticChildApproval }}
-        resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs"]
+        resources: ["pods", "deployments", "replicationcontrollers", "replicasets", "daemonsets", "statefulsets", "jobs", "cronjobs", "pods/ephemeralcontainers"]
         {{- else }}
-        resources: ["pods"]
+        resources: ["pods", "pods/ephemeralcontainers"]
         {{- end }}
     sideEffects: None
     {{- if gt ($k8sMinor | int) 13 }}
