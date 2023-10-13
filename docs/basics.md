@@ -32,7 +32,7 @@ Using Connaisseur requires a [Kubernetes](https://kubernetes.io/) cluster, [Helm
 
 Download the Connaisseur resources required for installation either by cloning the source code via Git or directly add the chart repository via Helm.
 
-=== "Clone via Git"
+=== "Git repo"
 
     The Connaisseur source code can be cloned directly from GitHub and includes the application and Helm charts in a single repository:
 
@@ -40,7 +40,7 @@ Download the Connaisseur resources required for installation either by cloning t
     git clone https://github.com/sse-secure-systems/connaisseur.git
     ```
 
-=== "Add via Helm"
+=== "Helm chart"
 
     The Helm chart can be added by:
 
@@ -76,7 +76,7 @@ However, validating your own images requires additional configuration.
 
 Install Connaisseur via Helm:
 
-=== "Cloned via Git"
+=== "Git repo"
 
     Install Connaisseur by using the Helm template definition files in the `helm` directory:
 
@@ -84,7 +84,7 @@ Install Connaisseur via Helm:
     helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
     ```
 
-=== "Added via Helm"
+=== "Helm chart"
 
     Install Connaisseur using the default configuration from the chart repository:
 
@@ -140,7 +140,7 @@ kubectl run hello-world --image=docker.io/hello-world
 
 A running Connaisseur instance can be updated by a Helm upgrade of the current release:
 
-=== "Cloned via Git"
+=== "Git repo"
 
     Adjust configuration in `helm/values.yaml` as required and upgrade via:
 
@@ -148,7 +148,7 @@ A running Connaisseur instance can be updated by a Helm upgrade of the current r
     helm upgrade connaisseur helm -n connaisseur --wait
     ```
 
-=== "Added via Helm"
+=== "Helm chart"
 
     Adjust your local configuration file (e.g. `values.yaml`) as required and upgrade via:
 
