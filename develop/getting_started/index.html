@@ -1262,7 +1262,9 @@ In case you have previously worked with Docker Content Trust or Cosign before an
 Otherwise, pick your preferred signing solution below.</p>
 <p>In case you are uncertain which solution to go with, you might be better off to start with DCT, as it comes packaged with <code>docker</code>.
 Cosign on the other hand is somewhat more straightforward to use.</p>
-<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Docker Content Trust</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Docker Content Trust</label><label for="__tabbed_1_2">Cosign</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <p>General usage of DCT is described in the <a href="https://docs.docker.com/engine/security/trust/">docker documentation</a>.
 Detailed information on all configuration options for Connaisseur is provided in the <a href="../validators/notaryv1/">Notary (V1) validator section</a>.
 For now, we just need to generate a public-private root key pair via:</p>
@@ -1278,7 +1280,7 @@ YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ<span class="o">==</sp
 </code></pre></div>
 <p>We will only need the actual base64 encoded part of the key later.</p>
 </div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Cosign</label><div class="tabbed-content">
+<div class="tabbed-block">
 <p>Usage of Cosign is very well described in the <a href="https://github.com/sigstore/cosign">docs</a>.
 You can download Cosign from its <a href="https://github.com/sigstore/cosign/releases">GitHub repository</a>.
 Detailed information on all configuration options for Connaisseur is provided in the <a href="../validators/sigstore_cosign/">Cosign validator section</a>.
@@ -1294,6 +1296,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
 </code></pre></div>
 </div>
 </div>
+</div>
 <h2 id="configure-connaisseur">Configure Connaisseur<a class="headerlink" href="#configure-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>Now, we will need to configure Connaisseur.
 Let's first clone the repository:</p>
@@ -1305,7 +1308,9 @@ We need to set Connaisseur to use our previously created public key for validati
 To do so, go to the <code>.application.validators</code> and find the <code>default</code> validator.
 We need to uncomment the trust root with name <code>default</code> and add our previously created public key.
 The result should look similar to this:</p>
-<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Docker Content Trust</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Docker Content Trust</label><label for="__tabbed_2_2">Cosign</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
@@ -1330,7 +1335,7 @@ The result should look similar to this:</p>
 <span class="w">  </span><span class="c1">#  password: mypass</span>
 </code></pre></div>
 </div>
-<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Cosign</label><div class="tabbed-content">
+<div class="tabbed-block">
 <p><em>In addition for Cosign, the <code>type</code> needs to be set to <code>cosign</code> and the <code>host</code> is not required.</em></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
@@ -1354,6 +1359,7 @@ The result should look similar to this:</p>
 <span class="w">  </span><span class="c1">#  username: myuser</span>
 <span class="w">  </span><span class="c1">#  password: mypass</span>
 </code></pre></div>
+</div>
 </div>
 </div>
 <p>We have now configured the validator <code>default</code> with trust root <code>default</code>.
@@ -1411,18 +1417,21 @@ Error<span class="w"> </span>from<span class="w"> </span>server:<span class="w">
 Error<span class="w"> </span>from<span class="w"> </span>server:<span class="w"> </span>admission<span class="w"> </span>webhook<span class="w"> </span><span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span><span class="w"> </span>denied<span class="w"> </span>the<span class="w"> </span>request:<span class="w"> </span>could<span class="w"> </span>not<span class="w"> </span>find<span class="w"> </span>signed<span class="w"> </span>digest<span class="w"> </span><span class="k">for</span><span class="w"> </span>image<span class="w"> </span><span class="s2">&quot;docker.io/securesystemsengineering/demo:test&quot;</span><span class="w"> </span><span class="k">in</span><span class="w"> </span>trust<span class="w"> </span>data.
 </code></pre></div>
 <p>So let's sign the image and try again.</p>
-<div class="tabbed-set" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Docker Content Trust</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Docker Content Trust</label><label for="__tabbed_3_2">Cosign</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <p>In DCT signing works via <code>docker push</code> using the <code>--disable-content-trust</code> flag:</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>push<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span><span class="w"> </span>--disable-content-trust<span class="o">=</span><span class="nb">false</span>
 </code></pre></div>
 <p>You will be prompted to provide your password and might be asked to set a new repository key.
 The trust data will then be pushed to the Docker Hub Notary server.</p>
 </div>
-<input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">Cosign</label><div class="tabbed-content">
+<div class="tabbed-block">
 <p>For Cosign, we use the private key file from the first step:</p>
 <div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>sign<span class="w"> </span>-key<span class="w"> </span>cosign.key<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>You will be asked to enter your password after wich the signature data will be pushed to your repository.</p>
+</div>
 </div>
 </div>
 <p>After successful signing, we try again:</p>
@@ -1448,6 +1457,8 @@ The trust data will then be pushed to the Docker Hub Notary server.</p>
             </div>
           
           
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
         </div>
         
           <button type="button" class="md-top md-icon" data-md-component="top" hidden>
@@ -1562,7 +1573,7 @@ The trust data will then be pushed to the Docker Hub Notary server.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
