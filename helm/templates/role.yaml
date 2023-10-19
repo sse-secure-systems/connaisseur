@@ -4,6 +4,7 @@ metadata:
   name: {{ .Chart.Name }}-role
   namespace: {{ .Release.Namespace }}
   labels:
+    app.kubernetes.io/component: connaisseur-core
     {{- include "helm.labels" . | nindent 4 }}
 rules:
 - apiGroups: ["*"]

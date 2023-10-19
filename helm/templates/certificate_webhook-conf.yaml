@@ -37,6 +37,7 @@ metadata:
   name: {{ .Chart.Name }}-tls
   namespace: {{ .Release.Namespace }}
   labels:
+    app.kubernetes.io/component: connaisseur-core
     {{- include "helm.labels" . | nindent 4 }}
 type: Opaque
 data:
@@ -52,6 +53,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: {{ .Chart.Name }}-webhook
   labels:
+    app.kubernetes.io/component: connaisseur-init
     {{- include "helm.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": post-delete
@@ -83,6 +85,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: {{ .Chart.Name }}-webhook
   labels:
+    app.kubernetes.io/component: connaisseur-webhook
     {{- include "helm.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install, post-upgrade, post-rollback

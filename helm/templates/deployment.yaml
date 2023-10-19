@@ -4,6 +4,7 @@ metadata:
   name: {{ .Chart.Name }}-deployment
   namespace: {{ .Release.Namespace }}
   labels:
+    app.kubernetes.io/component: connaisseur-core
     {{- include "helm.labels" . | nindent 4 }}
   annotations:
     checksum/config: {{ include "getConfigChecksum" . }}
@@ -16,6 +17,7 @@ spec:
   template:
     metadata:
       labels:
+        app.kubernetes.io/component: connaisseur-core
         app.kubernetes.io/name: {{ include "helm.name" . }}
         app.kubernetes.io/instance: {{ .Chart.Name }}
       annotations:

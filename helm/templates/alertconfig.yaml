@@ -5,10 +5,8 @@ metadata:
   name: {{ .Chart.Name }}-alert-templates
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "helm.name" . }}
-    helm.sh/chart: {{ include "helm.chart" . }}
-    app.kubernetes.io/instance: {{ .Chart.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: connaisseur-core
+    {{- include "helm.labels" . | nindent 4 }}
 data:
   {{- (.Files.Glob "alert_payload_templates/*").AsConfig | nindent 2 }}
 
@@ -21,10 +19,8 @@ metadata:
   name: {{ .Chart.Name }}-alertconfig
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "helm.name" . }}
-    helm.sh/chart: {{ include "helm.chart" . }}
-    app.kubernetes.io/instance: {{ .Chart.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: connaisseur-core
+    {{- include "helm.labels" . | nindent 4 }}
 stringData:
   {{- if .Values.alerting}}
   alertconfig.json: |
