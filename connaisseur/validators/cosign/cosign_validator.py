@@ -19,6 +19,7 @@ from connaisseur.image import Image
 from connaisseur.trust_root import ECDSAKey, KMSKey, RSAKey, TrustRoot
 from connaisseur.util import safe_path_func  # nosec
 from connaisseur.validators.interface import ValidatorInterface
+from connaisseur.timing import timing
 
 
 class CosignValidator(ValidatorInterface):
@@ -45,6 +46,7 @@ class CosignValidator(ValidatorInterface):
             else f"https://{rekor_host}"
         )
 
+    @timing(capture_args=["image"])
     async def validate(
         self,
         image: Image,

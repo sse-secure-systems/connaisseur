@@ -18,6 +18,7 @@ from connaisseur.validators.interface import ValidatorInterface
 from connaisseur.validators.notaryv1.key_store import KeyStore
 from connaisseur.validators.notaryv1.notary import Notary
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
+from connaisseur.timing import timing
 
 
 class NotaryV1Validator(ValidatorInterface):
@@ -28,6 +29,7 @@ class NotaryV1Validator(ValidatorInterface):
         super().__init__(name, **kwargs)
         self.notary = Notary(name, **kwargs)
 
+    @timing(capture_args=["image"])
     async def validate(
         self,
         image: Image,
@@ -93,6 +95,7 @@ class NotaryV1Validator(ValidatorInterface):
             delegation_role = prefix + delegation_role
         return delegation_role
 
+    @timing(capture_args=["image"])
     async def __process_chain_of_trust(
         self,
         session: ClientSession,

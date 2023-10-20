@@ -16,6 +16,7 @@ from connaisseur.exceptions import (
     ConfigurationError,
 )
 from connaisseur.util import feature_flag_on, get_admission_review
+from connaisseur.timing import timing, Timings
 
 APP = Flask(__name__)
 """
@@ -106,6 +107,8 @@ def readyz():
 
 
 async def __async_mutate():
+    timings = Timings()
+    timings.reset()
     # Maximum timeout for admission control is 30s
     # If Connaisseur issues requests that timeout after the webhook times out
     # k8s will report that Connaisseur was unresponsive, which isn't quite true
@@ -138,6 +141,8 @@ async def __async_mutate():
         logging.error(err_log)
         uid = admission_request.uid if admission_request else ""
         return jsonify(get_admission_review(uid, False, msg=msg))
+    finally:
+        logging.debug("timings: %s", timings.timings)
 
 
 async def __admit(admission_request: AdmissionRequest, session: aiohttp.ClientSession):
@@ -162,6 +167,7 @@ async def __admit(admission_request: AdmissionRequest, session: aiohttp.ClientSe
     )
 
 
+@timing(capture_args=["image"])
 async def __validate_image(
     type_index, image, admission_request, session: aiohttp.ClientSession
 ):

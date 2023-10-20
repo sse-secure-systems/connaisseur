@@ -17,6 +17,7 @@ from connaisseur.exceptions import (
 from connaisseur.image import Image
 from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
+from connaisseur.timing import timing
 
 
 class Notary:
@@ -89,6 +90,7 @@ class Notary:
         except Exception:
             return False
 
+    @timing(capture_args=["image", "role"])
     async def get_trust_data(
         self,
         session: aiohttp.ClientSession,

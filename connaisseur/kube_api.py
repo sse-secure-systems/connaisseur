@@ -2,7 +2,10 @@ import os
 
 import requests
 
+from connaisseur.timing import timing
 
+
+@timing(capture_args=["path"])
 def request_kube_api(path: str):
     """
     Make an API call to the underlying Kubernetes API server with the given
