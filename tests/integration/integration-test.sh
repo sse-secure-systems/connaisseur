@@ -555,7 +555,7 @@ case $1 in
 	;;
 "load")
 	update_values_minimal
-	update_values '.application.logLevel=DEBUG'
+	update_values '.application.logLevel="DEBUG"'
 	make_install
 	load_test
 	;;
