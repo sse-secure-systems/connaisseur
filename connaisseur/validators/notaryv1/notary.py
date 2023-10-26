@@ -89,39 +89,46 @@ class Notary:
         except Exception:
             return False
 
-    async def get_trust_data(
-        self,
-        session: aiohttp.ClientSession,
-        image: Image,
-        role: TUFRole,
-        token: str = None,
-    ):
-        im_repo = f"{image.repository}/" if image.repository else ""
-        url = (
-            f"https://{self.host}/v2/{image.registry}/{im_repo}"
-            f"{image.name}/_trust/tuf/{str(role)}.json"
-        )
+    async def get_auth(self, session: aiohttp.ClientSession, image: Image):
+        request_kwargs = self.__build_args(image, "root")
 
-        request_kwargs = {
-            "url": url,
-            "ssl": self.cert,
-            "headers": ({"Authorization": f"Bearer {token}"} if token else None),
-        }
         async with session.get(**request_kwargs) as response:
             status = response.status
-            if (
-                status == 401
-                and not token
-                and ("www-authenticate" in [k.lower() for k in response.headers])
+            if status == 401 and (
+                "www-authenticate" in [k.lower() for k in response.headers]
             ):
                 auth_url = self.__parse_auth(
                     {k.lower(): v for k, v in response.headers.items()}[
                         "www-authenticate"
                     ]
                 )
-                token = await self.__get_auth_token(session, auth_url)
-                return await self.get_trust_data(session, image, role, token)
+                repo_token = await self.__get_auth_token(session, auth_url)
+                return repo_token
+            elif status == 401:
+                msg = (
+                    "Unable to find auhorization endpoint in"
+                    "'www-authenticate' header for notary {notary_name}."
+                )
+                raise NotFoundException(message=msg, notary_name=self.name)
+            else:
+                return None
 
+    async def get_trust_data(
+        self,
+        session: aiohttp.ClientSession,
+        image: Image,
+        role: TUFRole,
+        repo_token: str,
+    ):
+        request_kwargs = self.__build_args(image, str(role))
+
+        if repo_token:
+            request_kwargs.update(
+                {"headers": ({"Authorization": f"Bearer {repo_token}"})}
+            )
+
+        async with session.get(**request_kwargs) as response:
+            status = response.status
             if status == 404:
                 msg = "Unable to get {tuf_role} trust data from {notary_name}."
                 raise NotFoundException(
@@ -137,10 +144,10 @@ class Notary:
         session: aiohttp.ClientSession,
         image: Image,
         role: TUFRole,
-        token: str = None,
+        repo_token: str,
     ):
         try:
-            return await self.get_trust_data(session, image, role, token)
+            return await self.get_trust_data(session, image, role, repo_token)
         except Exception as ex:
             if ConnaisseurLoggingWrapper.is_debug_level():
                 raise ex
@@ -222,6 +229,7 @@ class Notary:
             "ssl": self.cert,
             "auth": (aiohttp.BasicAuth(**self.auth) if self.auth else None),
         }
+
         async with session.get(**request_kwargs) as response:
             if response.status >= 500:
                 msg = "Unable to get authentication token from {auth_url}."
@@ -233,7 +241,7 @@ class Notary:
 
             try:
                 token_key = "access_token" if self.is_acr else "token"
-                token = (await response.json(content_type=None))[token_key]
+                repo_token = (await response.json(content_type=None))[token_key]
             except KeyError as err:
                 msg = (
                     "Unable to retrieve authentication token from {auth_url} response."
@@ -246,7 +254,7 @@ class Notary:
                 r"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$"  # nosec
             )
 
-            if not re.match(token_re, token):
+            if not re.match(token_re, repo_token):
                 msg = "{validation_kind} has an invalid format."
                 raise InvalidFormatException(
                     message=msg,
@@ -254,4 +262,13 @@ class Notary:
                     notary_name=self.name,
                     auth_url=url,
                 )
-            return token
+            return repo_token
+
+    def __build_args(self, image: Image, role: str):
+        im_repo = f"{image.repository}/" if image.repository else ""
+        url = (
+            f"https://{self.host}/v2/{image.registry}/{im_repo}"
+            f"{image.name}/_trust/tuf/{role}.json"
+        )
+
+        return {"url": url, "ssl": self.cert}

@@ -118,9 +118,13 @@ class NotaryV1Validator(ValidatorInterface):
 
         # load all trust data
         t_start = dt.datetime.now()
+
+        # even if a registry is public like e.g. docker.io, it might still
+        # require a token on repository level, specifying the scope (e.g. pull)
+        repo_token = await self.notary.get_auth(session, image)
         trust_data_list = await asyncio.gather(
             *[
-                self.notary.get_trust_data(session, image, TUFRole(role))
+                self.notary.get_trust_data(session, image, TUFRole(role), repo_token)
                 for role in tuf_roles
             ]
         )
@@ -185,7 +189,7 @@ class NotaryV1Validator(ValidatorInterface):
 
             # download only the required delegation files
             await self.__update_with_delegation_trust_data(
-                session, trust_data, req_delegations, key_store, image
+                session, trust_data, req_delegations, key_store, image, repo_token
             )
 
             # if certain delegations are required, then only take the targets fields of the
@@ -263,12 +267,12 @@ class NotaryV1Validator(ValidatorInterface):
         return None
 
     async def __update_with_delegation_trust_data(
-        self, session: ClientSession, trust_data, delegations, key_store, image
+        self, session: ClientSession, trust_data, delegations, key_store, image, token
     ):
         delegation_trust_data_list = await asyncio.gather(
             *[
                 self.notary.get_delegation_trust_data(
-                    session, image, TUFRole(delegation)
+                    session, image, TUFRole(delegation), token
                 )
                 for delegation in delegations
             ]

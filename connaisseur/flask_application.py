@@ -222,7 +222,6 @@ async def __validate_image(
     try:
         policy_rule = CONFIG.get_policy_rule(image)
         validator = CONFIG.get_validator(policy_rule.validator)
-
         logging.debug(
             'starting verification of image "%s" using rule "%s" with arguments %s and validator "%s".',
             original_image,
