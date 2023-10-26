@@ -49,7 +49,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
 			kubectl apply -f $4 >output.log 2>&1 || true
 		fi
 		# if the webhook couldn't be called, try again.
-		[[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt $RETRY ]] || break
+		[[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt $RETRY ]] && echo "Failed calling webhook, retrying test deployments" || break
 	done
 	if [[ "$3" == "debug" ]]; then
 		# account for extra deployed pod for attaching ephemeral container to
