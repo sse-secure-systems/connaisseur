@@ -13,6 +13,9 @@ from connaisseur.flask_application import APP
 from connaisseur.logging import ConnaisseurLoggingWrapper
 
 if __name__ == "__main__":
+    # allow nested asyncio loops
+    nest_asyncio.apply()
+
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 
     dictConfig(
@@ -35,9 +38,6 @@ if __name__ == "__main__":
     HTTPServer.ssl_adapter = BuiltinSSLAdapter(
         certificate="/app/certs/tls.crt", private_key="/app/certs/tls.key"
     )
-
-    # allow nested asyncio loops
-    nest_asyncio.apply()
 
     # wrap Connaisseur with a layer that logs HTTP requests
     app = ConnaisseurLoggingWrapper(APP, LOG_LEVEL)
