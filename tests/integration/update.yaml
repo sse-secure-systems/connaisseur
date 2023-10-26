@@ -1,3 +1,6 @@
+kubernetes:
+  deployment:
+    replicasCount: 1
 application:
   validators:
   - name: allow
