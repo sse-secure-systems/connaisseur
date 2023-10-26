@@ -96,7 +96,7 @@ jobs:
       - name: Display logs if integration test failed
         if: failure()
         run: |
-          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1
 
   optional-integration-test:
     name: optional
@@ -162,7 +162,7 @@ jobs:
       - name: Display logs if integration test failed
         if: failure()
         run: |
-          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1
 
   k8s-versions:
     name: k8s versions
@@ -211,4 +211,4 @@ jobs:
         run: |
           kubectl describe deployments.apps -n connaisseur -lapp.kubernetes.io/name=connaisseur
           kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur
-          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1

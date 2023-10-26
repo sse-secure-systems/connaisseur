@@ -59,7 +59,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
 		echo -e ${FAILED}
 		echo "::group::Output"
 		cat output.log
-		kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur
+		kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur --tail=-1
 		echo "::endgroup::"
 		EXIT="1"
 	else
@@ -68,7 +68,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
 			echo -e ${FAILED}
 			echo "::group::Output"
 			cat output.log
-			kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur
+			kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur --tail=-1
 			echo "::endgroup::"
 			EXIT="1"
 		else
