@@ -49,7 +49,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
 			kubectl apply -f $4 >output.log 2>&1 || true
 		fi
 		# if the webhook couldn't be called, try again.
-		[[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt $RETRY ]] && echo "Failed calling webhook, retrying test deployments" || break
+		[[ ("$(cat output.log)" =~ "failed calling webhook") && $i -lt ${RETRY} ]] && echo "Failed calling webhook, retrying test deployments" || break
 	done
 	if [[ "$3" == "debug" ]]; then
 		# account for extra deployed pod for attaching ephemeral container to
@@ -90,7 +90,7 @@ multi_test() { # TEST_CASE: key in the `test_cases` dict in the cases.yaml
 	# converting to json, as yq processing is pretty slow
 	test_cases=$(yq e -o=json ".test_cases.$1" tests/integration/cases.yaml)
 	len=$(echo ${test_cases} | jq 'length')
-	for i in $(seq 0 $(($len - 1))); do
+	for i in $(seq 0 $((${len} - 1))); do
 		test_case=$(echo ${test_cases} | jq ".[$i]")
 		ID=$(echo ${test_case} | jq -r ".id")
 		TEST_CASE_TXT=$(echo ${test_case} | jq -r ".txt")
@@ -204,7 +204,7 @@ load_test() { #
 ### CREATE IMAGEPULLSECRET ####################################
 create_imagepullsecret_in_ns() { # NAMESPACE # CREATE
 	local CREATE=${2:-true}
-	if $CREATE; then
+	if ${CREATE}; then
 		echo -n "Creating Namespace '${1}'..."
 		kubectl create ns ${1} >/dev/null || {
 			echo -e "${FAILED}"
@@ -215,7 +215,7 @@ create_imagepullsecret_in_ns() { # NAMESPACE # CREATE
 	if [[ -n "${IMAGEPULLSECRET+x}" ]]; then
 		echo -n "Creating imagePullSecret '${IMAGEPULLSECRET}'..."
 		kubectl create secret generic ${IMAGEPULLSECRET} \
-			--from-file=.dockerconfigjson=$HOME/.docker/config.json \
+			--from-file=.dockerconfigjson=${HOME}/.docker/config.json \
 			--type=kubernetes.io/dockerconfigjson \
 			--namespace=${1} >/dev/null || {
 			echo -e "${FAILED}"
@@ -395,7 +395,7 @@ regular_int_test() {
   "successful_requests_to_opsgenie_endpoint": $REQUESTS_TO_OPSGENIE_ENDPOINT,
   "successful_requests_to_keybase_endpoint": $REQUESTS_TO_KEYBASE_ENDPOINT
   }')
-	diff <(echo "$ENDPOINT_HITS" | jq -S .) <(echo "$EXPECTED_ENDPOINT_HITS" | jq -S .) >diff.log 2>&1 || true
+	diff <(echo "${ENDPOINT_HITS}" | jq -S .) <(echo "${EXPECTED_ENDPOINT_HITS}" | jq -S .) >diff.log 2>&1 || true
 	if [[ -s diff.log ]]; then
 		echo -e "${FAILED}"
 		echo "::group::Alerting endpoint diff:"
