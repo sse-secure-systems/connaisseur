@@ -477,7 +477,11 @@ case $1 in
 	enable_alerting
 	make_install
 	regular_int_test
-	make_uninstall
+	if [[ "${EXIT}" != "0" ]]; then
+		echo "Skipping uninstallation to preserve logs..."
+	else
+		make_uninstall
+	fi
 	;;
 "cosign")
 	update_via_env_vars
@@ -576,7 +580,11 @@ case $1 in
 	debug_values "helm/values.yaml"
 	helm_upgrade_namespace "connaisseur"
 	pre_config_int_test
-	helm_uninstall
+	if [[ "${EXIT}" != "0" ]]; then
+		echo "Skipping uninstallation to preserve logs..."
+	else
+		helm_uninstall
+	fi
 	;;
 *)
 	echo "Invalid test case. Exiting..."
