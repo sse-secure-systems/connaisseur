@@ -41,8 +41,8 @@ single_test() { # ID TXT TYP REF NS MSG RES
 		if [[ "$3" == "deploy" ]]; then
 			kubectl run pod-$1-${RAND} --image="$4" --namespace="$5" -luse="connaisseur-integration-test" >output.log 2>&1 || true
 		elif [[ "$3" == "debug" ]]; then
-			kubectl run will-be-debugged-${RAND} --image="securesystemsengineering/testimage:signed" --namespace="$5" -luse="connaisseur-integration-test" >/dev/null 2>&1 || true
-			kubectl debug will-be-debugged-${RAND} --image="$4" --namespace="$5" >output.log 2>&1 || true
+			kubectl run $1-base-pod-${RAND} --image="securesystemsengineering/testimage:signed" --namespace="$5" -luse="connaisseur-integration-test" >/dev/null 2>&1 || true
+			kubectl debug $1-base-pod-${RAND} --image="$4" --namespace="$5" >output.log 2>&1 || true
 		elif [[ "$3" == "workload" ]]; then
 			envsubst <tests/integration/workload-objects/$4.yaml | kubectl apply -f - >output.log 2>&1 || true
 		else
