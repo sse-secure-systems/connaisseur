@@ -160,7 +160,9 @@ kubectl create secret docker-registry my-secret \
   -n connaisseur
 ```
 
-> :octicons-light-bulb-16: **Note**: At present, it [seems to be necessary](https://github.com/sigstore/cosign/issues/587#issuecomment-1062510930) to suffix your registry server URL with `/v1/`. This may become unnecessary in the future.
+!!! info
+    At present, it [seems to be necessary](https://github.com/sigstore/cosign/issues/587#issuecomment-1062510930) to suffix your registry server URL with `/v1/`.
+    This may become unnecessary in the future.
 
 In the above cases, the secret name in Connaisseur configuration would be `secretName: my-secret`.
 It is possible to provide one Kubernetes secret with a `config.json` for authentication to multiple private registries and referencing this in multiple validators.

@@ -22,7 +22,8 @@ For more advanced usage in more complex cases (e.g. authentication, multiple reg
 
 In case you need help, feel free to reach out via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions) :wave:
 
-> :octicons-light-bulb-16: **Note**: As more than only public keys can be used to validate integrity and provenance of an image, we refer to these trust anchors in a generalized form as *trust roots*.
+!!! info
+    As more than only public keys can be used to validate integrity and provenance of an image, we refer to these trust anchors in a generalized form as *trust roots*.
 
 ## Requirements
 
