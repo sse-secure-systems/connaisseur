@@ -55,22 +55,25 @@ If you already have these keys, just enter the required passphrase.
 
 ```bash
 DOCKER_CONTENT_TRUST=1 docker push <your-repo>/busybox:stable
-> The push refers to repository [<your-repo>/busybox]
-> 5b8c72934dfc: Pushed
-> stable: digest: sha256:dca71257cd2e72840a21f0323234bb2e33fea6d949fa0f21c5102146f583486b size: 527
-> Signing and pushing trust metadata
-> You are about to create a new root signing key passphrase. This passphrase
-> will be used to protect the most sensitive key in your signing system. Please
-> choose a long, complex passphrase and be careful to keep the password and the
-> key file itself secure and backed up. It is highly recommended that you use a
-> password manager to generate the passphrase and keep it safe. There will be no
-> way to recover this key. You can find the key in your config directory.
-> Enter passphrase for new root key with ID 5fb3e1e:
-> Repeat passphrase for new root key with ID 5fb3e1e:
-> Enter passphrase for new repository key with ID 6c2a04c:
-> Repeat passphrase for new repository key with ID 6c2a04c:
-> Finished initializing "<your-repo>/busybox"
 ```
+??? example "Output"
+    ```bash
+    The push refers to repository [<your-repo>/busybox]
+    5b8c72934dfc: Pushed
+    stable: digest: sha256:dca71257cd2e72840a21f0323234bb2e33fea6d949fa0f21c5102146f583486b size: 527
+    Signing and pushing trust metadata
+    You are about to create a new root signing key passphrase. This passphrase
+    will be used to protect the most sensitive key in your signing system. Please
+    choose a long, complex passphrase and be careful to keep the password and the
+    key file itself secure and backed up. It is highly recommended that you use a
+    password manager to generate the passphrase and keep it safe. There will be no
+    way to recover this key. You can find the key in your config directory.
+    Enter passphrase for new root key with ID 5fb3e1e:
+    Repeat passphrase for new root key with ID 5fb3e1e:
+    Enter passphrase for new repository key with ID 6c2a04c:
+    Repeat passphrase for new repository key with ID 6c2a04c:
+    Finished initializing "<your-repo>/busybox"
+    ```
 
 The freshly generated keys are directly imported to the Docker client.
 Private keys reside in `~/.docker/trust/private` and public trust data is added to `~/.docker/trust/tuf/`.
@@ -89,12 +92,15 @@ To use it, either use our pre-built image or build the docker image yourself via
 docker run --rm docker.io/securesystemsengineering/get-public-root-key -i securesystemsengineering/testimage
 # or self-built
 docker run --rm get-public-root-key -i securesystemsengineering/testimage
-> KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
-> Key: -----BEGIN PUBLIC KEY-----
-> MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-> d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-> -----END PUBLIC KEY-----
 ```
+??? example "Output"
+    ```bash
+    KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
+    Key: -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+    d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+    -----END PUBLIC KEY-----
+    ```
 
 The `-i` (`--image`) option is required and takes the image, for which you want the public key.
 There is also the `-s` (`--server`) option, which defines the Notary server that should be used and which defaults to `notary.docker.io`.
@@ -107,7 +113,7 @@ Now that you either created your own keys and signed images or extracted the pub
 This is done via `application.validators` in `helm/values.yaml`.
 The corresponding entry should look similar to the following (using the extracted public key as trust root):
 
-```yaml
+```yaml title="helm/values.yaml"
 - name: customvalidator
   type: notaryv1
   host: notary.docker.io
@@ -120,9 +126,9 @@ The corresponding entry should look similar to the following (using the extracte
       -----END PUBLIC KEY-----
 ```
 
-You also need to create a corresponding entry in the image policy via `application.policy` in `helm/values.yaml`, for example:
+You also need to create a corresponding entry in the image policy via `application.policy`, for example:
 
-```yaml
+```yaml title="helm/values.yaml"
 - pattern: "docker.io/<REPOSITORY>/<IMAGE>:*"  # THE DESIRED REPOSITORY
   validator: customvalidator
 ```
@@ -193,29 +199,31 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 
 ### Example
 
-```yaml
-application:
-  validators:
-  - name: docker_essentials
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots:
-    - name: sse
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-        qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-        -----END PUBLIC KEY-----
 
-  policy:
-  - pattern: "docker.io/securesystemsengineering/connaisseur:*"
-    validator: docker_essentials
-    with:
-      key: sse
-      delegations:
-      - belitzphilipp
-      - starkteetje
-```
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      validators:
+      - name: docker_essentials
+        type: notaryv1
+        host: notary.docker.io
+        trustRoots:
+        - name: sse
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+            qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+            -----END PUBLIC KEY-----
+
+      policy:
+      - pattern: "docker.io/securesystemsengineering/connaisseur:*"
+        validator: docker_essentials
+        with:
+          key: sse
+          delegations:
+          - belitzphilipp
+          - starkteetje
+    ```
 
 ## Additional notes
 
@@ -258,7 +266,7 @@ docker trust signer add --key <key-name>.pub <key-name> <your-repo>/busybox
 If you create a new signature for the image, you'll be asked for your delegation key instead of the targets key, therefore creating a signature using the delegation.
 
 ```bash
-> DOCKER_CONTENT_TRUST=1 docker push <your-repo>/busybox:stable
+DOCKER_CONTENT_TRUST=1 docker push <your-repo>/busybox:stable
 ```
 
 Without further configuration, Connaisseur will accept all delegation signatures for an image that can ultimately be validated against the public root key.
@@ -266,7 +274,7 @@ Connaisseur can enforce a certain signer/delegation (or multiple) for an image's
 Simply add the signer's name to the list.
 You can also add multiple signer names to the list in which case Connaisseur will enforce that *all* delegations must have signed a matching image.
 
-```yaml
+```yaml title="helm/values.yaml"
 application:
   policy:
   - pattern: "<your-repo>/busybox:*"

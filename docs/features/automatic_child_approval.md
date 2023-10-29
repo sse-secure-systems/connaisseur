@@ -1,6 +1,8 @@
 # Automatic Child Approval
 
-> :warning: This is currently an experimental feature that might unstable over time. As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
+!!! warning
+    This is currently an experimental feature that might unstable over time.
+    As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
 
 Per default, Connaisseur uses *automatic child approval* by which the child of a Kubernetes resource is automatically admitted without re-verification of the signature in order to avoid duplicate validation and handle inconsistencies with the image policy.
 This behavior can be configured or even disabled.

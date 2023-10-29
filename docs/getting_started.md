@@ -103,7 +103,7 @@ The result should look similar to this:
 
 === "Docker Content Trust"
 
-    ```yaml
+    ```yaml title="helm/values.yaml"
     # the `default` validator is used if no validator is specified in image policy
     - name: default
       type: notaryv1  # or other supported validator (e.g. "cosign")
@@ -132,7 +132,7 @@ The result should look similar to this:
 
     _In addition for Cosign, the `type` needs to be set to `cosign` and the `host` is not required._
 
-    ```yaml
+    ```yaml title="helm/values.yaml"
     # the `default` validator is used if no validator is specified in image policy
     - name: default
       type: cosign  # or other supported validator (e.g. "cosign")

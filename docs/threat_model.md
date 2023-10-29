@@ -1,6 +1,8 @@
 # Threat Model
 
-:warning:**OUTDATED**:warning:
+!!! warning "DEPRECATION WARNING"
+    The threat model is **OUTDATED** and does not reflect the currently applicable architecture.
+    It still serves as a general guidance to relevant threats.
 
 The STRIDE threat model has been used as a reference for threat modeling. Each of the STRIDE threats were matched to all entities relevant to Connaisseur, including Connaisseur itself. A description of how a threat on an entity manifests itself is given as well as a possible counter measure.
 

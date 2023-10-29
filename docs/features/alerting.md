@@ -44,7 +44,7 @@ one it needs to be one of `slack`, `keybase`, `opsgenie`, `msteams` or `ecs-1-12
 For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:
 
 
-```
+```yaml title="helm/values.yaml"
 alerting:
   admitRequest:
     receivers:

@@ -31,6 +31,7 @@ theme:
   features:
     - navigation.top
     - content.code.copy
+    - content.code.annotate
     - content.tabs.link
 
 # Extensions
@@ -41,6 +42,7 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.details
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
@@ -95,12 +97,12 @@ nav:
       - validators/notaryv2.md
     - Features:
       - features/README.md
-      - features/metrics.md
       - features/alerting.md
-      - features/detection_mode.md
-      - features/namespaced_validation.md
       - features/automatic_child_approval.md
       - features/automatic_unchanged_approval.md
+      - features/detection_mode.md
+      - features/metrics.md
+      - features/namespaced_validation.md
   - Security:
     - threat_model.md
     - SECURITY.md

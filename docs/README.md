@@ -15,13 +15,11 @@ It is built to be extendable and currently aims to support the following signing
 - [sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign)
 - [Notary V2](https://github.com/notaryproject/nv2) (PLANNED)
 
-It provides several additional features:
+It provides several additional features such as:
 
-- [Metrics](features/metrics.md): *get prometheus metrics at `/metrics`*
 - [Alerting](features/alerting.md): *send alerts based on verification result*
 - [Detection Mode](features/detection_mode.md): *warn but do not block invalid images*
 - [Namespaced Validation](features/namespaced_validation.md): *restrict validation to dedicated namespaces*
-- [Automatic Child Approval](features/automatic_child_approval.md): *configure approval of Kubernetes child resources*
 
 Feel free to reach out via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions)!
 
@@ -31,7 +29,8 @@ Getting started to verify image signatures is only a matter of minutes:
 
 ![](assets/connaisseur_demo.gif)
 
-> :warning: Only try this out on a test cluster as deployments with unsigned images will be blocked. :warning:
+!!! warning
+    Only try this out on a test cluster as deployments with unsigned images will be blocked.
 
 Connaisseur comes pre-configured with public keys for its own repository and [Docker's official images](https://docs.docker.com/docker-hub/official_images/) (official images can be found [here](https://hub.docker.com/search?q=&type=image&image_filter=official)).
 It can be fully configured via `helm/values.yaml`.

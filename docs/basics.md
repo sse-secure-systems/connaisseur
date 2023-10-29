@@ -102,7 +102,7 @@ Install Connaisseur via Helm or Kubernetes manifests:
 === "Kubernetes manifests"
 
     Installing Conaisseur via Kubernetes manifests requires to first render the respecitve resources.
-    If the repo was cloned, simply render remplates via:
+    If the repo was cloned, simply render templates via:
     ```bash
     helm template helm -n connaisseur > deploy.yaml
     ```
@@ -135,20 +135,24 @@ Once everything is installed, you can check whether all the pods are up by runni
 
 ```bash
 kubectl get all -n connaisseur
-> NAME                                          READY   STATUS    RESTARTS   AGE
-> pod/connaisseur-deployment-78d8975596-42tkw   1/1     Running   0          22s
-> pod/connaisseur-deployment-78d8975596-5c4c6   1/1     Running   0          22s
-> pod/connaisseur-deployment-78d8975596-kvrj6   1/1     Running   0          22s
->
-> NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
-> service/connaisseur-svc   ClusterIP   10.108.220.34   <none>        443/TCP   22s
->
-> NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
-> deployment.apps/connaisseur-deployment   3/3     3            3           22s
->
-> NAME                                                DESIRED   CURRENT   READY   AGE
-> replicaset.apps/connaisseur-deployment-78d8975596   3         3         3       22s
 ```
+
+??? example "Output"
+    ```bash
+    NAME                                          READY   STATUS    RESTARTS   AGE
+    pod/connaisseur-deployment-78d8975596-42tkw   1/1     Running   0          22s
+    pod/connaisseur-deployment-78d8975596-5c4c6   1/1     Running   0          22s
+    pod/connaisseur-deployment-78d8975596-kvrj6   1/1     Running   0          22s
+    
+    NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+    service/connaisseur-svc   ClusterIP   10.108.220.34   <none>        443/TCP   22s
+    
+    NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/connaisseur-deployment   3/3     3            3           22s
+    
+    NAME                                                DESIRED   CURRENT   READY   AGE
+    replicaset.apps/connaisseur-deployment-78d8975596   3         3         3       22s
+    ```
 
 ### Use
 
@@ -159,8 +163,8 @@ In case you use the pre-configuration, you could for example run the following c
 kubectl run demo --image=docker.io/securesystemsengineering/testimage:unsigned
 > Error from server: admission webhook "connaisseur-svc.connaisseur.svc" denied the request (...).
 
-kubectl run hello-world --image=docker.io/hello-world
-> pod/hello-world created
+kubectl run demo --image=docker.io/securesystemsengineering/testimage:signed
+> pod/demo created
 ```
 
 ### Upgrade
@@ -194,7 +198,7 @@ A running Connaisseur instance can be updated by a Helm upgrade of the current r
     kubectl apply -f deploy.yaml -l 'app.kubernetes.io/component=connaisseur-webhook' -n connaisseur
     ```
     !!! note
-        Rolling upgrades as with Helm might also be possible, but might require further configuration.
+        Rolling upgrades as with Helm might also be possible, but likely require further configuration.
         Insights are welcome :pray:
 
 ### Delete
@@ -291,32 +295,33 @@ The special case of static validators used to simply allow or deny images withou
 
 #### Example
 
-```yaml
-application:
-  validators:
-  - name: default
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots:
-    - name: default
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-        d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-        -----END PUBLIC KEY-----
-    auth:
-      username: superuser
-      password: lookatmeimjumping
-  - name: myvalidator
-    type: cosign
-    trustRoots:
-    - name: mykey
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIFXO1w6oj0oI2Fk9SiaNJRKTiO9d
-        ksm6hFczQAq+FDdw0istEdCwcHO61O/0bV+LC8jqFoomA28cT+py6FcSYw==
-        -----END PUBLIC KEY-----
-```
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      validators:
+      - name: default
+        type: notaryv1
+        host: notary.docker.io
+        trustRoots:
+        - name: default
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
+        auth:
+          username: superuser
+          password: lookatmeimjumping
+      - name: myvalidator
+        type: cosign
+        trustRoots:
+        - name: mykey
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIFXO1w6oj0oI2Fk9SiaNJRKTiO9d
+            ksm6hFczQAq+FDdw0istEdCwcHO61O/0bV+LC8jqFoomA28cT+py6FcSYw==
+            -----END PUBLIC KEY-----
+    ```
 
 #### Static validators
 
@@ -334,16 +339,17 @@ This for example allows to implement an *allowlist* or *denylist*.
 
 ##### Example
 
-```yaml
-application:
-  validators:
-  - name: allow
-    type: static
-    approve: true
-  - name: deny
-    type: static
-    approve: false
-```
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      validators:
+      - name: allow
+        type: static
+        approve: true
+      - name: deny
+        type: static
+        approve: false
+    ```
 
 ### Image policy
 
@@ -372,7 +378,7 @@ The reference to validator and exact trust root is resolved in the following way
 Let's review the pattern and validator matching at a minimal example.
 We consider the following validator and policy configuration (most fields have been omitted for clarity):
 
-```yaml
+```yaml title="helm/values.yaml"
 application:
   validators:
   - name: default     # validator 1
@@ -424,19 +430,20 @@ There is two rules that should remain intact in some form in order to not brick 
 
 #### Example
 
-```yaml
-application:
-  policy:
-  - pattern: "*:*"
-  - pattern: "docker.io/myrepo/*:*"
-    validator: myvalidator
-    with:
-      trustRoot: mykey
-  - pattern: "docker.io/myrepo/deniedimage:*"
-    validator: deny
-  - pattern: "docker.io/myrepo/allowedimage:v*"
-    validator: allow
-```
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      policy:
+      - pattern: "*:*"
+      - pattern: "docker.io/myrepo/*:*"
+        validator: myvalidator
+        with:
+          trustRoot: mykey
+      - pattern: "docker.io/myrepo/deniedimage:*"
+        validator: deny
+      - pattern: "docker.io/myrepo/allowedimage:v*"
+        validator: allow
+    ```
 
 ### Common examples
 
@@ -446,7 +453,7 @@ These can serve as a first template beyond the pre-configuration or might just b
 We assume your repository is `docker.io/myrepo` and a public key has been created.
 In case this repository is private, authentication would have to be added to the respective validator for example via:
 
-```yaml
+```yaml title="helm/values.yaml"
     auth:
       secretName: k8ssecret
 ```
@@ -457,89 +464,92 @@ The Kubernetes secret would have to be created separately according to the valid
 
 This is likely the most common case in simple settings by which only self-built images are used and validated against your own public key:
 
-```yaml
-application:
-  validators:
-  - name: allow
-    type: static
-    approve: true
-  - name: default
-    type: notaryv1  # or e.g. 'cosign'
-    host: notary.docker.io  # only required in case of notaryv1
-    trustRoots:
-    - name: default
-      key: |  # your public key below
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-        qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-        -----END PUBLIC KEY-----
-  - name: dockerhub_basics
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots:
-    - name: securesystemsengineering_official
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-        d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-        -----END PUBLIC KEY-----
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      validators:
+      - name: allow
+        type: static
+        approve: true
+      - name: default
+        type: notaryv1  # or e.g. 'cosign'
+        host: notary.docker.io  # only required in case of notaryv1
+        trustRoots:
+        - name: default
+          key: |  # your public key below
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+            qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+            -----END PUBLIC KEY-----
+      - name: dockerhub_basics
+        type: notaryv1
+        host: notary.docker.io
+        trustRoots:
+        - name: securesystemsengineering_official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
 
-  policy:
-  - pattern: "*:*"
-  - pattern: "k8s.gcr.io/*:*"
-    validator: allow
-  - pattern: "docker.io/securesystemsengineering/*:*"
-    validator: dockerhub_basics
-    with:
-      trustRoot: securesystemsengineering_official
-```
+      policy:
+      - pattern: "*:*"
+      - pattern: "k8s.gcr.io/*:*"
+        validator: allow
+      - pattern: "docker.io/securesystemsengineering/*:*"
+        validator: dockerhub_basics
+        with:
+          trustRoot: securesystemsengineering_official
+    ```
 
 
 #### Case: Only validate own images and deny all others (faster)
 
 This configuration achieves the same as the one above, but is faster as trust data only needs to be requested for images in your repository:
 
-```yaml
-application:
-  validators:
-  - name: allow
-    type: static
-    approve: true
-  - name: deny
-    type: static
-    approve: false
-  - name: default
-    type: notaryv1  # or e.g. 'cosign'
-    host: notary.docker.io  # only required in case of notaryv1
-    trustRoots:
-    - name: default
-      key: |  # your public key below
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-        qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-        -----END PUBLIC KEY-----
-  - name: dockerhub_basics
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots:
-    - name: securesystemsengineering_official
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-        d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-        -----END PUBLIC KEY-----
 
-  policy:
-  - pattern: "*:*"
-    validator: deny
-  - pattern: "docker.io/myrepo/*:*"
-  - pattern: "k8s.gcr.io/*:*"
-    validator: allow
-  - pattern: "docker.io/securesystemsengineering/*:*"
-    validator: dockerhub_basics
-    with:
-      trustRoot: securesystemsengineering_official
-```
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      validators:
+      - name: allow
+        type: static
+        approve: true
+      - name: deny
+        type: static
+        approve: false
+      - name: default
+        type: notaryv1  # or e.g. 'cosign'
+        host: notary.docker.io  # only required in case of notaryv1
+        trustRoots:
+        - name: default
+          key: |  # your public key below
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+            qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+            -----END PUBLIC KEY-----
+      - name: dockerhub_basics
+        type: notaryv1
+        host: notary.docker.io
+        trustRoots:
+        - name: securesystemsengineering_official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
+
+      policy:
+      - pattern: "*:*"
+        validator: deny
+      - pattern: "docker.io/myrepo/*:*"
+      - pattern: "k8s.gcr.io/*:*"
+        validator: allow
+      - pattern: "docker.io/securesystemsengineering/*:*"
+        validator: dockerhub_basics
+        with:
+          trustRoot: securesystemsengineering_official
+    ```
 
 The `*:*` rule could also have been omitted as Connaisseur denies unmatched images.
 However, explicit is better than implicit.
@@ -548,113 +558,117 @@ However, explicit is better than implicit.
 
 In case only validated Docker Hub official images should be admitted to the cluster:
 
-```yaml
-application:
-  validators:
-  - name: allow
-    type: static
-    approve: true
-  - name: deny
-    type: static
-    approve: false
-  - name: dockerhub_basics
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots:
-    - name: docker_official
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-        QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
-        -----END PUBLIC KEY-----
-    - name: securesystemsengineering_official
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-        d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-        -----END PUBLIC KEY-----
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      validators:
+      - name: allow
+        type: static
+        approve: true
+      - name: deny
+        type: static
+        approve: false
+      - name: dockerhub_basics
+        type: notaryv1
+        host: notary.docker.io
+        trustRoots:
+        - name: docker_official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            -----END PUBLIC KEY-----
+        - name: securesystemsengineering_official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
 
-  policy:
-  - pattern: "*:*"
-    validator: deny
-  - pattern: "docker.io/library/*:*"
-    validator: dockerhub_basics
-    with:
-      trustRoot: docker_official
-  - pattern: "k8s.gcr.io/*:*"
-    validator: allow
-  - pattern: "docker.io/securesystemsengineering/*:*"
-    validator: dockerhub_basics
-    with:
-      trustRoot: securesystemsengineering_official
-```
+      policy:
+      - pattern: "*:*"
+        validator: deny
+      - pattern: "docker.io/library/*:*"
+        validator: dockerhub_basics
+        with:
+          trustRoot: docker_official
+      - pattern: "k8s.gcr.io/*:*"
+        validator: allow
+      - pattern: "docker.io/securesystemsengineering/*:*"
+        validator: dockerhub_basics
+        with:
+          trustRoot: securesystemsengineering_official
+    ```
 
 #### Case: Only validate Docker Hub official images and allow all others
 
 In case only Docker Hub official images should be validated while all others are simply admitted:
 
-```yaml
-application:
-  validators:
-  - name: allow
-    type: static
-    approve: true
-  - name: deny
-    type: static
-    approve: false
-  - name: dockerhub_basics
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots:
-    - name: docker_official
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-        QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
-        -----END PUBLIC KEY-----
-    - name: securesystemsengineering_official
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-        d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-        -----END PUBLIC KEY-----
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      validators:
+      - name: allow
+        type: static
+        approve: true
+      - name: deny
+        type: static
+        approve: false
+      - name: dockerhub_basics
+        type: notaryv1
+        host: notary.docker.io
+        trustRoots:
+        - name: docker_official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            -----END PUBLIC KEY-----
+        - name: securesystemsengineering_official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
 
-  policy:
-  - pattern: "*:*"
-    validator: allow
-  - pattern: "docker.io/library/*:*"
-    validator: dockerhub_basics
-    with:
-      trustRoot: docker_official
-  - pattern: "k8s.gcr.io/*:*"
-    validator: allow
-  - pattern: "docker.io/securesystemsengineering/*:*"
-    validator: dockerhub_basics
-    with:
-      trustRoot: securesystemsengineering_official
-```
+      policy:
+      - pattern: "*:*"
+        validator: allow
+      - pattern: "docker.io/library/*:*"
+        validator: dockerhub_basics
+        with:
+          trustRoot: docker_official
+      - pattern: "k8s.gcr.io/*:*"
+        validator: allow
+      - pattern: "docker.io/securesystemsengineering/*:*"
+        validator: dockerhub_basics
+        with:
+          trustRoot: securesystemsengineering_official
+    ```
 
 #### Case: Directly admit own images and deny all others
 
 As a matter of fact, Connaisseur can also be used to restrict the allowed registries and repositories without signature validation:
 
-```yaml
-application:
-  validators:
-  - name: allow
-    type: static
-    approve: true
-  - name: deny
-    type: static
-    approve: false
 
-  policy:
-  - pattern: "*:*"
-    validator: deny
-  - pattern: "docker.io/myrepo/*:*"
-    validator: allow
-  - pattern: "k8s.gcr.io/*:*"
-    validator: allow
-  - pattern: "docker.io/securesystemsengineering/*:*"
-    validator: allow
-```
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      validators:
+      - name: allow
+        type: static
+        approve: true
+      - name: deny
+        type: static
+        approve: false
+
+      policy:
+      - pattern: "*:*"
+        validator: deny
+      - pattern: "docker.io/myrepo/*:*"
+        validator: allow
+      - pattern: "k8s.gcr.io/*:*"
+        validator: allow
+      - pattern: "docker.io/securesystemsengineering/*:*"
+        validator: allow
+    ```

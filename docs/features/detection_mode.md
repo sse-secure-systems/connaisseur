@@ -23,13 +23,12 @@ To activate the detection mode, set the `detectionMode` flag to `true` in `helm/
 
 ## Example
 
-In `helm/values.yaml`:
-
-```
-application:
-  features:
-    detectionMode: true
-```
+??? abstract "helm/values.yaml"
+    ```yaml title="helm/values.yaml"
+    application:
+      features:
+        detectionMode: true
+    ```
 
 ## Additional notes
 

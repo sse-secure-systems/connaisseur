@@ -1,10 +1,10 @@
 # Namespaced Validation
 
+!!! warning
+    Enabling namespaced validation, allows roles with edit permissions on namespaces to disable validation for those namespaces.
 Namespaced validation allows restricting validation to specific namespaces.
 Connaisseur will only verify trust of images deployed to the configured namespaces.
 This can greatly support initial rollout by stepwise extending the validated namespaces or excluding specific namespaces for which signatures are unfeasible.
-
-> :warning: Enabling namespaced validation, allows roles with edit permissions on namespaces to disable validation for those namespaces. :warning:
 
 Namespaced validation offers two modes:
 

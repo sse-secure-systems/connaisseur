@@ -28,13 +28,11 @@ It is built to be extendable and currently aims to support the following signing
 - [Sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign)
 - [Notary V2](https://github.com/notaryproject/nv2) (PLANNED)
 
-It provides several additional features:
+It provides several additional features such as:
 
-- [Metrics](docs/features/metrics.md): *get prometheus metrics at `/metrics`*
 - [Alerting](docs/features/alerting.md): *send alerts based on verification result*
 - [Detection Mode](docs/features/detection_mode.md): *warn but do not block invalid images*
 - [Namespaced Validation](docs/features/namespaced_validation.md): *restrict validation to dedicated namespaces*
-- [Automatic Child Approval](docs/features/automatic_child_approval.md): *configure approval of Kubernetes child resources*
 
 
 ## Quick start
