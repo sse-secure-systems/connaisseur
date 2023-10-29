@@ -74,7 +74,7 @@ However, validating your own images requires additional configuration.
 
 ### Deploy
 
-Install Connaisseur via Helm:
+Install Connaisseur via Helm or Kubernetes manifests:
 
 === "Git repo"
 
@@ -96,6 +96,32 @@ Install Connaisseur via Helm:
 
     ```bash
     helm install connaisseur connaisseur/connaisseur --atomic --create-namespace --namespace connaisseur -f values.yaml
+    ```
+
+=== "Kubernetes manifests"
+
+    Installing Conaisseur via Kubernetes manifests requires to first render the respecitve resources.
+    If the repo was cloned, simply render remplates via:
+    ```bash
+    helm template helm -n connaisseur > deploy.yaml
+    ```
+    Next, the admission controller is deployed step-wise:
+
+    0. Create target namespace:
+    ```bash
+    kubectl create namespace connaisseur
+    ```
+    1. Setup the preliminary hook:
+    ```bash
+    kubectl apply -f deploy.yaml -l 'app.kubernetes.io/component=connaisseur-init' -n connaisseur
+    ```
+    2. Deploy core resources
+    ```bash
+    kubectl apply -f deploy.yaml -l 'app.kubernetes.io/component=connaisseur-core' -n connaisseur
+    ```
+    3. Arm the webhook
+    ```bash
+    kubectl apply -f deploy.yaml -l 'app.kubernetes.io/component=connaisseur-webhook' -n connaisseur
     ```
 
 This deploys Connaisseur to its own namespace called `connaisseur`.
@@ -156,15 +182,48 @@ A running Connaisseur instance can be updated by a Helm upgrade of the current r
     helm upgrade connaisseur connaisseur/connaisseur -n connaisseur --wait -f values.yaml
     ```
 
+=== "Kubernetes manifests"
 
+    Adjust your local Kubernetes manifests (e.g. `deploy.yaml`) as required and upgrade via delete and reinstall:
+
+    ```bash
+    kubectl delete -f deploy.yaml -n connaisseur
+    kubectl apply -f deploy.yaml -l 'app.kubernetes.io/component=connaisseur-init' -n connaisseur
+    kubectl apply -f deploy.yaml -l 'app.kubernetes.io/component=connaisseur-core' -n connaisseur
+    kubectl apply -f deploy.yaml -l 'app.kubernetes.io/component=connaisseur-webhook' -n connaisseur
+    ```
+    !!! note
+        Rolling upgrades as with Helm might also be possible, but might require further configuration.
+        Insights are welcome :pray:
 
 ### Delete
 
 Just like for installation, Helm can also be used to delete Connaisseur from your cluster:
 
-```bash
-helm uninstall connaisseur -n connaisseur
-```
+
+=== "Git repo"
+
+    Uninstall via Helm:
+
+    ```bash
+    helm uninstall connaisseur -n connaisseur
+    ```
+
+=== "Helm chart"
+
+    Uninstall via Helm:
+
+    ```bash
+    helm uninstall connaisseur -n connaisseur
+    ```
+
+=== "Kubernetes manifests"
+
+    Delete via manifests:
+
+    ```bash
+    kubectl delete -f deploy.yaml -n connaisseur
+    ```
 
 In case uninstallation fails or problems occur during subsequent installation, you can manually remove all resources:
 
