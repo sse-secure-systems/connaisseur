@@ -8,10 +8,7 @@ import requests
 from aioresponses import CallbackResult
 
 import connaisseur.admission_request as admreq
-import connaisseur.alert as alert
-import connaisseur.config as co
 import connaisseur.kube_api
-import connaisseur.util as util
 import connaisseur.validators.notaryv1.key_store as ks
 import connaisseur.validators.notaryv1.notary as no
 import connaisseur.validators.notaryv1.notaryv1_validator as nv1

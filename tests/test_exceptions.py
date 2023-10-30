@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 import connaisseur.exceptions as exc

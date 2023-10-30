@@ -5,10 +5,8 @@ import pytest
 import yaml
 from aiohttp.client_exceptions import ClientResponseError
 from aioresponses import aioresponses
-from requests.models import HTTPError
 
 import connaisseur.exceptions as exc
-import connaisseur.util
 import connaisseur.validators.notaryv1.notary as notary
 from connaisseur.image import Image
 
