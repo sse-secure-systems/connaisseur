@@ -14,7 +14,7 @@ TIMEOUT=30
 RETRY=3
 
 ## Backup helm/values.yaml
-cp helm/values.yaml values.yaml.Backup
+cp helm/values.yaml values.yaml.backup
 
 ## LOAD PUBLIC KEY
 COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n            }")"
@@ -607,5 +607,6 @@ fi
 echo 'Cleaning up installation and test resources...'
 make uninstall >/dev/null 2>&1 || true
 kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets,namespaces -luse="connaisseur-integration-test" -A >/dev/null
+rm ghcr-values ghcr-validator
 mv values.yaml.backup helm/values.yaml
 echo 'Finished cleanup.'
