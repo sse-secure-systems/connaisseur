@@ -42,6 +42,8 @@ single_test() { # ID TXT TYP REF NS MSG RES
 			kubectl run pod-$1-${RAND} --image="$4" --namespace="$5" -luse="connaisseur-integration-test" >output.log 2>&1 || true
 		elif [[ "$3" == "debug" ]]; then
 			kubectl run $1-base-pod-${RAND} --image="securesystemsengineering/testimage:signed" --namespace="$5" -luse="connaisseur-integration-test" >/dev/null 2>&1 || true
+			# Await base pod readiness as otherwise there may be multiple admission requests during the deployment of the ephemeral container
+			kubectl wait --for=condition=Ready pod $1-base-pod-${RAND} --namespace="$5" || true
 			kubectl debug $1-base-pod-${RAND} --image="$4" --namespace="$5" >output.log 2>&1 || true
 		elif [[ "$3" == "workload" ]]; then
 			envsubst <tests/integration/workload-objects/$4.yaml | kubectl apply -f - >output.log 2>&1 || true
