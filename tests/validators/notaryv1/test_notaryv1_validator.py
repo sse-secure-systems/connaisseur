@@ -403,30 +403,46 @@ def test_search_image_targets_for_digest(sample_nv1, image: str, digest: str):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "delegations",
+    "delegations, expected_trust_data_keys",
     [
-        ([]),
-        (["targets/phbelitz"]),
-        (["targets/phbelitz", "targets/chamsen"]),
-        (["targets/daugustin"]),
+        ([], []),
+        (["targets/phbelitz"], ["targets/phbelitz"]),
+        (
+            ["targets/phbelitz", "targets/chamsen"],
+            ["targets/phbelitz", "targets/chamsen"],
+        ),
+        (["targets/non-existant"], []),
+        (["targets/non-existant", "targets/chamsen"], ["targets/chamsen"]),
     ],
 )
 async def test_update_with_delegation_trust_data(
-    monkeypatch,
     m_request,
     m_trust_data,
     m_expiry,
     alice_key_store,
     sample_nv1,
     delegations,
+    expected_trust_data_keys,
 ):
     async with aiohttp.ClientSession() as session:
-        assert (
-            await sample_nv1._NotaryV1Validator__update_with_delegation_trust_data(
-                session, {}, delegations, alice_key_store, Image("alice-image")
+        with aioresponses() as aio:
+            aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+            trust_data = {}
+            assert (
+                await sample_nv1._NotaryV1Validator__update_with_delegation_trust_data(
+                    session,
+                    trust_data,
+                    delegations,
+                    alice_key_store,
+                    Image("alice-image"),
+                )
+                is None
             )
-            is None
-        )
+            if not expected_trust_data_keys:
+                assert not trust_data
+            else:
+                for expected_key in expected_trust_data_keys:
+                    assert expected_key in trust_data.keys()
 
 
 @pytest.mark.parametrize(
