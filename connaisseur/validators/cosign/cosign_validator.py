@@ -16,6 +16,7 @@ from connaisseur.exceptions import (
     WrongKeyError,
 )
 from connaisseur.image import Image
+from connaisseur.logging import ConnaisseurLoggingWrapper
 from connaisseur.trust_root import ECDSAKey, KMSKey, RSAKey, TrustRoot
 from connaisseur.util import safe_path_func  # nosec
 from connaisseur.validators.interface import ValidatorInterface
@@ -310,26 +311,7 @@ class CosignValidator(ValidatorInterface):
 
         Raises an exception if Cosign times out.
         """
-
-        # on the use of `--insecure-ignore-sct`: this flag disables/enables
-        # the validation that a certificate was added to the transparency log.
-        # without the support of keyless, no certificates are being used in the
-        # first place, so it can be safely ignored.
-        # once we do enable it, we run into problems that multiple parallel
-        # processes try to access a local file, of which only one process
-        # will win, while the others fail.
-        args = [
-            "verify",
-            *([] if verify_tlog else ["--insecure-ignore-tlog"]),
-            "--insecure-ignore-sct",
-            "--output",
-            "text",
-            tr_args["option_kword"],
-            tr_args["inline_tr"],
-            *(["--k8s-keychain"] if self.k8s_keychain else []),
-            *(["--rekor-url", self.rekor_url] if self.rekor_url else []),
-            image,
-        ]
+        args = self.__build_call_arguments(image, tr_args, verify_tlog)
 
         process = await asyncio.create_subprocess_exec(  # nosec
             "/app/cosign/cosign",
@@ -351,6 +333,28 @@ class CosignValidator(ValidatorInterface):
             ) from err
 
         return (process.returncode, stdout.decode("utf-8"), stderr.decode("utf-8"))
+
+    def __build_call_arguments(self, image: str, tr_args: dict, verify_tlog: bool):
+        # on the use of `--insecure-ignore-sct`: this flag disables/enables
+        # the validation that a certificate was added to the transparency log.
+        # without the support of keyless, no certificates are being used in the
+        # first place, so it can be safely ignored.
+        # once we do enable it, we run into problems that multiple parallel
+        # processes try to access a local file, of which only one process
+        # will win, while the others fail.
+        return [
+            "verify",
+            *([] if verify_tlog else ["--insecure-ignore-tlog"]),
+            "--insecure-ignore-sct",
+            "--output",
+            "text",
+            tr_args["option_kword"],
+            tr_args["inline_tr"],
+            *(["--k8s-keychain"] if self.k8s_keychain else []),
+            *(["--rekor-url", self.rekor_url] if self.rekor_url else []),
+            *(["--verbose"] if ConnaisseurLoggingWrapper.is_debug_level() else []),
+            image,
+        ]
 
     def __get_envs(self):
         """

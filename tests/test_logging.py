@@ -34,6 +34,21 @@ def test_call():
     assert lo.__call__({}, start_func) == "wayne"
 
 
+@pytest.mark.parametrize(
+    "log_level",
+    [
+        ("INFO"),
+        ("DEBUG"),
+        ("CRITICAL"),
+        ("WARNING"),
+        ("NOTSET"),
+    ],
+)
+def test_is_debug_level(log_level):
+    lw.ConnaisseurLoggingWrapper("SOME_NAME", log_level)
+    assert lw.ConnaisseurLoggingWrapper.is_debug_level() == (log_level == "DEBUG")
+
+
 # don't know how to properly test the logging :(
 # pytest supports a fixture (caplog), but this only captures
 # the input for the log call, but not the resulting string/JSON

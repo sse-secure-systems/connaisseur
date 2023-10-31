@@ -1,5 +1,4 @@
 import json
-import os
 import re
 import ssl
 from typing import Optional
@@ -15,6 +14,7 @@ from connaisseur.exceptions import (
     UnknownTypeException,
 )
 from connaisseur.image import Image
+from connaisseur.logging import ConnaisseurLoggingWrapper
 from connaisseur.validators.notaryv1.trust_data import TrustData
 from connaisseur.validators.notaryv1.tuf_role import TUFRole
 
@@ -142,7 +142,7 @@ class Notary:
         try:
             return await self.get_trust_data(session, image, role, token)
         except Exception as ex:
-            if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
+            if ConnaisseurLoggingWrapper.is_debug_level():
                 raise ex
             return None
 

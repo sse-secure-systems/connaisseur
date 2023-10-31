@@ -6,6 +6,7 @@ import pytest_subprocess
 import connaisseur.exceptions as exc
 import connaisseur.validators.cosign.cosign_validator as co
 from connaisseur.image import Image
+from connaisseur.logging import ConnaisseurLoggingWrapper
 from connaisseur.trust_root import TrustRoot
 
 from ... import conftest as fix
@@ -673,6 +674,66 @@ async def test_invoke_cosign_timeout_expired(
 
     mock_kill.assert_has_calls([mocker.call()])
     assert "Cosign timed out." in str(err.value)
+
+
+@pytest.mark.parametrize(
+    "index, image, tr_args, verify_tlog, log_lvl_is_debug, exception",
+    [
+        (
+            0,
+            "a/b:c",
+            {"option_kword": "hi", "inline_tr": "there"},
+            True,
+            False,
+            fix.no_exc(),
+        ),
+        (
+            0,
+            "a/b:c",
+            {"option_kword": "hi", "inline_tr": "there"},
+            False,
+            False,
+            fix.no_exc(),
+        ),
+        (0, "a/b:c", {"ab": "cd", "ef": "gh"}, False, "INFO", pytest.raises(KeyError)),
+        (
+            1,
+            "d/e:f",
+            {"option_kword": "hi", "inline_tr": "there"},
+            False,
+            False,
+            fix.no_exc(),
+        ),
+        (
+            1,
+            "a/b:c",
+            {"option_kword": "hi", "inline_tr": "there"},
+            False,
+            True,
+            fix.no_exc(),
+        ),
+    ],
+)
+def test_build_call_arguments(
+    monkeypatch, index, image, tr_args, verify_tlog, log_lvl_is_debug, exception
+):
+    monkeypatch.setattr(
+        ConnaisseurLoggingWrapper, "is_debug_level", lambda: log_lvl_is_debug
+    )
+    with exception:
+        validator = co.CosignValidator(**static_cosigns[index])
+        args = validator._CosignValidator__build_call_arguments(
+            image, tr_args, verify_tlog
+        )
+        assert args[-1] == image
+        assert tr_args["option_kword"] in args
+        assert tr_args["inline_tr"] in args
+        assert ("--k8s-keychain" in args) == validator.k8s_keychain
+        assert ("--rekor-url" in args and validator.rekor_url in args) == bool(
+            validator.rekor_url
+        )
+        assert ("--insecure-ignore-tlog" in args) != verify_tlog
+        assert ("--verbose" in args) == log_lvl_is_debug
 
 
 @pytest.mark.parametrize("index, COSIGN_EXPERIMENTAL", [(0, 0), (5, 1)])

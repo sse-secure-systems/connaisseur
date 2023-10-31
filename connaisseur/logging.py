@@ -3,6 +3,8 @@ from datetime import datetime as dt
 
 from pythonjsonlogger import jsonlogger
 
+CONNAISSEUR_LOGGER_NAME = "wsgi"
+
 
 class ConnaisseurLoggingWrapper:
     """
@@ -11,7 +13,7 @@ class ConnaisseurLoggingWrapper:
 
     def __init__(self, app, log_level):
         self.logger = logging.getLogger(
-            "wsgi"
+            CONNAISSEUR_LOGGER_NAME
         )  # has no handler and hence propagates logs to root logger
         self.logger.setLevel(log_level)
         self.app = app
@@ -48,6 +50,13 @@ class ConnaisseurLoggingWrapper:
         else:
             self.logger.info("request log", extra=extra_logs)
         return result
+
+    @staticmethod
+    def is_debug_level() -> bool:
+        return (
+            logging.getLogger(CONNAISSEUR_LOGGER_NAME).getEffectiveLevel()
+            == logging.DEBUG
+        )
 
 
 class JsonLogFormatter(jsonlogger.JsonFormatter):

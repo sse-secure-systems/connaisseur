@@ -9,6 +9,7 @@ from aioresponses import aioresponses
 import connaisseur.exceptions as exc
 import connaisseur.validators.notaryv1.notary as notary
 from connaisseur.image import Image
+from connaisseur.logging import ConnaisseurLoggingWrapper
 
 from ... import conftest as fix
 
@@ -159,16 +160,16 @@ async def test_get_trust_data(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "index, image, output, exception, log_lvl",
+    "index, image, output, exception, log_lvl_is_debug",
     [
-        (0, "alice-image", True, fix.no_exc(), "INFO"),
-        (0, "empty.io/alice-image", False, fix.no_exc(), "INFO"),
+        (0, "alice-image", True, fix.no_exc(), False),
+        (0, "empty.io/alice-image", False, fix.no_exc(), False),
         (
             0,
             "empty.io/alice-image",
             False,
             pytest.raises(exc.NotFoundException),
-            "DEBUG",
+            True,
         ),
     ],
 )
@@ -181,9 +182,11 @@ async def test_get_delegation_trust_data(
     image,
     output,
     exception,
-    log_lvl,
+    log_lvl_is_debug,
 ):
-    monkeypatch.setenv("LOG_LEVEL", log_lvl)
+    monkeypatch.setattr(
+        ConnaisseurLoggingWrapper, "is_debug_level", lambda: log_lvl_is_debug
+    )
     async with aiohttp.ClientSession() as session:
         with exception:
             with aioresponses() as aio:
