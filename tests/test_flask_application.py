@@ -283,15 +283,15 @@ async def test_admit(
     out,
     exception,
 ):
-    session = aiohttp.ClientSession()
-    monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", str(update_approval))
-    with exception:
-        with aioresponses() as aio:
-            aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
-            response = await pytest.fa.__admit(
-                AdmissionRequest(adm_req_samples[index]), session
-            )
-            assert response == out
+    async with aiohttp.ClientSession() as session:
+        monkeypatch.setenv("AUTOMATIC_UNCHANGED_APPROVAL", str(update_approval))
+        with exception:
+            with aioresponses() as aio:
+                aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+                response = await pytest.fa.__admit(
+                    AdmissionRequest(adm_req_samples[index]), session
+                )
+                assert response == out
 
 
 @pytest.mark.parametrize(
@@ -375,8 +375,13 @@ async def test__validate_image_adds_context(mocker, adm_req_samples):
         "connaisseur.config.Config.get_validator",
         return_value=StaticValidator("", False),
     )
-    session = aiohttp.ClientSession()
-    with pytest.raises(exc.ValidationError, match=r"'image': '[^']*myimagename:andtag"):
-        await pytest.fa.__validate_image(
-            (0, 0), "myimagename:andtag", AdmissionRequest(adm_req_samples[0]), session
-        )
+    async with aiohttp.ClientSession() as session:
+        with pytest.raises(
+            exc.ValidationError, match=r"'image': '[^']*myimagename:andtag"
+        ):
+            await pytest.fa.__validate_image(
+                (0, 0),
+                "myimagename:andtag",
+                AdmissionRequest(adm_req_samples[0]),
+                session,
+            )
