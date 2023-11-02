@@ -50,10 +50,9 @@ A simple starting point may be a minikube cluster with e.g. a [Docker Hub](https
 In case you make changes to the Connaisseur container image itself or code for that matter, you need to re-build the image and install it locally for testing.
 This requires a few steps:
 
-1. In `helm/values.yaml`, set `imagePullPolicy` to `IfNotPresent`.
-2. Configure your local environment to use the Kubernetes Docker daemon. In minikube, this can be done via `eval (minikube docker-env)`.
-3. Build the Connaisseur container image via `make docker`.
-4. Install Connaisseur as usual via `make install`.
+1. Configure your local environment to use the Kubernetes Docker daemon. In minikube, this can be done via `eval $(minikube docker-env)`.
+2. Build the Connaisseur container image via `make docker`.
+3. Install Connaisseur as usual via `make dev-install`.
 
 ### Test changes
 Tests and linting are important to ensure code quality, functionality and security.
