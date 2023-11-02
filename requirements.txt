@@ -3,7 +3,7 @@ cheroot~=10.0.0
 ecdsa~=0.18
 Flask~=3.0.0
 Jinja2~=3.1.2
-jsonschema~=4.19.1
+jsonschema~=4.19.2
 nest_asyncio~=1.5.8
 parsedatetime~=2.6
 prometheus-flask-exporter==0.23.0
