@@ -18,7 +18,7 @@ from ... import conftest as fix
 def sample_notaries():
     notary.Notary.CERT_PATH = "tests/data/notary/{}.cert"
     li = []
-    for file_name in ("notary1", "notary2", "unhealthy_notary"):
+    for file_name in ("notary1", "notary2", "unhealthy_notary", "hanswurstnotary"):
         with open(f"tests/data/notary/{file_name}.yaml") as file:
             li.append(yaml.safe_load(file))
     return li
@@ -124,6 +124,36 @@ def test_healthy(sample_notaries, m_request, index, host, health):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
+    "index, image, output, exception",
+    [
+        (3, "alice-image", "a.valid.token", fix.no_exc()),
+        (0, "empty.io/alice-image", {}, pytest.raises(exc.NotFoundException)),
+        (0, "notary_wo_auth.io/alice-image", None, fix.no_exc()),
+    ],
+)
+async def test_get_auth(
+    monkeypatch,
+    sample_notaries,
+    m_request,
+    index,
+    image,
+    output,
+    exception,
+):
+    async with aiohttp.ClientSession() as session:
+        with exception:
+            with aioresponses() as aio:
+                aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
+                no = notary.Notary(**sample_notaries[index])
+                token = await no.get_auth(
+                    session,
+                    Image(image),
+                )
+                assert token == output
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
     "index, image, role, output, exception",
     [
         (0, "alice-image", "root", fix.get_td("alice-image/root"), fix.no_exc()),
@@ -151,9 +181,10 @@ async def test_get_trust_data(
     async with aiohttp.ClientSession() as session:
         with exception:
             with aioresponses() as aio:
+                token = "***"
                 aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
                 no = notary.Notary(**sample_notaries[index])
-                td = await no.get_trust_data(session, Image(image), role)
+                td = await no.get_trust_data(session, Image(image), role, token)
                 assert td.signed == output["signed"]
                 assert td.signatures == output["signatures"]
 
@@ -190,10 +221,11 @@ async def test_get_delegation_trust_data(
     async with aiohttp.ClientSession() as session:
         with exception:
             with aioresponses() as aio:
+                token = "***"
                 aio.get(re.compile(r".*"), callback=fix.async_callback)
                 no = notary.Notary(**sample_notaries[index])
                 td = await no.get_delegation_trust_data(
-                    session, Image(image), "targets/phbelitz"
+                    session, Image(image), "targets/phbelitz", token
                 )
                 assert output is bool(td)
 

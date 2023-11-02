@@ -142,7 +142,16 @@ def mock_request_notary(match: re.Match, **kwargs):
         match.group(5),
     )
 
-    if registry == "auth.io" and not kwargs.get("headers"):
+    if kwargs.get("headers") and kwargs.get("headers").get("Authorization"):
+        if registry == "empty.io":
+            return MockResponse({}, status_code=404)
+
+        return MockResponse(get_td(f"{image}/{role}"))
+    elif registry == "empty.io":
+        return MockResponse({}, status_code=401)
+    elif registry == "notary_wo_auth.io":
+        return MockResponse(get_td(f"{image}/{role}"))
+    else:
         return MockResponse(
             {},
             headers={
@@ -153,10 +162,6 @@ def mock_request_notary(match: re.Match, **kwargs):
             },
             status_code=401,
         )
-    if registry == "empty.io":
-        return MockResponse({}, status_code=404)
-
-    return MockResponse(get_td(f"{image}/{role}"))
 
 
 def mock_request_kube(match: re.Match, **kwargs):
@@ -399,12 +404,12 @@ def m_alerting_without_send(monkeypatch, m_safe_path_func, mocker):
 
 @pytest.fixture
 def count_loaded_delegations(monkeypatch):
-    async def get_delegation_trust_data_counted(self, image, role, token=None):
+    async def get_delegation_trust_data_counted(self, session, image, role, token):
         monkeypatch.setenv(
             "DELEGATION_COUNT", str(int(os.getenv("DELEGATION_COUNT")) + 1)
         )
         try:
-            return await no.Notary.get_trust_data(self, image, role, token)
+            return await no.Notary.get_trust_data(self, session, image, role, token)
         except Exception as ex:
             if os.environ.get("LOG_LEVEL", "INFO") == "DEBUG":
                 raise ex

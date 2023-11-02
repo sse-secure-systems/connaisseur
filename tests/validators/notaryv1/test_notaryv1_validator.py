@@ -424,6 +424,7 @@ async def test_update_with_delegation_trust_data(
     delegations,
     expected_trust_data_keys,
 ):
+    token = "ey123"
     async with aiohttp.ClientSession() as session:
         with aioresponses() as aio:
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
@@ -435,6 +436,7 @@ async def test_update_with_delegation_trust_data(
                     delegations,
                     alice_key_store,
                     Image("alice-image"),
+                    token,
                 )
                 is None
             )
