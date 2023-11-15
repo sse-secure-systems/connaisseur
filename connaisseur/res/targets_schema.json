@@ -90,7 +90,6 @@
                                 "required": [
                                     "keyids",
                                     "name",
-                                    "paths",
                                     "threshold"
                                 ]
                             }

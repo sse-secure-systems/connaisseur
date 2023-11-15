@@ -246,6 +246,7 @@ timestamp_hashes = {
         (fix.get_td("sample4_targets"), "targets", "TargetsData", fix.no_exc()),
         (fix.get_td("sample7_targets"), "targets", "TargetsData", fix.no_exc()),
         (fix.get_td("sample7_snapshot"), "snapshot", "SnapshotData", fix.no_exc()),
+        (fix.get_td("missing_path"), "targets", "TargetsData", fix.no_exc()),
     ],
 )
 def test_trust_data_init(m_trust_data, data: dict, role: str, class_: str, exception):
