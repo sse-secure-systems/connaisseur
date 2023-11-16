@@ -1,6 +1,0 @@
-{
-    "remote_server": {
-            "url": "https://notary:4443",
-            "root_ca": "./../certs/root/ca.crt"
-    }
-}
