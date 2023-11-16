@@ -61,9 +61,9 @@ jobs:
       notary:
         image: notary:server
         env:
-          - NOTARY_SERVER_TRUST_SERVICE_TYPE=local
-          - NOTARY_SERVER_STORAGE_BACKEND=memory
-          - NOTARY_SERVER_LOGGING_LEVEL=debug
+            NOTARY_SERVER_TRUST_SERVICE_TYPE: local
+            NOTARY_SERVER_STORAGE_BACKEND: memory
+            NOTARY_SERVER_LOGGING_LEVEL: debug
         volumes:
           - ./tests/data/notaryservice_container/certs/leaf/:/certs
     steps:
