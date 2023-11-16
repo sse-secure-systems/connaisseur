@@ -357,10 +357,31 @@ update_helm_for_workloads() {
 	rm update
 }
 
+update_for_self_hosted_notary() {
+	envsubst <tests/integration/update-self-hosted-notary.yaml >update
+	yq '. *+ load("ghcr-values")' -i update
+	yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
+	rm update
+	curl "https://notary.server:4443/v2/docker.io/securesystemsengineering/testimage/_trust/tuf/root.json" > root.json
+	SELF_HOSTED_NOTARY_PUBLIC_ROOT_KEY_ID=$(cat root.json | jq -r .signatures[0].keyid)
+	cat root.json | jq -r --arg KEYID $SELF_HOSTED_NOTARY_PUBLIC_ROOT_KEY_ID '.signed.keys | .[$KEYID] | .keyval.public' | base64 -d | openssl x509 -pubkey -noout > self_hosted_notary_root_key.pub
+	yq -i '(.application.validators.[] | select(.name == "self-hosted-notary") | .trustRoots.[] | select(.name=="default") | .key) |= load_str("self_hosted_notary_root_key.pub")' helm/values.yaml
+	rm self_hosted_notary_root_key.pub root.json
+}
+
 enable_alerting() {
 	envsubst <tests/integration/update-alerting.yaml >update
 	yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
 	rm update
+}
+
+render_notary_host() {
+	envsubst <tests/integration/update_deployment_notary_test.yaml >update_deployment_with_host_alias.yaml
+	# It is not possible to yq the deployment.yaml as it's not valid yaml due to the helm variables, thus the awk magic here
+	HOST_ALIAS=$(cat update_deployment_with_host_alias.yaml)
+	awk -v host_alias="${HOST_ALIAS}" '/    spec:/ { print; print host_alias; next }1' helm/templates/deployment.yaml > deployment.yaml
+	mv deployment.yaml helm/templates/
+	rm update_deployment_with_host_alias.yaml
 }
 
 debug_values() { #PATH
@@ -408,6 +429,11 @@ regular_int_test() {
 		echo -e "${SUCCESS}"
 	fi
 	rm diff.log
+}
+
+### RUN SELF-HOSTED NOTARY INTEGRATION TEST ####################################
+self_hosted_notary_int_test() {
+	multi_test "self-hosted-notary"
 }
 
 ### COSIGN TEST ####################################
@@ -552,6 +578,12 @@ case $1 in
 "helm-repo")
 	helm_repo_install
 	pre_config_int_test
+	;;
+"self-hosted-notary")
+	update_for_self_hosted_notary
+	render_notary_host
+	make_install
+	self_hosted_notary_int_test
 	;;
 "complexity")
 	update_values_minimal

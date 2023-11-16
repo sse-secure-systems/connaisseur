@@ -17,7 +17,7 @@ defaults:
     shell: bash
 
 env:
-  SKIP_INTEGRATION_TESTS: 'none' # 'none', 'non-required', 'all'
+  SKIP_INTEGRATION_TESTS: 'self-hosted-notary' # 'none', 'non-required', 'all', 'self-hosted-notary'
 
 jobs:
   conditionals:

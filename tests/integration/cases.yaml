@@ -77,6 +77,23 @@ test_cases:
     namespace: default
     expected_msg: Defaulting debug container name to debugger-
     expected_result: VALID
+  self-hosted-notary:
+    # "shnu" is exactly the same test case as "ru" from the regular test 
+    # to ensure the new settings did not render connaisseur dysfunctional
+  - id: shnu
+    txt: Testing unsigned image...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned.
+    expected_result: INVALID
+  - id: shnsi
+    txt: Testing signed image with trust data in self-hosted notary...
+    type: deploy
+    ref: securesystemsengineering/testimage:self-hosted-notary-signed
+    namespace: default
+    expected_msg: pod/pod-shnsi-${RAND} created
+    expected_result: VALID
   cosign:
   - id: cu
     txt: Testing unsigned cosign image...
