@@ -58,6 +58,16 @@ jobs:
         image: securesystemsengineering/alerting-endpoint
         ports:
           - 56243:56243
+      notary:
+        image: notary:server
+        #ports:
+        #  - 4443:4443
+        env:
+          - NOTARY_SERVER_TRUST_SERVICE_TYPE=local
+          - NOTARY_SERVER_STORAGE_BACKEND=memory
+          - NOTARY_SERVER_LOGGING_LEVEL=debug
+        volumes:
+          - ./tests/data/notaryservice_container/certs/leaf/:/certs
     steps:
       - name: Checkout code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -70,6 +80,8 @@ jobs:
       - name: Install yq
         run: |
           sudo snap install yq
+      - name: Setup Test Notary Trust Data
+        uses: ./.github/actions/setup-notary
       - uses: ./.github/actions/k8s-version-config
         name: Setup k8s cluster
         with:
