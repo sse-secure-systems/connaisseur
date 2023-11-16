@@ -77,6 +77,13 @@ test_cases:
     namespace: default
     expected_msg: Defaulting debug container name to debugger-
     expected_result: VALID
+  - id: rsishn
+    txt: Testing signed image with trust data in self-hosted notary...
+    type: deploy
+    ref: securesystemsengineering/testimage:sef-hosted-notary-signed
+    namespace: default
+    expected_msg: pod/pod-rsishn-${RAND} created
+    expected_result: VALID
   cosign:
   - id: cu
     txt: Testing unsigned cosign image...

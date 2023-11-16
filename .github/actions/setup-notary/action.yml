@@ -1,0 +1,23 @@
+name: setup-notary-trust-data
+description: 'Initialize trust data in running notary servvice container for existing test image'
+runs:
+  using: "composite"
+  steps:
+    - name: Install notary and docker client
+      run: |
+        sudo apt install docker
+        sudo apt install notary
+    - name: Install expect
+      run: |
+        sudp apt install expect
+    - name: Trust root cert of notary instance
+      run: |
+        sudo cp ./tests/data/notary_service_container/certs/root/ca.crt /usr/local/share/ca-certificates/notary_root_ca.crt
+        sudo update-ca-certificates
+    - name: Configure notary client
+      run: |
+        ./tests/integration/notary_init.sh
+        docker pull docker.io/securesystemsengineering/testimage:self-hosted-notary-signed
+        DIGEST=$(docker images --digests | grep self-hosted-notary-signed | awk '{print $3}')
+        DIGEST_WITHOUT_PREFIX=$(echo ${DIGEST#sha256:})
+        ./tests/integration/notary_addhash.sh ${DIGEST_WITHOUT_PREFIX}

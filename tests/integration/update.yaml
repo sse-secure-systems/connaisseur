@@ -3,140 +3,172 @@ kubernetes:
     replicasCount: 1
 application:
   validators:
-  - name: allow
-    type: static
-    approve: true
-  - name: deny
-    type: static
-    approve: false
-  - name: default
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots: []
-  - name: dockerhub-basics
-    type: notaryv1
-    host: notary.docker.io
-    trustRoots:
-    - name: docker-official
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-        QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
-        -----END PUBLIC KEY-----
-    - name: securesystemsengineering-official
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-        d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
-        -----END PUBLIC KEY-----
-  - name: cosign
-    type: cosign
-    trustRoots:
+    - name: allow
+      type: static
+      approve: true
+    - name: deny
+      type: static
+      approve: false
     - name: default
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
-        qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
-        -----END PUBLIC KEY-----
-  - name: multicosigner
-    type: cosign
-    trustRoots:
-    - name: alice
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ
-        wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==
-        -----END PUBLIC KEY-----
-    - name: bob
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o
-        EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==
-        -----END PUBLIC KEY-----
-    - name: charlie
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4
-        ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==
-        -----END PUBLIC KEY-----
-  - name: rekor-cosign
-    type: cosign
-    host:
-      rekor: rekor.sigstore.dev
-    trustRoots:
-    - name: rekored-key
-      key: |
-        -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqxgd/RqCdPnafQmlmX71eICGRBqu
-        USHEjAv3FZCROHLYts11xR6Peu8ZEvMXOR46L7+z84DRFK6gnTInbIGFmg==
-        -----END PUBLIC KEY-----
-  - name: rsa
-    type: cosign
-    trustRoots:
-     - name: default
-       key: |
-        -----BEGIN PUBLIC KEY-----
-        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxmEXG8savZ/Q8IJB8dBT
-        YCKV/ECwkj8zBInilrWSipsKiBwGTugAgKHj7Nvo6pg91DTESpfnryL+UUwAyJ1C
-        irdUThCZa90vC9SlwYUhC/ftz/dwU8KaiVcWJHCbj4VLLCD7xVKPh65j4x65D8bL
-        ohbrpZFfboXgG/gJHYhU18q0nmGzuQyGWSxAYcsh8qVcaNa68TvZLqecq/AYvspI
-        qNIGWekU1BYXoUVt6kBx/fwEKtxESRbgsT1R8ha+q1HTGLMtj71LfWfX9d1bbNeq
-        2+pXRO8Ut8km2lGEekRNXYb2C+sOX7uA1MSv+gm2JCoVzep69fGTHbqOwf4tm2Qh
-        AwIDAQAB
-        -----END PUBLIC KEY-----
+      type: notaryv1
+      host: notary.docker.io
+      trustRoots: []
+    - name: dockerhub-basics
+      type: notaryv1
+      host: notary.docker.io
+      trustRoots:
+        - name: docker-official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            -----END PUBLIC KEY-----
+        - name: securesystemsengineering-official
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
+    - name: self-hosted-notary
+      host: https://notary:4443
+      trustRoots:
+        - name: default
+          key: 123
+      # CA cert signing the cert of the self-hosted notary 
+      # (tests/data/notary_service_container/certs/root/ca.crt)
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        MIIDnTCCAoWgAwIBAgIUFf5FhXSV6IcRBfxIK4ADnQrGBc8wDQYJKoZIhvcNAQEL
+        BQAwXjELMAkGA1UEBhMCREUxCjAIBgNVBAgMAUIxDzANBgNVBAcMBkJlcmxpbjEU
+        MBIGA1UECgwLQ29ubmFpc3NldXIxHDAaBgNVBAMME1Rlc3QgTm90YXJ5IFJvb3Qg
+        Q0EwHhcNMjMxMTE1MDcxNTEzWhcNMzMxMTEyMDcxNTEzWjBeMQswCQYDVQQGEwJE
+        RTEKMAgGA1UECAwBQjEPMA0GA1UEBwwGQmVybGluMRQwEgYDVQQKDAtDb25uYWlz
+        c2V1cjEcMBoGA1UEAwwTVGVzdCBOb3RhcnkgUm9vdCBDQTCCASIwDQYJKoZIhvcN
+        AQEBBQADggEPADCCAQoCggEBAMjuQNgRXkV1JORYceDR8m344dWnA1Mvspw6AYsv
+        41h4FeDcvAACH2jMYTMC/Uad+hWwCUb9q+cQCRfC+/xigzd5mcIkKvAERnJqlcwP
+        +TxeCxN1Fni0cgO+V1GC8zShEDA2YRK4AbxfydXKENzdJ4JYueZzZivmnEhdDJYI
+        0DzmLDKEh462Tk7vKjxl6V2hsMS1z8iTAYHgDL3RV/+0+gRwvjf5ZCSipu3OwmHQ
+        nFxopbSstoH/9zpv+RTa9d0KKStOR2qtQQTxCbGBXK3VTwV9L6aDy1JSLmla/H46
+        KIGdN8QarLJpg70MidvKjo4kOosvTEbqHZiBiGS3+D79coMCAwEAAaNTMFEwHQYD
+        VR0OBBYEFC1t89kqzc4QEJPpatP9TWo5GTC8MB8GA1UdIwQYMBaAFC1t89kqzc4Q
+        EJPpatP9TWo5GTC8MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEB
+        ABqoj/AfW72feD6c2ooZ9zZjU2SJHkp4Wn8vJYBjmQpnGBDnO68JmEhKx6ZmAfBM
+        xCd4MtzSOZ9BfmjwGcKkUeoK6nWeGtyaqjy/mrRhzjX4ZSqa78gBpe3GYu5c3u67
+        ex9BgODzKZp+0V+XzuFvcNTNoOoQbBgbNmrF9rtdyuERm8vsWIFuodJ1kDBLS05+
+        RS5zMSA+VjXLbxQl9gAa5yrDjrEJoIGWmv8JWIHEXhxQ5qgcsdk+lCuQ+8bBWD5T
+        AFsEfll3tMhUTZ7XMR+Sw4KDCk3lTqwX8NkXrNqYjZ9rG/1h31ujez9gFSvEPBiW
+        wif4UGd6sqxs1edRuLTYECI=
+        -----END CERTIFICATE-----
+    - name: cosign
+      type: cosign
+      trustRoots:
+        - name: default
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+            qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+            -----END PUBLIC KEY-----
+    - name: multicosigner
+      type: cosign
+      trustRoots:
+        - name: alice
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ
+            wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==
+            -----END PUBLIC KEY-----
+        - name: bob
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE01DasuXJ4rfzAEXsURSnbq4QzJ6o
+            EJ2amYV/CBKqEhhl8fDESxsmbdqtBiZkDV2C3znIwV16SsJlRRYO+UrrAQ==
+            -----END PUBLIC KEY-----
+        - name: charlie
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEHBUYJVrH+aFYJPuryEkRyE6m0m4
+            ANj+o/oW5fLRiEiXp0kbhkpLJR1LSwKYiX5Toxe3ePcuYpcWZn8Vqe3+oA==
+            -----END PUBLIC KEY-----
+    - name: rekor-cosign
+      type: cosign
+      host:
+        rekor: rekor.sigstore.dev
+      trustRoots:
+        - name: rekored-key
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqxgd/RqCdPnafQmlmX71eICGRBqu
+            USHEjAv3FZCROHLYts11xR6Peu8ZEvMXOR46L7+z84DRFK6gnTInbIGFmg==
+            -----END PUBLIC KEY-----
+    - name: rsa
+      type: cosign
+      trustRoots:
+        - name: default
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxmEXG8savZ/Q8IJB8dBT
+            YCKV/ECwkj8zBInilrWSipsKiBwGTugAgKHj7Nvo6pg91DTESpfnryL+UUwAyJ1C
+            irdUThCZa90vC9SlwYUhC/ftz/dwU8KaiVcWJHCbj4VLLCD7xVKPh65j4x65D8bL
+            ohbrpZFfboXgG/gJHYhU18q0nmGzuQyGWSxAYcsh8qVcaNa68TvZLqecq/AYvspI
+            qNIGWekU1BYXoUVt6kBx/fwEKtxESRbgsT1R8ha+q1HTGLMtj71LfWfX9d1bbNeq
+            2+pXRO8Ut8km2lGEekRNXYb2C+sOX7uA1MSv+gm2JCoVzep69fGTHbqOwf4tm2Qh
+            AwIDAQAB
+            -----END PUBLIC KEY-----
   policy:
-  - pattern: "*:*"
-    validator: dockerhub-basics
-    with:
-      trustRoot: securesystemsengineering-official
-  - pattern: "k8s.gcr.io/*:*"
-    validator: allow
-  - pattern: docker.io/securesystemsengineering/connaisseur:*
-    validator: allow
-  - pattern: docker.io/securesystemsengineering/testimage:co-*
-    validator: cosign
-    with:
-      verifyInTransparencyLog: false
-  - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-alice*"
-    validator: multicosigner
-    with:
-      trustRoot: "*"
-      verifyInTransparencyLog: false
-  - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-bob*"
-    validator: multicosigner
-    with:
-      trustRoot: "*"
-      threshold: 2
-      verifyInTransparencyLog: false
-  - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-charlie*"
-    validator: multicosigner
-    with:
-      trustRoot: "*"
-      required: ["alice", "charlie"]
-      verifyInTransparencyLog: false
-  - pattern: docker.io/securesystemsengineering/testimage:rekor-*
-    validator: rekor-cosign
-    with:
-      trustRoot: "rekored-key"
-  - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
-    validator: dockerhub-basics
-    with:
-      trustRoot: securesystemsengineering-official
-      delegations: ["starkteetje"]
-  - pattern: "docker.io/securesystemsengineering/testimage:wrong_signer"
-    validator: dockerhub-basics
-    with:
-      trustRoot: securesystemsengineering-official
-      delegations: ["belitzphilipp"]
-  - pattern: "docker.io/securesystemsengineering/testimage:double_sig"
-    validator: dockerhub-basics
-    with:
-      trustRoot: securesystemsengineering-official
-      delegations: ["belitzphilipp", "starkteetje"]
-  - pattern: "docker.io/securesystemsengineering/testimage:rsa-*"
-    validator: rsa
-    with:
-      verifyInTransparencyLog: false
+    - pattern: "*:*"
+      validator: dockerhub-basics
+      with:
+        trustRoot: securesystemsengineering-official
+    - pattern: "k8s.gcr.io/*:*"
+      validator: allow
+    - pattern: docker.io/securesystemsengineering/connaisseur:*
+      validator: allow
+    - pattern: docker.io/securesystemsengineering/testimage:co-*
+      validator: cosign
+      with:
+        verifyInTransparencyLog: false
+    - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-alice*"
+      validator: multicosigner
+      with:
+        trustRoot: "*"
+        verifyInTransparencyLog: false
+    - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-bob*"
+      validator: multicosigner
+      with:
+        trustRoot: "*"
+        threshold: 2
+        verifyInTransparencyLog: false
+    - pattern: "docker.io/securesystemsengineering/testimage:multi-cosigned-charlie*"
+      validator: multicosigner
+      with:
+        trustRoot: "*"
+        required: ["alice", "charlie"]
+        verifyInTransparencyLog: false
+    - pattern: docker.io/securesystemsengineering/testimage:rekor-*
+      validator: rekor-cosign
+      with:
+        trustRoot: "rekored-key"
+    - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
+      validator: dockerhub-basics
+      with:
+        trustRoot: securesystemsengineering-official
+        delegations: ["starkteetje"]
+    - pattern: "docker.io/securesystemsengineering/testimage:wrong_signer"
+      validator: dockerhub-basics
+      with:
+        trustRoot: securesystemsengineering-official
+        delegations: ["belitzphilipp"]
+    - pattern: "docker.io/securesystemsengineering/testimage:double_sig"
+      validator: dockerhub-basics
+      with:
+        trustRoot: securesystemsengineering-official
+        delegations: ["belitzphilipp", "starkteetje"]
+    - pattern: "docker.io/securesystemsengineering/testimage:self-hosted-notary-signed"
+      validator: self-hosted-notary
+    - pattern: "docker.io/securesystemsengineering/testimage:rsa-*"
+      validator: rsa
+      with:
+        verifyInTransparencyLog: false
   features:
     detectionMode: false
     automaticChildApproval: true

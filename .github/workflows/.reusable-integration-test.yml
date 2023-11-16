@@ -84,14 +84,15 @@ jobs:
         name: Setup k8s cluster
         with:
           k8s-version: v1.25
-      - name: Get alerting endpoint IP
-        id: get_ip
-        uses: ./.github/actions/alerting-endpoint
+      - name: Get alerting endpoint and notary IP
+        id: get_ips
+        uses: ./.github/actions/service-ips
       - name: Run test
         run: |
           bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
         env:
-          ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
+          ALERTING_ENDPOINT_IP: ${{ steps.get_ips.outputs.alerting_endpoint_ip }}
+          NOTARY_IP: ${{ steps.get_ips.outputs.notary_ip }}
       - name: Display Connaisseur configuration
         if: always()
         run: |

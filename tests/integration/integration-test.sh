@@ -348,6 +348,8 @@ update_via_env_vars() {
 	yq '. *+ load("ghcr-values")' -i update
 	yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
 	rm update
+	SELF_HOSTED_NOTARY_PUBIC_ROOT_KEY=$(python3 /scripts/get_root_key.py https://notary:4443 docker.io/securesystemsengineering/testimage:self-hosted-notary-signed)
+	yq -i '(.application.validators.[] | select(.name == "self-hosted-notary") | .trustRoots.[] | select(.name=="default") | .key) |= ${SELF_HOSTED_NOTARY_PUBIC_ROOT_KEY}' helm/values.yaml
 }
 
 update_helm_for_workloads() {
