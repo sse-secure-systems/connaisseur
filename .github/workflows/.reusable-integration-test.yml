@@ -60,8 +60,6 @@ jobs:
           - 56243:56243
       notary:
         image: notary:server
-        #ports:
-        #  - 4443:4443
         env:
           - NOTARY_SERVER_TRUST_SERVICE_TYPE=local
           - NOTARY_SERVER_STORAGE_BACKEND=memory
