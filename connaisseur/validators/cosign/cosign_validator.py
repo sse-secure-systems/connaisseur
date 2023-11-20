@@ -364,6 +364,9 @@ class CosignValidator(ValidatorInterface):
         # Extend the OS env vars only for passing to the subprocess below
         env["DOCKER_CONFIG"] = f"/app/connaisseur-config/{self.name}/.docker/"
         env["TUF_ROOT"] = "/app/.sigstore"
+        env[
+            "SIGSTORE_NO_CACHE"
+        ] = "1"  # Otherwise, Cosign will try to write cache files to disk
         if safe_path_func(
             os.path.exists, "/app/certs/cosign", f"/app/certs/cosign/{self.name}.crt"
         ):
