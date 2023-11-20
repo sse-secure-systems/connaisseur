@@ -228,7 +228,7 @@ class CosignValidator(ValidatorInterface):
                 trust_root=values["name"],
             )
         elif "MANIFEST_UNKNOWN" in stderr:
-            msg = 'Image "{image}" does not exist.'
+            msg = 'Image "{image}" does not exist or no signatures were present.'
             raise NotFoundException(
                 message=msg,
                 trust_data_type="dev.cosignproject.cosign/signature",
