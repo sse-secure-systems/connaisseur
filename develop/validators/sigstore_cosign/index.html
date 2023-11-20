@@ -1401,10 +1401,10 @@ In short: After installation, a keypair is generated via:</p>
 <p>You will be prompted to set a password, after which a private (<code>cosign.key</code>) and public (<code>cosign.pub</code>) key are created.
 You can then use Cosign to sign a container image using:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Here, ${IMAGE} is REPOSITORY/IMAGE_NAME:TAG</span>
-cosign<span class="w"> </span>sign<span class="w"> </span>-key<span class="w"> </span>cosign.key<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+cosign<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> </span>cosign.key<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>The created signature can be verfied via:</p>
-<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>verify<span class="w"> </span>-key<span class="w"> </span>cosign.pub<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>verify<span class="w"> </span>--key<span class="w"> </span>cosign.pub<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>To use Connaisseur with Cosign, configure a validator in <code>helm/values.yaml</code> with the generated public key (<code>cosign.pub</code>) as a trust root.
 The entry in <code>.application.validators</code> should look something like this (make sure to add your own public key to trust root <code>default</code>):</p>

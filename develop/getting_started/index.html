@@ -1452,7 +1452,7 @@ The trust data will then be pushed to the Docker Hub Notary server.</p>
 </div>
 <div class="tabbed-block">
 <p>For Cosign, we use the private key file from the first step:</p>
-<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>sign<span class="w"> </span>-key<span class="w"> </span>cosign.key<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
+<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> </span>cosign.key<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <p>You will be asked to enter your password after wich the signature data will be pushed to your repository.</p>
 </div>
