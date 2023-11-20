@@ -27,13 +27,13 @@ You can then use Cosign to sign a container image using:
 
 ```bash
 # Here, ${IMAGE} is REPOSITORY/IMAGE_NAME:TAG
-cosign sign -key cosign.key ${IMAGE}
+cosign sign --key cosign.key ${IMAGE}
 ```
 
 The created signature can be verfied via:
 
 ```bash
-cosign verify -key cosign.pub ${IMAGE}
+cosign verify --key cosign.pub ${IMAGE}
 ```
 
 To use Connaisseur with Cosign, configure a validator in `helm/values.yaml` with the generated public key (`cosign.pub`) as a trust root.

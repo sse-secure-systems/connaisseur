@@ -247,7 +247,7 @@ So let's sign the image and try again.
     For Cosign, we use the private key file from the first step:
 
     ```bash
-    cosign sign -key cosign.key ${IMAGE}
+    cosign sign --key cosign.key ${IMAGE}
     ```
 
     You will be asked to enter your password after wich the signature data will be pushed to your repository.
