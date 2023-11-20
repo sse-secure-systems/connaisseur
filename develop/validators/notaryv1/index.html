@@ -686,71 +686,11 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../features/metrics/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Metrics
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../features/alerting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Alerting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/detection_mode/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Detection Mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/namespaced_validation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Namespaced Validation
   </span>
   
 
@@ -791,6 +731,66 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     Automatic Unchanged Approval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/detection_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Detection Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/namespaced_validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Namespaced Validation
   </span>
   
 
@@ -1419,22 +1419,26 @@ If you haven't created any signatures for images in the current repository yet, 
 Have a look into the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a> to read more about TUF roles and their meanings.
 If you already have these keys, just enter the required passphrase.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>push<span class="w"> </span>&lt;your-repo&gt;/busybox:stable
-&gt;<span class="w"> </span>The<span class="w"> </span>push<span class="w"> </span>refers<span class="w"> </span>to<span class="w"> </span>repository<span class="w"> </span><span class="o">[</span>&lt;your-repo&gt;/busybox<span class="o">]</span>
-&gt;<span class="w"> </span>5b8c72934dfc:<span class="w"> </span>Pushed
-&gt;<span class="w"> </span>stable:<span class="w"> </span>digest:<span class="w"> </span>sha256:dca71257cd2e72840a21f0323234bb2e33fea6d949fa0f21c5102146f583486b<span class="w"> </span>size:<span class="w"> </span><span class="m">527</span>
-&gt;<span class="w"> </span>Signing<span class="w"> </span>and<span class="w"> </span>pushing<span class="w"> </span>trust<span class="w"> </span>metadata
-&gt;<span class="w"> </span>You<span class="w"> </span>are<span class="w"> </span>about<span class="w"> </span>to<span class="w"> </span>create<span class="w"> </span>a<span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>signing<span class="w"> </span>key<span class="w"> </span>passphrase.<span class="w"> </span>This<span class="w"> </span>passphrase
-&gt;<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>used<span class="w"> </span>to<span class="w"> </span>protect<span class="w"> </span>the<span class="w"> </span>most<span class="w"> </span>sensitive<span class="w"> </span>key<span class="w"> </span><span class="k">in</span><span class="w"> </span>your<span class="w"> </span>signing<span class="w"> </span>system.<span class="w"> </span>Please
-&gt;<span class="w"> </span>choose<span class="w"> </span>a<span class="w"> </span>long,<span class="w"> </span>complex<span class="w"> </span>passphrase<span class="w"> </span>and<span class="w"> </span>be<span class="w"> </span>careful<span class="w"> </span>to<span class="w"> </span>keep<span class="w"> </span>the<span class="w"> </span>password<span class="w"> </span>and<span class="w"> </span>the
-&gt;<span class="w"> </span>key<span class="w"> </span>file<span class="w"> </span>itself<span class="w"> </span>secure<span class="w"> </span>and<span class="w"> </span>backed<span class="w"> </span>up.<span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>highly<span class="w"> </span>recommended<span class="w"> </span>that<span class="w"> </span>you<span class="w"> </span>use<span class="w"> </span>a
-&gt;<span class="w"> </span>password<span class="w"> </span>manager<span class="w"> </span>to<span class="w"> </span>generate<span class="w"> </span>the<span class="w"> </span>passphrase<span class="w"> </span>and<span class="w"> </span>keep<span class="w"> </span>it<span class="w"> </span>safe.<span class="w"> </span>There<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>no
-&gt;<span class="w"> </span>way<span class="w"> </span>to<span class="w"> </span>recover<span class="w"> </span>this<span class="w"> </span>key.<span class="w"> </span>You<span class="w"> </span>can<span class="w"> </span>find<span class="w"> </span>the<span class="w"> </span>key<span class="w"> </span><span class="k">in</span><span class="w"> </span>your<span class="w"> </span>config<span class="w"> </span>directory.
-&gt;<span class="w"> </span>Enter<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>5fb3e1e:
-&gt;<span class="w"> </span>Repeat<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>5fb3e1e:
-&gt;<span class="w"> </span>Enter<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>repository<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>6c2a04c:
-&gt;<span class="w"> </span>Repeat<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>repository<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>6c2a04c:
-&gt;<span class="w"> </span>Finished<span class="w"> </span>initializing<span class="w"> </span><span class="s2">&quot;&lt;your-repo&gt;/busybox&quot;</span>
 </code></pre></div>
+<details class="example">
+<summary>Output</summary>
+<div class="highlight"><pre><span></span><code>The<span class="w"> </span>push<span class="w"> </span>refers<span class="w"> </span>to<span class="w"> </span>repository<span class="w"> </span><span class="o">[</span>&lt;your-repo&gt;/busybox<span class="o">]</span>
+5b8c72934dfc:<span class="w"> </span>Pushed
+stable:<span class="w"> </span>digest:<span class="w"> </span>sha256:dca71257cd2e72840a21f0323234bb2e33fea6d949fa0f21c5102146f583486b<span class="w"> </span>size:<span class="w"> </span><span class="m">527</span>
+Signing<span class="w"> </span>and<span class="w"> </span>pushing<span class="w"> </span>trust<span class="w"> </span>metadata
+You<span class="w"> </span>are<span class="w"> </span>about<span class="w"> </span>to<span class="w"> </span>create<span class="w"> </span>a<span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>signing<span class="w"> </span>key<span class="w"> </span>passphrase.<span class="w"> </span>This<span class="w"> </span>passphrase
+will<span class="w"> </span>be<span class="w"> </span>used<span class="w"> </span>to<span class="w"> </span>protect<span class="w"> </span>the<span class="w"> </span>most<span class="w"> </span>sensitive<span class="w"> </span>key<span class="w"> </span><span class="k">in</span><span class="w"> </span>your<span class="w"> </span>signing<span class="w"> </span>system.<span class="w"> </span>Please
+choose<span class="w"> </span>a<span class="w"> </span>long,<span class="w"> </span>complex<span class="w"> </span>passphrase<span class="w"> </span>and<span class="w"> </span>be<span class="w"> </span>careful<span class="w"> </span>to<span class="w"> </span>keep<span class="w"> </span>the<span class="w"> </span>password<span class="w"> </span>and<span class="w"> </span>the
+key<span class="w"> </span>file<span class="w"> </span>itself<span class="w"> </span>secure<span class="w"> </span>and<span class="w"> </span>backed<span class="w"> </span>up.<span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>highly<span class="w"> </span>recommended<span class="w"> </span>that<span class="w"> </span>you<span class="w"> </span>use<span class="w"> </span>a
+password<span class="w"> </span>manager<span class="w"> </span>to<span class="w"> </span>generate<span class="w"> </span>the<span class="w"> </span>passphrase<span class="w"> </span>and<span class="w"> </span>keep<span class="w"> </span>it<span class="w"> </span>safe.<span class="w"> </span>There<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>no
+way<span class="w"> </span>to<span class="w"> </span>recover<span class="w"> </span>this<span class="w"> </span>key.<span class="w"> </span>You<span class="w"> </span>can<span class="w"> </span>find<span class="w"> </span>the<span class="w"> </span>key<span class="w"> </span><span class="k">in</span><span class="w"> </span>your<span class="w"> </span>config<span class="w"> </span>directory.
+Enter<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>5fb3e1e:
+Repeat<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>root<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>5fb3e1e:
+Enter<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>repository<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>6c2a04c:
+Repeat<span class="w"> </span>passphrase<span class="w"> </span><span class="k">for</span><span class="w"> </span>new<span class="w"> </span>repository<span class="w"> </span>key<span class="w"> </span>with<span class="w"> </span>ID<span class="w"> </span>6c2a04c:
+Finished<span class="w"> </span>initializing<span class="w"> </span><span class="s2">&quot;&lt;your-repo&gt;/busybox&quot;</span>
+</code></pre></div>
+</details>
 <p>The freshly generated keys are directly imported to the Docker client.
 Private keys reside in <code>~/.docker/trust/private</code> and public trust data is added to <code>~/.docker/trust/tuf/</code>.
 The created signature for your image is pushed to the public Docker Hub Notary (notary.docker.io).
@@ -1448,12 +1452,16 @@ To use it, either use our pre-built image or build the docker image yourself via
 docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>docker.io/securesystemsengineering/get-public-root-key<span class="w"> </span>-i<span class="w"> </span>securesystemsengineering/testimage
 <span class="c1"># or self-built</span>
 docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>get-public-root-key<span class="w"> </span>-i<span class="w"> </span>securesystemsengineering/testimage
-&gt;<span class="w"> </span>KeyID:<span class="w"> </span>76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
-&gt;<span class="w"> </span>Key:<span class="w"> </span>-----BEGIN<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
-&gt;<span class="w"> </span>MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
-&gt;<span class="w"> </span>d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</span>
-&gt;<span class="w"> </span>-----END<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
 </code></pre></div>
+<details class="example">
+<summary>Output</summary>
+<div class="highlight"><pre><span></span><code>KeyID:<span class="w"> </span>76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508
+Key:<span class="w"> </span>-----BEGIN<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q<span class="o">==</span>
+-----END<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
+</code></pre></div>
+</details>
 <p>The <code>-i</code> (<code>--image</code>) option is required and takes the image, for which you want the public key.
 There is also the <code>-s</code> (<code>--server</code>) option, which defines the Notary server that should be used and which defaults to <code>notary.docker.io</code>.</p>
 <p>The public repository root key resides with the signature data in the Notary instance, so what the <em>get_root_key</em> utility does in the background is just fetching, locating and parsing the public repository root key for the given image.</p>
@@ -1461,7 +1469,7 @@ There is also the <code>-s</code> (<code>--server</code>) option, which defines 
 <p>Now that you either created your own keys and signed images or extracted the public key of other images, you will need to configure Connaisseur to use those keys for validation.
 This is done via <code>application.validators</code> in <code>helm/values.yaml</code>.
 The corresponding entry should look similar to the following (using the extracted public key as trust root):</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
 <span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span>
 <span class="w">  </span><span class="nt">trustRoots</span><span class="p">:</span>
@@ -1472,8 +1480,8 @@ The corresponding entry should look similar to the following (using the extracte
 <span class="w">      </span><span class="no">QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==</span>
 <span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
 </code></pre></div>
-<p>You also need to create a corresponding entry in the image policy via <code>application.policy</code> in <code>helm/values.yaml</code>, for example:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/&lt;REPOSITORY&gt;/&lt;IMAGE&gt;:*&quot;</span><span class="w">  </span><span class="c1"># THE DESIRED REPOSITORY</span>
+<p>You also need to create a corresponding entry in the image policy via <code>application.policy</code>, for example:</p>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/&lt;REPOSITORY&gt;/&lt;IMAGE&gt;:*&quot;</span><span class="w">  </span><span class="c1"># THE DESIRED REPOSITORY</span>
 <span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
 </code></pre></div>
 <p>After installation, you are ready to verify your images against your public key:</p>
@@ -1604,7 +1612,9 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 </tbody>
 </table>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h3>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_essentials</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
@@ -1626,6 +1636,7 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">belitzphilipp</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">starkteetje</span>
 </code></pre></div>
+</details>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="enforcing-delegations">Enforcing delegations<a class="headerlink" href="#enforcing-delegations" title="Permanent link">⚓︎</a></h3>
 <p>Notary (V1) offers the functionality to delegate trust.
@@ -1654,13 +1665,13 @@ In doing so, you'll be asked for the targets key.</p>
 &gt;<span class="w"> </span>Successfully<span class="w"> </span>added<span class="w"> </span>signer:<span class="w"> </span>&lt;key-name&gt;<span class="w"> </span>to<span class="w"> </span>&lt;your-repo&gt;/busybox
 </code></pre></div>
 <p>If you create a new signature for the image, you'll be asked for your delegation key instead of the targets key, therefore creating a signature using the delegation.</p>
-<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>push<span class="w"> </span>&lt;your-repo&gt;/busybox:stable
+<div class="highlight"><pre><span></span><code><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>push<span class="w"> </span>&lt;your-repo&gt;/busybox:stable
 </code></pre></div>
 <p>Without further configuration, Connaisseur will accept all delegation signatures for an image that can ultimately be validated against the public root key.
 Connaisseur can enforce a certain signer/delegation (or multiple) for an image's signature via the <code>with.delegations</code> list inside an image policy rule.
 Simply add the signer's name to the list.
 You can also add multiple signer names to the list in which case Connaisseur will enforce that <em>all</em> delegations must have signed a matching image.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">policy</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;your-repo&gt;/busybox:*&quot;</span>
 <span class="w">    </span><span class="nt">with</span><span class="p">:</span>
@@ -1814,7 +1825,7 @@ az<span class="w"> </span>ad<span class="w"> </span>sp<span class="w"> </span>cr
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.6c14ae12.min.js"></script>

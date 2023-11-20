@@ -846,71 +846,11 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../features/metrics/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Metrics
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../features/alerting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Alerting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../features/detection_mode/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Detection Mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../features/namespaced_validation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Namespaced Validation
   </span>
   
 
@@ -951,6 +891,66 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     Automatic Unchanged Approval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/detection_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Detection Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/namespaced_validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Namespaced Validation
   </span>
   
 
@@ -1716,10 +1716,11 @@ A validator is a set of configuration options required for validation like the t
 The image policy defines a set of rules which maps different images to those validators.
 This is done via glob matching of the image name which for example allows to use different validators for different registries, repositories, images or even tags.
 This is specifically useful when using public or external images from other entities like Docker's official images or different keys in a more complex development team.</p>
-<blockquote>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"/></svg></span> <strong>Note</strong>: Typically, the public key of a known entity is used to validate the signature over an image's content in order to ensure integrity and provenance.
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Typically, the public key of a known entity is used to validate the signature over an image's content in order to ensure integrity and provenance.
 However, other ways to implement such trust pinning exist and as a consequence we refer to all types of trust anchors in a generalized form as <em>trust roots</em>.</p>
-</blockquote>
+</div>
 <h2 id="using-connaisseur">Using Connaisseur<a class="headerlink" href="#using-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>Some general administration tasks like deployment or uninstallation when using Connaisseur are described in this section.</p>
 <h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h3>
@@ -1756,8 +1757,8 @@ Other features are described on the <a href="../features/">respective pages</a>.
 <p>Connaisseur ships with a pre-configuration that does not need any adjustments for testing.
 However, validating your own images requires additional configuration.</p>
 <h3 id="deploy">Deploy<a class="headerlink" href="#deploy" title="Permanent link">⚓︎</a></h3>
-<p>Install Connaisseur via Helm:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Git repo</label><label for="__tabbed_2_2">Helm chart</label></div>
+<p>Install Connaisseur via Helm or Kubernetes manifests:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Git repo</label><label for="__tabbed_2_2">Helm chart</label><label for="__tabbed_2_3">Kubernetes manifests</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Install Connaisseur by using the Helm template definition files in the <code>helm</code> directory:</p>
@@ -1772,6 +1773,27 @@ However, validating your own images requires additional configuration.</p>
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>connaisseur/connaisseur<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur<span class="w"> </span>-f<span class="w"> </span>values.yaml
 </code></pre></div>
 </div>
+<div class="tabbed-block">
+<p>Installing Conaisseur via Kubernetes manifests requires to first render the respecitve resources.
+If the repo was cloned, simply render templates via:
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>template<span class="w"> </span>helm<span class="w"> </span>-n<span class="w"> </span>connaisseur<span class="w"> </span>&gt;<span class="w"> </span>deploy.yaml
+</code></pre></div>
+Next, the admission controller is deployed step-wise:</p>
+<ol>
+<li>Create target namespace:
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>connaisseur
+</code></pre></div></li>
+<li>Setup the preliminary hook:
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy.yaml<span class="w"> </span>-l<span class="w"> </span><span class="s1">&#39;app.kubernetes.io/component=connaisseur-init&#39;</span><span class="w"> </span>-n<span class="w"> </span>connaisseur
+</code></pre></div></li>
+<li>Deploy core resources
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy.yaml<span class="w"> </span>-l<span class="w"> </span><span class="s1">&#39;app.kubernetes.io/component=connaisseur-core&#39;</span><span class="w"> </span>-n<span class="w"> </span>connaisseur
+</code></pre></div></li>
+<li>Arm the webhook
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy.yaml<span class="w"> </span>-l<span class="w"> </span><span class="s1">&#39;app.kubernetes.io/component=connaisseur-webhook&#39;</span><span class="w"> </span>-n<span class="w"> </span>connaisseur
+</code></pre></div></li>
+</ol>
+</div>
 </div>
 </div>
 <p>This deploys Connaisseur to its own namespace called <code>connaisseur</code>.
@@ -1780,32 +1802,36 @@ The admission webhook for intercepting requests can only be applied when the Con
 <h3 id="check">Check<a class="headerlink" href="#check" title="Permanent link">⚓︎</a></h3>
 <p>Once everything is installed, you can check whether all the pods are up by running <code>kubectl get all -n connaisseur</code>:</p>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>all<span class="w"> </span>-n<span class="w"> </span>connaisseur
-&gt;<span class="w"> </span>NAME<span class="w">                                          </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
-&gt;<span class="w"> </span>pod/connaisseur-deployment-78d8975596-42tkw<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>22s
-&gt;<span class="w"> </span>pod/connaisseur-deployment-78d8975596-5c4c6<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>22s
-&gt;<span class="w"> </span>pod/connaisseur-deployment-78d8975596-kvrj6<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>22s
-&gt;
-&gt;<span class="w"> </span>NAME<span class="w">                      </span>TYPE<span class="w">        </span>CLUSTER-IP<span class="w">      </span>EXTERNAL-IP<span class="w">   </span>PORT<span class="o">(</span>S<span class="o">)</span><span class="w">   </span>AGE
-&gt;<span class="w"> </span>service/connaisseur-svc<span class="w">   </span>ClusterIP<span class="w">   </span><span class="m">10</span>.108.220.34<span class="w">   </span>&lt;none&gt;<span class="w">        </span><span class="m">443</span>/TCP<span class="w">   </span>22s
-&gt;
-&gt;<span class="w"> </span>NAME<span class="w">                                     </span>READY<span class="w">   </span>UP-TO-DATE<span class="w">   </span>AVAILABLE<span class="w">   </span>AGE
-&gt;<span class="w"> </span>deployment.apps/connaisseur-deployment<span class="w">   </span><span class="m">3</span>/3<span class="w">     </span><span class="m">3</span><span class="w">            </span><span class="m">3</span><span class="w">           </span>22s
-&gt;
-&gt;<span class="w"> </span>NAME<span class="w">                                                </span>DESIRED<span class="w">   </span>CURRENT<span class="w">   </span>READY<span class="w">   </span>AGE
-&gt;<span class="w"> </span>replicaset.apps/connaisseur-deployment-78d8975596<span class="w">   </span><span class="m">3</span><span class="w">         </span><span class="m">3</span><span class="w">         </span><span class="m">3</span><span class="w">       </span>22s
 </code></pre></div>
+<details class="example">
+<summary>Output</summary>
+<div class="highlight"><pre><span></span><code>NAME<span class="w">                                          </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+pod/connaisseur-deployment-78d8975596-42tkw<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>22s
+pod/connaisseur-deployment-78d8975596-5c4c6<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>22s
+pod/connaisseur-deployment-78d8975596-kvrj6<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>22s
+
+NAME<span class="w">                      </span>TYPE<span class="w">        </span>CLUSTER-IP<span class="w">      </span>EXTERNAL-IP<span class="w">   </span>PORT<span class="o">(</span>S<span class="o">)</span><span class="w">   </span>AGE
+service/connaisseur-svc<span class="w">   </span>ClusterIP<span class="w">   </span><span class="m">10</span>.108.220.34<span class="w">   </span>&lt;none&gt;<span class="w">        </span><span class="m">443</span>/TCP<span class="w">   </span>22s
+
+NAME<span class="w">                                     </span>READY<span class="w">   </span>UP-TO-DATE<span class="w">   </span>AVAILABLE<span class="w">   </span>AGE
+deployment.apps/connaisseur-deployment<span class="w">   </span><span class="m">3</span>/3<span class="w">     </span><span class="m">3</span><span class="w">            </span><span class="m">3</span><span class="w">           </span>22s
+
+NAME<span class="w">                                                </span>DESIRED<span class="w">   </span>CURRENT<span class="w">   </span>READY<span class="w">   </span>AGE
+replicaset.apps/connaisseur-deployment-78d8975596<span class="w">   </span><span class="m">3</span><span class="w">         </span><span class="m">3</span><span class="w">         </span><span class="m">3</span><span class="w">       </span>22s
+</code></pre></div>
+</details>
 <h3 id="use">Use<a class="headerlink" href="#use" title="Permanent link">⚓︎</a></h3>
 <p>To use Connaisseur, simply try running some images or apply a deployment.
 In case you use the pre-configuration, you could for example run the following commands:</p>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:unsigned
 &gt;<span class="w"> </span>Error<span class="w"> </span>from<span class="w"> </span>server:<span class="w"> </span>admission<span class="w"> </span>webhook<span class="w"> </span><span class="s2">&quot;connaisseur-svc.connaisseur.svc&quot;</span><span class="w"> </span>denied<span class="w"> </span>the<span class="w"> </span>request<span class="w"> </span><span class="o">(</span>...<span class="o">)</span>.
 
-kubectl<span class="w"> </span>run<span class="w"> </span>hello-world<span class="w"> </span>--image<span class="o">=</span>docker.io/hello-world
-&gt;<span class="w"> </span>pod/hello-world<span class="w"> </span>created
+kubectl<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--image<span class="o">=</span>docker.io/securesystemsengineering/testimage:signed
+&gt;<span class="w"> </span>pod/demo<span class="w"> </span>created
 </code></pre></div>
 <h3 id="upgrade">Upgrade<a class="headerlink" href="#upgrade" title="Permanent link">⚓︎</a></h3>
 <p>A running Connaisseur instance can be updated by a Helm upgrade of the current release:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Git repo</label><label for="__tabbed_3_2">Helm chart</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Git repo</label><label for="__tabbed_3_2">Helm chart</label><label for="__tabbed_3_3">Kubernetes manifests</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Adjust configuration in <code>helm/values.yaml</code> as required and upgrade via:</p>
@@ -1817,12 +1843,42 @@ kubectl<span class="w"> </span>run<span class="w"> </span>hello-world<span class
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>connaisseur<span class="w"> </span>connaisseur/connaisseur<span class="w"> </span>-n<span class="w"> </span>connaisseur<span class="w"> </span>--wait<span class="w"> </span>-f<span class="w"> </span>values.yaml
 </code></pre></div>
 </div>
+<div class="tabbed-block">
+<p>Adjust your local Kubernetes manifests (e.g. <code>deploy.yaml</code>) as required and upgrade via delete and reinstall:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>deploy.yaml<span class="w"> </span>-n<span class="w"> </span>connaisseur
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy.yaml<span class="w"> </span>-l<span class="w"> </span><span class="s1">&#39;app.kubernetes.io/component=connaisseur-init&#39;</span><span class="w"> </span>-n<span class="w"> </span>connaisseur
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy.yaml<span class="w"> </span>-l<span class="w"> </span><span class="s1">&#39;app.kubernetes.io/component=connaisseur-core&#39;</span><span class="w"> </span>-n<span class="w"> </span>connaisseur
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>deploy.yaml<span class="w"> </span>-l<span class="w"> </span><span class="s1">&#39;app.kubernetes.io/component=connaisseur-webhook&#39;</span><span class="w"> </span>-n<span class="w"> </span>connaisseur
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Rolling upgrades as with Helm might also be possible, but likely require further configuration.
+Insights are welcome <img alt="🙏" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f64f.svg" title=":pray:" /></p>
+</div>
+</div>
 </div>
 </div>
 <h3 id="delete">Delete<a class="headerlink" href="#delete" title="Permanent link">⚓︎</a></h3>
 <p>Just like for installation, Helm can also be used to delete Connaisseur from your cluster:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Git repo</label><label for="__tabbed_4_2">Helm chart</label><label for="__tabbed_4_3">Kubernetes manifests</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Uninstall via Helm:</p>
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>connaisseur<span class="w"> </span>-n<span class="w"> </span>connaisseur
 </code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Uninstall via Helm:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>connaisseur<span class="w"> </span>-n<span class="w"> </span>connaisseur
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Delete via manifests:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>deploy.yaml<span class="w"> </span>-n<span class="w"> </span>connaisseur
+</code></pre></div>
+</div>
+</div>
+</div>
 <p>In case uninstallation fails or problems occur during subsequent installation, you can manually remove all resources:</p>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,imagepolicies,secrets,serviceaccounts,customresourcedefinitions<span class="w"> </span>-lapp.kubernetes.io/instance<span class="o">=</span>connaisseur
 kubectl<span class="w"> </span>delete<span class="w"> </span>namespaces<span class="w"> </span>connaisseur
@@ -1910,7 +1966,9 @@ The special case of static validators used to simply allow or deny images withou
 </table>
 <p><em>Further configuration fields specific to the validator type are described in the <a href="../validators/">respective section</a>.</em></p>
 <h4 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
@@ -1935,6 +1993,7 @@ The special case of static validators used to simply allow or deny images withou
 <span class="w">        </span><span class="no">ksm6hFczQAq+FDdw0istEdCwcHO61O/0bV+LC8jqFoomA28cT+py6FcSYw==</span>
 <span class="w">        </span><span class="no">-----END PUBLIC KEY-----</span>
 </code></pre></div>
+</details>
 <h4 id="static-validators">Static validators<a class="headerlink" href="#static-validators" title="Permanent link">⚓︎</a></h4>
 <p>Static validators are a special type of validator that does not validate any signatures.
 Depending on the <code>approve</code> value being <code>true</code> or <code>false</code>, they either allow or deny all images for which they are specified as validator.
@@ -1971,7 +2030,9 @@ This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.
 </tbody>
 </table>
 <h5 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">⚓︎</a></h5>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -1980,6 +2041,7 @@ This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
 <span class="w">    </span><span class="nt">approve</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
+</details>
 <h3 id="image-policy">Image policy<a class="headerlink" href="#image-policy" title="Permanent link">⚓︎</a></h3>
 <p>The image policy is defined in the <code>policy</code> field and acts as a list of rule objects to determine which image should be validated by which validator (and potentially some further configurations).</p>
 <p>For each image in the admission request, only a single rule in the image policy will apply: the one with the <em>most specific</em> matching <code>pattern</code> field.
@@ -2005,7 +2067,7 @@ The reference to validator and exact trust root is resolved in the following way
 </ol>
 <p>Let's review the pattern and validator matching at a minimal example.
 We consider the following validator and policy configuration (most fields have been omitted for clarity):</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w">     </span><span class="c1"># validator 1</span>
 <span class="w">    </span><span class="nt">trustRoots</span><span class="p">:</span>
@@ -2081,7 +2143,9 @@ There is two rules that should remain intact in some form in order to not brick 
 </tbody>
 </table>
 <h4 id="example_2">Example<a class="headerlink" href="#example_2" title="Permanent link">⚓︎</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">policy</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
@@ -2093,18 +2157,21 @@ There is two rules that should remain intact in some form in order to not brick 
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/allowedimage:v*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 </code></pre></div>
+</details>
 <h3 id="common-examples">Common examples<a class="headerlink" href="#common-examples" title="Permanent link">⚓︎</a></h3>
 <p>Let's look at some useful examples for the <code>validators</code> and <code>policy</code> configuration.
 These can serve as a first template beyond the pre-configuration or might just be instructive to understand validators and policies.</p>
 <p>We assume your repository is <code>docker.io/myrepo</code> and a public key has been created.
 In case this repository is private, authentication would have to be added to the respective validator for example via:</p>
-<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="nt">auth</span><span class="p">:</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="w">    </span><span class="nt">auth</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8ssecret</span>
 </code></pre></div>
 <p>The Kubernetes secret would have to be created separately according to the validator documentation.</p>
 <h4 id="case-only-validate-own-images-and-deny-all-others">Case: Only validate own images and deny all others<a class="headerlink" href="#case-only-validate-own-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>This is likely the most common case in simple settings by which only self-built images are used and validated against your own public key:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2139,9 +2206,12 @@ In case this repository is private, authentication would have to be added to the
 <span class="w">    </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
 </code></pre></div>
+</details>
 <h4 id="case-only-validate-own-images-and-deny-all-others-faster">Case: Only validate own images and deny all others (faster)<a class="headerlink" href="#case-only-validate-own-images-and-deny-all-others-faster" title="Permanent link">⚓︎</a></h4>
 <p>This configuration achieves the same as the one above, but is faster as trust data only needs to be requested for images in your repository:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2181,11 +2251,14 @@ In case this repository is private, authentication would have to be added to the
 <span class="w">    </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
 </code></pre></div>
+</details>
 <p>The <code>*:*</code> rule could also have been omitted as Connaisseur denies unmatched images.
 However, explicit is better than implicit.</p>
 <h4 id="case-only-validate-docker-hub-official-images-and-deny-all-others">Case: Only validate Docker Hub official images and deny all others<a class="headerlink" href="#case-only-validate-docker-hub-official-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>In case only validated Docker Hub official images should be admitted to the cluster:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2224,9 +2297,12 @@ However, explicit is better than implicit.</p>
 <span class="w">    </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
 </code></pre></div>
+</details>
 <h4 id="case-only-validate-docker-hub-official-images-and-allow-all-others">Case: Only validate Docker Hub official images and allow all others<a class="headerlink" href="#case-only-validate-docker-hub-official-images-and-allow-all-others" title="Permanent link">⚓︎</a></h4>
 <p>In case only Docker Hub official images should be validated while all others are simply admitted:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2265,9 +2341,12 @@ However, explicit is better than implicit.</p>
 <span class="w">    </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">securesystemsengineering_official</span>
 </code></pre></div>
+</details>
 <h4 id="case-directly-admit-own-images-and-deny-all-others">Case: Directly admit own images and deny all others<a class="headerlink" href="#case-directly-admit-own-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>As a matter of fact, Connaisseur can also be used to restrict the allowed registries and repositories without signature validation:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2286,6 +2365,7 @@ However, explicit is better than implicit.</p>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 </code></pre></div>
+</details>
 <div class="footnote">
 <hr />
 <ol>
@@ -2426,7 +2506,7 @@ However, explicit is better than implicit.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.6c14ae12.min.js"></script>

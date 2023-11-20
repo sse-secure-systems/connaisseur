@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/features/alerting/">
       
       
-        <link rel="prev" href="../metrics/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../detection_mode/">
+        <link rel="next" href="../automatic_child_approval/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -527,26 +527,6 @@ You're not viewing the docs of the latest version.
                 
   
   
-  
-    <li class="md-nav__item">
-      <a href="../metrics/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Metrics
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -660,46 +640,6 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../detection_mode/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Detection Mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../namespaced_validation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Namespaced Validation
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../automatic_child_approval/" class="md-nav__link">
         
   
@@ -725,6 +665,66 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     Automatic Unchanged Approval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detection_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Detection Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../namespaced_validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Namespaced Validation
   </span>
   
 
@@ -1335,11 +1335,11 @@ one it needs to be one of <code>slack</code>, <code>keybase</code>, <code>opsgen
 </ul>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
 <p>For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:</p>
-<div class="highlight"><pre><span></span><code>alerting:
-  admitRequest:
-    receivers:
-      - template: keybase
-        receiverUrl: https://bots.keybase.io/webhookbot/&lt;Your-Keybase-Hook-Token&gt;
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">alerting</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">admitRequest</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keybase</span>
+<span class="w">        </span><span class="nt">receiverUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://bots.keybase.io/webhookbot/&lt;Your-Keybase-Hook-Token&gt;</span>
 </code></pre></div>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="creating-a-custom-template">Creating a custom template<a class="headerlink" href="#creating-a-custom-template" title="Permanent link">⚓︎</a></h3>
@@ -1488,7 +1488,7 @@ specify them as described above in <code>customHeaders</code>.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.6c14ae12.min.js"></script>

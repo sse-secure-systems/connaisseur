@@ -619,71 +619,11 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../features/metrics/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Metrics
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../features/alerting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Alerting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../features/detection_mode/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Detection Mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../features/namespaced_validation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Namespaced Validation
   </span>
   
 
@@ -724,6 +664,66 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     Automatic Unchanged Approval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/detection_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Detection Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/namespaced_validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Namespaced Validation
   </span>
   
 
@@ -1272,9 +1272,10 @@ For more advanced usage in more complex cases (e.g. authentication, multiple reg
 <li><a href="../features/">Features</a>: <em>using additional features (e.g. alerting)</em></li>
 </ul>
 <p>In case you need help, feel free to reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a> <img alt="👋" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f44b.svg" title=":wave:" /></p>
-<blockquote>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"/></svg></span> <strong>Note</strong>: As more than only public keys can be used to validate integrity and provenance of an image, we refer to these trust anchors in a generalized form as <em>trust roots</em>.</p>
-</blockquote>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>As more than only public keys can be used to validate integrity and provenance of an image, we refer to these trust anchors in a generalized form as <em>trust roots</em>.</p>
+</div>
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h2>
 <p>You should have a Kubernetes test cluster running.
 Furthermore, <code>docker</code>, <code>git</code>, <code>helm</code> and <code>kubectl</code> should be installed and usable, i.e. having run <code>docker login</code> and switched to the appropriate <code>kubectl</code> context.</p>
@@ -1335,7 +1336,7 @@ The result should look similar to this:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Docker Content Trust</label><label for="__tabbed_2_2">Cosign</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
 <span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"> </span><span class="c1"># configure the notary server to be used</span>
@@ -1361,7 +1362,7 @@ The result should look similar to this:</p>
 </div>
 <div class="tabbed-block">
 <p><em>In addition for Cosign, the <code>type</code> needs to be set to <code>cosign</code> and the <code>host</code> is not required.</em></p>
-<div class="highlight"><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
 <span class="w">  </span><span class="nt">trustRoots</span><span class="p">:</span>
@@ -1597,7 +1598,7 @@ The trust data will then be pushed to the Docker Hub Notary server.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.6c14ae12.min.js"></script>

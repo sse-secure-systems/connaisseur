@@ -16,7 +16,7 @@
         <link rel="prev" href="../validators/notaryv2/">
       
       
-        <link rel="next" href="metrics/">
+        <link rel="next" href="alerting/">
       
       
       <link rel="icon" href="../assets/favicon.svg">
@@ -539,71 +539,11 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="metrics/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Metrics
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="alerting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Alerting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="detection_mode/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Detection Mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="namespaced_validation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Namespaced Validation
   </span>
   
 
@@ -644,6 +584,66 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     Automatic Unchanged Approval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="detection_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Detection Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="namespaced_validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Namespaced Validation
   </span>
   
 
@@ -1110,12 +1110,11 @@ You're not viewing the docs of the latest version.
 
 
 <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">⚓︎</a></h1>
-<p>Besides Connaisseur's central functionality, several additional features are available:</p>
+<p>Besides Connaisseur's central functionality, several additional features are available, such as:</p>
 <ul>
+<li><a href="alerting/">Alerting</a>: <em>send alerts based on verification result</em></li>
 <li><a href="detection_mode/">Detection Mode</a>: <em>warn but do not block invalid images</em></li>
 <li><a href="namespaced_validation/">Namespaced Validation</a>: <em>restrict validation to dedicated namespaces</em></li>
-<li><a href="alerting/">Alerting</a>: <em>send alerts based on verification result</em></li>
-<li><a href="automatic_child_approval/">Automatic Child Approval</a>: <em>configure approval of Kubernetes child resources</em></li>
 </ul>
 <p>In combination, these features help to improve usability and might better support the DevOps workflow.
 Switching Connaisseur to <em>detection mode</em> and alerting on non-compliant images can for example avoid service interruptions while still benefitting from improved supply-chain security.</p>
@@ -1246,7 +1245,7 @@ Switching Connaisseur to <em>detection mode</em> and alerting on non-compliant i
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.6c14ae12.min.js"></script>

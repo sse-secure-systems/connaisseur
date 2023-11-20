@@ -668,71 +668,11 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="features/metrics/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Metrics
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="features/alerting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Alerting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="features/detection_mode/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Detection Mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="features/namespaced_validation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Namespaced Validation
   </span>
   
 
@@ -773,6 +713,66 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     Automatic Unchanged Approval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/detection_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Detection Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/namespaced_validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Namespaced Validation
   </span>
   
 
@@ -1364,21 +1364,20 @@ It is built to be extendable and currently aims to support the following signing
 <li><a href="https://sigstore.dev/">sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a></li>
 <li><a href="https://github.com/notaryproject/nv2">Notary V2</a> (PLANNED)</li>
 </ul>
-<p>It provides several additional features:</p>
+<p>It provides several additional features such as:</p>
 <ul>
-<li><a href="features/metrics/">Metrics</a>: <em>get prometheus metrics at <code>/metrics</code></em></li>
 <li><a href="features/alerting/">Alerting</a>: <em>send alerts based on verification result</em></li>
 <li><a href="features/detection_mode/">Detection Mode</a>: <em>warn but do not block invalid images</em></li>
 <li><a href="features/namespaced_validation/">Namespaced Validation</a>: <em>restrict validation to dedicated namespaces</em></li>
-<li><a href="features/automatic_child_approval/">Automatic Child Approval</a>: <em>configure approval of Kubernetes child resources</em></li>
 </ul>
 <p>Feel free to reach out via <a href="https://github.com/sse-secure-systems/connaisseur/discussions">GitHub Discussions</a>!</p>
 <h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">⚓︎</a></h2>
 <p>Getting started to verify image signatures is only a matter of minutes:</p>
 <p><img alt="" src="assets/connaisseur_demo.gif" /></p>
-<blockquote>
-<p><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> Only try this out on a test cluster as deployments with unsigned images will be blocked. <img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /></p>
-</blockquote>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Only try this out on a test cluster as deployments with unsigned images will be blocked.</p>
+</div>
 <p>Connaisseur comes pre-configured with public keys for its own repository and <a href="https://docs.docker.com/docker-hub/official_images/">Docker's official images</a> (official images can be found <a href="https://hub.docker.com/search?q=&amp;type=image&amp;image_filter=official">here</a>).
 It can be fully configured via <code>helm/values.yaml</code>.
 For a quick start, clone the Connaisseur repository:</p>
@@ -1629,7 +1628,7 @@ Please refer to our <a href="CONTRIBUTING/">contributing guide</a>, <a href="htt
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="assets/javascripts/bundle.6c14ae12.min.js"></script>

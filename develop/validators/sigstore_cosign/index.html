@@ -686,71 +686,11 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../features/metrics/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Metrics
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../features/alerting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Alerting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/detection_mode/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Detection Mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/namespaced_validation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Namespaced Validation
   </span>
   
 
@@ -791,6 +731,66 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     Automatic Unchanged Approval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/detection_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Detection Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/namespaced_validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Namespaced Validation
   </span>
   
 
@@ -1408,7 +1408,7 @@ cosign<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> 
 </code></pre></div>
 <p>To use Connaisseur with Cosign, configure a validator in <code>helm/values.yaml</code> with the generated public key (<code>cosign.pub</code>) as a trust root.
 The entry in <code>.application.validators</code> should look something like this (make sure to add your own public key to trust root <code>default</code>):</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
 <span class="w">  </span><span class="nt">trustRoots</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
@@ -1419,7 +1419,7 @@ The entry in <code>.application.validators</code> should look something like thi
 <span class="w">      </span><span class="no">-----END PUBLIC KEY-----</span>
 </code></pre></div>
 <p>In <code>.application.policy</code>, add a pattern to match your public key to your own repository:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/testimage:co*&quot;</span><span class="w">  </span><span class="c1"># YOUR REPOSITORY</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/testimage:co*&quot;</span><span class="w">  </span><span class="c1"># YOUR REPOSITORY</span>
 <span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
 </code></pre></div>
 <p>After installation, you are ready to verify your images against your public key:</p>
@@ -1541,7 +1541,9 @@ In case you just use the default values for the validator and image policy given
 </tbody>
 </table>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h3>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
@@ -1559,6 +1561,7 @@ In case you just use the default values for the validator and image policy given
 <span class="w">    </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span>
 </code></pre></div>
+</details>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">⚓︎</a></h3>
 <p>When using a private registry for images and signature data, the credentials need to be provided to Connaisseur. There are two ways to do this.</p>
@@ -1577,9 +1580,11 @@ The secret can for example be created directly from your local <code>config.json
 <span class="w">  </span>--docker-password<span class="o">=</span><span class="s1">&#39;&lt;your password&gt;&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-n<span class="w"> </span>connaisseur
 </code></pre></div>
-<blockquote>
-<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"/></svg></span> <strong>Note</strong>: At present, it <a href="https://github.com/sigstore/cosign/issues/587#issuecomment-1062510930">seems to be necessary</a> to suffix your registry server URL with <code>/v1/</code>. This may become unnecessary in the future.</p>
-</blockquote>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>At present, it <a href="https://github.com/sigstore/cosign/issues/587#issuecomment-1062510930">seems to be necessary</a> to suffix your registry server URL with <code>/v1/</code>.
+This may become unnecessary in the future.</p>
+</div>
 <p>In the above cases, the secret name in Connaisseur configuration would be <code>secretName: my-secret</code>.
 It is possible to provide one Kubernetes secret with a <code>config.json</code> for authentication to multiple private registries and referencing this in multiple validators.</p>
 <h4 id="k8s_keychain">k8s_keychain<a class="headerlink" href="#k8s_keychain" title="Permanent link">⚓︎</a></h4>
@@ -1604,7 +1609,7 @@ See <a href="https://github.com/sigstore/cosign/pull/972">this cosign pull reque
 <p>Connaisseur supports Cosign's URI-based <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">KMS integration</a> to manage the signing and verification keys.
 Simply configure the trust root key value as the respective URI.
 In case of a <a href="https://github.com/sigstore/cosign/blob/main/KMS.md#kubernetes-secret">Kubernetes secret</a>, this would take the following form:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvalidator</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
 <span class="w">  </span><span class="nt">trustRoots</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mykey</span>
@@ -1613,15 +1618,16 @@ In case of a <a href="https://github.com/sigstore/cosign/blob/main/KMS.md#kubern
 <p>For that specific case of a Kubernetes secret, make sure to place it in a suitable namespace and grant Connaisseur access to it<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
 <p>Most other KMS will require credentials for authentication that must be provided via environment variables.
 Such environment variables can be injected into Connaisseur via <code>deployment.envs</code> in <code>helm/values.yaml</code>, e.g.:</p>
-<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">envs</span><span class="p">:</span><span class="w"> </span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="w">  </span><span class="nt">envs</span><span class="p">:</span><span class="w"> </span>
 <span class="w">    </span><span class="nt">VAULT_ADDR</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myvault.com</span>
 <span class="w">    </span><span class="nt">VAULT_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secrettoken</span>
 </code></pre></div>
 <h3 id="multi-signature-verification">Multi-signature verification<a class="headerlink" href="#multi-signature-verification" title="Permanent link">⚓︎</a></h3>
-<blockquote>
-<p><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> This is currently an experimental feature that might be unstable over time.
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is currently an experimental feature that might be unstable over time.
 As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.</p>
-</blockquote>
+</div>
 <p>Connaisseur can verify multiple signatures for a single image.
 It is possible to configure a threshold number and specific set of required valid signatures.
 This allows to implement several advanced use cases (and policies):</p>
@@ -1633,7 +1639,7 @@ This allows to implement several advanced use cases (and policies):</p>
 </ul>
 <p>Multi-signature verification is scoped to the trust roots specified within a referenced validator.
 Consider the following validator configuration:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
@@ -1658,7 +1664,7 @@ Consider the following validator configuration:</p>
 <span class="w">        </span><span class="no">-----END PUBLIC KEY-----</span>
 </code></pre></div>
 <p>The trust roots <code>alice</code>, <code>bob</code>, and <code>charlie</code> are all included for verification in case <code>.application.policy[*].with.trustRoot</code> is set to <code>"*"</code> (note that this is a special flag, not a real wildcard):</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
 <span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
 <span class="w">  </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
@@ -1666,7 +1672,7 @@ Consider the following validator configuration:</p>
 <p>As neither <code>threshold</code> nor <code>required</code> are specified, Connaisseur will require signatures of all trust roots (<code>alice</code>, <code>bob</code>, and <code>charlie</code>) and deny an image otherwise.
 If either <code>threshold</code> or <code>required</code> is specified, it takes precedence.
 For example, it is possible to configure a threshold number of required signatures via the <code>threshold</code> key:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
 <span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
 <span class="w">  </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
@@ -1674,7 +1680,7 @@ For example, it is possible to configure a threshold number of required signatur
 </code></pre></div>
 <p>In this case, valid signatures of two or more out of the three trust roots are required for admittance.
 Using the <code>required</code> key, it is possible to enforce specific trusted roots:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
 <span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
 <span class="w">  </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
@@ -1682,7 +1688,7 @@ Using the <code>required</code> key, it is possible to enforce specific trusted 
 </code></pre></div>
 <p>Now, only images with valid signatures of trust roots <code>alice</code> and <code>bob</code> are admitted.
 It is possible to combine <code>threshold</code> and <code>required</code> keys:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
 <span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">multicosigner</span>
 <span class="w">  </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
@@ -1862,7 +1868,7 @@ Make sure to adjust it as needed.&#160;<a class="footnote-backref" href="#fnref:
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.6c14ae12.min.js"></script>

@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/features/detection_mode/">
       
       
-        <link rel="prev" href="../alerting/">
+        <link rel="prev" href="../automatic_unchanged_approval/">
       
       
-        <link rel="next" href="../namespaced_validation/">
+        <link rel="next" href="../metrics/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
@@ -529,11 +529,11 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../metrics/" class="md-nav__link">
+      <a href="../alerting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Metrics
+    Alerting
   </span>
   
 
@@ -549,11 +549,31 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../alerting/" class="md-nav__link">
+      <a href="../automatic_child_approval/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Alerting
+    Automatic Child Approval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../automatic_unchanged_approval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Automatic Unchanged Approval
   </span>
   
 
@@ -671,51 +691,31 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
+      <a href="../metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../namespaced_validation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Namespaced Validation
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../automatic_child_approval/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Automatic Child Approval
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../automatic_unchanged_approval/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Automatic Unchanged Approval
   </span>
   
 
@@ -1260,11 +1260,13 @@ In detection mode, Connaisseur admits all images to the cluster, but issues a wa
 </tbody>
 </table>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
-<p>In <code>helm/values.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code>application:
-  features:
-    detectionMode: true
+<details class="abstract">
+<summary>helm/values.yaml</summary>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">features</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">detectionMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
+</details>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="failure-policy-vs-detection-mode">Failure policy vs. detection mode<a class="headerlink" href="#failure-policy-vs-detection-mode" title="Permanent link">⚓︎</a></h3>
 <p>The detection mode is not to be confused with the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> (<code>kubernetes.webhook.failurePolicy</code> in <code>helm/values.yaml</code>) for the mutating admission controller:
@@ -1405,7 +1407,7 @@ While in default configuration, requests will be denied if either no valid image
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.6c14ae12.min.js"></script>
