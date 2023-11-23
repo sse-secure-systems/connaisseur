@@ -139,7 +139,7 @@ jobs:
       - uses: ./.github/actions/k8s-version-config
         name: Setup k8s cluster
         with:
-          k8s-version: v1.25
+          k8s-version: v1.28
       - name: Get alerting endpoint IP
         id: get_alerting_endpoint_ip
         uses: ./.github/actions/alerting-endpoint
@@ -216,7 +216,7 @@ jobs:
       - uses: ./.github/actions/k8s-version-config
         name: Setup k8s cluster
         with:
-          k8s-version: v1.25
+          k8s-version: v1.28
       - name: Run test
         run: |
           bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
@@ -261,6 +261,7 @@ jobs:
             "v1.25",
             "v1.26",
             "v1.27",
+            "v1.28",
           ]
     steps:
       - name: Checkout code
