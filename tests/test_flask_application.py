@@ -341,6 +341,7 @@ async def test_admit(
 )
 def test_error_handler(
     mocker,
+    m_request,
     m_ad_schema_path,
     m_alerting,
     function,
