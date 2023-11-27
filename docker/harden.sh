@@ -4,6 +4,9 @@ set -euo pipefail
 # Update packages and remove apk
 apk update --no-cache && apk upgrade --no-cache && apk del apk-tools --no-cache && rm -rf /var/cache/apk
 
+# Remove pip
+pip uninstall pip --yes
+
 # Remove user accounts
 echo "" > /etc/group
 echo "" > /etc/passwd
