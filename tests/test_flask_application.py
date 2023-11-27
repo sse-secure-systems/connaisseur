@@ -324,7 +324,7 @@ async def test_admit(
         (
             {
                 "target": "connaisseur.flask_application.__admit",
-                "side_effect": asyncio.TimeoutError(""),
+                "side_effect": TimeoutError(""),
             },
             "couldn't retrieve the necessary trust data for verification within 30s. most likely there was a network failure. check connectivity to external servers or retry",
             200,
