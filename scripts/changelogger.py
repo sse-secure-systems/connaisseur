@@ -83,7 +83,17 @@ def git_latest_two_tags():
 def create_changelog(version, change_dict):
     body = ""
 
-    known_keys = ["feat", "fix", "refactor", "build", "ci", "test", "docs", "update"]
+    known_keys = [
+        "sec",
+        "feat",
+        "fix",
+        "refactor",
+        "build",
+        "ci",
+        "test",
+        "docs",
+        "update",
+    ]
 
     # order by importance
     for key in known_keys:

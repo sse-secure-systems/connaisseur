@@ -61,7 +61,7 @@ jobs:
           for commit in ${COMMITS}; do
               MSG=$(git log ${commit} -n1 --pretty=%s)
               TYPE=$(echo ${MSG} | awk '{{ print $1 }}')
-              if ! [[ "${TYPE}" =~ ^(build|ci|docs|feat|fix|refactor|test|update):$ ]]; then
+              if ! [[ "${TYPE}" =~ ^(build|ci|docs|feat|fix|refactor|sec|test|update):$ ]]; then
                 EXIT=1
                 echo "Commit message of commit ${commit} doesn't conform to 'type: msg' format:"
                 echo "${MSG}"

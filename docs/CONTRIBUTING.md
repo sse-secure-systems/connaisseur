@@ -147,6 +147,7 @@ We want to use the following common types in the header:
 - _feat_: adding of new features
 - _fix_: fixing an issue or bug
 - _refactor_: adjustment of code base to improve code quality or performance but not adding a feature or fixing a bug
+- _sec_: change that fixes a security vulnerability
 - _test_: testing related changes
 - _update_: updating a dependency
 
