@@ -1261,6 +1261,12 @@ We stick to semantic versioning, so unless the major version changes, updating C
 <td>3.2.0</td>
 <td>Prior to version 3.2.0 Connaisseur did not validate ephemeral containers (introduced in k8s 1.25) which allowed deploying unverified images to the cluster.</td>
 </tr>
+<tr>
+<td>Regex Denial of Service for Notary delegations</td>
+<td><span>&#8804;</span> 3.3.0</td>
+<td>3.3.1</td>
+<td>Prior to version 3.3.1 Connaisseur did input validation on the names of delegations in an unsafe manner: An adversary with the ability to alter Notary responses, in particular an evil Notary server, could have provided Connaisseur with an invalid delegation name that would lead to catastrophic backtracking during a regex matching. Only users of type <code>notaryv1</code> validators are affected as Connaisseur will only perform this kind of input validation in the context of a Notary validation. If you mistrust the Docker Notary server, the default configuration is vulnerable as it contains a <code>notaryv1</code> validator with the root keys of both Connaisseur and the library of official Docker images.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="reporting-a-vulnerability">Reporting a vulnerability<a class="headerlink" href="#reporting-a-vulnerability" title="Permanent link">⚓︎</a></h2>
