@@ -89,6 +89,7 @@ jobs:
           git config user.email "connaisseur@securesystems.dev"
           CHART_VERSION="${{ needs.build.outputs.chart_version }}"
           helm package helm
+          git checkout . # Remove changes to Chart for git checkout
           mkdir -p charts
           mv connaisseur*.tgz ./charts
           git checkout gh-pages
