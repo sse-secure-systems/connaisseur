@@ -81,6 +81,8 @@ jobs:
           fetch-depth: 0
       - name: Lint Helm chart
         run: helm lint helm
+      - name: Add annotation if it's a security release
+        run: bash scripts/security_annotation.sh
       - name: Package and upload Helm chart
         run: |
           git config user.name "versioning_user"
