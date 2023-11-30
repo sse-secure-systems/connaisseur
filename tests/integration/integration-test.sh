@@ -15,6 +15,15 @@ RETRY=3
 
 ## Backup helm/values.yaml
 cp helm/values.yaml values.yaml.backup
+cp helm/templates/deployment.yaml deployment.yaml.backup
+
+DEFAULT_CTX=$(kubectl config current-context)
+
+source tests/integration/cleanup.sh
+
+if [[ "${GITHUB_ACTIONS-}" != "true" ]]; then
+    trap "preserve_info_and_cleanup" SIGTERM EXIT
+fi
 
 ## LOAD PUBLIC KEY
 COSIGN_PUBLIC_KEY="$(printf -- "${COSIGN_PUBLIC_KEY//<br>/\\n            }")"
@@ -61,7 +70,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
 		echo -e ${FAILED}
 		echo "::group::Output"
 		cat output.log
-		kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur --tail=-1
+		kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur --tail=-1 || true
 		echo "::endgroup::"
 		EXIT="1"
 	else
@@ -124,13 +133,18 @@ workload_test() { # WORKLOAD_KIND
 	echo "::endgroup::"
 	single_test "w_${KIND}_${APIVERSION}_${TAG}" "Testing ${KIND} using ${APIVERSION} and ${TAG} image..." "workload" "${KIND}" "default" " created" "null"
 
-	if [[ "${GITHUB_BASE_REF}" == "master" ]]; then
+	if [[ "${GITHUB_BASE_REF:-"no-github-base-ref-set"}" == "master" || "${GITHUB_BASE_REF:-"no-github-base-ref-set"}" == "no-github-base-ref-set" ]]; then
 		# Check that the workload object is actually ready, see #516
 		echo -n "Checking readiness of deployed resources..."
 		if [[ "${KIND}" == "StatefulSet" ]]; then
 			sleep 30 # StatefulSet provisions a PVC, which needs more time. A lot more sometimes...
 		fi
-		sleep 5
+		if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
+		    SLEEP_TIME=5
+		else
+		    SLEEP_TIME=20
+		fi
+		sleep ${SLEEP_TIME}
 
 		# Output of different objects differs considerably, in particular in JSON representation
 		# To have less to differentiate, we parse the visual representation
@@ -362,9 +376,9 @@ update_for_self_hosted_notary() {
 	yq '. *+ load("ghcr-values")' -i update
 	yq eval-all --inplace 'select(fileIndex == 0) * select(fileIndex == 1)' helm/values.yaml update
 	rm update
-	curl "https://notary.server:4443/v2/docker.io/securesystemsengineering/testimage/_trust/tuf/root.json" > root.json
+	curl -k "https://${NOTARY_IP}:4443/v2/docker.io/securesystemsengineering/testimage/_trust/tuf/root.json" > root.json
 	SELF_HOSTED_NOTARY_PUBLIC_ROOT_KEY_ID=$(cat root.json | jq -r .signatures[0].keyid)
-	cat root.json | jq -r --arg KEYID $SELF_HOSTED_NOTARY_PUBLIC_ROOT_KEY_ID '.signed.keys | .[$KEYID] | .keyval.public' | base64 -d | openssl x509 -pubkey -noout > self_hosted_notary_root_key.pub
+	cat root.json | jq -r --arg KEYID ${SELF_HOSTED_NOTARY_PUBLIC_ROOT_KEY_ID} '.signed.keys | .[$KEYID] | .keyval.public' | base64 -d | openssl x509 -pubkey -noout > self_hosted_notary_root_key.pub
 	yq -i '(.application.validators.[] | select(.name == "self-hosted-notary") | .trustRoots.[] | select(.name=="default") | .key) |= load_str("self_hosted_notary_root_key.pub")' helm/values.yaml
 	rm self_hosted_notary_root_key.pub root.json
 }
@@ -396,13 +410,19 @@ regular_int_test() {
 
 	### EDGE CASE TAG IN RELEASES AND TARGETS ####################################
 	echo -n "[edge1] Testing edge case of tag defined in both targets and release json file..."
-	POD=$(kubectl get pods -o name | grep "pod-rs-")
-	DEPLOYED_SHA=$(kubectl get "${POD}" -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://')
-	if [[ "${DEPLOYED_SHA}" != 'fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b' ]]; then
-		echo -e "${FAILED}"
-		EXIT="1"
+	POD=$(kubectl get pods -o name | grep "pod-rs-" || true)
+	if [[ ${POD} == "" ]]; then
+        echo -e "${FAILED}"
+	    EXIT="1"
 	else
-		echo -e "${SUCCESS}"
+	    DEPLOYED_SHA=$(kubectl get "${POD}" -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://')
+        kubectl get "${POD}" -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://'
+        if [[ "${DEPLOYED_SHA}" != 'fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b' ]]; then
+	        echo -e "${FAILED}"
+	        EXIT="1"
+        else
+	        echo -e "${SUCCESS}"
+        fi
 	fi
 
 	### ALERTING TEST ####################################
@@ -554,6 +574,7 @@ case $1 in
 	kubectl config use-context ${CTX}
 	helm_install_namespace_no_create ${NS}
 	single_test "on" "Testing unsigned image..." "deploy" "securesystemsengineering/testimage:unsigned" "${NS}" "Unable to find signed digest for image docker.io/securesystemsengineering/testimage:unsigned." "INVALID"
+	kubectl config use-context ${DEFAULT_CTX}
 	;;
 "deployment")
 	update_via_env_vars
@@ -565,7 +586,6 @@ case $1 in
 	update_values_minimal
 	helm_install
 	pre_config_int_test
-	helm_uninstall
 	;;
 "pre-and-workload")
 	update_helm_for_workloads
@@ -616,8 +636,11 @@ case $1 in
 	pre_config_int_test
 	if [[ "${EXIT}" != "0" ]]; then
 		echo "Skipping uninstallation to preserve logs..."
+		rm release.yaml release_patched.yaml
 	else
 		helm_uninstall
+		kubectl delete ns connaisseur
+		rm release.yaml release_patched.yaml
 	fi
 	;;
 *)
@@ -635,10 +658,3 @@ fi
 if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
 	exit $((${EXIT}))
 fi
-
-echo 'Cleaning up installation and test resources...'
-make uninstall >/dev/null 2>&1 || true
-kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets,namespaces -luse="connaisseur-integration-test" -A >/dev/null
-rm ghcr-values ghcr-validator
-mv values.yaml.backup helm/values.yaml
-echo 'Finished cleanup.'
