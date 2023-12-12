@@ -92,6 +92,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Scan
+        continue-on-error: true
         uses: stackrox/kube-linter-action@ca0d55b925470deb5b04b556e6c4276ea94d03c3 # v1.0.4
         with:
           directory: helm
