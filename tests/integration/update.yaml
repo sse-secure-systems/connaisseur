@@ -89,7 +89,7 @@ application:
     validator: dockerhub-basics
     with:
       trustRoot: securesystemsengineering-official
-  - pattern: "k8s.gcr.io/*:*"
+  - pattern: "registry.k8s.io/*:*"
     validator: allow
   - pattern: docker.io/securesystemsengineering/connaisseur:*
     validator: allow

@@ -54,7 +54,7 @@ policy:
   validator: dockerhub
   with:
     delegations: ["phbelitz"]
-- pattern: "k8s.gcr.io/*:*"
+- pattern: "registry.k8s.io/*:*"
   validator: allow
 - pattern: "gcr.io/*:*"
   validator: allow

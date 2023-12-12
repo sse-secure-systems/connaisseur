@@ -143,13 +143,13 @@ kubectl get all -n connaisseur
     pod/connaisseur-deployment-78d8975596-42tkw   1/1     Running   0          22s
     pod/connaisseur-deployment-78d8975596-5c4c6   1/1     Running   0          22s
     pod/connaisseur-deployment-78d8975596-kvrj6   1/1     Running   0          22s
-    
+
     NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
     service/connaisseur-svc   ClusterIP   10.108.220.34   <none>        443/TCP   22s
-    
+
     NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
     deployment.apps/connaisseur-deployment   3/3     3            3           22s
-    
+
     NAME                                                DESIRED   CURRENT   READY   AGE
     replicaset.apps/connaisseur-deployment-78d8975596   3         3         3       22s
     ```
@@ -414,7 +414,7 @@ Now deploying the following images we would get the matchings:
 Connaisseur ships with a few rules pre-configured.
 There is two rules that should remain intact in some form in order to not brick the Kubernetes cluster:
 
-- `k8s.gcr.io`: This is an `allow` rule for Kubernetes images (`k8s.gcr.io`) in order to not block cluster relevant images. These cannot be validated currently.
+- `registry.k8s.io`: This is an `allow` rule for Kubernetes images (`registry.k8s.io`) in order to not block cluster relevant images. These images are signed with keyless Cosign signatures, which Connaisseur doesn't support yet. Thus, they cannot be validated currently.
 - `docker.io/securesystemsengineering/*:*`: This rule is used to validate the Connaisseur images with the respective validator and removal can break the Connaisseur deployment. It is, however, possible to use the static `allow` validator.
 
 #### Configuration options
@@ -494,7 +494,7 @@ This is likely the most common case in simple settings by which only self-built 
 
       policy:
       - pattern: "*:*"
-      - pattern: "k8s.gcr.io/*:*"
+      - pattern: "registry.k8s.io/*:*"
         validator: allow
       - pattern: "docker.io/securesystemsengineering/*:*"
         validator: dockerhub_basics
@@ -543,7 +543,7 @@ This configuration achieves the same as the one above, but is faster as trust da
       - pattern: "*:*"
         validator: deny
       - pattern: "docker.io/myrepo/*:*"
-      - pattern: "k8s.gcr.io/*:*"
+      - pattern: "registry.k8s.io/*:*"
         validator: allow
       - pattern: "docker.io/securesystemsengineering/*:*"
         validator: dockerhub_basics
@@ -592,7 +592,7 @@ In case only validated Docker Hub official images should be admitted to the clus
         validator: dockerhub_basics
         with:
           trustRoot: docker_official
-      - pattern: "k8s.gcr.io/*:*"
+      - pattern: "registry.k8s.io/*:*"
         validator: allow
       - pattern: "docker.io/securesystemsengineering/*:*"
         validator: dockerhub_basics
@@ -638,7 +638,7 @@ In case only Docker Hub official images should be validated while all others are
         validator: dockerhub_basics
         with:
           trustRoot: docker_official
-      - pattern: "k8s.gcr.io/*:*"
+      - pattern: "registry.k8s.io/*:*"
         validator: allow
       - pattern: "docker.io/securesystemsengineering/*:*"
         validator: dockerhub_basics
@@ -667,7 +667,7 @@ As a matter of fact, Connaisseur can also be used to restrict the allowed regist
         validator: deny
       - pattern: "docker.io/myrepo/*:*"
         validator: allow
-      - pattern: "k8s.gcr.io/*:*"
+      - pattern: "registry.k8s.io/*:*"
         validator: allow
       - pattern: "docker.io/securesystemsengineering/*:*"
         validator: allow

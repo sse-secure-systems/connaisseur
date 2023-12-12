@@ -47,7 +47,7 @@ application:
       validator: dockerhub-basics
       with:
         trustRoot: docker-official
-    - pattern: "k8s.gcr.io/*:*"
+    - pattern: "registry.k8s.io/*:*"
       validator: allow
     - pattern: "docker.io/rancher/library-busybox:*" # Allow PVC creation helper of k3s
       validator: allow

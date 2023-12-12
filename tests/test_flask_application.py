@@ -33,7 +33,7 @@ def m_config(monkeypatch, sample_nv1):
                 "validator": "dockerhub",
                 "with": {"delegations": ["phbelitz"]},
             },
-            {"pattern": "k8s.gcr.io/*:*", "validator": "allow"},
+            {"pattern": "registry.k8s.io/*:*", "validator": "allow"},
             {"pattern": "gcr.io/*:*", "validator": "allow"},
             {
                 "pattern": "docker.io/securesystemsengineering/*:*",

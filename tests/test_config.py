@@ -42,7 +42,7 @@ static_config = {
             "validator": "dockerhub",
             "with": {"delegations": ["phbelitz"]},
         },
-        {"pattern": "k8s.gcr.io/*:*", "validator": "allow"},
+        {"pattern": "registry.k8s.io/*:*", "validator": "allow"},
         {"pattern": "gcr.io/*:*", "validator": "allow"},
         {
             "pattern": "docker.io/securesystemsengineering/*:*",
@@ -191,7 +191,7 @@ def test_match_compare(rule1: str, rule2: str, image: str):
     [
         ("image:tag", "docker.io/*:*"),
         ("reg.io/image:tag", "*:*"),
-        ("k8s.gcr.io/path/image", "k8s.gcr.io/*:*"),
+        ("registry.k8s.io/path/image", "registry.k8s.io/*:*"),
         (
             "docker.io/securesystemsengineering/sample:v4",
             "docker.io/securesystemsengineering/sample:v4",

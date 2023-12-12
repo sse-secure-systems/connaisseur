@@ -159,18 +159,24 @@ application:
   ### IMAGE POLICY ###
   # the image policy ties validators and images together whereby always only the most specific rule (pattern)
   # is applied. specify if and how images should be validated by which validator via the validator name.
+  #
+  # below is a starting configuration, which you can fully customize to your liking
   policy:
+    # use the 'default' validator as a fallback
     - pattern: "*:*"
+    # validate official docker images using docker's public key
     - pattern: "docker.io/library/*:*"
       validator: dockerhub-basics
       with:
         trustRoot: docker-official
-    - pattern: "k8s.gcr.io/*:*"
-      validator: allow
+    # validate Connaisseur images using SSE's public key
     - pattern: "docker.io/securesystemsengineering/*:*"
       validator: dockerhub-basics
       with:
         trustRoot: securesystemsengineering-official
+    # simply allow any images of Kubernetes projects
+    - pattern: "registry.k8s.io/*:*"
+      validator: allow
 
   features:
     # in detection mode, deployment will not be denied, but only prompted

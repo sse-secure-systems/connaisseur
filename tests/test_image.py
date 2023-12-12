@@ -88,11 +88,11 @@ from . import conftest as fix
             fix.no_exc(),
         ),
         (
-            "master-node:5000/k8s.gcr.io/library/kube-apiserver:v1.18.6",
+            "master-node:5000/registry.k8s.io/library/kube-apiserver:v1.18.6",
             "kube-apiserver",
             "v1.18.6",
             None,
-            "k8s.gcr.io/library",
+            "registry.k8s.io/library",
             "master-node:5000",
             fix.no_exc(),
         ),
