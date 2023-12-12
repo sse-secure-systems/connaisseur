@@ -70,7 +70,8 @@ single_test() { # ID TXT TYP REF NS MSG RES
 		echo -e ${FAILED}
 		echo "::group::Output"
 		cat output.log
-		kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur --tail=-1 || true
+        kubectl config use-context ${DEFAULT_CTX}
+		kubectl logs -n connaisseur -lapp.kubernetes.io/instance=connaisseur --tail=-1 || kubectl logs -n security -lapp.kubernetes.io/instance=connaisseur --tail=-1 || true
 		echo "::endgroup::"
 		EXIT="1"
 	else
