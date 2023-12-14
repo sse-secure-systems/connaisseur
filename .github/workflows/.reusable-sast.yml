@@ -15,11 +15,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@407ffafae6a767df3e0230c3df91b6443ae8df75 # v2.22.8
+      uses: github/codeql-action/init@b374143c1149a9115d881581d29b8390bbcbb59c # v3.22.11
       with:
         languages: 'python'
     - name: Analyze
-      uses: github/codeql-action/analyze@407ffafae6a767df3e0230c3df91b6443ae8df75 # v2.22.8
+      uses: github/codeql-action/analyze@b374143c1149a9115d881581d29b8390bbcbb59c # v3.22.11
 
   black:
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
       - name: Run Bandit
         run: bandit -r -f sarif -o bandit-results.sarif connaisseur/ --exit-zero
       - name: Upload
-        uses: github/codeql-action/upload-sarif@407ffafae6a767df3e0230c3df91b6443ae8df75 # v2.22.8
+        uses: github/codeql-action/upload-sarif@b374143c1149a9115d881581d29b8390bbcbb59c # v3.22.11
         with:
           sarif_file: 'bandit-results.sarif'
 
@@ -80,7 +80,7 @@ jobs:
           format: sarif
           output-file: hadolint-results.sarif
       - name: Upload
-        uses: github/codeql-action/upload-sarif@407ffafae6a767df3e0230c3df91b6443ae8df75 # v2.22.8
+        uses: github/codeql-action/upload-sarif@b374143c1149a9115d881581d29b8390bbcbb59c # v3.22.11
         with:
           sarif_file: 'hadolint-results.sarif'
 
@@ -100,7 +100,7 @@ jobs:
           format: sarif
           output-file: kubelinter-results.sarif
       - name: Upload
-        uses: github/codeql-action/upload-sarif@407ffafae6a767df3e0230c3df91b6443ae8df75 # v2.22.8
+        uses: github/codeql-action/upload-sarif@b374143c1149a9115d881581d29b8390bbcbb59c # v3.22.11
         with:
           sarif_file: 'kubelinter-results.sarif'
 
@@ -129,13 +129,13 @@ jobs:
           helm template helm > deployment/deployment.yaml
         shell: bash
       - name: Scan
-        uses: bridgecrewio/checkov-action@784a76771b8933e0e88bbcab85031e023d743210 # v12.2598.0
+        uses: bridgecrewio/checkov-action@7f9dcb2543985c9e6f23b1156d75378361634587 # v12.2619.0
         with:
           soft_fail: true
           output_format: cli,sarif
           output_file_path: console,checkov-results.sarif
       - name: Upload
-        uses: github/codeql-action/upload-sarif@407ffafae6a767df3e0230c3df91b6443ae8df75 # v2.22.8
+        uses: github/codeql-action/upload-sarif@b374143c1149a9115d881581d29b8390bbcbb59c # v3.22.11
         with:
           sarif_file: checkov-results.sarif
 
@@ -152,6 +152,6 @@ jobs:
       - name: Scan
         run: semgrep ci --config=auto --suppress-errors --sarif --output=semgrep-results.sarif || exit 0
       - name: Upload
-        uses: github/codeql-action/upload-sarif@407ffafae6a767df3e0230c3df91b6443ae8df75 # v2.22.8
+        uses: github/codeql-action/upload-sarif@b374143c1149a9115d881581d29b8390bbcbb59c # v3.22.11
         with:
           sarif_file: semgrep-results.sarif
