@@ -2135,7 +2135,7 @@ We consider the following validator and policy configuration (most fields have b
 <p>Connaisseur ships with a few rules pre-configured.
 There is two rules that should remain intact in some form in order to not brick the Kubernetes cluster:</p>
 <ul>
-<li><code>k8s.gcr.io</code>: This is an <code>allow</code> rule for Kubernetes images (<code>k8s.gcr.io</code>) in order to not block cluster relevant images. These cannot be validated currently.</li>
+<li><code>registry.k8s.io</code>: This is an <code>allow</code> rule for Kubernetes images (<code>registry.k8s.io</code>) in order to not block cluster relevant images. These images are signed with keyless Cosign signatures, which Connaisseur doesn't support yet. Thus, they cannot be validated currently.</li>
 <li><code>docker.io/securesystemsengineering/*:*</code>: This rule is used to validate the Connaisseur images with the respective validator and removal can break the Connaisseur deployment. It is, however, possible to use the static <code>allow</code> validator.</li>
 </ul>
 <h4 id="configuration-options_2">Configuration options<a class="headerlink" href="#configuration-options_2" title="Permanent link">⚓︎</a></h4>
@@ -2233,7 +2233,7 @@ In case this repository is private, authentication would have to be added to the
 
 <span class="w">  </span><span class="nt">policy</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;registry.k8s.io/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
@@ -2278,7 +2278,7 @@ In case this repository is private, authentication would have to be added to the
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;registry.k8s.io/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
@@ -2324,7 +2324,7 @@ However, explicit is better than implicit.</p>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
 <span class="w">    </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_official</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;registry.k8s.io/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
@@ -2368,7 +2368,7 @@ However, explicit is better than implicit.</p>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
 <span class="w">    </span><span class="nt">with</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">trustRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker_official</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;registry.k8s.io/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub_basics</span>
@@ -2394,7 +2394,7 @@ However, explicit is better than implicit.</p>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8s.gcr.io/*:*&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;registry.k8s.io/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/securesystemsengineering/*:*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
