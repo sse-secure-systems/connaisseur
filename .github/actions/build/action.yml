@@ -68,7 +68,7 @@ runs:
         sbom: true
         provenance: true
     - name: Create SBOM
-      uses: anchore/sbom-action@07978da4bdb4faa726e52dfc6b1bed63d4b56479 # v0.13.3
+      uses: anchore/sbom-action@5ecf649a417b8ae17dc8383dc32d46c03f2312df # v0.15.1
       with:
         image: ${{ inputs.image_registry }}/${{ inputs.image_repo }}@${{ steps.build.outputs.digest }}
         format: cyclonedx-json
