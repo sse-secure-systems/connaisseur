@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
     
     
       
@@ -1887,7 +1887,7 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Rolling upgrades as with Helm might also be possible, but likely require further configuration.
-Insights are welcome <img alt="🙏" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f64f.svg" title=":pray:" /></p>
+Insights are welcome <img alt="🙏" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/1f64f.svg" title=":pray:" /></p>
 </div>
 </div>
 </div>
@@ -1963,31 +1963,31 @@ The special case of static validators used to simply allow or deny images withou
 <tr>
 <td><code>name</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>Name of the validator, which is referenced in the image policy. It must consist of lower case alphanumeric characters or '-'. If the name is <code>default</code>, it will be used if no validator is specified.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>Type of the validator, e.g. <code>notaryv1</code> or <code>cosign</code>, which is dependent on the <a href="../validators/">signing solution in use</a>.</td>
 </tr>
 <tr>
 <td><code>trustRoots</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>List of trust anchors to validate the signatures against. In practice, this is typically a list of public keys.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].name</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>Name of the trust anchor, which is referenced in the image policy. If the name is <code>default</code>, it will be used if no key is specified.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].key</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>Value of the trust anchor, most commonly a PEM encoded public key.</td>
 </tr>
 <tr>
@@ -2046,19 +2046,19 @@ This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.
 <tr>
 <td><code>name</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>Name of the validator, which will be used to reference it in the image policy.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td><code>static</code>; value has to be <code>static</code> for a static validator.</td>
 </tr>
 <tr>
 <td><code>approve</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td><code>true</code> or <code>false</code> to admit or deny all images.</td>
 </tr>
 </tbody>
@@ -2153,7 +2153,7 @@ There is two rules that should remain intact in some form in order to not brick 
 <tr>
 <td><code>pattern</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>Globbing pattern to match an image name against.</td>
 </tr>
 <tr>
@@ -2548,10 +2548,10 @@ However, explicit is better than implicit.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../assets/javascripts/bundle.7389ff0e.min.js"></script>
       
     
   </body>
