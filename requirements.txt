@@ -14,4 +14,4 @@ PyYAML~=6.0
 requests~=2.31.0
 rfc3339-validator~=0.1.4
 rsa~=4.9
-safety~=2.3.5
+safety~=3.0.0
