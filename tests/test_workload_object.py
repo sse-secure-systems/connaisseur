@@ -109,7 +109,7 @@ def test_k8s_object_init(adm_req_sample_objects, index, exception):
             },
             fix.no_exc(),
         ),
-        (2, {}, pytest.raises(exc.ParentNotFoundError)),
+        (2, {}, fix.no_exc()),
         (3, {}, fix.no_exc()),
         (6, {}, fix.no_exc()),
     ],

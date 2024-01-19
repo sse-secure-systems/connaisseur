@@ -4,10 +4,10 @@ Main method for Connaisseur. Start the web server.
 import os
 from logging.config import dictConfig
 
+import nest_asyncio
 from cheroot.server import HTTPServer
 from cheroot.ssl.builtin import BuiltinSSLAdapter
 from cheroot.wsgi import Server
-import nest_asyncio
 
 from connaisseur.flask_application import APP
 from connaisseur.logging import ConnaisseurLoggingWrapper

@@ -1,7 +1,10 @@
+import logging
 from functools import cached_property
 
+import requests
+
 import connaisseur.kube_api as k_api
-from connaisseur.exceptions import ParentNotFoundError, UnknownAPIVersionError
+from connaisseur.exceptions import UnknownAPIVersionError
 from connaisseur.image import Image
 
 SUPPORTED_API_VERSIONS = {
@@ -75,18 +78,19 @@ class WorkloadObject:
             ):
                 return {}
 
-            parent = k_api.request_kube_api(
-                f"{rest_path}/{api_version}/namespaces/{self.namespace}/{kinds}/{name}"
-            )
+            try:
+                parent = k_api.request_kube_api(
+                    f"{rest_path}/{api_version}/namespaces/{self.namespace}/{kinds}/{name}"
+                )
+            except requests.exceptions.HTTPError:
+                msg = f"Couldn't find parent resource {kinds} {name}."
+                logging.warning(msg)
+                continue
 
             if parent["metadata"]["uid"] != uid:
-                msg = (
-                    "Couldn't find the right parent"
-                    " resource {parent_kind} {parent_name}."
-                )
-                raise ParentNotFoundError(
-                    message=msg, parent_kind=kinds, parent_name=name, parent_uid=uid
-                )
+                msg = f"Couldn't find the right parent resource {kinds} {name}."
+                logging.warning(msg)
+                continue
 
             parent_containers.update(WorkloadObject(parent, self.namespace).containers)
         return parent_containers
