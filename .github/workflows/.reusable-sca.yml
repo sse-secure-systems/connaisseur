@@ -35,11 +35,6 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Run
         uses: ./.github/actions/safety
-        with:
-          image: ${{ inputs.image }}
-          registry: ${{ inputs.registry }}
-          repo_owner: ${{ inputs.repo_owner }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   trivy-image-scan:
     name: trivy image

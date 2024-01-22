@@ -7,12 +7,8 @@ RUN mkdir /install
 WORKDIR /install
 COPY requirements.txt /requirements.txt
 
-# Have to upgrade pip and install extra packages due to error when installing frozenlist
-# Since we run inside an alpine based container, we cannot compile yarl and multidict
-# also: safety needs gcc no properly install. gcc can't be installed in the final image,
-# since apk is no longer available, so safety is added as package to the final image
-RUN apk add --no-cache musl-dev gcc \
-  && pip install --no-cache-dir --upgrade pip~=23.3 \
+# Have to upgrade pip due to error when installing frozenlist
+RUN pip install --no-cache-dir --upgrade pip~=23.3 \
   && YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install --no-cache-dir --prefix=/install -r /requirements.txt
 
 # Load and verify Cosign

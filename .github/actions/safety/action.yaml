@@ -1,33 +1,16 @@
 name: safety
-description: 'Run Safety on image'
-inputs:
-  image:
-    description: 'Image name'
-    required: true
-  registry:
-    description: 'Registry to login to pull image, e.g. "ghcr.io" for GHCR, leave empty if image is public'
-    required: false
-  repo_owner:
-    description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
-    required: false
-  repo_token:
-    description: 'Access token for repository owner, e.g. "secrets.GITHUB_TOKEN" for ghcr.io'
-    required: false
+description: "Run Safety on image"
 runs:
   using: "composite"
   steps:
-    - name: Login with registry
-      if: inputs.registry != ''
-      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
-      with:
-        registry: ${{ inputs.registry }}
-        username: ${{ inputs.repo_owner }}
-        password: ${{ inputs.repo_token }}
-    - name: Scan
+    - name: Install safety
       run: |
-        docker run --user 0 -v ${PWD}:/results ${{ inputs.image }} /bin/ash -c \
-          'safety check --full-report -o screen --save-json /results/safety-report.json'
-      shell: sh
+        pip3 install safety
+      shell: bash
+    - name: Run safety
+      run: |
+        safety check --file requirements.txt --file requirements_dev.txt --full-report -o screen --save-json safety-report.json
+      shell: bash
     - name: Upload
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       if: failure()
