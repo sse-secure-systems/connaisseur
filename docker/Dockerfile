@@ -1,7 +1,10 @@
-FROM python:3.12-alpine as base
+FROM cgr.dev/chainguard/wolfi-base as base
 
 # Build dependencies
 FROM base as builder
+
+ARG version=3.11
+RUN apk add python-${version} py${version}-pip
 
 RUN mkdir /install
 WORKDIR /install
@@ -11,9 +14,9 @@ COPY requirements.txt /requirements.txt
 # Since we run inside an alpine based container, we cannot compile yarl and multidict
 # also: safety needs gcc no properly install. gcc can't be installed in the final image,
 # since apk is no longer available, so safety is added as package to the final image
-RUN apk add --no-cache musl-dev gcc \
-  && pip install --no-cache-dir --upgrade pip~=23.3 \
-  && YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install --no-cache-dir --prefix=/install -r /requirements.txt
+RUN apk add --no-cache gcc
+USER nonroot
+RUN YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip install -r /requirements.txt --no-cache-dir --user
 
 # Load and verify Cosign
 FROM debian:bullseye-slim as cosign_loader
@@ -33,21 +36,21 @@ RUN apt-get update \
 # Build Connaisseur image
 FROM base
 
+ARG version=3.11
 WORKDIR /app
 
-# Harden image
-COPY docker/harden.sh /
-RUN sh /harden.sh && rm /harden.sh
+RUN apk add --no-cache python-${version} && chown -R nonroot.nonroot /app/
+
+USER nonroot
 
 # Copy source code and install packages
-COPY --from=builder /install /usr/local
+COPY --from=builder /home/nonroot/.local/lib/python${version}/site-packages /usr/lib/python${version}/site-packages
+COPY --from=builder /home/nonroot/.local/bin /usr/local/bin
 COPY --from=cosign_loader /go/cosign/cosign-linux-amd64 /app/cosign/cosign
 COPY connaisseur /app/connaisseur
-
-USER 10001:20001
 
 LABEL org.opencontainers.image.documentation="https://sse-secure-systems.github.io/connaisseur/"
 LABEL org.opencontainers.image.authors="Philipp Belitz <philipp.belitz@securesystems.de>, Anneke Breust <anneke.breust@securesystems.de>, Christoph Hamsen <christoph.hamsen@securesystems.de>, Teetje Stark <teetje.stark@securesystems.de>"
 LABEL org.opencontainers.image.vendor="Secure Systems Engineering"
 
-CMD ["python", "-m", "connaisseur"]
+ENTRYPOINT ["python", "-m", "connaisseur"]
