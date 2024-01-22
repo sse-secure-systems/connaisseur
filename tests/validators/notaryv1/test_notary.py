@@ -124,20 +124,29 @@ def test_healthy(sample_notaries, m_request, index, host, health):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "index, image, output, exception",
+    "index, image, token, output, exception",
     [
         (
             3,
             "alice-image",
+            None,
             (fix.get_td("alice-image/root"), "a.valid.token"),
             fix.no_exc(),
         ),
-        (0, "empty.io/alice-image", {}, pytest.raises(exc.NotFoundException)),
+        (0, "empty.io/alice-image", None, {}, pytest.raises(exc.NotFoundException)),
         (
             0,
             "notary_wo_auth.io/alice-image",
+            None,
             (fix.get_td("alice-image/root"), None),
             fix.no_exc(),
+        ),
+        (
+            0,
+            "deny.io/alice-image",
+            "invalid",
+            {},
+            pytest.raises(exc.UnauthorizedError),
         ),
     ],
 )
@@ -147,6 +156,7 @@ async def test_get_root_trust_data_and_auth(
     m_request,
     index,
     image,
+    token,
     output,
     exception,
 ):
@@ -158,6 +168,7 @@ async def test_get_root_trust_data_and_auth(
                 trust_data, token = await no.get_root_trust_data_and_auth(
                     session,
                     Image(image),
+                    token,
                 )
                 (expected_trust_data, expected_token) = output
                 assert token == expected_token
@@ -167,34 +178,66 @@ async def test_get_root_trust_data_and_auth(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "index, image, role, output, exception",
+    "index, image, role, token,  output, exception",
     [
-        (0, "alice-image", "root", fix.get_td("alice-image/root"), fix.no_exc()),
+        (0, "alice-image", "root", "***", fix.get_td("alice-image/root"), fix.no_exc()),
         (
             0,
             "alice-image",
             "targets/phbelitz",
+            "***",
             fix.get_td("alice-image/targets/phbelitz"),
             fix.no_exc(),
         ),
-        (0, "bob-image", "root", fix.get_td("bob-image/root"), fix.no_exc()),
+        (0, "bob-image", "root", "***", fix.get_td("bob-image/root"), fix.no_exc()),
         (
             0,
             "auth.io/alice-image",
             "root",
+            "***",
             fix.get_td("alice-image/root"),
             fix.no_exc(),
         ),
-        (0, "empty.io/alice-image", "root", {}, pytest.raises(exc.NotFoundException)),
+        (
+            0,
+            "empty.io/alice-image",
+            "root",
+            "***",
+            {},
+            pytest.raises(exc.NotFoundException),
+        ),
+        (
+            0,
+            "empty.io/alice-image",
+            "root",
+            "",
+            {},
+            pytest.raises(exc.UnauthorizedError),
+        ),
+        (
+            0,
+            "fail.io/alice-image",
+            "root",
+            "",
+            {},
+            pytest.raises(aiohttp.client_exceptions.ClientResponseError),
+        ),
     ],
 )
 async def test_get_trust_data(
-    sample_notaries, m_request, m_trust_data, index, image, role, output, exception
+    sample_notaries,
+    m_request,
+    m_trust_data,
+    index,
+    image,
+    role,
+    token,
+    output,
+    exception,
 ):
     async with aiohttp.ClientSession() as session:
         with exception:
             with aioresponses() as aio:
-                token = "***"
                 aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
                 no = notary.Notary(**sample_notaries[index])
                 td = await no.get_trust_data(session, Image(image), role, token)

@@ -145,12 +145,16 @@ def mock_request_notary(match: re.Match, **kwargs):
     if kwargs.get("headers") and kwargs.get("headers").get("Authorization"):
         if registry == "empty.io":
             return MockResponse({}, status_code=404)
-
-        return MockResponse(get_td(f"{image}/{role}"))
+        elif registry == "deny.io":
+            return MockResponse({}, status_code=401)
+        else:
+            return MockResponse(get_td(f"{image}/{role}"))
     elif registry == "empty.io":
         return MockResponse({}, status_code=401)
     elif registry == "notary_wo_auth.io":
         return MockResponse(get_td(f"{image}/{role}"))
+    elif registry == "fail.io":
+        return MockResponse({}, status_code=500)
     else:
         return MockResponse(
             {},

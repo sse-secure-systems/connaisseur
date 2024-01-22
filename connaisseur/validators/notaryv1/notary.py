@@ -11,6 +11,7 @@ from connaisseur.exceptions import (
     InvalidFormatException,
     NotFoundException,
     PathTraversalError,
+    UnauthorizedError,
     UnknownTypeException,
 )
 from connaisseur.image import Image
@@ -125,6 +126,9 @@ class Notary:
                     "'www-authenticate' header for notary {notary_name}."
                 )
                 raise NotFoundException(message=msg, notary_name=self.name)
+            elif status == 401 and token:
+                msg = "Unable to get root trust data from {notary_name} due to faulty authentication."
+                raise UnauthorizedError(message=msg, notary_name=self.name)
             else:
                 response.raise_for_status()
                 data = await response.text()
@@ -149,6 +153,14 @@ class Notary:
             if status == 404:
                 msg = "Unable to get {tuf_role} trust data from {notary_name}."
                 raise NotFoundException(
+                    message=msg, notary_name=self.name, tuf_role=str(role)
+                )
+            if status == 401:
+                msg = (
+                    "Unable to get {tuf_role} trust data from {notary_name}"
+                    "due to faulty authentication."
+                )
+                raise UnauthorizedError(
                     message=msg, notary_name=self.name, tuf_role=str(role)
                 )
 

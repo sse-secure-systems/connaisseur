@@ -120,6 +120,10 @@ class UnreachableError(BaseConnaisseurException):
     pass
 
 
+class UnauthorizedError(BaseConnaisseurException):
+    pass
+
+
 class AlertingException(Exception):
     message: str
 
