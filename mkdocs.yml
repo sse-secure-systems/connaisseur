@@ -13,7 +13,7 @@ repo_url: https://github.com/sse-secure-systems/connaisseur
 edit_uri: ""
 
 # Company
-copyright:  <a href="https://securesystems.de">Secure Systems Engineering GmbH</a> 
+copyright:  <a href="https://securesystems.de">Secure Systems Engineering GmbH</a>
 
 
 # Configuration
@@ -40,8 +40,8 @@ markdown_extensions:
   - codehilite
   - footnotes
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.tabbed:
