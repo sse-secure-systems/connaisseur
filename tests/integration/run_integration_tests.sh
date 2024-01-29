@@ -106,6 +106,7 @@ if [[ "${CLUSTER:-"minikube"}" == "minikube" ]]; then
   echo "Building docker image..."
   make docker > /dev/null
   echo "Done building docker image!"
+  eval $(minikube docker-env -u)
   NETWORK=$(docker container inspect minikube | jq -r '.[].NetworkSettings.Networks | to_entries | .[].key')
 else
   if [[ "$(docker inspect kind-control-plane | jq -r .[].State.Status || echo 'container not found')" != "running" ]]; then
