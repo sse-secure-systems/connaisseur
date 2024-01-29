@@ -1,4 +1,4 @@
-aiohttp~=3.9.1
+aiohttp~=3.9.2
 cheroot~=10.0.0
 ecdsa~=0.18
 Flask~=3.0.1
