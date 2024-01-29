@@ -7,6 +7,7 @@ endpoint that accepts JSON payloads.
 ## Supported interfaces
 
 Slack, Opsgenie, Keybase and Microsoft Teams have pre-configured payloads that are ready to use.
+Additionally, there is a template matching the [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/1.12/index.html) in version 1.12.
 However, you can use the existing payload templates as an example how to model your
 own custom one.
 It is also possible to configure multiple interfaces for receiving
@@ -74,5 +75,44 @@ Referring to any of these variables in the templates works by Jinja2 notation
 fields in `yaml` representation in the `payloadFields` key which will be translated
 to JSON by Helm as is. If your REST endpoint requires particular headers, you can
 specify them as described above in `customHeaders`.
+
+??? example "Payload fields in action"
+    With payload fields, you can extend the same template depending on the receiver.
+    For example, below Connaisseur's default Opsgenie template is used to send alerts that will be assigned to different users depending on whether the alert is for a successful admission or not.
+    The `payloadFields` entries will be transformed to their JSON equivalents overwrite the respective entries of the template.
+
+    ```yaml title="helm/values.yaml"
+    alerting:
+      admitRequest:
+        receivers:
+          - template: opsgenie
+            receiverUrl: https://api.eu.opsgenie.com/v2/alerts
+            priority: 4
+            customHeaders: ["Authorization: GenieKey ABC-DEF"]
+            payloadFields:
+              responders:
+                - username: "someone@testcompany.de"
+                  type: user
+      rejectRequest:
+        receivers:
+          - template: opsgenie
+            receiverUrl: https://api.eu.opsgenie.com/v2/alerts
+            priority: 4
+            customHeaders: ["Authorization: GenieKey ABC-DEF"]
+            payloadFields:
+              responders:
+                - username: "cert@testcompany.de"
+                  type: user
+    ```
+
+    The resulting payload sent to the webhook endpoint will then contain the field content:
+
+    ```json
+    {
+        ...
+        "responders": [{"type": "user", "username": "cert@testcompany.de"}],
+        ...
+    }
+    ```
 
 Feel free to make a PR to share with the community if you add new neat templates for other third parties :pray:
