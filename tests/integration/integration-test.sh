@@ -418,7 +418,7 @@ regular_int_test() {
 	else
 	    DEPLOYED_SHA=$(kubectl get "${POD}" -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://')
         kubectl get "${POD}" -o yaml | yq e '.spec.containers[0].image' - | sed 's/.*sha256://'
-        if [[ "${DEPLOYED_SHA}" != 'fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b' ]]; then
+        if [[ "${DEPLOYED_SHA}" != 'fe542477b92fb84c38eda9c824f6566d5c2536ef30af9c47152fa8a5fadb58dd' ]]; then
 	        echo -e "${FAILED}"
 	        EXIT="1"
         else

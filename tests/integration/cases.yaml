@@ -59,7 +59,7 @@ test_cases:
   - id: rstd
     txt: Testing signed image with tag and digest...
     type: deploy
-    ref: securesystemsengineering/testimage:signed@sha256:fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b
+    ref: securesystemsengineering/testimage:signed@sha256:fe542477b92fb84c38eda9c824f6566d5c2536ef30af9c47152fa8a5fadb58dd
     namespace: default
     expected_msg: pod/pod-rstd-${RAND} created
     expected_result: VALID
@@ -73,7 +73,7 @@ test_cases:
   - id: recs
     txt: Testing ephemeral container with signed image...
     type: debug
-    ref: securesystemsengineering/testimage:signed@sha256:fa65f55bd50c700fa691291d5b9d06b98cc7c906bc5bf4048683cb085f7c237b
+    ref: securesystemsengineering/testimage:signed@sha256:fe542477b92fb84c38eda9c824f6566d5c2536ef30af9c47152fa8a5fadb58dd
     namespace: default
     expected_msg: Defaulting debug container name to debugger-
     expected_result: VALID
