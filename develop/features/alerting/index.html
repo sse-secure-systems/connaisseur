@@ -1288,6 +1288,7 @@ You're not viewing the docs of the latest version.
 endpoint that accepts JSON payloads.</p>
 <h2 id="supported-interfaces">Supported interfaces<a class="headerlink" href="#supported-interfaces" title="Permanent link">⚓︎</a></h2>
 <p>Slack, Opsgenie, Keybase and Microsoft Teams have pre-configured payloads that are ready to use.
+Additionally, there is a template matching the <a href="https://www.elastic.co/guide/en/ecs/1.12/index.html">Elastic Common Schema</a> in version 1.12.
 However, you can use the existing payload templates as an example how to model your
 own custom one.
 It is also possible to configure multiple interfaces for receiving
@@ -1395,6 +1396,41 @@ during runtime into the payload:</p>
 fields in <code>yaml</code> representation in the <code>payloadFields</code> key which will be translated
 to JSON by Helm as is. If your REST endpoint requires particular headers, you can
 specify them as described above in <code>customHeaders</code>.</p>
+<details class="example">
+<summary>Payload fields in action</summary>
+<p>With payload fields, you can extend the same template depending on the receiver.
+For example, below Connaisseur's default Opsgenie template is used to send alerts that will be assigned to different users depending on whether the alert is for a successful admission or not.
+The <code>payloadFields</code> entries will be transformed to their JSON equivalents overwrite the respective entries of the template.</p>
+<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">alerting</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">admitRequest</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">opsgenie</span>
+<span class="w">        </span><span class="nt">receiverUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://api.eu.opsgenie.com/v2/alerts</span>
+<span class="w">        </span><span class="nt">priority</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">        </span><span class="nt">customHeaders</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Authorization:</span><span class="nv"> </span><span class="s">GenieKey</span><span class="nv"> </span><span class="s">ABC-DEF&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">payloadFields</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">responders</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;someone@testcompany.de&quot;</span>
+<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+<span class="w">  </span><span class="nt">rejectRequest</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">opsgenie</span>
+<span class="w">        </span><span class="nt">receiverUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://api.eu.opsgenie.com/v2/alerts</span>
+<span class="w">        </span><span class="nt">priority</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">        </span><span class="nt">customHeaders</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Authorization:</span><span class="nv"> </span><span class="s">GenieKey</span><span class="nv"> </span><span class="s">ABC-DEF&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">payloadFields</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">responders</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cert@testcompany.de&quot;</span>
+<span class="w">              </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+</code></pre></div>
+<p>The resulting payload sent to the webhook endpoint will then contain the field content:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="err">...</span>
+<span class="w">    </span><span class="nt">&quot;responders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cert@testcompany.de&quot;</span><span class="p">}],</span>
+<span class="w">    </span><span class="err">...</span>
+<span class="p">}</span>
+</code></pre></div>
+</details>
 <p>Feel free to make a PR to share with the community if you add new neat templates for other third parties <img alt="🙏" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/1f64f.svg" title=":pray:" /></p>
 
 
