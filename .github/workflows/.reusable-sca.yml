@@ -92,7 +92,7 @@ jobs:
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run
-        uses: anchore/sbom-action@41f7a6c033dbcdf78917f23b652c8b8146298c85 # v0.15.4
+        uses: anchore/sbom-action@c6aed38a4323b393d05372c58a74c39ae8386d02 # v0.15.6
         with:
           image: ${{ inputs.image }}
           format: cyclonedx-json
