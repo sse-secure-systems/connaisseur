@@ -14,7 +14,7 @@ from connaisseur.validators.notaryv1.tuf_role import TUFRole
 
 async def get_pub_root_key(host: str, image: Image):
     notary = Notary("no", host, ["not_empty"])
-    async with (aiohttp.ClientSession()) as session:
+    async with aiohttp.ClientSession() as session:
         token = await notary.get_auth(session, image)
         root_td = await notary.get_trust_data(session, image, TUFRole("root"), token)
 
