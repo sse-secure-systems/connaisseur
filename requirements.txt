@@ -1,4 +1,4 @@
-aiohttp~=3.9.1
+aiohttp~=3.9.3
 cheroot~=10.0.0
 ecdsa~=0.18
 Flask~=3.0.1
@@ -9,7 +9,7 @@ parsedatetime~=2.6
 prometheus-flask-exporter==0.23.0
 python-dateutil~=2.8.2
 python-json-logger~=2.0.7
-pytz~=2023.3
+pytz~=2024.1
 PyYAML~=6.0
 requests~=2.31.0
 rfc3339-validator~=0.1.4
