@@ -94,7 +94,6 @@ class Notary:
     # directly in case the notary instance has no auth configured or to obtain the notary's auth
     # endpoint (and then the auth token) first, and then use it for getting the trust data.
     # To save network calls this is done in one function.
-
     async def get_root_trust_data_and_auth(
         self, session: aiohttp.ClientSession, image: Image, token: str = None
     ) -> (TrustData, str):
