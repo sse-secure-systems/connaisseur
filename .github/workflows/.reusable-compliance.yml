@@ -25,7 +25,7 @@ jobs:
           repo_token: ${{ secrets.SCORECARD_TOKEN }}
           publish_results: ${{ github.ref_name == 'master' }}
       - name: Upload
-        uses: github/codeql-action/upload-sarif@0b21cf2492b6b02c465a3e5d7c473717ad7721ba # v3.23.1
+        uses: github/codeql-action/upload-sarif@379614612a29c9e28f31f39a59013eb8012a51f0 # v3.24.3
         with:
           sarif_file: results.sarif
 
@@ -39,7 +39,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Review
-        uses: actions/dependency-review-action@4901385134134e04cec5fbe5ddfe3b2c5bd5d976 # v4.0.0
+        uses: actions/dependency-review-action@be8bc500ee15e96754d2a6f2d34be14e945a46f3 # v4.1.2
 
   check-commit-message:
     runs-on: ubuntu-latest
