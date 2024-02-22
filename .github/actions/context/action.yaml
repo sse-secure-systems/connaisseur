@@ -10,9 +10,6 @@ inputs:
     required: false
     default: "${{ github.repository }}"
 outputs:
-  cosign_version:
-    description: "Cosign version used for building Connaisseur image"
-    value: ${{ steps.get_context.outputs.COSIGN_VERSION }}
   chart_version:
     description: "Connaisseur Helm chart version"
     value: ${{ steps.get_context.outputs.CHART_VERSION }}
@@ -53,24 +50,23 @@ runs:
       id: get_chart_version
       uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
       with:
-        cmd: yq '.version' helm/Chart.yaml
+        cmd: yq '.version' charts/connaisseur/Chart.yaml
     - name: Get app version
       id: get_app_version
       uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
       with:
-        cmd: yq '.appVersion' helm/Chart.yaml
+        cmd: yq '.appVersion' charts/connaisseur/Chart.yaml
     - name: Get original image
       id: get_original_image_repository
       uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
       with:
-        cmd: yq '.kubernetes.deployment.image.repository' helm/values.yaml
+        cmd: yq '.kubernetes.deployment.image.repository' charts/connaisseur/values.yaml
     - name: Get context
       id: get_context
       run: |
         GHREF=${{ github.ref }}
         echo "github.ref is: ${GHREF}"
         CHART_VERSION=${{ steps.get_chart_version.outputs.result }}
-        COSIGN_VERSION=$(grep -Eo '^COSIGN_VERSION = .*' Makefile | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
         CONFIGURED_IMAGE_REPO=${{ steps.get_original_image_repository.outputs.result }}
         ORIGINAL_REGISTRY=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 1)
         ORIGINAL_REPO=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 2- | cut -d ":" -f 1)
@@ -84,7 +80,6 @@ runs:
           BUILD_REPO="${BUILD_REPO}-test"
         fi
 
-        echo COSIGN_VERSION=${COSIGN_VERSION} >> ${GITHUB_OUTPUT}
         echo CHART_VERSION=${CHART_VERSION} >> ${GITHUB_OUTPUT}
         echo ORIGINAL_REGISTRY=${ORIGINAL_REGISTRY} >> ${GITHUB_OUTPUT}
         echo ORIGINAL_REPO=${ORIGINAL_REPO} >> ${GITHUB_OUTPUT}
@@ -122,8 +117,7 @@ runs:
         echo "# :clipboard: Context" >> ${GITHUB_STEP_SUMMARY}
         echo "<table>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><th>Build Context</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<tr><td>Cosign version</td><td><code>${{ steps.get_context.outputs.COSIGN_VERSION }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<tr><td>Helm chart version</td><td><code>${{ steps.get_context.outputs.CHART_VERSION }}</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+        echo "<tr><td>Helm chart version</td><td><code>${{ steps.get_context.outputs.CHART_VERSION }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Original registry</td><td><code>${{ steps.get_context.outputs.ORIGINAL_REGISTRY }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Original repository</td><td><code>${{ steps.get_context.outputs.ORIGINAL_REPO }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
         echo "<tr><td>Original tag</td><td><code>${{ steps.get_context.outputs.ORIGINAL_TAG }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
@@ -140,7 +134,6 @@ runs:
         echo "<details><summary>:pushpin: Context Variables References</summary>" >> ${GITHUB_STEP_SUMMARY}
         echo "(<context> job must run in workflow and <code>needs: [context]</code> mut be set for job)" >> ${GITHUB_STEP_SUMMARY}
         echo "<ul>" >> ${GITHUB_STEP_SUMMARY}
-        echo "<li>Cosign version: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.cosign_version }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Helm chart version: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.chart_version }}</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Original registry: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.original_registry &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
         echo "<li>Original repository: <pre><code>&#x24;&#x7b;&#x7b; needs.context.outputs.original_repo &#x7d;&#x7d;</code></pre></li>" >> ${GITHUB_STEP_SUMMARY}
@@ -157,4 +150,3 @@ runs:
         echo "" >> ${GITHUB_STEP_SUMMARY}
         echo "Let's start building :rocket:" >> ${GITHUB_STEP_SUMMARY}
       shell: bash
-

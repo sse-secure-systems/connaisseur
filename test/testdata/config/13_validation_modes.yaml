@@ -1,0 +1,36 @@
+validators:
+  - name: default
+    type: static
+    approve: true
+  - name: deny
+    type: static
+    approve: false
+  - name: cosign
+    type: cosign
+    trustRoots:
+      - name: sse-cosign
+        key: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+          qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+          -----END PUBLIC KEY-----
+policy:
+  - pattern: "*:*"
+  - pattern: "securesystemsengineering/*:co*"
+    validator: cosign
+    with:
+      trustRoot: sse-cosign
+  - pattern: docker.io/*:*
+  - pattern: "registry.k8s.io/*:*"
+  - pattern: "docker.io/securesystemsengineering/sample"
+    with:
+      mode: "mutate"
+  - pattern: "docker.io/securesystemsengineering/sample:v1"
+    with:
+      mode: "insecureValidateOnly"
+  - pattern: "docker.io/library/allow-me"
+  - pattern: "docker.io/library/deny-me"
+    validator: deny
+  - pattern: "my.registry/*"
+  - pattern: "my.registry/test"
+  - pattern: "docker.io/test:*"

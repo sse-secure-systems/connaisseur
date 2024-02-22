@@ -1,0 +1,14 @@
+template: opsgenie #REQUIRED!
+receiverUrl: https://api.eu.opsgenie.com/v2/alerts #REQUIRED!
+priority: 4 #(defaults to 3)
+customHeaders: ["Authorization: GenieKey <Your-Genie-Key>"]
+payloadFields:
+  responders:
+    - username: "testuser@testcompany.de"
+      type: user
+  visibleTo:
+    - username: "testuser@testcompany.de"
+      type: user
+  tags:
+    - "deployed_an_image"
+failIfAlertSendingFails: True

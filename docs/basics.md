@@ -51,7 +51,7 @@ Download the Connaisseur resources required for installation either by cloning t
 
 ### Configure
 
-The configuration of Connaisseur is completely done in the `helm/values.yaml`.
+The configuration of Connaisseur is completely done in the `charts/connaisseur/values.yaml`.
 The upper `kubernetes` section offers some general Kubernetes typical configurations like image version or resources.
 Noteworthy configurations are:
 
@@ -173,7 +173,7 @@ A running Connaisseur instance can be updated by a Helm upgrade of the current r
 
 === "Git repo"
 
-    Adjust configuration in `helm/values.yaml` as required and upgrade via:
+    Adjust configuration in `charts/connaisseur/values.yaml` as required and upgrade via:
 
     ```bash
     helm upgrade connaisseur helm -n connaisseur --wait
@@ -252,9 +252,9 @@ Alternatively to using Helm, you can also run the Makefile for installing, delet
 
 ## Detailed configuration
 
-All configuration is done in the `helm/values.yaml`.
+All configuration is done in the `charts/connaisseur/values.yaml`.
 The configuration of features is only described in the [corresponding section](features/README.md).
-Any configuration of the actual application is done below the `application` key, so when below we write `validators`, this actually corresponds to the `application.validators` key in the `helm/values.yaml`.
+Any configuration of the actual application is done below the `application` key, so when below we write `validators`, this actually corresponds to the `application.validators` key in the `charts/connaisseur/values.yaml`.
 
 ### Validators
 
@@ -280,7 +280,7 @@ The special case of static validators used to simply allow or deny images withou
 
 #### Configuration options
 
-`.validators[*]` in `helm/values.yaml` supports the following keys:
+`.validators[*]` in `charts/connaisseur/values.yaml` supports the following keys:
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -295,8 +295,8 @@ The special case of static validators used to simply allow or deny images withou
 
 #### Example
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: default
@@ -339,8 +339,8 @@ This for example allows to implement an *allowlist* or *denylist*.
 
 ##### Example
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: allow
@@ -373,12 +373,12 @@ In order to perform the actual validation, Connaisseur will call the validator s
 The reference to validator and exact trust root is resolved in the following way:
 
 1. The validator with name (`validators[*].name`) equal to the `validator` value in the selected rule is chosen. If no validator is specified, the validator with name `default` is used if it exists.
-2. Of that validator, the trust root (e.g. public key) is chosen which name (`.validators.trustRoots[*].name`) matches the policies trust root string (`with.trustRoot`). If no trust root is specified, the trust root with name `default` is used if it exists.
+2. Of that validator, the trust root (e.g. public key) is chosen whose name (`.validators.trustRoots[*].name`) matches the policies trust root string (`with.trustRoot`). If no trust root is specified, the trust root with name `default` is used if it exists. Specifying `"*"` enables signature verification under any trust root in the validator.
 
 Let's review the pattern and validator matching at a minimal example.
 We consider the following validator and policy configuration (most fields have been omitted for clarity):
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 application:
   validators:
   - name: default     # validator 1
@@ -419,19 +419,20 @@ There is two rules that should remain intact in some form in order to not brick 
 
 #### Configuration options
 
-`.policy[*]` in `helm/values.yaml` supports the following keys:
+`.policy[*]` in `charts/connaisseur/values.yaml` supports the following keys:
 
 | Key  | Default | Required | Description |
 | - | - | - | - |
 | `pattern` | - | :heavy_check_mark: | Globbing pattern to match an image name against. |
 | `validator` | `default` | - | Name of a validator in the `validators` list. If not provided, the validator with name `default` is used if it exists. |
 | `with` | - | - | Additional parameters to use for a validator. See more specifics in [validator section](validators/README.md). |
-|`with.trustRoot`| `default` | - | Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. |
+|`with.trustRoot`| `default` | - | Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. Setting this to `"*"` implements a logical `or` and enables signature verification under any trust root in the validator. |
+|`with.mode`| `mutate` | - | Mode of operation which specifies whether or not image references should be mutated after successful image validation. If set to `mutate`, Connaisseur operates mutates image references to include digests. If set to `insecureValidateOnly`, Connaisseur will not mutate the digests. This leaves the risk of a malicious registry serving a different image under the signed tag. |
 
 #### Example
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       policy:
       - pattern: "*:*"
@@ -443,6 +444,8 @@ There is two rules that should remain intact in some form in order to not brick 
         validator: deny
       - pattern: "docker.io/myrepo/allowedimage:v*"
         validator: allow
+        with:
+          mode: insecureValidateOnly
     ```
 
 ### Common examples
@@ -453,7 +456,7 @@ These can serve as a first template beyond the pre-configuration or might just b
 We assume your repository is `docker.io/myrepo` and a public key has been created.
 In case this repository is private, authentication would have to be added to the respective validator for example via:
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
     auth:
       secretName: k8ssecret
 ```
@@ -464,8 +467,8 @@ The Kubernetes secret would have to be created separately according to the valid
 
 This is likely the most common case in simple settings by which only self-built images are used and validated against your own public key:
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: allow
@@ -508,8 +511,8 @@ This is likely the most common case in simple settings by which only self-built 
 This configuration achieves the same as the one above, but is faster as trust data only needs to be requested for images in your repository:
 
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: allow
@@ -558,8 +561,8 @@ However, explicit is better than implicit.
 
 In case only validated Docker Hub official images should be admitted to the cluster:
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: allow
@@ -604,8 +607,8 @@ In case only validated Docker Hub official images should be admitted to the clus
 
 In case only Docker Hub official images should be validated while all others are simply admitted:
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: allow
@@ -651,8 +654,8 @@ In case only Docker Hub official images should be validated while all others are
 As a matter of fact, Connaisseur can also be used to restrict the allowed registries and repositories without signature validation:
 
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: allow

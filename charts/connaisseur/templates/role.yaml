@@ -1,0 +1,31 @@
+{{ if print .Values.application.features.automaticChildApproval | default "true" | lower | eq "true" }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "connaisseur.roleName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "connaisseur.clusterRoleName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+  verbs: ["get"]
+- apiGroups: [""]
+  resources: ["pods", "replicationcontrollers"]
+  verbs: ["get"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get"]
+{{ end }}

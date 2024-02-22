@@ -1,0 +1,20 @@
+validators:
+  - name: default
+    type: static
+    approve: true
+  - name: allow
+    type: static
+    approve: true
+  - name: deny
+    type: static
+    approve: false
+policy:
+  - pattern: "securesystemsengineering/alice-image"
+    validator: cosigner
+  - pattern: "docker.io/securesystemsengineering/default"
+  - pattern: "docker.io/securesystemsengineering/notary-signed*"
+    validator: notary_validator
+  - pattern: "docker.io/library/allow-me"
+    validator: allow
+  - pattern: "docker.io/library/deny-me"
+    validator: deny

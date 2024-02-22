@@ -1,0 +1,101 @@
+{
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1",
+    "request": {
+        "uid": "faa399ba-a51b-4790-a404-dd1aaac7421e",
+        "kind": {
+            "group": "",
+            "version": "v1",
+            "kind": "ReplicationController"
+        },
+        "resource": {
+            "group": "",
+            "version": "v1",
+            "resource": "replicationcontrollers"
+        },
+        "requestKind": {
+            "group": "",
+            "version": "v1",
+            "kind": "ReplicationController"
+        },
+        "requestResource": {
+            "group": "",
+            "version": "v1",
+            "resource": "replicationcontrollers"
+        },
+        "name": "nginx",
+        "namespace": "connaisseur",
+        "operation": "CREATE",
+        "userInfo": {
+            "username": "minikube-user",
+            "groups": [
+                "system:masters",
+                "system:authenticated"
+            ]
+        },
+        "object": {
+            "kind": "ReplicationController",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "nginx",
+                "namespace": "connaisseur",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "nginx"
+                },
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"ReplicationController\",\"metadata\":{\"annotations\":{},\"name\":\"nginx\",\"namespace\":\"connaisseur\"},\"spec\":{\"replicas\":3,\"selector\":{\"app\":\"nginx\"},\"template\":{\"metadata\":{\"labels\":{\"app\":\"nginx\"},\"name\":\"nginx\"},\"spec\":{\"containers\":[{\"image\":\"nginx\",\"name\":\"nginx\",\"ports\":[{\"containerPort\":80}]}]}}}}\n"
+                }
+            },
+            "spec": {
+                "replicas": 3,
+                "selector": {
+                    "app": "nginx"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "nginx",
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "nginx"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "nginx",
+                                "image": "nginx",
+                                "ports": [
+                                    {
+                                        "containerPort": 80,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 0
+            }
+        },
+        "oldObject": null,
+        "dryRun": false,
+        "options": {
+            "kind": "CreateOptions",
+            "apiVersion": "meta.k8s.io/v1",
+            "fieldManager": "kubectl-client-side-apply",
+            "fieldValidation": "Strict"
+        }
+    }
+}

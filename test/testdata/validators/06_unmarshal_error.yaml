@@ -1,0 +1,3 @@
+name: default
+type: cosign
+trustRoots: []

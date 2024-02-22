@@ -1,19 +1,18 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
+  - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "daily"
     commit-message:
       prefix: "update"
-    insecure-external-code-execution: "deny"
     target-branch: "develop"
     groups:
-      pip-packages:
+      gomod-packages:
         patterns:
           - "*"
   - package-ecosystem: "docker"
-    directory: "/docker"
+    directory: "/build"
     schedule:
       interval: "daily"
     commit-message:
@@ -34,4 +33,3 @@ updates:
       gh-actions-packages:
         patterns:
           - "*"
-

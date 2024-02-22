@@ -1,0 +1,7 @@
+validators:
+  - name: allow
+    type: static
+    approve: true
+policy:
+  - pattern: "*:*"
+    validator: notImplemented

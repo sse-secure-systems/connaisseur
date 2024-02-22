@@ -1,0 +1,142 @@
+{
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1",
+    "request": {
+        "uid": "9412459c-09dc-4c90-b022-639eea4d2b2c",
+        "kind": {
+            "group": "apps",
+            "version": "v1",
+            "kind": "StatefulSet"
+        },
+        "resource": {
+            "group": "apps",
+            "version": "v1",
+            "resource": "statefulsets"
+        },
+        "requestKind": {
+            "group": "apps",
+            "version": "v1",
+            "kind": "StatefulSet"
+        },
+        "requestResource": {
+            "group": "apps",
+            "version": "v1",
+            "resource": "statefulsets"
+        },
+        "name": "web",
+        "namespace": "connaisseur",
+        "operation": "CREATE",
+        "userInfo": {
+            "username": "minikube-user",
+            "groups": [
+                "system:masters",
+                "system:authenticated"
+            ]
+        },
+        "object": {
+            "kind": "StatefulSet",
+            "apiVersion": "apps/v1",
+            "metadata": {
+                "name": "web",
+                "namespace": "connaisseur",
+                "creationTimestamp": null,
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"StatefulSet\",\"metadata\":{\"annotations\":{},\"name\":\"web\",\"namespace\":\"connaisseur\"},\"spec\":{\"minReadySeconds\":10,\"replicas\":3,\"selector\":{\"matchLabels\":{\"app\":\"nginx\"}},\"serviceName\":\"nginx\",\"template\":{\"metadata\":{\"labels\":{\"app\":\"nginx\"}},\"spec\":{\"containers\":[{\"image\":\"registry.k8s.io/nginx-slim:0.8\",\"name\":\"nginx\",\"ports\":[{\"containerPort\":80,\"name\":\"web\"}],\"volumeMounts\":[{\"mountPath\":\"/usr/share/nginx/html\",\"name\":\"www\"}]}],\"terminationGracePeriodSeconds\":10}},\"volumeClaimTemplates\":[{\"metadata\":{\"name\":\"www\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"1Gi\"}},\"storageClassName\":\"my-storage-class\"}}]}}\n"
+                }
+            },
+            "spec": {
+                "replicas": 3,
+                "selector": {
+                    "matchLabels": {
+                        "app": "nginx"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "nginx"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "nginx",
+                                "image": "registry.k8s.io/nginx-slim:0.8",
+                                "ports": [
+                                    {
+                                        "name": "web",
+                                        "containerPort": 80,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "volumeMounts": [
+                                    {
+                                        "name": "www",
+                                        "mountPath": "/usr/share/nginx/html"
+                                    }
+                                ],
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 10,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                },
+                "volumeClaimTemplates": [
+                    {
+                        "kind": "PersistentVolumeClaim",
+                        "apiVersion": "v1",
+                        "metadata": {
+                            "name": "www",
+                            "creationTimestamp": null
+                        },
+                        "spec": {
+                            "accessModes": [
+                                "ReadWriteOnce"
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "storage": "1Gi"
+                                }
+                            },
+                            "storageClassName": "my-storage-class",
+                            "volumeMode": "Filesystem"
+                        },
+                        "status": {
+                            "phase": "Pending"
+                        }
+                    }
+                ],
+                "serviceName": "nginx",
+                "podManagementPolicy": "OrderedReady",
+                "updateStrategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "partition": 0
+                    }
+                },
+                "revisionHistoryLimit": 10,
+                "minReadySeconds": 10
+            },
+            "status": {
+                "replicas": 0,
+                "availableReplicas": 0
+            }
+        },
+        "oldObject": null,
+        "dryRun": false,
+        "options": {
+            "kind": "CreateOptions",
+            "apiVersion": "meta.k8s.io/v1",
+            "fieldManager": "kubectl-client-side-apply",
+            "fieldValidation": "Strict"
+        }
+    }
+}

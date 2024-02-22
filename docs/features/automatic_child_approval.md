@@ -1,9 +1,5 @@
 # Automatic Child Approval
 
-!!! warning
-    This is currently an experimental feature that might unstable over time.
-    As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
-
 Per default, Connaisseur uses *automatic child approval* by which the child of a Kubernetes resource is automatically admitted without re-verification of the signature in order to avoid duplicate validation and handle inconsistencies with the image policy.
 This behavior can be configured or even disabled.
 
@@ -27,7 +23,7 @@ The extension of the feature (disabling, caching) is currently under development
 
 ## Configuration options
 
-`automaticChildApproval` in `helm/values.yaml` under `application.features` supports the following values:
+`automaticChildApproval` in `charts/connaisseur/values.yaml` under `application.features` supports the following values:
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -36,7 +32,7 @@ The extension of the feature (disabling, caching) is currently under development
 
 ## Example
 
-In `helm/values.yaml`:
+In `charts/connaisseur/values.yaml`:
 
 ```yaml
 application:
@@ -46,7 +42,15 @@ application:
 
 ## Additional notes
 
-### Caching TTL
+### Caching
 
-It is planned to implement a caching by which Connaisseur might perform automatic child approval only for a limited time after creation of the parent resource.
+Connaisseur implements a caching mechanism, which allows bypassing verification for images that were already admitted recently.
+One might think that this obviates the need for automatic child approval.
+However, since an image may be mutated during verification, i.e. a tag being replaced with a digest, the child resource image to be validated could be different from the original one and in that case could be governed by a different policy pattern that explicitly denies the specific digest in which case caching would change the outcome, if we cached the validation result for both original and mutated image.
+As such, caching cannot replace automatic child approval with regards to skipping validations even though they both admit workload objects with images that were "already admitted".
 
+
+### Pod-only validation
+
+If the resource validation mode is set to only validate pods, while automatic child approval is enabled, then the combination becomes an allow-all validator with regards to all workloads except for individual pods.
+As this is unlikely to be desired, we pretend automatic child approval were disabled if it is enabled in conjunction with a pod-only resource validation mode.

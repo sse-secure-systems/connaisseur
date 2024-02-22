@@ -13,7 +13,7 @@ In the tutorial, you can choose to use either Notary (V1) via Docker Content Tru
 Furthermore we will work with public images on [Docker Hub](https://hub.docker.com/) as a container registry and a Kubernetes test cluster which might for example be [MicroK8s](https://microk8s.io/) or [minikube](https://minikube.sigs.k8s.io/docs/) for local setups.
 However, feel free to bring your own solutions for registry or cluster and check out our notes on [compatibility](./README.md#compatibility).
 
-In general, Connaisseur can be fully configured via `helm/values.yaml`, so feel free to take a look and try for yourself.
+In general, Connaisseur can be fully configured via `charts/connaisseur/values.yaml`, so feel free to take a look and try for yourself.
 For more advanced usage in more complex cases (e.g. authentication, multiple registries, signers, validators, additional features), we strongly advise to review the following pages:
 
 - [Basics](./basics.md): *understanding, configuring and using Connaisseur (e.g. image policy and validators)*
@@ -29,6 +29,8 @@ In case you need help, feel free to reach out via [GitHub Discussions](https://g
 
 You should have a Kubernetes test cluster running.
 Furthermore, `docker`, `git`, `helm` and `kubectl` should be installed and usable, i.e. having run `docker login` and switched to the appropriate `kubectl` context.
+
+If you want to [contribute](./CONTRIBUTING.md) to Connaisseur, then you will also need a Golang v1.21 installation.
 
 ## Create signing key pairs
 
@@ -95,7 +97,7 @@ git clone https://github.com/sse-secure-systems/connaisseur.git
 cd connaisseur
 ```
 
-Connaisseur is configured via `helm/values.yaml`, so we will start there.
+Connaisseur is configured via `charts/connaisseur/values.yaml`, so we will start there.
 We need to set Connaisseur to use our previously created public key for validation.
 To do so, go to the `.application.validators` and find the `default` validator.
 We need to uncomment the trust root with name `default` and add our previously created public key.
@@ -103,7 +105,7 @@ The result should look similar to this:
 
 === "Docker Content Trust"
 
-    ```yaml title="helm/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     # the `default` validator is used if no validator is specified in image policy
     - name: default
       type: notaryv1  # or other supported validator (e.g. "cosign")
@@ -132,7 +134,7 @@ The result should look similar to this:
 
     _In addition for Cosign, the `type` needs to be set to `cosign` and the `host` is not required._
 
-    ```yaml title="helm/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     # the `default` validator is used if no validator is specified in image policy
     - name: default
       type: cosign  # or other supported validator (e.g. "cosign")
@@ -158,7 +160,7 @@ The result should look similar to this:
 
 We have now configured the validator `default` with trust root `default`.
 This will automatically be used if no validator and trust root is specified in the image policy (`.application.policy`).
-Per default, Connaisseur's image policy under `.application.policy` in `helm/values.yaml` comes with a pattern `"*:*"` that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
+Per default, Connaisseur's image policy under `.application.policy` in `charts/connaisseur/values.yaml` comes with a pattern `"*:*"` that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
 Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the [basics](./basics.md) to leverage the full potential of Connaisseur.
 
 ## Deploy Connaisseur
@@ -279,4 +281,3 @@ helm uninstall connaisseur --namespace connaisseur
 ```
 
 Uninstallation can take a moment as Connaisseur needs to validate the deletion webhook.
-

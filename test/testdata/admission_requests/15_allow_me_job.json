@@ -1,0 +1,93 @@
+{
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1",
+    "request": {
+        "uid": "4b84524b-2dc4-4e69-935d-833c86ff0c10",
+        "kind": {
+            "group": "batch",
+            "version": "v1",
+            "kind": "Job"
+        },
+        "resource": {
+            "group": "batch",
+            "version": "v1",
+            "resource": "jobs"
+        },
+        "requestKind": {
+            "group": "batch",
+            "version": "v1",
+            "kind": "Job"
+        },
+        "requestResource": {
+            "group": "batch",
+            "version": "v1",
+            "resource": "jobs"
+        },
+        "name": "pi",
+        "namespace": "connaisseur",
+        "operation": "CREATE",
+        "userInfo": {
+            "username": "minikube-user",
+            "groups": [
+                "system:masters",
+                "system:authenticated"
+            ]
+        },
+        "object": {
+            "kind": "Job",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": "pi",
+                "namespace": "connaisseur",
+                "creationTimestamp": null,
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"pi\",\"namespace\":\"connaisseur\"},\"spec\":{\"backoffLimit\":4,\"template\":{\"spec\":{\"containers\":[{\"command\":[\"perl\",\"-Mbignum=bpi\",\"-wle\",\"print bpi(2000)\"],\"image\":\"perl:5.34.0\",\"name\":\"pi\"}],\"restartPolicy\":\"Never\"}}}}\n"
+                }
+            },
+            "spec": {
+                "parallelism": 1,
+                "completions": 1,
+                "backoffLimit": 4,
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "pi",
+                                "image": "my.reg/allow-me@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff",
+                                "command": [
+                                    "perl",
+                                    "-Mbignum=bpi",
+                                    "-wle",
+                                    "print bpi(2000)"
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Never",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                },
+                "completionMode": "NonIndexed",
+                "suspend": false
+            },
+            "status": {}
+        },
+        "oldObject": null,
+        "dryRun": false,
+        "options": {
+            "kind": "CreateOptions",
+            "apiVersion": "meta.k8s.io/v1",
+            "fieldManager": "kubectl-client-side-apply",
+            "fieldValidation": "Strict"
+        }
+    }
+}

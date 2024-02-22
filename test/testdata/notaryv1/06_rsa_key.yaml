@@ -1,0 +1,14 @@
+name: rsa-key
+type: notaryv1
+trustRoots:
+  - name: rsa
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzeWg/jpKnET+0lWCg+Gr
+      /exqvUQQpl2JvJi9GYZYGwYjiUwIEssGBHm3jd7FuBkxqPSOJxnFF28elEDns+WH
+      3ji+iDSlycpE8DJeMAvpYhBDREiYBfrWpw5XX2WAE9/wzJ/17+vzYBiQImgSuTo5
+      fnZml1ROCZmgaGEJWBsKSCNTOyZ2CnKLapkXIZiFuMUYYbwDe4Xoo7jSIcn6cnb7
+      9UaWszhWdE2xSumuXwRwCDyV7gwPjyX2HriNK7sIx78btX7zoMFfozurRZEHLUYL
+      lL82oUqQMhSFbek4XELxjP3rM4iZXCwS8Q8pRDMwGsr9eJZbOsu/iY6YnoiilO4V
+      iQIDAQAB
+      -----END PUBLIC KEY-----

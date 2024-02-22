@@ -1,0 +1,70 @@
+{
+    "timestamp": "2023-07-14 11:49:24.723176",
+    "message": "",
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1",
+    "request": {
+        "uid": "a13ec2e3-9c34-4fb7-9522-b191691b70e1",
+        "kind": {
+            "group": "rbac.authorization.k8s.io",
+            "version": "v1",
+            "kind": "Role"
+        },
+        "resource": {
+            "group": "rbac.authorization.k8s.io",
+            "version": "v1",
+            "resource": "roles"
+        },
+        "requestKind": {
+            "group": "rbac.authorization.k8s.io",
+            "version": "v1",
+            "kind": "Role"
+        },
+        "requestResource": {
+            "group": "rbac.authorization.k8s.io",
+            "version": "v1",
+            "resource": "roles"
+        },
+        "name": "pod-reader",
+        "namespace": "connaisseur",
+        "operation": "CREATE",
+        "userInfo": {
+            "username": "minikube-user",
+            "groups": [
+                "system:masters",
+                "system:authenticated"
+            ]
+        },
+        "object": {
+            "kind": "Role",
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "metadata": {
+                "name": "pod-reader",
+                "namespace": "connaisseur"
+            },
+            "rules": [
+                {
+                    "verbs": [
+                        "get",
+                        "list",
+                        "watch"
+                    ],
+                    "apiGroups": [
+                        ""
+                    ],
+                    "resources": [
+                        "pods"
+                    ]
+                }
+            ]
+        },
+        "oldObject": null,
+        "dryRun": false,
+        "options": {
+            "kind": "CreateOptions",
+            "apiVersion": "meta.k8s.io/v1",
+            "fieldManager": "kubectl-create",
+            "fieldValidation": "Strict"
+        }
+    }
+}

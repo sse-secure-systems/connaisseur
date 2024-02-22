@@ -33,7 +33,7 @@ Getting started to verify image signatures is only a matter of minutes:
     Only try this out on a test cluster as deployments with unsigned images will be blocked.
 
 Connaisseur comes pre-configured with public keys for its own repository and [Docker's official images](https://docs.docker.com/docker-hub/official_images/) (official images can be found [here](https://hub.docker.com/search?q=&type=image&image_filter=official)).
-It can be fully configured via `helm/values.yaml`.
+It can be fully configured via `charts/connaisseur/values.yaml`.
 For a quick start, clone the Connaisseur repository:
 
 ```bash

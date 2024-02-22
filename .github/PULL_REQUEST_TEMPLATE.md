@@ -15,4 +15,3 @@ Fixes #
 - [ ] Added tests (if necessary)
 - [ ] Extended README/Documentation (if necessary)
 - [ ] Adjusted versions of image and Helm chart in `Chart.yaml` (if necessary)
-

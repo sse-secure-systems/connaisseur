@@ -50,34 +50,33 @@ A simple starting point may be a minikube cluster with e.g. a [Docker Hub](https
 In case you make changes to the Connaisseur container image itself or code for that matter, you need to re-build the image and install it locally for testing.
 This requires a few steps:
 
-1. Configure your local environment to use the Kubernetes Docker daemon. In minikube, this can be done via `eval $(minikube docker-env)`.
-2. Build the Connaisseur container image via `make docker`.
-3. Install Connaisseur via `make dev-install`.
+1. Get the Connaisseur image ready:
+    - Using minikube, the local environment needs to be configured to use the minikube Docker daemon before building the image:
+        1. Run `eval $(minikube docker-env)`.
+        2. Run `make docker`.
+    - Using kind, the image needs to be built first and then loaded onto the kind node:
+        1. Run `make docker`.
+        2. Run `IMAGE_REPO=$(yq e '.kubernetes.deployment.image.repository' charts/connaisseur/values.yaml) && VERSION=$(yq e '.appVersion' charts/connaisseur/Chart.yaml)`.
+        3. Run `kind load docker-image ${IMAGE_REPO}:v${VERSION}`.
+3. Install Connaisseur via `make install-dev`.
 
 ### Test changes
 Tests and linting are important to ensure code quality, functionality and security.
 We therefore aim to keep the code coverage high.
 We are running several automated tests in the [CI pipeline](https://github.com/sse-secure-systems/connaisseur/blob/master/.github/workflows/cicd.yaml).
-Application code is tested via [pytest](https://docs.pytest.org/) and linted via [pylint](https://pylint.org/).
+Application code is tested via Go's [testing package](https://pkg.go.dev/testing) and linted via [golangci-lint](https://golangci-lint.run/) and [gosec](https://github.com/securego/gosec).
 When making changes to the application code, please directly provide tests for your changes.
 
-We recommend using [black](https://pypi.org/project/black/) for autoformatting to simplify linting and reduce review effort. It can be installed via:
+Changes can and should be tested locally via running `make test`.
+
+Linters can be run locally via
+
 ```
-pip3 install black
-```
-To autoformat the code:
-```
-black <path-to-repository>/connaisseur
+docker run --rm -v $(pwd):/app -w /app/cmd/connaisseur securego/gosec gosec ./...
+docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint golangci-lint run -v --timeout=10m --skip-dirs="test"
 ```
 
-Changes can also be tested locally.
-We recommend the following approach for running pytest in a container:
-```
-docker run -it --rm -v <path-to-repository>:/data --entrypoint=bash python:3.11
-cd data
-pip3 install -r requirements_dev.txt
-pytest --cov=connaisseur --cov-report=xml tests/
-```
+from the root folder.
 
 This helps identify bugs in changes before pushing.
 

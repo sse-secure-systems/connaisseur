@@ -18,7 +18,7 @@ While DCT relies on *trust on first use* (TOFU) for repositories' public root ke
 
 ## Basic usage
 
-In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the public root key of other images and configure Connaisseur via `application.validators[*].trustRoots[*].key` in `helm/values.yaml` to pin trust to those keys.
+In order to validate signatures using Notary, you will either need to create signing keys and signed images yourself or extract the public root key of other images and configure Connaisseur via `application.validators[*].trustRoots[*].key` in `charts/connaisseur/values.yaml` to pin trust to those keys.
 Both is described below.
 However, there is also step-by-step instructions for using Notary in the [getting started guide](../getting_started.md).
 
@@ -42,7 +42,7 @@ YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ==
 -----END PUBLIC KEY-----
 ```
 
-You will only need the actual base64 encoded part for configuring the `application.validators[*].trustRoots[*].key` in `helm/values.yaml` of Connaisseur to validate your images.
+You will only need the actual base64 encoded part for configuring the `application.validators[*].trustRoots[*].key` in `charts/connaisseur/values.yaml` of Connaisseur to validate your images.
 How to extract the public root key for any image is described [below](#getting-the-public-root-key).
 
 ### Creating signatures
@@ -110,10 +110,10 @@ The public repository root key resides with the signature data in the Notary ins
 ### Configuring and running Connaisseur
 
 Now that you either created your own keys and signed images or extracted the public key of other images, you will need to configure Connaisseur to use those keys for validation.
-This is done via `application.validators` in `helm/values.yaml`.
+This is done via `application.validators` in `charts/connaisseur/values.yaml`.
 The corresponding entry should look similar to the following (using the extracted public key as trust root):
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - name: customvalidator
   type: notaryv1
   host: notary.docker.io
@@ -128,7 +128,7 @@ The corresponding entry should look similar to the following (using the extracte
 
 You also need to create a corresponding entry in the image policy via `application.policy`, for example:
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - pattern: "docker.io/<REPOSITORY>/<IMAGE>:*"  # THE DESIRED REPOSITORY
   validator: customvalidator
 ```
@@ -175,33 +175,35 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 
 ## Configuration options
 
-`.application.validators[*]` in `helm/values.yaml` supports the following keys for Notary (V1) (refer to [basics](../basics.md#validators) for more information on default keys):
+`.application.validators[*]` in `charts/connaisseur/values.yaml` supports the following keys for Notary (V1) (refer to [basics](../basics.md#validators) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
 | `name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `type` | - | :heavy_check_mark: | `notaryv1`; the validator type must be set to `notaryv1`. |
 | `host` | - | :heavy_check_mark: | URL of the Notary instance, in which the signatures reside, e.g. `notary.docker.io`. |
-| `trustRoots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
-| `trustRoots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public root key. |
+| `trustRoots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). Setting the name of trust root to "*" implements a logical `and` and enables multiple signature verification under any trust root in the validator.  |
+| `trustRoots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). TUF public root key. |
 | `auth` | - | - | Authentication credentials for the Notary server in case the trust data is not public. |
 | `auth.secretName` | - | - | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file `auth.yaml` containing:<br/>&nbsp; `username: <user>` <br/>&nbsp; `password: <password>` <br/>Run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml -n connaisseur` to create the secret.|
-| `auth.username` | - | - | Username to authenticate with. It is recommended to use `auth.secretName` instead. |
-| `auth.password` | - | - | Password or access token to authenticate with. It is recommended to use `auth.secretName` instead. |
+| `auth.username` | - | - | Username to authenticate with[^2]. |
+| `auth.password` | - | - | Password or access token to authenticate with[^2]. |
 | `cert` | - | - | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
 | `isAcr` | `false` | - | `true` if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs. |
 
-`.application.policy[*]` in `helm/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
+`.application.policy[*]` in `charts/connaisseur/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
 | `with.delegations` | - | - | List of delegation names to enforce specific signers to be present. Refer to section on [enforcing delegations](#enforcing-delegations) for more information. |
 
+[^2]: There is no behavioral difference between configuring a Kubernetes secret or setting the credentials via `username` or `password`. In the latter case, a corresponding Kubernetes secret containing these credentials will be created automatically during deployment.
+
 ### Example
 
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: docker_essentials
@@ -274,7 +276,7 @@ Connaisseur can enforce a certain signer/delegation (or multiple) for an image's
 Simply add the signer's name to the list.
 You can also add multiple signer names to the list in which case Connaisseur will enforce that *all* delegations must have signed a matching image.
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 application:
   policy:
   - pattern: "<your-repo>/busybox:*"
@@ -301,5 +303,4 @@ REGISTRY_ID=$(az acr show --name <ACR-NAME>  --query 'id' -otsv)
 az ad sp create-for-rbac --name "<SERVICE-PRINCIPLE-NAME>" --role Reader --scopes ${REGISTRY_ID}
 ```
 
-Use the resulting `applicationID` as `auth.username`, the resulting `password` as `auth.password` and set `<ACR>.azurecr.io` as `host` in the `helm/values.yaml` and you're ready to go!
-
+Use the resulting `applicationID` as `auth.username`, the resulting `password` as `auth.password` and set `<ACR>.azurecr.io` as `host` in the `charts/connaisseur/values.yaml` and you're ready to go!

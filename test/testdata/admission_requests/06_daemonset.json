@@ -1,0 +1,142 @@
+{
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1",
+    "request": {
+        "uid": "083cbdfe-ae0e-48ef-b944-8c4585c4aa90",
+        "kind": {
+            "group": "apps",
+            "version": "v1",
+            "kind": "DaemonSet"
+        },
+        "resource": {
+            "group": "apps",
+            "version": "v1",
+            "resource": "daemonsets"
+        },
+        "requestKind": {
+            "group": "apps",
+            "version": "v1",
+            "kind": "DaemonSet"
+        },
+        "requestResource": {
+            "group": "apps",
+            "version": "v1",
+            "resource": "daemonsets"
+        },
+        "name": "fluentd-elasticsearch",
+        "namespace": "kube-system",
+        "operation": "CREATE",
+        "userInfo": {
+            "username": "minikube-user",
+            "groups": [
+                "system:masters",
+                "system:authenticated"
+            ]
+        },
+        "object": {
+            "kind": "DaemonSet",
+            "apiVersion": "apps/v1",
+            "metadata": {
+                "name": "fluentd-elasticsearch",
+                "namespace": "kube-system",
+                "creationTimestamp": null,
+                "labels": {
+                    "k8s-app": "fluentd-logging"
+                },
+                "annotations": {
+                    "deprecated.daemonset.template.generation": "0",
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"DaemonSet\",\"metadata\":{\"annotations\":{},\"labels\":{\"k8s-app\":\"fluentd-logging\"},\"name\":\"fluentd-elasticsearch\",\"namespace\":\"kube-system\"},\"spec\":{\"selector\":{\"matchLabels\":{\"name\":\"fluentd-elasticsearch\"}},\"template\":{\"metadata\":{\"labels\":{\"name\":\"fluentd-elasticsearch\"}},\"spec\":{\"containers\":[{\"image\":\"quay.io/fluentd_elasticsearch/fluentd:v2.5.2\",\"name\":\"fluentd-elasticsearch\",\"resources\":{\"limits\":{\"memory\":\"200Mi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"200Mi\"}},\"volumeMounts\":[{\"mountPath\":\"/var/log\",\"name\":\"varlog\"}]}],\"terminationGracePeriodSeconds\":30,\"tolerations\":[{\"effect\":\"NoSchedule\",\"key\":\"node-role.kubernetes.io/control-plane\",\"operator\":\"Exists\"},{\"effect\":\"NoSchedule\",\"key\":\"node-role.kubernetes.io/master\",\"operator\":\"Exists\"}],\"volumes\":[{\"hostPath\":{\"path\":\"/var/log\"},\"name\":\"varlog\"}]}}}}\n"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "matchLabels": {
+                        "name": "fluentd-elasticsearch"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "name": "fluentd-elasticsearch"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "varlog",
+                                "hostPath": {
+                                    "path": "/var/log",
+                                    "type": ""
+                                }
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "fluentd-elasticsearch",
+                                "image": "quay.io/fluentd_elasticsearch/fluentd:v2.5.2",
+                                "resources": {
+                                    "limits": {
+                                        "memory": "200Mi"
+                                    },
+                                    "requests": {
+                                        "cpu": "100m",
+                                        "memory": "200Mi"
+                                    }
+                                },
+                                "volumeMounts": [
+                                    {
+                                        "name": "varlog",
+                                        "mountPath": "/var/log"
+                                    }
+                                ],
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler",
+                        "tolerations": [
+                            {
+                                "key": "node-role.kubernetes.io/control-plane",
+                                "operator": "Exists",
+                                "effect": "NoSchedule"
+                            },
+                            {
+                                "key": "node-role.kubernetes.io/master",
+                                "operator": "Exists",
+                                "effect": "NoSchedule"
+                            }
+                        ]
+                    }
+                },
+                "updateStrategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "maxUnavailable": 1,
+                        "maxSurge": 0
+                    }
+                },
+                "revisionHistoryLimit": 10
+            },
+            "status": {
+                "currentNumberScheduled": 0,
+                "numberMisscheduled": 0,
+                "desiredNumberScheduled": 0,
+                "numberReady": 0
+            }
+        },
+        "oldObject": null,
+        "dryRun": false,
+        "options": {
+            "kind": "CreateOptions",
+            "apiVersion": "meta.k8s.io/v1",
+            "fieldManager": "kubectl-client-side-apply",
+            "fieldValidation": "Strict"
+        }
+    }
+}

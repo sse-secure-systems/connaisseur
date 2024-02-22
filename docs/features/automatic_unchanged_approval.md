@@ -27,7 +27,7 @@ The creation of resources on the other hand remains unchanged and will enforce v
 
 ## Example
 
-In `helm/values.yaml`:
+In `charts/connaisseur/values.yaml`:
 
 ```yaml
 application:

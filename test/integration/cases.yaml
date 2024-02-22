@@ -1,0 +1,340 @@
+test_cases:
+  regular:
+  - id: ru
+    txt: Testing unsigned image...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: "no tag 'unsigned' found in targets"
+    expected_result: INVALID
+  - id: rsdk
+    txt: Testing image signed under different key...
+    type: deploy
+    ref: library/nginx
+    namespace: default
+    expected_msg: "signature was invalid"
+    expected_result: INVALID
+  - id: rs
+    txt: Testing signed image...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: default
+    expected_msg: pod/pod-rs-${RAND} created
+    expected_result: VALID
+  - id: rsds
+    txt: Testing signed image with designated signer...
+    type: deploy
+    ref: securesystemsengineering/testimage:special_sig
+    namespace: default
+    expected_msg: pod/pod-rsds-${RAND} created
+    expected_result: VALID
+  - id: rsmds
+    txt: Testing image with missing designated signer...
+    type: deploy
+    ref: securesystemsengineering/testimage:wrong_signer
+    namespace: default
+    expected_msg: "no tag 'wrong_signer' found in targets"
+    expected_result: INVALID
+  - id: rsdds
+    txt: Testing image with differing designated signers...
+    type: deploy
+    ref: securesystemsengineering/testimage:double_sig
+    namespace: default
+    expected_msg: "error during notaryv1 validation of image securesystemsengineering/testimage:double_sig: validator dockerhub-basics found 2 digests for image double_sig, expected 1"
+    expected_result: INVALID
+  - id: rdvivs
+    txt: Testing deployment of valid init container along with a valid container...
+    type: apply
+    ref: test/integration/deployments/valid_init_container.yaml
+    namespace: default
+    expected_msg: pod/connaisseur-integration-test-pod-valid-init created
+    expected_result: VALID
+  - id: rduivs
+    txt: Testing deployment of unsigned init container along with a valid container...
+    type: apply
+    ref: test/integration/deployments/valid_container_with_unsigned_init_container_image.yml
+    namespace: default
+    expected_msg: "no tag 'unsigned' found in targets"
+    expected_result: INVALID
+  - id: rstd
+    txt: Testing signed image with tag and digest...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed@sha256:fe542477b92fb84c38eda9c824f6566d5c2536ef30af9c47152fa8a5fadb58dd
+    namespace: default
+    expected_msg: pod/pod-rstd-${RAND} created
+    expected_result: VALID
+  - id: recu
+    txt: Testing ephemeral container with unsigned image...
+    type: debug
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: "no tag 'unsigned' found in targets"
+    expected_result: INVALID
+  - id: recs
+    txt: Testing ephemeral container with signed image...
+    type: debug
+    ref: securesystemsengineering/testimage:signed@sha256:fe542477b92fb84c38eda9c824f6566d5c2536ef30af9c47152fa8a5fadb58dd
+    namespace: default
+    expected_msg: Defaulting debug container name to debugger-
+    expected_result: VALID
+  cosign:
+  - id: cu
+    txt: Testing unsigned cosign image...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-unsigned
+    namespace: default
+    expected_msg: "error during cosign validation of image securesystemsengineering/testimage:co-unsigned: no signed digests"
+    expected_result: null
+  - id: csdk
+    txt: Testing cosign image signed under different key...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-signed-alt
+    namespace: default
+    expected_msg: "error during cosign validation of image securesystemsengineering/testimage:co-signed-alt: no signed digests"
+    expected_result: null
+  - id: cs
+    txt: Testing signed cosign image...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-signed
+    namespace: default
+    expected_msg: pod/pod-cs-${RAND} created
+    expected_result: null
+  - id: cstd
+    txt: Testing signed cosign image with tag and digest...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-signed@sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7
+  - id: crsa
+    txt: Testing signed cosign image, signed with RSA key
+    type: deploy
+    ref: securesystemsengineering/testimage:rsa-co-signed
+    namespace: default
+    expected_msg: pod/pod-crsa-${RAND} created
+    expected_result: null
+  multi-cosigned:
+  - id: mc-u
+    txt: Testing multi-cosigned image `threshold` => undefined, not reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-alice
+    namespace: default
+    expected_msg: validation threshold not reached (1/3)
+    expected_result: null
+  - id: mc-s
+    txt: Testing multi-cosigned image `threshold` => undefined, reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie
+    namespace: default
+    expected_msg: pod/pod-mc-s-${RAND} created
+    expected_result: null
+  - id: mct2-u
+    txt: Testing multi-cosigned image `threshold` => 2, not reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-bob
+    namespace: default
+    expected_msg: validation threshold not reached (1/2)
+    expected_result: null
+  - id: mct2-s
+    txt: Testing multi-cosigned image `threshold` => 2, reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-bob-charlie
+    namespace: default
+    expected_msg: pod/pod-mct2-s-${RAND} created
+    expected_result: null
+  - id: mcr-u
+    txt: Testing multi-cosigned image `required` signers => ['alice', 'charlie'], not reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-charlie
+    namespace: default
+    expected_msg: missing required signatures from [alice]
+    expected_result: null
+  - id: mcr-s
+    txt: Testing multi-cosigned image `required` signers => ['alice', 'charlie'], reached...
+    type: deploy
+    ref: securesystemsengineering/testimage:multi-cosigned-charlie-alice
+    namespace: default
+    expected_msg: pod/pod-mcr-s-${RAND} created
+    expected_result: null
+  rekor-cosigned:
+  - id: rcu
+    txt: Testing unsigned cosign image...
+    type: deploy
+    ref: securesystemsengineering/testimage:co-unsigned
+    namespace: default
+    expected_msg: "error during cosign validation of image securesystemsengineering/testimage:co-unsigned: no signed digests"
+    expected_result: null
+  - id: rcs
+    txt: Testing signed cosign image WITHOUT transparency log entry...
+    type: deploy
+    ref: securesystemsengineering/testimage:rekor-cosigned-notl
+    namespace: default
+    expected_msg: "error during cosign validation of image securesystemsengineering/testimage:rekor-cosigned-notl: no signed digests"
+    expected_result: null
+  - id: rcstl
+    txt: Testing signed cosign image WITH transparency log entry...
+    type: deploy
+    ref: securesystemsengineering/testimage:rekor-cosigned-tl
+    namespace: default
+    expected_msg: pod/pod-rcstl-${RAND} created
+    expected_result: null
+  ignore-namespace-val:
+  - id: iuu
+    txt: Testing unsigned image in unlabelled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: "error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+    expected_result: null
+  - id: isu
+    txt: Testing signed image in unlabelled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: default
+    expected_msg: pod/pod-isu-${RAND} created
+    expected_result: null
+  - id: iui
+    txt: Testing unsigned image in ignored namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: ignoredns
+    expected_msg: pod/pod-iui-${RAND} created
+    expected_result: null
+  validate-namespace-val:
+  - id: vue
+    txt: Testing unsigned image in enabled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: validatedns
+    expected_msg: "error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+    expected_result: null
+  - id: vse
+    txt: Testing signed image in enabled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: validatedns
+    expected_msg: pod/pod-vse-${RAND} created
+    expected_result: null
+  - id: vuu
+    txt: Testing unsigned image in unlabelled namespace...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: pod/pod-vuu-${RAND} created
+    expected_result: null
+  deployment:
+  - id: d1s
+    txt: Testing 1 signed image deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i1.yaml
+    namespace: default
+    expected_msg: deployment.apps/i1-deployment created
+    expected_result: null
+  - id: d1u
+    txt: Testing 1 unsigned image deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i1u1.yaml
+    namespace: default
+    expected_msg: "denied the request: error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+    expected_result: null
+  - id: d1nc
+    txt: Testing 1 nonexistent image (cosign) deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i1n1.yaml
+    namespace: default
+    expected_msg: 'image index.docker.io/securesystemsengineering/testimage:co-nonexistent does not exist'
+    expected_result: null
+  - id: d2s
+    txt: Testing 2 signed images deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i2.yaml
+    namespace: default
+    expected_msg: deployment.apps/i2-deployment created
+    expected_result: null
+  - id: d1sf1us
+    txt: Testing 1 signed image (first) and 1 unsigned (second) image deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i2u1-2.yaml
+    namespace: default
+    expected_msg: "denied the request: error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+    expected_result: null
+  - id: d1ss1uf
+    txt: Testing 1 signed image (second) and 1 unsigned (first) image deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i2u1-1.yaml
+    namespace: default
+    expected_msg: "denied the request: error during cosign validation of image securesystemsengineering/testimage:co-unsigned: no signed digests"
+    expected_result: null
+  - id: d2u
+    txt: Testing 2 unsigned images deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i2u2.yaml
+    namespace: default
+    expected_msg: "denied the request:"
+    expected_result: null
+  - id: d2s1si
+    txt: Testing 2 signed images and 1 signed init container deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i2i.yaml
+    namespace: default
+    expected_msg: deployment.apps/i2i-deployment created
+    expected_result: null
+  - id: d2s1ui
+    txt: Testing 2 signed images and 1 unsigned init container deployment...
+    type: apply
+    ref: test/integration/deployments/deployment_i2ui.yaml
+    namespace: default
+    expected_msg: "denied the request: error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+    expected_result: null
+  pre-config:
+  - id: pnv1u
+    txt: Testing nv1 unsigned image...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: no tag 'unsigned' found in targets
+    expected_result: null
+  - id: pnv1s
+    txt: Testing nv1 signed image...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: default
+    expected_msg: pod/pod-pnv1s-${RAND} created
+    expected_result: null
+  - id: poff
+    txt: Testing signed official docker image...
+    type: deploy
+    # choose official image that doesn't exit, so we can check ready status
+    ref: docker.io/library/nginx
+    namespace: default
+    expected_msg: pod/pod-poff-${RAND} created
+    expected_result: null
+  certificate:
+  - id: x509u
+    txt: Testing unsigned image...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: "error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+    expected_result: null
+  - id: x509s
+    txt: Testing signed image...
+    type: deploy
+    ref: securesystemsengineering/testimage:signed
+    namespace: default
+    expected_msg: pod/pod-x509s-${RAND} created
+    expected_result: null
+  self-hosted-notary:
+    # "shnu" is exactly the same test case as "ru" from the regular test
+    # to ensure the new settings did not render connaisseur dysfunctional
+  - id: shnu
+    txt: Testing unsigned image...
+    type: deploy
+    ref: securesystemsengineering/testimage:unsigned
+    namespace: default
+    expected_msg: "error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+    expected_result: null
+  - id: shnsi
+    txt: Testing signed image with trust data in self-hosted notary...
+    type: deploy
+    ref: securesystemsengineering/testimage:self-hosted-notary-signed
+    namespace: default
+    expected_msg: pod/pod-shnsi-${RAND} created
+    expected_result: null

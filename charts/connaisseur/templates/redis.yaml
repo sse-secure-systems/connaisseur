@@ -1,0 +1,135 @@
+{{- $svc := (include "connaisseur.redisService" .) -}}
+{{- $tlsName := (include "connaisseur.redisTLS" .) -}}
+{{- $input := dict "deployment" .Values.kubernetes.redis "tlsName" $tlsName "svc" $svc "namespace" .Release.Namespace -}}
+{{ $tls := (include "connaisseur.tlsCertificate" $input) | fromYaml }}
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "connaisseur.redisSecret" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+type: Opaque
+data:
+    REDIS_PASSWORD: {{ include "connaisseur.redisPassword" . }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "connaisseur.redisTLS" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+type: Opaque
+data:
+    tls.crt: {{ $tls.cert }}
+    tls.key: {{ $tls.key }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "connaisseur.redisName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+  annotations:
+    checksum/config: {{ include "connaisseur.getConfigChecksum" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "connaisseur.redisSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "connaisseur.redisSelectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include "connaisseur.getConfigChecksum" . }}
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: redis
+        image: redis:7
+        imagePullPolicy: {{ .Values.kubernetes.redis.pullPolicy }}
+        args:
+          - --requirepass
+          - $(REDIS_PASSWORD)
+          - --tls-cert-file
+          - /cfg/certs/tls.crt
+          - --tls-key-file
+          - /cfg/certs/tls.key
+          - --tls-auth-clients
+          - "no"
+          - --tls-port
+          - "6379"
+          - --port
+          - "6380"
+          {{ if eq (lower .Values.application.logLevel) "debug" -}}
+          - --loglevel
+          - "debug"
+          {{- else if eq (lower .Values.application.logLevel) "error" -}}
+          - --loglevel
+          - "warning"
+          {{- else -}}
+          - --loglevel
+          - "notice"
+          {{- end }}
+          - --rename-command
+          - FLUSHALL
+          - ""
+          - --rename-command
+          - FLUSHDB
+          - ""
+        ports:
+          - containerPort: 6379
+            name: redis
+            protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+              - redis-cli
+              - -p
+              - "6380"
+              - ping
+        readinessProbe:
+          exec:
+            command:
+              - redis-cli
+              - -p
+              - "6380"
+              - ping
+        volumeMounts:
+          - name: certs
+            mountPath: /cfg/certs
+            readOnly: true
+        envFrom:
+          - secretRef:
+              name: {{ include "connaisseur.redisSecret" . }}
+        resources:
+          {{- toYaml .Values.kubernetes.redis.resources | nindent 12 }}
+        securityContext:
+          {{- toYaml .Values.kubernetes.redis.securityContext | nindent 12 }}
+      securityContext:
+        {{- toYaml .Values.kubernetes.redis.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: certs
+          secret:
+            secretName: {{ include "connaisseur.redisTLS" . }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "connaisseur.redisService" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "connaisseur.redisSelectorLabels" . | nindent 4 }}

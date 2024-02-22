@@ -71,4 +71,3 @@ runs:
         kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik -n kube-system || true
         kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
       shell: bash
-

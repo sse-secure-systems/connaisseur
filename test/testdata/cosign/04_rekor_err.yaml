@@ -1,0 +1,11 @@
+name: rekor
+type: cosign
+host:
+  rekor: \\
+trustRoots:
+- name: default
+  key: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+    qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+    -----END PUBLIC KEY-----

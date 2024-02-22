@@ -1,0 +1,13 @@
+name: invalid-pub-key
+type: notaryv1
+trustRoots:
+  - name: invalid_pub_key
+    key: |
+      -----BEGIN RSA PUBLIC KEY-----
+      MIIBCgKCAQEAs5pC7R5OTSTUMJHUniPkrLfmGDAUxZtRlvIE+pGPCD6cUXH22adv
+      kK87xwpupjxdVYuKTFnWHUIyFJwjI3vusievezcAr0E/xxyeo49tWog9kFoooK3q
+      mXjpETC8OpvNROZ0K3qhlm9PZkGo3gSJ/B4rMU/d+jkCI8eiUPpdVQOczdBoD5nz
+      QAF1mfmffWGsbKY+d8/l77Vset0GXExRzUtnglMhREyHNpDeQUg5OEn+kuGLlTzI
+      xpIF+MlbzP3+xmNEzH2iafr0ae2g5kX2880priXpxG8GXW2ybZmPvchclnvFu4Zf
+      ZcM10FpgYJFvR/9iofFeAka9u5z6VZccmQIDAQAB
+      -----END RSA PUBLIC KEY-----

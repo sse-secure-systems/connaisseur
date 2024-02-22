@@ -1,5 +1,7 @@
 name: sca
 
+permissions: {}
+
 on:
   workflow_call:
     inputs:
@@ -17,28 +19,21 @@ on:
         type: string
         required: false
         default: ''
+      skip:
+        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+        type: string
+        default: "none"
       output:
         description: 'Output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
         type: string
         required: false
         default: 'sarif'
 
-permissions: {}
-
 jobs:
-  safety:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: read
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Run
-        uses: ./.github/actions/safety
-
   trivy-image-scan:
     name: trivy image
     runs-on: ubuntu-latest
+    if: inputs.skip != 'all'
     permissions:
       packages: read
       security-events: write
@@ -59,6 +54,9 @@ jobs:
   grype:
     name: grype
     runs-on: ubuntu-latest
+    if: |
+      inputs.skip != 'non-required' &&
+      inputs.skip != 'all'
     permissions:
       packages: read
       security-events: write
@@ -80,6 +78,9 @@ jobs:
   dependency-submission:
     name: syft / dependency review
     runs-on: ubuntu-latest
+    if: |
+      inputs.skip != 'non-required' &&
+      inputs.skip != 'all'
     permissions:
       packages: read
       contents: write
@@ -96,4 +97,4 @@ jobs:
         with:
           image: ${{ inputs.image }}
           format: cyclonedx-json
-          dependency-snapshot: true
+          dependency-snapshot: ${{ inputs.output == 'sarif' }}

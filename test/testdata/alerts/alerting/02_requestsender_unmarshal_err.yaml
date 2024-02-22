@@ -1,0 +1,5 @@
+clusterIdentifier: test
+admitRequest:
+  receivers: \\
+rejectRequest:
+  receivers: \\

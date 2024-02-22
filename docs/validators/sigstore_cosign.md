@@ -36,10 +36,10 @@ The created signature can be verfied via:
 cosign verify --key cosign.pub ${IMAGE}
 ```
 
-To use Connaisseur with Cosign, configure a validator in `helm/values.yaml` with the generated public key (`cosign.pub`) as a trust root.
+To use Connaisseur with Cosign, configure a validator in `charts/connaisseur/values.yaml` with the generated public key (`cosign.pub`) as a trust root.
 The entry in `.application.validators` should look something like this (make sure to add your own public key to trust root `default`):
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - name: customvalidator
   type: cosign
   trustRoots:
@@ -53,7 +53,7 @@ The entry in `.application.validators` should look something like this (make sur
 
 In `.application.policy`, add a pattern to match your public key to your own repository:
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - pattern: "docker.io/securesystemsengineering/testimage:co*"  # YOUR REPOSITORY
   validator: customvalidator
 ```
@@ -85,7 +85,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 
 ## Configuration options
 
-`.application.validators[*]` in `helm/values.yaml` supports the following keys for Cosign (refer to [basics](../basics.md#validators) for more information on default keys):
+`.application.validators[*]` in `charts/connaisseur/values.yaml` supports the following keys for Cosign (refer to [basics](../basics.md#validators) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -99,7 +99,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `auth.k8sKeychain` | `false` | - | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s_keychain). |
 | `cert` | - | - | A TLS certificate in PEM format for private registries with self-signed certificates. |
 
-`.application.policy[*]` in `helm/values.yaml` supports the following additional keys and modifications for sigstore/Cosign (refer to [basics](../basics.md#image-policy) for more information on default keys):
+`.application.policy[*]` in `charts/connaisseur/values.yaml` supports the following additional keys and modifications for sigstore/Cosign (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -112,8 +112,8 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 ### Example
 
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       validators:
       - name: myvalidator
@@ -199,7 +199,7 @@ Connaisseur supports Cosign's URI-based [KMS integration](https://github.com/sig
 Simply configure the trust root key value as the respective URI.
 In case of a [Kubernetes secret](https://github.com/sigstore/cosign/blob/main/KMS.md#kubernetes-secret), this would take the following form:
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - name: myvalidator
   type: cosign
   trustRoots:
@@ -242,19 +242,15 @@ roleRef:
 Make sure to adjust it as needed.
 
 Most other KMS will require credentials for authentication that must be provided via environment variables.
-Such environment variables can be injected into Connaisseur via `deployment.envs` in `helm/values.yaml`, e.g.:
+Such environment variables can be injected into Connaisseur via `deployment.envs` in `charts/connaisseur/values.yaml`, e.g.:
 
-```yaml title="helm/values.yaml"
-  envs: 
+```yaml title="charts/connaisseur/values.yaml"
+  envs:
     VAULT_ADDR: myvault.com
     VAULT_TOKEN: secrettoken
 ```
 
 ### Multi-signature verification
-
-!!! warning
-    This is currently an experimental feature that might be unstable over time.
-    As such, it is not part of our semantic versioning guarantees and we take the liberty to adjust or remove it with any version at any time without incrementing MAJOR or MINOR.
 
 Connaisseur can verify multiple signatures for a single image.
 It is possible to configure a threshold number and specific set of required valid signatures.
@@ -268,7 +264,7 @@ This allows to implement several advanced use cases (and policies):
 Multi-signature verification is scoped to the trust roots specified within a referenced validator.
 Consider the following validator configuration:
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 application:
   validators:
   - name: multicosigner
@@ -296,7 +292,7 @@ application:
 
 The trust roots `alice`, `bob`, and `charlie` are all included for verification in case `.application.policy[*].with.trustRoot` is set to `"*"` (note that this is a special flag, not a real wildcard):
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - pattern: "*:*"
   validator: multicosigner
   with:
@@ -307,7 +303,7 @@ As neither `threshold` nor `required` are specified, Connaisseur will require si
 If either `threshold` or `required` is specified, it takes precedence.
 For example, it is possible to configure a threshold number of required signatures via the `threshold` key:
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - pattern: "*:*"
   validator: multicosigner
   with:
@@ -318,7 +314,7 @@ For example, it is possible to configure a threshold number of required signatur
 In this case, valid signatures of two or more out of the three trust roots are required for admittance.
 Using the `required` key, it is possible to enforce specific trusted roots:
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - pattern: "*:*"
   validator: multicosigner
   with:
@@ -329,7 +325,7 @@ Using the `required` key, it is possible to enforce specific trusted roots:
 Now, only images with valid signatures of trust roots `alice` and `bob` are admitted.
 It is possible to combine `threshold` and `required` keys:
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 - pattern: "*:*"
   validator: multicosigner
   with:

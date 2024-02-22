@@ -11,11 +11,11 @@ kubectl run unsigned --image=docker.io/securesystemsengineering/testimage:unsign
 > pod/unsigned created
 ```
 
-To activate the detection mode, set the `detectionMode` flag to `true` in `helm/values.yaml`.
+To activate the detection mode, set the `detectionMode` flag to `true` in `charts/connaisseur/values.yaml`.
 
 ## Configuration options
 
-`detectionMode` in `helm/values.yaml` under `application.features` supports the following values:
+`detectionMode` in `charts/connaisseur/values.yaml` under `application.features` supports the following values:
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -23,8 +23,8 @@ To activate the detection mode, set the `detectionMode` flag to `true` in `helm/
 
 ## Example
 
-??? abstract "helm/values.yaml"
-    ```yaml title="helm/values.yaml"
+??? abstract "charts/connaisseur/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     application:
       features:
         detectionMode: true
@@ -34,7 +34,7 @@ To activate the detection mode, set the `detectionMode` flag to `true` in `helm/
 
 ### Failure policy vs. detection mode
 
-The detection mode is not to be confused with the [failure policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) (`kubernetes.webhook.failurePolicy` in `helm/values.yaml`) for the mutating admission controller:
+The detection mode is not to be confused with the [failure policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy) (`kubernetes.webhook.failurePolicy` in `charts/connaisseur/values.yaml`) for the mutating admission controller:
 In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.
 As such, both options are disjoint.
 While in default configuration, requests will be denied if either no valid image signature exists or the Connaisseur service is unavailable, setting `failurePolicy` to `Ignore` and `detectionMode` to `true` ensures that Connaisseur never blocks a request.

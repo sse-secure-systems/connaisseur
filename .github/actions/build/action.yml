@@ -61,10 +61,11 @@ runs:
       uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671 # v4.0.0
       with:
         push: true
-        tags: ${{ steps.tags.outputs.tags }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        file: build/Dockerfile
         labels: ${{ inputs.image_labels }}
-        file: docker/Dockerfile
-        build-args: COSIGN_VERSION=${{ inputs.cosign_version }}
+        tags: ${{ steps.tags.outputs.tags }}
         sbom: false  # Duplicates SBOMs manually created below
         provenance: false  #TODO: Set to false, as resulting format is not OCI (GHCR) compliant (https://github.com/docker/build-push-action/issues/820) and causes problems with GHCR and e.g. image deletion (https://github.com/snok/container-retention-policy/issues/63)
     - name: Create SBOM
@@ -88,9 +89,9 @@ runs:
     - name: Verify build data
       id: verify
       run: |
-        mkdir build
-        cosign public-key --key env://COSIGN_PRIVATE_KEY > build/cosign.pub
-        PUBLIC_KEY="$(cat build/cosign.pub)"
+        mkdir ci
+        cosign public-key --key env://COSIGN_PRIVATE_KEY > ci/cosign.pub
+        PUBLIC_KEY="$(cat ci/cosign.pub)"
         cosign tree ${TAGS}
         PUBLIC_KEY=${PUBLIC_KEY} cosign verify --key env://PUBLIC_KEY ${TAGS}
         PUBLIC_KEY=${PUBLIC_KEY} cosign verify --key env://PUBLIC_KEY --attachment sbom ${TAGS}
@@ -109,14 +110,14 @@ runs:
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       with:
         name: cosign.pub
-        path: build/cosign.pub
+        path: ci/cosign.pub
     - name: Show build and signature information
       run: |
-        CONFIGURE="yq '. *+ load(\"tests/integration/var-img.yaml\")' tests/integration/ghcr-values.yaml > ghcr.yaml &&\n\t IMAGE=\"${{ inputs.image_registry }}/${{ inputs.image_repo }}\" TAG=\"${{ inputs.image_tag }}\" IMAGEPULLSECRET=\"<ImagePullSecret name>\" envsubst < ghcr.yaml > update &&\n\t yq '. *+ load(\"update\")' -i helm/values.yaml &&\n\t rm ghcr.yaml update"
+        CONFIGURE="yq '. *+ load(\"test/integration/var-img.yaml\")' test/integration/ghcr-values.yaml > ghcr.yaml &&\n\t IMAGE=\"${{ inputs.image_registry }}/${{ inputs.image_repo }}\" TAG=\"${{ inputs.image_tag }}\" IMAGEPULLSECRET=\"<ImagePullSecret name>\" envsubst < ghcr.yaml > update &&\n\t yq '. *+ load(\"update\")' -i charts/connaisseur/values.yaml &&\n\t rm ghcr.yaml update"
         CONFIGURE=$(printf -- "${CONFIGURE}")
         PUBLIC_KEY="${{ steps.verify.outputs.public_key }}"
         PUBLIC_KEY="$(printf -- "${PUBLIC_KEY//'<br>'/'\n'}")"
-        HELM_PATCH="yq e '.kubernetes.deployment.image.repository = \"${{ inputs.image_registry }}/${{ inputs.image_repo }}\"' -i helm/values.yaml\nyq e '.kubernetes.deployment.image.tag = \"${{ inputs.image_tag }}\"' -i helm/values.yaml"
+        HELM_PATCH="yq e '.kubernetes.deployment.image.repository = \"${{ inputs.image_registry }}/${{ inputs.image_repo }}\"' -i charts/connaisseur/values.yaml\nyq e '.kubernetes.deployment.image.tag = \"${{ inputs.image_tag }}\"' -i charts/connaisseur/values.yaml"
         HELM_PATCH=$(printf -- "${HELM_PATCH}")
         echo "# :building_construction: Build Information" >> ${GITHUB_STEP_SUMMARY}
         echo "<table>" >> ${GITHUB_STEP_SUMMARY}

@@ -2,13 +2,21 @@ name: compliance
 
 on:
   workflow_call:
+    inputs:
+      skip:
+        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+        type: string
+        default: "none"
 
 permissions: read-all
 
 jobs:
   ossf-scorecard:
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name == 'master' || github.event_name == 'pull_request' }}
+    if: |
+      (github.ref_name == 'master' || github.event_name == 'pull_request') &&
+      inputs.skip != 'non-required' &&
+      inputs.skip != 'all'
     permissions:
       security-events: write
       id-token: write
@@ -32,7 +40,10 @@ jobs:
   dependency-review:
     name: dependency review
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: |
+      github.event_name == 'pull_request' &&
+      inputs.skip != 'non-required' &&
+      inputs.skip != 'all'
     permissions:
       contents: write
     steps:
@@ -43,8 +54,10 @@ jobs:
 
   check-commit-message:
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' &&
+      inputs.skip != 'all'
     permissions: {}
-    if: ${{ github.event_name == 'pull_request' }} # Only run on PRs
     steps:
       - name: Checkout code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1

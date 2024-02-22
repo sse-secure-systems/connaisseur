@@ -103,6 +103,8 @@ nav:
       - features/detection_mode.md
       - features/metrics.md
       - features/namespaced_validation.md
+      - features/resource_validation_mode.md
+      - features/caching.md
   - Security:
     - threat_model.md
     - SECURITY.md
@@ -118,6 +120,8 @@ nav:
       - adr/ADR-5_no-more-bootstrap.md
       - adr/ADR-6_dynamic-config.md
       - adr/ADR-7_wsgi-server.md
+      - adr/ADR-8_go-transition.md
+      - adr/ADR-9_multi-pod.md
   - Releases ⧉: https://github.com/sse-secure-systems/connaisseur/releases
   - Support ⧉: https://github.com/sse-secure-systems/connaisseur/discussions
 

@@ -1,0 +1,16 @@
+validators:
+  - name: allow
+    type: static
+    approve: true
+  - name: deny
+    type: static
+    approve: false
+policy:
+  - pattern: "*:*"
+    validator: mock
+  - pattern: "my.reg/allow-me"
+    validator: "allow"
+  - pattern: "my.reg/deny-me"
+    validator: deny
+  - pattern: test-image
+    validator: allow

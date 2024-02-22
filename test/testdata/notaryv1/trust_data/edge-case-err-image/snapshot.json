@@ -1,0 +1,51 @@
+{
+    "signed": {
+        "_type": "Snapshot",
+        "expires": "2999-10-27T08:00:05.282502691Z",
+        "meta": {
+            "root": {
+                "hashes": {
+                    "sha256": "tRJZKfIy+YjAjkONt/H8xlx2H1V7DWQhTnq2fBP07tA=",
+                    "sha512": "yV7J6q2nIA4zDNLj7eNlV/GPx+vcPi7gBBXvwPXiebB8cR/XYUyzF4U3GGpSpSnTUQRLUW+ZEYrtGZQNv+Ci6Q=="
+                },
+                "length": 2420
+            },
+            "targets": {
+                "hashes": {
+                    "sha256": "AmOexhG8f8eNAxQAyRBycFmerP83GCzFSaJy/WAFRkE=",
+                    "sha512": "Gw53Svlkb3DN7VTHkcO8iBWypORu1A0C8j9r8hidSfrBvpwara6G0p/Jmv4W5lfvAuiZ7pBBKHvPUrx6wG6HCg=="
+                },
+                "length": 523
+            },
+            "targets/del1": {
+                "hashes": {
+                    "sha256": "prSJCXbU8Cw9OOqXmdOKUgRQtcoa4zIOBzMHe87qnWw=",
+                    "sha512": "4Qs37J851HA1hegL5CaatfTCBw0Vn2konZtEgM0RIXePOAO4hTQfRR4fPtnbI0a4uRJP2NeRj+dZinsEjJAQdA=="
+                },
+                "length": 434
+            },
+            "targets/del2": {
+                "hashes": {
+                    "sha256": "cg+pFr6W+KGQ2077wS7dxxQzhwmkgriMFxG8727gM1U=",
+                    "sha512": "HL0Hu5FiMd7apCWGujpz9bPpwYsSMSaX1nRwJzdm+BiCGNpHdjXlVauzaImdEAjvaNo8Bz5YUmtMvkI6yXsUkQ=="
+                },
+                "length": 432
+            },
+            "targets/releases": {
+                "hashes": {
+                    "sha256": "prSJCXbU8Cw9OOqXmdOKUgRQtcoa4zIOBzMHe87qnWw=",
+                    "sha512": "4Qs37J851HA1hegL5CaatfTCBw0Vn2konZtEgM0RIXePOAO4hTQfRR4fPtnbI0a4uRJP2NeRj+dZinsEjJAQdA=="
+                },
+                "length": 434
+            }
+        },
+        "version": 4
+    },
+    "signatures": [
+        {
+            "keyid": "56ec6c5e5d48b72a26289a3230e78ffc4805f7ef74debb8fe2ad567166f51bb8",
+            "method": "ecdsa",
+            "sig": "PDJB0DMbV35SOTShCFXyTyNy4GjpuGKQbPtwpyE6mJcM1D6tLWpavH1EKZeBNTGm1rrXlfGBhnTHXiFmopcxhw=="
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+name: cosign_with_auth
+type: cosign
+trustRoots:
+- name: alice
+  key: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEusIAt6EJ3YrTHdg2qkWVS0KuotWQ
+    wHDtyaXlq7Nhj8279+1u/l5pZhXJPW8PnGRRLdO5NbsuM6aT7pOcP100uw==
+    -----END PUBLIC KEY-----
+auth:
+  secretName: 01_auth

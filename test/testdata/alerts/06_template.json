@@ -1,0 +1,4 @@
+{
+    "name": "connaisseur_pod_id",
+    "value": "{{ connaisseur_pod_id }}"
+}

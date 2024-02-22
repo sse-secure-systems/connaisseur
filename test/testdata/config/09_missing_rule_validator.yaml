@@ -1,0 +1,11 @@
+validators:
+  - name: default
+    type: static
+    approve: true
+  - name: deny
+    type: static
+    approve: false
+policy:
+  - pattern: "aaaa"
+    validator: x
+  - pattern: "bbbb"

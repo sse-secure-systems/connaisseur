@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "connaisseur.appConfigName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    validators:
+    {{- range $k,$v := .Values.application.validators }}
+      {{- $validator := deepCopy $v }}
+      {{- if and (hasKey $validator "auth") (and (hasKey $validator.auth "username") (hasKey $validator.auth "password")) }}
+        {{- $auth := dict "secretName" (print $validator.name "-auth") }}
+        {{- $_ := unset $validator "auth" }}
+        {{- $_ := set $validator "auth" $auth }}
+      {{- end }}
+    - {{- $validator | toYaml | trim | nindent 6 -}}
+    {{- end }}
+    policy:
+    {{- range $k,$v := .Values.application.policy }}
+    - {{- $v | toYaml | trim | nindent 6 -}}
+    {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "connaisseur.alertConfigName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    {{- default (dict) .Values.alerting | toYaml | nindent 6 }}
+{{- if .Values.alerting }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "connaisseur.alertTemplatesName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+data:
+  {{- (.Files.Glob "alert_payload_templates/*").AsConfig | nindent 2 }}
+{{- end -}}

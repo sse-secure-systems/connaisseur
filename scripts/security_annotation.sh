@@ -10,5 +10,5 @@ if [[ ${COUNT} -gt 0 ]]; then
   echo """
 annotations:
   artifacthub.io/containsSecurityUpdates: "true"
-""" >> helm/Chart.yaml
+""" >> charts/connaisseur/Chart.yaml
 fi

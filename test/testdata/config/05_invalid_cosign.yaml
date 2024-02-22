@@ -1,0 +1,6 @@
+validators:
+- name: cosign
+  type: cosign
+  host:
+    rekor: \\\
+  trustRoots: [{}]

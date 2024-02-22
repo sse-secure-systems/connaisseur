@@ -1,0 +1,33 @@
+{{ if print .Values.application.features.automaticChildApproval | default "true" | lower | eq "true" }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "connaisseur.roleBindingName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "connaisseur.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ include "connaisseur.roleName" . }}
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "connaisseur.clusterRoleBindingName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "connaisseur.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "connaisseur.clusterRoleName" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{ end }}

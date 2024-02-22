@@ -1,13 +1,19 @@
 name: docs
 
+permissions: {}
+
 on:
   workflow_call:
-
-permissions: {}
+    inputs:
+      skip:
+        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+        type: string
+        default: "none"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: inputs.skip != 'all'
     permissions:
       contents: write
     steps:
@@ -25,6 +31,7 @@ jobs:
         run: |
           pip install -r docs/requirements_docs.txt
       - name: Deploy
+        if: inputs.skip != 'non-required'
         run: |
           if [[ "${GITHUB_REF}" == "refs/tags/v"* ]];
           then

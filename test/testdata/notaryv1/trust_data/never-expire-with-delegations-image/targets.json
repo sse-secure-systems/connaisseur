@@ -1,0 +1,66 @@
+{
+    "signed": {
+        "_type": "Targets",
+        "delegations": {
+            "keys": {
+                "00d6123c8d501ed3cf273a1cbe9174187fff32e636e700f752c607d58756c99e": {
+                    "keytype": "ecdsa",
+                    "keyval": {
+                        "private": null,
+                        "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWx24zAnqLOTIMJJNjjhH3J2p8b3yLmfN3o1xeQqFmuAwXoHgF1SlWL2BK92VHfyNXe/swm0djhAgebLC3yLx+w=="
+                    }
+                },
+                "ac3d0e2f1aaf982b4e1e0c4b5c76d967e59c21402c23acb96f4db1e22f0d6adf": {
+                    "keytype": "ecdsa",
+                    "keyval": {
+                        "private": null,
+                        "public": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEi/XdSaSbLUpHTVbcirfuQC8GHYaBsJeiw2RAMJtw1FnAVARBu9ueL9WrRC4pjHKoccGg52xoNZSaKZk9Z9axtg=="
+                    }
+                }
+            },
+            "roles": [
+                {
+                    "keyids": [
+                        "00d6123c8d501ed3cf273a1cbe9174187fff32e636e700f752c607d58756c99e"
+                    ],
+                    "name": "targets/del1",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                },
+                {
+                    "keyids": [
+                        "00d6123c8d501ed3cf273a1cbe9174187fff32e636e700f752c607d58756c99e",
+                        "ac3d0e2f1aaf982b4e1e0c4b5c76d967e59c21402c23acb96f4db1e22f0d6adf"
+                    ],
+                    "name": "targets/releases",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                },
+                {
+                    "keyids": [
+                        "ac3d0e2f1aaf982b4e1e0c4b5c76d967e59c21402c23acb96f4db1e22f0d6adf"
+                    ],
+                    "name": "targets/del2",
+                    "paths": [
+                        ""
+                    ],
+                    "threshold": 1
+                }
+            ]
+        },
+        "expires": "2999-10-27T09:02:05.103488436+02:00",
+        "targets": {},
+        "version": 4
+    },
+    "signatures": [
+        {
+            "keyid": "d0cef4ea6349fcfbb961a917342a8c218126ebc7eba7ca4351812200207f4f18",
+            "method": "ecdsa",
+            "sig": "nXjvtc0EAa+2BzsEZz7e8OSylIOGe3+o3AhDCUAVxZJaftqZW8YO5KA/YI7qFGnNG7bDWKKFNFKN+5PIS9BFEQ=="
+        }
+    ]
+}

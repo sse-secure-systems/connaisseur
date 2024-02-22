@@ -1,0 +1,8 @@
+clusterIdentifier: test
+admitRequest:
+  receivers:
+    - template: 11_fail_template
+      receiverUrl: https://some.url
+      failIfAlertSendingFails: True
+rejectRequest:
+  receivers: []

@@ -1,0 +1,12 @@
+name: default
+type: notaryv1
+trustRoots:
+  - name: default
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+      QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+      -----END PUBLIC KEY-----
+auth:
+  secretName: "15_default_auth"
+host: "ghcr.io"

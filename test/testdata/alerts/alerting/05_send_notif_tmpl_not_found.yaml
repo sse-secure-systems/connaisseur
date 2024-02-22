@@ -1,0 +1,8 @@
+clusterIdentifier: test
+admitRequest:
+  receivers:
+    - template: 404_not_found
+      receiverUrl: https://some.url
+      failIfAlertSendingFails: True
+rejectRequest:
+  receivers: []

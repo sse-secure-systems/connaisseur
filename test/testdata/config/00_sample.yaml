@@ -1,0 +1,63 @@
+validators:
+  - name: default
+    type: static
+    approve: true
+  - name: deny
+    type: static
+    approve: false
+  - name: cosign
+    type: cosign
+    trustRoots:
+      - name: sse-cosign
+        key: |
+          -----BEGIN PUBLIC KEY-----
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+          qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+          -----END PUBLIC KEY-----
+policy:
+  - pattern: "*:*"
+  - pattern: "securesystemsengineering/*:co*"
+    validator: cosign
+    with:
+      trustRoot: sse-cosign
+  - pattern: docker.io/*:*
+  - pattern: "registry.k8s.io/*:*"
+  - pattern: "docker.io/securesystemsengineering/sample"
+  - pattern: "docker.io/securesystemsengineering/sample:v1"
+  - pattern: "docker.io/library/allow-me"
+  - pattern: "docker.io/library/deny-me"
+    validator: deny
+  - pattern: "my.registry/*"
+  - pattern: "my.registry/test"
+  - pattern: "docker.io/test:*"
+
+alerting:
+  clusterIdentifier: example-cluster-staging-europe # defaults to "not specified"
+  admitRequest:
+    receivers:
+      # <template> needs to be chosen such that <template>.json matches one of the file names
+      # in the ./alert_payload_templates directory
+      - template: opsgenie #REQUIRED!
+        receiverUrl: https://api.eu.opsgenie.com/v2/alerts #REQUIRED!
+        priority: 4 #(defaults to 3)
+        customHeaders: ["Authorization: GenieKey <Your-Genie-Key>"]
+        payloadFields:
+          responders:
+            - username: "testuser@testcompany.de"
+              type: user
+          visibleTo:
+            - username: "testuser@testcompany.de"
+              type: user
+          tags:
+            - "deployed_an_image"
+        failIfAlertSendingFails:
+          True # (defaults to False, turning it to True will make Connaisseur deny your
+          # deployment (even in detection mode))
+      - template: slack #REQUIRED!
+        receiverUrl: https://hooks.slack.com/services/<Your-Slack-Hook-Path>
+        priority: 1
+  rejectRequest:
+    receivers:
+      - template: keybase #REQUIRED!
+        receiverUrl: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
+        failIfAlertSendingFails: True

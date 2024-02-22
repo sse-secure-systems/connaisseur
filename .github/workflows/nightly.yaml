@@ -11,17 +11,10 @@ defaults:
     shell: bash
 
 jobs:
-  build:
-    uses: ./.github/workflows/.reusable-build.yml
+  ci:
+    uses: ./.github/workflows/.reusable-ci.yml
     permissions:
       packages: write
-    secrets: inherit
-    with:
-      build: false
-
-  compliance:
-    uses: ./.github/workflows/.reusable-compliance.yml
-    permissions:
       contents: write
       id-token: write
       security-events: write
@@ -30,43 +23,20 @@ jobs:
       deployments: read
       issues: read
       discussions: read
-      packages: read
       pages: read
       pull-requests: read
       repository-projects: read
       statuses: read
     secrets: inherit
-
-  sca-released:
-    name: sca (released)
-    uses: ./.github/workflows/.reusable-sca.yml
-    needs: [build]
-    permissions:
-      contents: write
-      security-events: write
-      packages: read
-    secrets: inherit
     with:
-      image: ${{ needs.build.outputs.original_image }}
-      output: "table"
-
-  get-root:
-    name: Build and test get-root
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: sh
-    container:
-      image: docker:stable
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Build and test get-root utility
-        run: |
-          docker build -t get-root-key -f docker/Dockerfile.getRoot .
-          docker run --rm get-root-key -i securesystemsengineering/testimage > output
-          cat output | grep "KeyID: 76d211ff8d2317d78ee597dbc43888599d691dbfd073b8226512f0e9848f2508"
-          cat output | grep "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe"
+      skip_build: "none"
+      skip_compliance_checks: "none"
+      skip_unit_tests: "all"
+      skip_sast: "all"
+      skip_sca: "none"
+      skip_docs: "all"
+      skip_integration_tests: "all"
+      output_type: "table"
 
   cleanup-registry:
     uses: ./.github/workflows/.reusable-cleanup-registry.yml

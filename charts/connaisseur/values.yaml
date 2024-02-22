@@ -1,0 +1,188 @@
+kubernetes:
+  # changes to connaisseur deployment file
+  deployment:
+    image:
+      repository: docker.io/securesystemsengineering/connaisseur
+      # Running a different version than the version in the Chart.yaml may not work as the
+      # Connaisseur application version depends on the layout of the Helm deployment
+      # Thus, if unset, we default to the appVersion of the Chart.yaml
+      # tag: v1.2.3
+    pullPolicy: Always
+    replicasCount: 3
+    imagePullSecrets: []
+    nodeSelector: {}
+    tolerations: []
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 10001 # remove when using openshift or OKD 4
+      runAsGroup: 20001 # remove when using openshift or OKD 4
+      seccompProfile: # remove when using Kubernetes prior v1.19, openshift or OKD 4
+        type: RuntimeDefault # remove when using Kubernetes prior v1.19, openshift or OKD 4
+    podSecurityContext: {}
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/instance
+                    operator: In
+                    values:
+                      - connaisseur
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+    tls: {} # set to use custom tls certificates for webhook (key and cert fields)
+    envs: {} # set to use custom environment variables for connaisseur
+    podLabels: {} # additional labels to attach to the pods created
+  # -----------------------------------------------------
+
+  # changes to connaisseur service
+  service:
+    type: ClusterIP
+    port: 443
+  # -----------------------------------------------------
+
+  # changes to connaisseur service account
+  serviceaccount: {}
+  #   annotations:
+  #     eks.amazonaws.com/role-arn: arn:aws:iam::XXX:role/myrole
+
+  # -----------------------------------------------------
+
+  # changes to connaisseur admission controller
+  webhook:
+    failurePolicy: Fail
+    reinvocationPolicy: Never
+  # -----------------------------------------------------
+
+  # changes to redis key-value store
+  redis:
+    pullPolicy: Always
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 10001 # remove when using openshift or OKD 4
+      runAsGroup: 20001 # remove when using openshift or OKD 4
+      seccompProfile: # remove when using Kubernetes prior v1.19, openshift or OKD 4
+        type: RuntimeDefault # remove when using Kubernetes prior v1.19, openshift or OKD 4
+    podSecurityContext: {}
+    tls: {} # set to use custom tls certificates for redis
+# -----------------------------------------------------
+
+  # additional labels for connaisseur resources
+  # (except for pods – see kubernetes.deployment.podLabels for that)
+  additionalLabels: {}
+
+# -----------------------------------------------------
+
+# changes to connaisseur application logic
+application:
+  # validator options: https://sse-secure-systems.github.io/connaisseur/latest/validators/
+  validators:
+    - name: allow
+      type: static
+      approve: true
+    - name: deny
+      type: static
+      approve: false
+    - name: dockerhub
+      type: notaryv1
+      trustRoots:
+        - name: default # root from dockerhub
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            -----END PUBLIC KEY-----
+        - name: sse # root from sse
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
+
+  # policy options: https://sse-secure-systems.github.io/connaisseur/latest/basics/#configuration-options_2
+  # explanation of policy patterns: https://sse-secure-systems.github.io/connaisseur/latest/basics/#image-policy
+  policy:
+    - pattern: "*:*"
+      validator: deny
+    - pattern: "docker.io/library/*:*"
+      validator: dockerhub
+    - pattern: "docker.io/securesystemsengineering/*:*"
+      validator: dockerhub
+      with:
+        trustRoot: sse
+    - pattern: "registry.k8s.io/*:*"
+      validator: allow
+
+  # feature descriptions: https://sse-secure-systems.github.io/connaisseur/latest/features/
+  features:
+    # automatic approval of resources that are updated, without changing the image reference
+    automaticUnchangedApproval: false
+    # automatic approval of child resources (e.g. pod created from a deployment)
+    automaticChildApproval: true
+    # mode to never deny any resources, only warn should any errors occur during validation
+    detectionMode: false
+    # ignore or validate only in specific namespaces, according to namespace annotations
+    namespacedValidation:
+      mode: ignore # 'ignore' or 'validate'
+    # validate all resources or only pods (and warn on others)
+    resourceValidationMode: "all" # 'all' or 'podsOnly'
+
+  logLevel: info
+
+# alerting options: https://sse-secure-systems.github.io/connaisseur/latest/features/alerting/#configuration-options
+# alerting:
+#   clusterIdentifier: example-cluster-staging-europe # defaults to "not specified"
+#   admitRequest:
+#     receivers:
+#       # <template> needs to be chosen such that <template>.json matches one of the file names
+#       # in the ./alert_payload_templates directory
+#       - template: opsgenie #REQUIRED!
+#         receiverUrl: https://api.eu.opsgenie.com/v2/alerts #REQUIRED!
+#         priority: 4 #(defaults to 3)
+#         customHeaders: ["Authorization: GenieKey <Your-Genie-Key>"]
+#         payloadFields:
+#           responders:
+#             - username: "testuser@testcompany.de"
+#               type: user
+#           visibleTo:
+#             - username: "testuser@testcompany.de"
+#               type: user
+#           tags:
+#             - "deployed_an_image"
+#         failIfAlertSendingFails: True  # (defaults to False, turning it to True will make Connaisseur deny your
+#                                           # deployment (even in detection mode))
+#       - template: slack #REQUIRED!
+#         receiverUrl: https://hooks.slack.com/services/<Your-Slack-Hook-Path>
+#         priority: 1
+#   rejectRequest:
+#     receivers:
+#       - template: keybase  #REQUIRED!
+#         receiverUrl: https://bots.keybase.io/webhookbot/<Your-Keybase-Hook-Token>
+#         failIfAlertSendingFails: True

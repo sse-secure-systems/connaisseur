@@ -19,7 +19,7 @@ runs:
     - name: Adjust Configuration
       run: |
         if [[ $(echo "${{ inputs.k8s-version }}" | tail -c 3) -lt "19" ]]; then
-          yq e 'del(.kubernetes.deployment.securityContext.seccompProfile)' -i helm/values.yaml
-          yq e '.kubernetes.deployment.annotations."seccomp.security.alpha.kubernetes.io/pod" = "runtime/default"' -i helm/values.yaml
+          yq e 'del(.kubernetes.deployment.securityContext.seccompProfile)' -i charts/connaisseur/values.yaml
+          yq e '.kubernetes.deployment.annotations."seccomp.security.alpha.kubernetes.io/pod" = "runtime/default"' -i charts/connaisseur/values.yaml
         fi
       shell: bash

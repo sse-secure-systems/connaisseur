@@ -5,6 +5,8 @@ Besides Connaisseur's central functionality, several additional features are ava
 - [Alerting](./alerting.md): *send alerts based on verification result*
 - [Detection Mode](./detection_mode.md): *warn but do not block invalid images*
 - [Namespaced Validation](./namespaced_validation.md): *restrict validation to dedicated namespaces*
+- [Resource Validation Mode](./resource_validation_mode.md): *warn but do not block invalid images of particular resource types*
+- [Caching](./caching.md): *boost performance via caching of image digests*
 
 In combination, these features help to improve usability and might better support the DevOps workflow.
 Switching Connaisseur to _detection mode_ and alerting on non-compliant images can for example avoid service interruptions while still benefitting from improved supply-chain security.

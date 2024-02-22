@@ -16,7 +16,7 @@ That's why the decision was made to support more than one notary and multiple ke
 
 ### Choice 1
 
-The overall notary configuration setup in `helm/values.yaml`.
+The overall notary configuration setup in `charts/connaisseur/values.yaml`.
 
 #### Option 1 (Per Notary)
 

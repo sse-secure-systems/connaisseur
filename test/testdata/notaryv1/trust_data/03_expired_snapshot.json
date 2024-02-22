@@ -1,0 +1,30 @@
+{
+    "signed": {
+        "_type": "Snapshot",
+        "expires": "1990-10-27T08:00:05.282502691Z",
+        "meta": {
+            "root": {
+                "hashes": {
+                    "sha256": "dtJdZvRTh8zlrAiEiam/CsJ1VNqXiQmObI/bAIVmEvc=",
+                    "sha512": "l9bLlholwB/ha3RApA5fsuj/RQCN/kVxULWS+peja5Ucmq6/t6kVTYCP/3al5lzmziVtSQ8j6jnV8RJdzX59Ow=="
+                },
+                "length": 2420
+            },
+            "targets": {
+                "hashes": {
+                    "sha256": "4SKpDoCpLJj/c2jT6Q9MDyPkTfZCc35f7eaFeLhZGMk=",
+                    "sha512": "8GREydaej2rBl0BuOLGudidsHlOSTXKBDhuvv1A+PXcH3DxW3lQnEG50YCKCuynGNRO/fB8QvEz664SRi5K3yg=="
+                },
+                "length": 523
+            }
+        },
+        "version": 4
+    },
+    "signatures": [
+        {
+            "keyid": "56ec6c5e5d48b72a26289a3230e78ffc4805f7ef74debb8fe2ad567166f51bb8",
+            "method": "ecdsa",
+            "sig": "fLsho8NlQ92UxR3oapdLg8TVE4lYVRSQ+576kjIoz8qJKjZ7kdjIpGnTAUHWlOCHk1GACiQXWLoAIyPYwwZNDg=="
+        }
+    ]
+}

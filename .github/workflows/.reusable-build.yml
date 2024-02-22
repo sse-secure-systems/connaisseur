@@ -1,17 +1,15 @@
 name: build
 
+permissions: {} 
+
 on:
   workflow_call:
     inputs:
-      build:
-        description: "Run actual build job?"
-        type: boolean
-        required: false
-        default: true
+      skip:
+        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+        type: string
+        default: "none"
     outputs:
-      cosign_version: 
-        description: "Cosign version used for building Connaisseur image"
-        value: ${{ jobs.context.outputs.cosign_version }}
       cosign_public_key: 
         description: "Cosign public key used for signing Connaisseur image"
         value: ${{ jobs.build.outputs.cosign_public_key }}
@@ -49,19 +47,17 @@ on:
         description: "Repository- and workflow-specific build labels"
         value: ${{ jobs.context.outputs.build_labels }}
 
-permissions: {}
-
 jobs:
   context:
     runs-on: ubuntu-latest
+    if: inputs.skip != 'all'
     permissions: {}
     outputs:
-      cosign_version: ${{ steps.get_context.outputs.cosign_version }}
       chart_version: ${{ steps.get_context.outputs.chart_version }}
       original_registry: ${{ steps.get_context.outputs.original_registry }}
       original_repo: ${{ steps.get_context.outputs.original_repo }}
-      original_tag: ${{ steps.get_context.outputs.original_tag }}
       original_image: ${{ steps.get_context.outputs.original_image }}
+      original_tag: ${{ steps.get_context.outputs.original_tag }}
       build_registry: ${{ steps.get_context.outputs.build_registry }}
       build_repo: ${{ steps.get_context.outputs.build_repo }}
       build_tag: ${{ steps.get_context.outputs.build_tag }}
@@ -77,7 +73,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: inputs.build
+    if: |
+      inputs.skip != 'non-required' &&
+      inputs.skip != 'all'
     needs: [context]
     permissions:
       packages: write
@@ -97,6 +95,5 @@ jobs:
           image_labels: ${{ needs.context.outputs.build_labels }}
           repo_owner: ${{ github.repository_owner }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          cosign_version: ${{ needs.context.outputs.cosign_version }}
           cosign_private_key: ${{ secrets.COSIGN_PRIVATE_KEY }}
           cosign_password: ${{ secrets.COSIGN_PASSWORD }}

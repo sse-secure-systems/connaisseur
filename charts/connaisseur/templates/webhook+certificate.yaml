@@ -1,0 +1,90 @@
+{{- $svc := (include "connaisseur.serviceName" .) -}}
+{{- $tlsName := (include "connaisseur.TLSName" .) -}}
+{{- $input := dict "deployment" .Values.kubernetes.deployment "tlsName" $tlsName "svc" $svc "namespace" .Release.Namespace -}}
+{{ $tls := (include "connaisseur.tlsCertificate" $input) | fromYaml }}
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "connaisseur.TLSName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+type: Opaque
+data:
+  tls.crt: {{ $tls.cert }}
+  tls.key: {{ $tls.key }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "connaisseur.webhookName" . }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+webhooks:
+  - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
+    failurePolicy: Ignore
+    reinvocationPolicy: Never
+    clientConfig:
+      service:
+        name: {{ $svc }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate
+      caBundle: {{ $tls.cert }}
+    rules: []
+    sideEffects: None
+    admissionReviewVersions: ["v1"]
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "connaisseur.webhookName" . }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade, post-rollback
+webhooks:
+  - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
+    failurePolicy: {{ .Values.kubernetes.webhook.failurePolicy | default "Fail" }}
+    reinvocationPolicy: {{ .Values.kubernetes.webhook.reinvocationPolicy | default "Never" }}
+    clientConfig:
+      service:
+        name: {{ $svc }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate
+      caBundle: {{ $tls.cert }}
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods", "pods/ephemeralcontainers", "replicationcontrollers"]
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["batch"]
+        apiVersions: ["v1"]
+        resources: ["jobs", "cronjobs"]
+    sideEffects: None
+    timeoutSeconds: 30
+    admissionReviewVersions: ["v1"]
+    {{- with .Values.application.features }}
+    {{- if .namespacedValidation }}
+    {{- $operator := "NotIn" }}
+    {{- $value := "ignore" }}
+    {{- if and .namespacedValidation.mode (eq .namespacedValidation.mode "validate") }}
+    {{- $operator = "In" }}
+    {{- $value = "validate" }}
+    {{- end }}
+    namespaceSelector:
+      matchExpressions:
+      - key: {{ include "conaisseur.namespaceSelectorKey" . }}
+        operator: {{ $operator }}
+        values:
+          - {{ $value }}
+   {{- end }}
+   {{- end }}

@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "connaisseur.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+  annotations:
+    checksum/config: {{ include "connaisseur.getConfigChecksum" . }}
+spec:
+  replicas: {{ .Values.kubernetes.deployment.replicasCount }}
+  selector:
+    matchLabels:
+      {{- include "connaisseur.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "connaisseur.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include "connaisseur.getConfigChecksum" . }}
+    spec:
+      serviceAccountName: {{ include "connaisseur.serviceAccountName" . }}
+      {{- with .Values.kubernetes.deployment.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ include "connaisseur.image" . }}
+          imagePullPolicy: {{ .Values.kubernetes.deployment.pullPolicy }}
+          ports:
+            - name: https
+              containerPort: 5000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: https
+              scheme: HTTPS
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: https
+              scheme: HTTPS
+          startupProbe:
+            httpGet:
+              path: /start
+              port: https
+              scheme: HTTPS
+            periodSeconds: 5
+            failureThreshold: 30
+          securityContext: 
+            {{- toYaml .Values.kubernetes.deployment.securityContext | nindent 12 }}
+          resources: 
+            {{- toYaml .Values.kubernetes.deployment.resources | nindent 12 }}
+          volumeMounts:
+            - name: certs
+              mountPath: /app/certs
+              readOnly: true
+            - name: app-config
+              mountPath: /app/config
+              readOnly: true
+            - name: redis-certs
+              mountPath: /app/redis-certs/tls.crt
+              readOnly: true
+              subPath: tls.crt
+            {{- include "connaisseur.alertMounts" . | nindent 12 }}
+            {{- include "connaisseur.validatorSecretMounts" . | nindent 12 }}
+          envFrom:
+          - configMapRef:
+              name: {{ include "connaisseur.envName" . }}
+          - secretRef:
+              name: {{ include "connaisseur.redisSecret" . }}
+          env:
+          - name: REDIS_HOST
+            value: {{ include "connaisseur.redisService" . }}
+          {{ if .Values.kubernetes.deployment.envs -}}
+          - secretRef:
+              name: {{ include "connaisseur.envSecretName" . }}
+          {{- end }}
+      volumes:
+        - name: certs
+          secret:
+            secretName: {{ include "connaisseur.TLSName" . }}
+        - name: redis-certs
+          secret:
+            secretName: {{ include "connaisseur.redisTLS" . }}
+        - name: app-config
+          configMap:
+            name: {{ include "connaisseur.appConfigName" . -}}
+        {{- include "connaisseur.alertVolumes" . | nindent 8 }}
+        {{- include "connaisseur.validatorSecretVolumes" . | nindent 8 }}
+      affinity:
+        {{- toYaml .Values.kubernetes.deployment.affinity | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.kubernetes.deployment.tolerations | nindent 8 }}
+      nodeSelector:
+        {{- toYaml .Values.kubernetes.deployment.nodeSelector | nindent 8 }}
+      securityContext:
+        {{- toYaml .Values.kubernetes.deployment.podSecurityContext | nindent 8 }}

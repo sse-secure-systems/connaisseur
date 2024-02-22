@@ -1,6 +1,5 @@
 # Alerting
 
-
 Connaisseur can send notifications on admission decisions to basically every REST
 endpoint that accepts JSON payloads.
 
@@ -32,7 +31,7 @@ Currently, Connaisseur supports alerting on either admittance of images, denial 
 _Notes_:
 
 - The value for `template` needs to match an existing file of the pattern
-`helm/alert_payload_templates/<template>.json`; so if you want to use a predefined
+`charts/connaisseur/alert_payload_templates/<template>.json`; so if you want to use a predefined
 one it needs to be one of `slack`, `keybase`, `opsgenie`, `msteams` or `ecs-1-12-0`.
 - For Opsgenie you need to configure an additional
   `["Authorization: GenieKey <Your-Genie-Key>"]` header.
@@ -45,7 +44,7 @@ one it needs to be one of `slack`, `keybase`, `opsgenie`, `msteams` or `ecs-1-12
 For example, if you would like to receive notifications in Keybase whenever Connaisseur admits a request to your cluster, your alerting configuration would look similar to the following snippet:
 
 
-```yaml title="helm/values.yaml"
+```yaml title="charts/connaisseur/values.yaml"
 alerting:
   admitRequest:
     receivers:
@@ -81,7 +80,7 @@ specify them as described above in `customHeaders`.
     For example, below Connaisseur's default Opsgenie template is used to send alerts that will be assigned to different users depending on whether the alert is for a successful admission or not.
     The `payloadFields` entries will be transformed to their JSON equivalents overwrite the respective entries of the template.
 
-    ```yaml title="helm/values.yaml"
+    ```yaml title="charts/connaisseur/values.yaml"
     alerting:
       admitRequest:
         receivers:

@@ -1,0 +1,13 @@
+{
+    "auths": {
+        "registry.io": {
+            "auth": "dXNlcjpwYXNz"
+        },
+        "https://index.docker.io/v1/": {
+            "auth": "ZG9ja2VyOmRvY2tlcg=="
+        },
+        "https://registry.io/path": {
+            "auth": "dGVzdDp0ZXN0"
+        }
+    }
+}

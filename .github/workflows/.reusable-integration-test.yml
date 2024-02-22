@@ -1,5 +1,7 @@
 name: integration-test
 
+permissions: {}
+
 on:
   workflow_call:
     inputs:
@@ -15,14 +17,13 @@ on:
       build_tag:
         description: "Tag of build image used for testing"
         type: string
-      skip_integration_tests:
-        description: "Want to skip running certain integration tests 'none', 'non-required', 'all'?"
+      skip:
+        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
         type: string
+        default: "none"
       cosign_public_key:
         description: "Cosign public key used for signing the build image"
         type: string
-
-permissions: {}
 
 env:
   IMAGEPULLSECRET: dockerconfigjson-ghcr
@@ -31,7 +32,7 @@ jobs:
   integration-test:
     name: functional
     runs-on: ubuntu-latest
-    if: inputs.skip_integration_tests != 'all'
+    if: inputs.skip != 'all'
     permissions:
       packages: read
     env:
@@ -75,18 +76,18 @@ jobs:
         with:
           k8s-version: v1.25
       - name: Get alerting endpoint IP
-        id: get_alerting_endpoint_ip
+        id: get_ip
         uses: ./.github/actions/alerting-endpoint
       - name: Run test
         run: |
-          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+          bash test/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
         env:
-          ALERTING_ENDPOINT_IP: ${{ steps.get_alerting_endpoint_ip.outputs.ip }}
+          ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
       - name: Display Connaisseur configuration
         if: always()
         run: |
           echo "::group::values.yaml"
-          yq e '... comments=""' helm/values.yaml
+          yq e '... comments=""' charts/connaisseur/values.yaml
           echo "::endgroup::"
       - name: Display k8s state if integration test failed
         if: failure()
@@ -102,8 +103,8 @@ jobs:
     name: optional
     runs-on: ubuntu-latest
     if: |
-      inputs.skip_integration_tests != 'non-required' &&
-      inputs.skip_integration_tests != 'all'
+      inputs.skip != 'non-required' &&
+      inputs.skip != 'all'
     permissions:
       packages: read
     env:
@@ -141,18 +142,18 @@ jobs:
         with:
           k8s-version: v1.28
       - name: Get alerting endpoint IP
-        id: get_alerting_endpoint_ip
+        id: get_ip
         uses: ./.github/actions/alerting-endpoint
       - name: Run test
         run: |
-          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+          bash test/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
         env:
-          ALERTING_ENDPOINT_IP: ${{ steps.get_alerting_endpoint_ip.outputs.ip }}
+          ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
       - name: Display Connaisseur configuration
         if: always()
         run: |
           echo "::group::values.yaml"
-          yq e '... comments=""' helm/values.yaml
+          yq e '... comments=""' charts/connaisseur/values.yaml
           echo "::endgroup::"
       - name: Display k8s state if integration test failed
         if: failure()
@@ -164,13 +165,117 @@ jobs:
         run: |
           kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1
 
+  k8s-versions:
+    name: k8s versions
+    runs-on: ubuntu-latest
+    if: inputs.skip != 'all'
+    permissions:
+      packages: read
+    env:
+      IMAGE: ${{ inputs.build_image_repository }}
+      TAG: ${{ inputs.build_tag }}
+      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s-version: [
+            "v1.26",
+            "v1.27",
+            "v1.28",
+            "v1.29",
+          ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Login with registry
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ inputs.build_registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+      - name: Run pre-config and workload integration tests
+        run: |
+          bash test/integration/integration-test.sh "pre-and-workload"
+      - name: Display k8s state and logs if integration test failed
+        if: failure()
+        run: |
+          kubectl describe deployments.apps -n connaisseur -lapp.kubernetes.io/name=connaisseur
+          kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1
+      - name: Display Connaisseur configuration
+        if: always()
+        run: |
+          echo "::group::values.yaml"
+          yq e '... comments=""' charts/connaisseur/values.yaml
+          echo "::endgroup::"
+
+  optional-k8s-versions:
+    name: optional k8s versions
+    runs-on: ubuntu-latest
+    if: |
+      inputs.skip != 'non-required' &&
+      inputs.skip != 'all'
+    permissions:
+      packages: read
+    env:
+      IMAGE: ${{ inputs.build_image_repository }}
+      TAG: ${{ inputs.build_tag }}
+      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s-version: [
+            "v1.21",
+            "v1.22",
+            "v1.23",
+            "v1.24",
+            "v1.25",
+          ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Login with registry
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ inputs.build_registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install yq
+        run: |
+          sudo snap install yq
+      - uses: ./.github/actions/k8s-version-config
+        name: Setup k8s cluster
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+      - name: Run pre-config and workload integration tests
+        run: |
+          bash test/integration/integration-test.sh "pre-and-workload"
+      - name: Display k8s state and logs if integration test failed
+        if: failure()
+        run: |
+          kubectl describe deployments.apps -n connaisseur -lapp.kubernetes.io/name=connaisseur
+          kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur
+          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1
+      - name: Display Connaisseur configuration
+        if: always()
+        run: |
+          echo "::group::values.yaml"
+          yq e '... comments=""' charts/connaisseur/values.yaml
+          echo "::endgroup::"
+
   self-hosted-notary:
     name: self-hosted-notary
     runs-on: ubuntu-latest
     if: |
-      inputs.skip_integration_tests != 'self-hosted-notary' &&
-      inputs.skip_integration_tests != 'non-required' &&
-      inputs.skip_integration_tests != 'all'
+      inputs.skip != 'non-required' &&
+      inputs.skip != 'all'
     permissions:
       packages: read
     env:
@@ -198,13 +303,13 @@ jobs:
           sudo snap install yq
       - name: Setup notary signer instance
         run: |
-          docker run -d -p 7899:7899 -v ./tests/data/notary_service_container/signer:/etc/docker/notary-signer/ notary:signer -config=/etc/docker/notary-signer/config.json
+          docker run -d -p 7899:7899 -v ./test/integration/notary_service_container/signer:/etc/docker/notary-signer/ notary:signer -config=/etc/docker/notary-signer/config.json
       - name: Get notary signer instance IP
         id: get_notary_signer_ip
         uses: ./.github/actions/notary-signer-ip
       - name: Setup notary server instance
         run: |
-          docker run -d -p 4443:4443 --add-host notary.signer:${{ steps.get_notary_signer_ip.outputs.notary_signer_ip }} -v ./tests/data/notary_service_container/server:/etc/docker/notary-server notary:server -config=/etc/docker/notary-server/config.json -logf=json
+          docker run -d -p 4443:4443 --add-host notary.signer:${{ steps.get_notary_signer_ip.outputs.notary_signer_ip }} -v ./test/integration/notary_service_container/server:/etc/docker/notary-server notary:server -config=/etc/docker/notary-server/config.json -logf=json
       - name: Get container IPs
         id: get_notary_server_ip
         uses: ./.github/actions/notary-server-ip
@@ -219,14 +324,14 @@ jobs:
           k8s-version: v1.28
       - name: Run test
         run: |
-          bash tests/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+          bash test/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
         env:
           NOTARY_IP: ${{ steps.get_notary_server_ip.outputs.notary_ip }}
       - name: Display Connaisseur configuration
         if: always()
         run: |
           echo "::group::values.yaml"
-          yq e '... comments=""' helm/values.yaml
+          yq e '... comments=""' charts/connaisseur/values.yaml
           echo "::endgroup::"
       - name: Display k8s state if integration test failed
         if: failure()
@@ -236,55 +341,4 @@ jobs:
       - name: Display logs if integration test failed
         if: failure()
         run: |
-          kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1
-
-
-  k8s-versions:
-    name: k8s versions
-    runs-on: ubuntu-latest
-    if: inputs.skip_integration_tests != 'all'
-    permissions:
-      packages: read
-    env:
-      IMAGE: ${{ inputs.build_image_repository }}
-      TAG: ${{ inputs.build_tag }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
-    strategy:
-      fail-fast: false
-      matrix:
-        k8s-version: [
-            "v1.20",
-            "v1.21",
-            "v1.22",
-            "v1.23",
-            "v1.24",
-            "v1.25",
-            "v1.26",
-            "v1.27",
-            "v1.28",
-          ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Login with registry
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
-        with:
-          registry: ${{ inputs.build_registry }}
-          username: ${{ inputs.repo_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install yq
-        run: |
-          sudo snap install yq
-      - uses: ./.github/actions/k8s-version-config
-        name: Setup k8s cluster
-        with:
-          k8s-version: ${{ matrix.k8s-version }}
-      - name: Run pre-config and workload integration tests
-        run: |
-          bash tests/integration/integration-test.sh "pre-and-workload"
-      - name: Display k8s state and logs if integration test failed
-        if: failure()
-        run: |
-          kubectl describe deployments.apps -n connaisseur -lapp.kubernetes.io/name=connaisseur
-          kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur
           kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1

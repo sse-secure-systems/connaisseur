@@ -1,0 +1,51 @@
+{
+    "signed": {
+        "_type": "Snapshot",
+        "expires": "2999-10-27T08:00:05.282502691Z",
+        "meta": {
+            "root": {
+                "hashes": {
+                    "sha256": "tRJZKfIy+YjAjkONt/H8xlx2H1V7DWQhTnq2fBP07tA=",
+                    "sha512": "yV7J6q2nIA4zDNLj7eNlV/GPx+vcPi7gBBXvwPXiebB8cR/XYUyzF4U3GGpSpSnTUQRLUW+ZEYrtGZQNv+Ci6Q=="
+                },
+                "length": 2420
+            },
+            "targets": {
+                "hashes": {
+                    "sha256": "kpV02OTPtnyu2Oy/uPP5T+5C41l2IdVOa0p9N4nLUtI=",
+                    "sha512": "gVUobI6KYJ7oBZT2QkNTFd4vWY9oY4+4cqCCPfg0h3/xoRfPfMMD8NYLUQei0piesiKdwNjKV4LvJzxqkBEPOA=="
+                },
+                "length": 523
+            },
+            "targets/del1": {
+                "hashes": {
+                    "sha256": "prSJCXbU8Cw9OOqXmdOKUgRQtcoa4zIOBzMHe87qnWw=",
+                    "sha512": "4Qs37J851HA1hegL5CaatfTCBw0Vn2konZtEgM0RIXePOAO4hTQfRR4fPtnbI0a4uRJP2NeRj+dZinsEjJAQdA=="
+                },
+                "length": 434
+            },
+            "targets/del2": {
+                "hashes": {
+                    "sha256": "cg+pFr6W+KGQ2077wS7dxxQzhwmkgriMFxG8727gM1U=",
+                    "sha512": "HL0Hu5FiMd7apCWGujpz9bPpwYsSMSaX1nRwJzdm+BiCGNpHdjXlVauzaImdEAjvaNo8Bz5YUmtMvkI6yXsUkQ=="
+                },
+                "length": 432
+            },
+            "targets/releases": {
+                "hashes": {
+                    "sha256": "prSJCXbU8Cw9OOqXmdOKUgRQtcoa4zIOBzMHe87qnWw=",
+                    "sha512": "4Qs37J851HA1hegL5CaatfTCBw0Vn2konZtEgM0RIXePOAO4hTQfRR4fPtnbI0a4uRJP2NeRj+dZinsEjJAQdA=="
+                },
+                "length": 434
+            }
+        },
+        "version": 4
+    },
+    "signatures": [
+        {
+            "keyid": "56ec6c5e5d48b72a26289a3230e78ffc4805f7ef74debb8fe2ad567166f51bb8",
+            "method": "ecdsa",
+            "sig": "dHnWDvkvq6EWajYTA7JJeZkyBoVIDZAw22+H7x5YCj5v35LJ58fW0Fh3p1Rw22hRZzcqQ06HQhiGf1IsdDr6zw=="
+        }
+    ]
+}

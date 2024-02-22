@@ -1,0 +1,23 @@
+{
+    "signed": {
+        "_type": "Timestamp",
+        "expires": "2999-11-11T08:00:05.460814238Z",
+        "meta": {
+            "snapshot": {
+                "hashes": {
+                    "sha256": "elmjy/pfPCVO9rI3sUZ5By7xEEv4ZOnSXlP9wEL5QBQ=",
+                    "sha512": "5qDH0utZRKUb29/3FoaxT1gYLXvMtIgs3FWsaK0fYVGnF6OI8OdKKIVSeZDg/QYHjI+QeQLhdaEDCfu3MQ2nYg=="
+                },
+                "length": 1278
+            }
+        },
+        "version": 7
+    },
+    "signatures": [
+        {
+            "keyid": "7dc6224e24d6ce2b4260f138e4eff12645aa675b727722aebf86a3421530d886",
+            "method": "ecdsa",
+            "sig": "MufU/fVPTvdG62MzI9kIH2BL5IP8Z8LG4LKcwgFLFGa5aC0IOJmo4BcdI/+/l5S4YwRY3Ior+eTyzQM8SYutEQ=="
+        }
+    ]
+}

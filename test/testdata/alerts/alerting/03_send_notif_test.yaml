@@ -1,0 +1,11 @@
+clusterIdentifier: test
+admitRequest:
+  receivers:
+    - template: 12_send_notif_test
+      receiverUrl: https://some.url
+      failIfAlertSendingFails: True
+rejectRequest:
+  receivers:
+    - template: 12_send_notif_test
+      receiverUrl: https://some.url
+      failIfAlertSendingFails: True

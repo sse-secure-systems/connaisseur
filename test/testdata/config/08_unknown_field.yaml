@@ -1,0 +1,5 @@
+validators:
+- name: allow
+  type: static
+  approve: true
+  invalid: someValue

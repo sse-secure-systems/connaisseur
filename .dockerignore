@@ -1,13 +1,15 @@
-# ignore Markdown files
+# ignore docs
 *.md
+docs/
 # ignore tests
-connaisseur/tests/
-# ignore img
-img/
-# ignore coverage files
-connaisseur/coverage.xml
-connaisseur/coverage.txt
-# ignore pycache
-connaisseur/__pycache__/
-# ignore venv folder
-venv/
+tests/
+test/
+# ignore tools
+tools/
+# ignore charts
+charts/
+helm/
+# ignore misc
+LICENSE
+Makefile
+mkdocs.yml

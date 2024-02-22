@@ -1,0 +1,7 @@
+validators:
+  - name: allow
+    type: stati
+    approve: true
+  - name: deny
+    type: static
+    approve: false

@@ -1,0 +1,24 @@
+validators:
+  - name: allow
+    type: static
+    approve: true
+  - name: deny
+    type: static
+    approve: false
+policy:
+  - pattern: "*:*"
+    validator: allow
+  - pattern: "my.reg/deny-me"
+    validator: deny
+  - pattern: "perl"
+    validator: non-static-allow
+  - pattern: "registry.k8s.io/nginx-slim"
+    validator: non-static-deny
+alerting:
+  admitRequest:
+    receivers:
+      - template: 404_notfound
+        receiverUrl: https://some.url
+        failIfAlertSendingFails: true
+  rejectRequest:
+    receivers: []

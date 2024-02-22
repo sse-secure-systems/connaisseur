@@ -1,0 +1,13 @@
+clusterIdentifier: test
+admitRequest:
+  receivers:
+    - template: 13_priority
+      receiverUrl: https://some.url
+      failIfAlertSendingFails: True
+      priority: 69
+    - template: 13_priority
+      receiverUrl: https://some.url
+      failIfAlertSendingFails: True
+      priority: 1337
+rejectRequest:
+  receivers: []

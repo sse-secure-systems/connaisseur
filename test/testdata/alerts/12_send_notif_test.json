@@ -1,0 +1,4 @@
+{
+    "message": "{{ alert_message }}",
+    "cluster": "{{ cluster }}"
+}

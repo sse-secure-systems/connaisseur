@@ -1,0 +1,32 @@
+{
+    "signed": {
+        "_type": "Targets",
+        "delegations": {
+            "keys": {},
+            "roles": []
+        },
+        "expires": "2999-10-27T09:02:05.103488436+02:00",
+        "targets": {
+            "sign": {
+                "hashes": {
+                    "sha256": "oVR5e4MAFllW7h8W2Y86FCYwHBFo8EYsc86bwDNhyr8="
+                },
+                "length": 1994
+            },
+            "v1": {
+                "hashes": {
+                    "sha256": "eZwPqKpMn7/1qZrvG0tcOrucLzQTQ0UAWYL600iYk8c="
+                },
+                "length": 1994
+            }
+        },
+        "version": 4
+    },
+    "signatures": [
+        {
+            "keyid": "d0cef4ea6349fcfbb961a917342a8c218126ebc7eba7ca4351812200207f4f18",
+            "method": "ecdsa",
+            "sig": "rmo+t+Mwaimkh3zwnqFK2RHwAGIo7sAyiotNvJRuS3+hjwj4AcM79snj6oYpqc/GzkwerlluF/0j8AYvpBvwFw=="
+        }
+    ]
+}

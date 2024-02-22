@@ -1,0 +1,7 @@
+{
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1",
+    "request": {
+        "operation": "UPDATE"
+    }
+}
