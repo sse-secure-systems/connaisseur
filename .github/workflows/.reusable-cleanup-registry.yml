@@ -28,13 +28,13 @@ jobs:
           account-type: org
           org-name: sse-secure-systems
           token: ${{ secrets.GHCR_PAT }}
-      - name: Cleanup all connaisseur images
-        uses: snok/container-retention-policy@b56f4ff7539c1f94f01e5dc726671cd619aa8072 # v2.2.1
-        with:
-          image-names: connaisseur
-          skip-tags: master, develop, v*, sha256-*
-          cut-off: four days ago UTC+1
-          timestamp-to-use: updated_at
-          account-type: org
-          org-name: sse-secure-systems
-          token: ${{ secrets.GHCR_PAT }}
+      # - name: Cleanup all connaisseur images
+      #   uses: snok/container-retention-policy@b56f4ff7539c1f94f01e5dc726671cd619aa8072 # v2.2.1
+      #   with:
+      #     image-names: connaisseur
+      #     skip-tags: master, develop, v*, sha256-*
+      #     cut-off: four days ago UTC+1
+      #     timestamp-to-use: updated_at
+      #     account-type: org
+      #     org-name: sse-secure-systems
+      #     token: ${{ secrets.GHCR_PAT }}
