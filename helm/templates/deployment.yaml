@@ -20,6 +20,9 @@ spec:
         app.kubernetes.io/component: connaisseur-core
         app.kubernetes.io/name: {{ include "helm.name" . }}
         app.kubernetes.io/instance: {{ .Chart.Name }}
+        {{- with .Values.kubernetes.deployment.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       annotations:
         checksum/config: {{ include "getConfigChecksum" . }}
         {{- if .Values.kubernetes.deployment.annotations }}

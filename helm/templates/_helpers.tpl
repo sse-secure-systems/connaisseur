@@ -39,6 +39,9 @@ app.kubernetes.io/name: {{ include "helm.name" . }}
 helm.sh/chart: {{ include "helm.chart" . }}
 app.kubernetes.io/instance: {{ .Chart.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- if .Values.kubernetes.commonLabels }}
+{{ toYaml .Values.kubernetes.commonLabels }}
+{{- end }}
 {{- end -}}
 
 

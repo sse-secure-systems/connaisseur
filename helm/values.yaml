@@ -55,6 +55,8 @@ kubernetes:
     podSecurityPolicy:
       enabled: false
       name: ["connaisseur-psp"] # list of PSPs to use, "connaisseur-psp" is the project-provided default
+    # additional labels to attach to the pods created
+    podLabels: {}
     envs: {} # dict of additional environment variables, which will be stored as a secret and injected into the Connaisseur pods
     # Extra config
     extraContainers: []
@@ -75,6 +77,8 @@ kubernetes:
     #     -----BEGIN PRIVATE KEY-----
     #     ...
     #     -----END PRIVATE KEY-----
+  # additional labels to attach to the Kubernetes resources created
+  commonLabels: {}
 
   # configure Connaisseur service
   service:
