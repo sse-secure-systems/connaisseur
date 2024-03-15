@@ -16,11 +16,11 @@
         <link rel="prev" href="../metrics/">
       
       
-        <link rel="next" href="../../threat_model/">
+        <link rel="next" href="../resource_validation_mode/">
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
     
     
       
@@ -712,6 +712,48 @@ You're not viewing the docs of the latest version.
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resource_validation_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resource Validation Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1091,6 +1133,48 @@ You're not viewing the docs of the latest version.
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-8_go-transition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 8: Transition to Golang
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-9_multi-pod/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 9: Multi Pod Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1224,9 +1308,9 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
 # or
 kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhook=validate
 </code></pre></div>
-<p>Configure namespaced validation via the <code>namespacedValidation</code> in <code>helm/values.yaml</code> under <code>application.features</code>.</p>
+<p>Configure namespaced validation via the <code>namespacedValidation</code> in <code>charts/connaisseur/values.yaml</code> under <code>application.features</code>.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>namespacedValidation</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<p><code>namespacedValidation</code> in <code>charts/connaisseur/values.yaml</code> supports the following keys:</p>
 <table>
 <thead>
 <tr>
@@ -1247,7 +1331,7 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
 </table>
 <p>If the <code>namespacedValidation</code> key is not set, all namespaces are validated.</p>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
-<p>In <code>helm/values.yaml</code>:</p>
+<p>In <code>charts/connaisseur/values.yaml</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">features</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">namespacedValidation</span><span class="p">:</span>
@@ -1393,7 +1477,7 @@ kubectl namespaces &lt;namespace&gt; securesystemsengineering.connaisseur/webhoo
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

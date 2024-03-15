@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
     
     
       
@@ -736,6 +736,48 @@ You're not viewing the docs of the latest version.
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resource_validation_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resource Validation Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1115,6 +1157,48 @@ You're not viewing the docs of the latest version.
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-8_go-transition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 8: Transition to Golang
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/ADR-9_multi-pod/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 9: Multi Pod Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1260,9 +1344,9 @@ In detection mode, Connaisseur admits all images to the cluster, but issues a wa
 &gt;<span class="w"> </span>Warning:<span class="w"> </span>Unable<span class="w"> </span>to<span class="w"> </span>find<span class="w"> </span>signed<span class="w"> </span>digest<span class="w"> </span><span class="k">for</span><span class="w"> </span>image<span class="w"> </span>docker.io/securesystemsengineering/testimage:unsigned.<span class="w"> </span><span class="o">(</span>not<span class="w"> </span>denied<span class="w"> </span>due<span class="w"> </span>to<span class="w"> </span>DETECTION_MODE<span class="o">)</span>
 &gt;<span class="w"> </span>pod/unsigned<span class="w"> </span>created
 </code></pre></div>
-<p>To activate the detection mode, set the <code>detectionMode</code> flag to <code>true</code> in <code>helm/values.yaml</code>.</p>
+<p>To activate the detection mode, set the <code>detectionMode</code> flag to <code>true</code> in <code>charts/connaisseur/values.yaml</code>.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>detectionMode</code> in <code>helm/values.yaml</code> under <code>application.features</code> supports the following values:</p>
+<p><code>detectionMode</code> in <code>charts/connaisseur/values.yaml</code> under <code>application.features</code> supports the following values:</p>
 <table>
 <thead>
 <tr>
@@ -1283,15 +1367,15 @@ In detection mode, Connaisseur admits all images to the cluster, but issues a wa
 </table>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">features</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">detectionMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </details>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="failure-policy-vs-detection-mode">Failure policy vs. detection mode<a class="headerlink" href="#failure-policy-vs-detection-mode" title="Permanent link">⚓︎</a></h3>
-<p>The detection mode is not to be confused with the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> (<code>kubernetes.webhook.failurePolicy</code> in <code>helm/values.yaml</code>) for the mutating admission controller:
+<p>The detection mode is not to be confused with the <a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy">failure policy</a> (<code>kubernetes.webhook.failurePolicy</code> in <code>charts/connaisseur/values.yaml</code>) for the mutating admission controller:
 In detection mode, Conaisseur service admits all requests to the cluster independent of the validation result while the failure policy only takes effect when the service itself becomes unavailable.
 As such, both options are disjoint.
 While in default configuration, requests will be denied if either no valid image signature exists or the Connaisseur service is unavailable, setting <code>failurePolicy</code> to <code>Ignore</code> and <code>detectionMode</code> to <code>true</code> ensures that Connaisseur never blocks a request.</p>
@@ -1440,7 +1524,7 @@ While in default configuration, requests will be denied if either no valid image
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

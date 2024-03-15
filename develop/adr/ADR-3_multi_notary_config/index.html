@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
     
     
       
@@ -641,6 +641,48 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     Namespaced Validation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/resource_validation_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resource Validation Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching
   </span>
   
 
@@ -1274,6 +1316,48 @@ You're not viewing the docs of the latest version.
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ADR-8_go-transition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 8: Transition to Golang
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ADR-9_multi-pod/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 9: Multi Pod Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1580,7 +1664,7 @@ You're not viewing the docs of the latest version.
 <p>That's why the decision was made to support more than one notary and multiple keys per notary, which leads to the question how the new configuration should look like. This also has implications on the notary health check, which is important for Connaisseur's own readiness check.</p>
 <h2 id="considered-options">Considered options<a class="headerlink" href="#considered-options" title="Permanent link">⚓︎</a></h2>
 <h3 id="choice-1">Choice 1<a class="headerlink" href="#choice-1" title="Permanent link">⚓︎</a></h3>
-<p>The overall notary configuration setup in <code>helm/values.yaml</code>.</p>
+<p>The overall notary configuration setup in <code>charts/connaisseur/values.yaml</code>.</p>
 <h4 id="option-1-per-notary">Option 1 (Per Notary)<a class="headerlink" href="#option-1-per-notary" title="Permanent link">⚓︎</a></h4>
 <p>The <code>notary</code> field becomes a list and changes to <code>notaries</code>. Per to be used notary instance, there will be one entry in this list.</p>
 <p>The entry will have the following data fields (<strong>bold</strong> are mandatory):</p>
@@ -1788,7 +1872,7 @@ You're not viewing the docs of the latest version.
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

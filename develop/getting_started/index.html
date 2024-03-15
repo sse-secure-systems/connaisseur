@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
     
     
       
@@ -744,6 +744,48 @@ You're not viewing the docs of the latest version.
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/resource_validation_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resource Validation Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1123,6 +1165,48 @@ You're not viewing the docs of the latest version.
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-8_go-transition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 8: Transition to Golang
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-9_multi-pod/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 9: Multi Pod Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1286,7 +1370,7 @@ You will learn how to:</p>
 <p>In the tutorial, you can choose to use either Notary (V1) via Docker Content Trust (DCT) or Cosign from the sigstore project as a signing solution referred to as DCT and Cosign from here on.
 Furthermore we will work with public images on <a href="https://hub.docker.com/">Docker Hub</a> as a container registry and a Kubernetes test cluster which might for example be <a href="https://microk8s.io/">MicroK8s</a> or <a href="https://minikube.sigs.k8s.io/docs/">minikube</a> for local setups.
 However, feel free to bring your own solutions for registry or cluster and check out our notes on <a href="../#compatibility">compatibility</a>.</p>
-<p>In general, Connaisseur can be fully configured via <code>helm/values.yaml</code>, so feel free to take a look and try for yourself.
+<p>In general, Connaisseur can be fully configured via <code>charts/connaisseur/values.yaml</code>, so feel free to take a look and try for yourself.
 For more advanced usage in more complex cases (e.g. authentication, multiple registries, signers, validators, additional features), we strongly advise to review the following pages:</p>
 <ul>
 <li><a href="../basics/">Basics</a>: <em>understanding, configuring and using Connaisseur (e.g. image policy and validators)</em></li>
@@ -1301,6 +1385,7 @@ For more advanced usage in more complex cases (e.g. authentication, multiple reg
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h2>
 <p>You should have a Kubernetes test cluster running.
 Furthermore, <code>docker</code>, <code>git</code>, <code>helm</code> and <code>kubectl</code> should be installed and usable, i.e. having run <code>docker login</code> and switched to the appropriate <code>kubectl</code> context.</p>
+<p>If you want to <a href="../CONTRIBUTING/">contribute</a> to Connaisseur, then you will also need a Golang v1.21 installation.</p>
 <h2 id="create-signing-key-pairs">Create signing key pairs<a class="headerlink" href="#create-signing-key-pairs" title="Permanent link">⚓︎</a></h2>
 <p>Before getting started with Connaisseur, we need to create our signing key pair.
 This obviously depends on the signing solution.
@@ -1350,7 +1435,7 @@ Let's first clone the repository:</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sse-secure-systems/connaisseur.git
 <span class="nb">cd</span><span class="w"> </span>connaisseur
 </code></pre></div>
-<p>Connaisseur is configured via <code>helm/values.yaml</code>, so we will start there.
+<p>Connaisseur is configured via <code>charts/connaisseur/values.yaml</code>, so we will start there.
 We need to set Connaisseur to use our previously created public key for validation.
 To do so, go to the <code>.application.validators</code> and find the <code>default</code> validator.
 We need to uncomment the trust root with name <code>default</code> and add our previously created public key.
@@ -1358,7 +1443,7 @@ The result should look similar to this:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Docker Content Trust</label><label for="__tabbed_2_2">Cosign</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
 <span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notary.docker.io</span><span class="w"> </span><span class="c1"># configure the notary server to be used</span>
@@ -1384,7 +1469,7 @@ The result should look similar to this:</p>
 </div>
 <div class="tabbed-block">
 <p><em>In addition for Cosign, the <code>type</code> needs to be set to <code>cosign</code> and the <code>host</code> is not required.</em></p>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="c1"># the `default` validator is used if no validator is specified in image policy</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span><span class="w">  </span><span class="c1"># or other supported validator (e.g. &quot;cosign&quot;)</span>
 <span class="w">  </span><span class="nt">trustRoots</span><span class="p">:</span>
@@ -1411,7 +1496,7 @@ The result should look similar to this:</p>
 </div>
 <p>We have now configured the validator <code>default</code> with trust root <code>default</code>.
 This will automatically be used if no validator and trust root is specified in the image policy (<code>.application.policy</code>).
-Per default, Connaisseur's image policy under <code>.application.policy</code> in <code>helm/values.yaml</code> comes with a pattern <code>"*:*"</code> that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
+Per default, Connaisseur's image policy under <code>.application.policy</code> in <code>charts/connaisseur/values.yaml</code> comes with a pattern <code>"*:*"</code> that does not specify a validator or trust root and thus all images that do not meet any of the more specific pre-configured patterns will be verified using this validator.
 Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the <a href="../basics/">basics</a> to leverage the full potential of Connaisseur.</p>
 <h2 id="deploy-connaisseur">Deploy Connaisseur<a class="headerlink" href="#deploy-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>So let's deploy Connaisseur to the cluster:</p>
@@ -1631,7 +1716,7 @@ The trust data will then be pushed to the Docker Hub Notary server.</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>

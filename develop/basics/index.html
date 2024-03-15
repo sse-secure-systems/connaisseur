@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
     
     
       
@@ -971,6 +971,48 @@ You're not viewing the docs of the latest version.
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/resource_validation_mode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resource Validation Mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1341,6 +1383,48 @@ You're not viewing the docs of the latest version.
   
   <span class="md-ellipsis">
     ADR 7: WSGI Server
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-8_go-transition/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 8: Transition to Golang
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/ADR-9_multi-pod/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR 9: Multi Pod Architecture
   </span>
   
 
@@ -1764,7 +1848,7 @@ However, other ways to implement such trust pinning exist and as a consequence w
 </div>
 </div>
 <h3 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">⚓︎</a></h3>
-<p>The configuration of Connaisseur is completely done in the <code>helm/values.yaml</code>.
+<p>The configuration of Connaisseur is completely done in the <code>charts/connaisseur/values.yaml</code>.
 The upper <code>kubernetes</code> section offers some general Kubernetes typical configurations like image version or resources.
 Noteworthy configurations are:</p>
 <ul>
@@ -1856,7 +1940,7 @@ kubectl<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> <
 <div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Git repo</label><label for="__tabbed_3_2">Helm chart</label><label for="__tabbed_3_3">Kubernetes manifests</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>Adjust configuration in <code>helm/values.yaml</code> as required and upgrade via:</p>
+<p>Adjust configuration in <code>charts/connaisseur/values.yaml</code> as required and upgrade via:</p>
 <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>-n<span class="w"> </span>connaisseur<span class="w"> </span>--wait
 </code></pre></div>
 </div>
@@ -1917,9 +2001,9 @@ In case of major releases, the configuration structure might change which can ca
 <li><code>make docker</code> -- Builds the <em>connaisseur</em> container image.</li>
 </ul>
 <h2 id="detailed-configuration">Detailed configuration<a class="headerlink" href="#detailed-configuration" title="Permanent link">⚓︎</a></h2>
-<p>All configuration is done in the <code>helm/values.yaml</code>.
+<p>All configuration is done in the <code>charts/connaisseur/values.yaml</code>.
 The configuration of features is only described in the <a href="../features/">corresponding section</a>.
-Any configuration of the actual application is done below the <code>application</code> key, so when below we write <code>validators</code>, this actually corresponds to the <code>application.validators</code> key in the <code>helm/values.yaml</code>.</p>
+Any configuration of the actual application is done below the <code>application</code> key, so when below we write <code>validators</code>, this actually corresponds to the <code>application.validators</code> key in the <code>charts/connaisseur/values.yaml</code>.</p>
 <h3 id="validators">Validators<a class="headerlink" href="#validators" title="Permanent link">⚓︎</a></h3>
 <p>The validators are configured in the <code>validators</code> field, which defines a list of validator objects.</p>
 <p>A validator defines what kind of signatures are to be expected, how signatures are to be validated, against which trust root and how to access the signature data.
@@ -1937,7 +2021,7 @@ The pre-configured validators can be removed.
 However to avoid Connaisseur failing its own validation in case you remove the <code>securesystemsengineering_official</code> key, make sure to also exclude Connaisseur from validation either via the static <code>allow</code> validator or <a href="../features/namespaced_validation/">namespaced validation</a>.
 The special case of static validators used to simply allow or deny images without verification is described below.</p>
 <h4 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h4>
-<p><code>.validators[*]</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<p><code>.validators[*]</code> in <code>charts/connaisseur/values.yaml</code> supports the following keys:</p>
 <table>
 <thead>
 <tr>
@@ -1989,8 +2073,8 @@ The special case of static validators used to simply allow or deny images withou
 <p><em>Further configuration fields specific to the validator type are described in the <a href="../validators/">respective section</a>.</em></p>
 <h4 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h4>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notaryv1</span>
@@ -2053,8 +2137,8 @@ This for example allows to implement an <em>allowlist</em> or <em>denylist</em>.
 </table>
 <h5 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">⚓︎</a></h5>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2085,11 +2169,11 @@ This <em>deny per default</em> behavior can be changed via a <em>catch-all</em> 
 The reference to validator and exact trust root is resolved in the following way:</p>
 <ol>
 <li>The validator with name (<code>validators[*].name</code>) equal to the <code>validator</code> value in the selected rule is chosen. If no validator is specified, the validator with name <code>default</code> is used if it exists.</li>
-<li>Of that validator, the trust root (e.g. public key) is chosen which name (<code>.validators.trustRoots[*].name</code>) matches the policies trust root string (<code>with.trustRoot</code>). If no trust root is specified, the trust root with name <code>default</code> is used if it exists.</li>
+<li>Of that validator, the trust root (e.g. public key) is chosen whose name (<code>.validators.trustRoots[*].name</code>) matches the policies trust root string (<code>with.trustRoot</code>). If no trust root is specified, the trust root with name <code>default</code> is used if it exists. Specifying <code>"*"</code> enables signature verification under any trust root in the validator.</li>
 </ol>
 <p>Let's review the pattern and validator matching at a minimal example.
 We consider the following validator and policy configuration (most fields have been omitted for clarity):</p>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w">     </span><span class="c1"># validator 1</span>
 <span class="w">    </span><span class="nt">trustRoots</span><span class="p">:</span>
@@ -2127,7 +2211,7 @@ There is two rules that should remain intact in some form in order to not brick 
 <li><code>docker.io/securesystemsengineering/*:*</code>: This rule is used to validate the Connaisseur images with the respective validator and removal can break the Connaisseur deployment. It is, however, possible to use the static <code>allow</code> validator.</li>
 </ul>
 <h4 id="configuration-options_2">Configuration options<a class="headerlink" href="#configuration-options_2" title="Permanent link">⚓︎</a></h4>
-<p><code>.policy[*]</code> in <code>helm/values.yaml</code> supports the following keys:</p>
+<p><code>.policy[*]</code> in <code>charts/connaisseur/values.yaml</code> supports the following keys:</p>
 <table>
 <thead>
 <tr>
@@ -2160,14 +2244,20 @@ There is two rules that should remain intact in some form in order to not brick 
 <td><code>with.trustRoot</code></td>
 <td><code>default</code></td>
 <td>-</td>
-<td>Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name <code>default</code> is used if it exists.</td>
+<td>Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name <code>default</code> is used if it exists. Setting this to <code>"*"</code> implements a logical <code>or</code> and enables signature verification under any trust root in the validator.</td>
+</tr>
+<tr>
+<td><code>with.mode</code></td>
+<td><code>mutate</code></td>
+<td>-</td>
+<td>Mode of operation which specifies whether or not image references should be mutated after successful image validation. If set to <code>mutate</code>, Connaisseur operates mutates image references to include digests. If set to <code>insecureValidateOnly</code>, Connaisseur will not mutate the digests. This leaves the risk of a malicious registry serving a different image under the signed tag.</td>
 </tr>
 </tbody>
 </table>
 <h4 id="example_2">Example<a class="headerlink" href="#example_2" title="Permanent link">⚓︎</a></h4>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">policy</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*:*&quot;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/*:*&quot;</span>
@@ -2178,6 +2268,8 @@ There is two rules that should remain intact in some form in order to not brick 
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/myrepo/allowedimage:v*&quot;</span>
 <span class="w">    </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="w">    </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">insecureValidateOnly</span>
 </code></pre></div>
 </details>
 <h3 id="common-examples">Common examples<a class="headerlink" href="#common-examples" title="Permanent link">⚓︎</a></h3>
@@ -2185,15 +2277,15 @@ There is two rules that should remain intact in some form in order to not brick 
 These can serve as a first template beyond the pre-configuration or might just be instructive to understand validators and policies.</p>
 <p>We assume your repository is <code>docker.io/myrepo</code> and a public key has been created.
 In case this repository is private, authentication would have to be added to the respective validator for example via:</p>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="w">    </span><span class="nt">auth</span><span class="p">:</span>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="w">    </span><span class="nt">auth</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8ssecret</span>
 </code></pre></div>
 <p>The Kubernetes secret would have to be created separately according to the validator documentation.</p>
 <h4 id="case-only-validate-own-images-and-deny-all-others">Case: Only validate own images and deny all others<a class="headerlink" href="#case-only-validate-own-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>This is likely the most common case in simple settings by which only self-built images are used and validated against your own public key:</p>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2232,8 +2324,8 @@ In case this repository is private, authentication would have to be added to the
 <h4 id="case-only-validate-own-images-and-deny-all-others-faster">Case: Only validate own images and deny all others (faster)<a class="headerlink" href="#case-only-validate-own-images-and-deny-all-others-faster" title="Permanent link">⚓︎</a></h4>
 <p>This configuration achieves the same as the one above, but is faster as trust data only needs to be requested for images in your repository:</p>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2279,8 +2371,8 @@ However, explicit is better than implicit.</p>
 <h4 id="case-only-validate-docker-hub-official-images-and-deny-all-others">Case: Only validate Docker Hub official images and deny all others<a class="headerlink" href="#case-only-validate-docker-hub-official-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>In case only validated Docker Hub official images should be admitted to the cluster:</p>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2323,8 +2415,8 @@ However, explicit is better than implicit.</p>
 <h4 id="case-only-validate-docker-hub-official-images-and-allow-all-others">Case: Only validate Docker Hub official images and allow all others<a class="headerlink" href="#case-only-validate-docker-hub-official-images-and-allow-all-others" title="Permanent link">⚓︎</a></h4>
 <p>In case only Docker Hub official images should be validated while all others are simply admitted:</p>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2367,8 +2459,8 @@ However, explicit is better than implicit.</p>
 <h4 id="case-directly-admit-own-images-and-deny-all-others">Case: Directly admit own images and deny all others<a class="headerlink" href="#case-directly-admit-own-images-and-deny-all-others" title="Permanent link">⚓︎</a></h4>
 <p>As a matter of fact, Connaisseur can also be used to restrict the allowed registries and repositories without signature validation:</p>
 <details class="abstract">
-<summary>helm/values.yaml</summary>
-<div class="highlight"><span class="filename">helm/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
+<summary>charts/connaisseur/values.yaml</summary>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">validators</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">static</span>
@@ -2539,7 +2631,7 @@ However, explicit is better than implicit.</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>
