@@ -29,6 +29,8 @@ updates:
     commit-message:
       prefix: "update"
     target-branch: "develop"
+    ignore:
+      - dependency-name: "codecov/codecov-action"
     groups:
       gh-actions-packages:
         patterns:
