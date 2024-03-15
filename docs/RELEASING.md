@@ -17,13 +17,13 @@ Before starting the release, make sure everything is ready and in order:
 
 - See that all tests are running smoothly.
 - Check that documentation changes show up correctly [here](https://sse-secure-systems.github.io/connaisseur/develop/).
-- Make sure the Connaisseur appVersion in `helm/Chart.yaml` is incremented correctly according to the changes and the (chart) version is increased according to semantic versioning if Helm templates have been touched.
+- Make sure the Connaisseur appVersion in `charts/connaisseur/Chart.yaml` is incremented correctly according to the changes and the (chart) version is increased according to semantic versioning if Helm templates have been touched.
 - See if the docs announcements should be adjusted [here](https://github.com/sse-secure-systems/connaisseur/blob/master/docs/overrides/main.html).
 - Consider making a [GitHub Discussions *announcement*](https://github.com/sse-secure-systems/connaisseur/discussions).
 
 ## Add new tag
 
-Before adding the new tag, make sure the Connaisseur version is updated in the `helm/Chart.yaml` and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version.
+Before adding the new tag, make sure the Connaisseur version is updated in the `charts/connaisseur/Chart.yaml` and applies the semantic versioning guidelines: fixes increment PATCH version, non-breaking features increment MINOR version, breaking features increment MAJOR version.
 Then add the tag (on `develop` branch) with `git tag v<new-connaisseur-version>` (e.g. `git tag v1.4.6`).
 
 ## Create changelog
