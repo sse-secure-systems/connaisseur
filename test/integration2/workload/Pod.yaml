@@ -1,0 +1,11 @@
+# https://kubernetes.io/docs/concepts/workloads/pods/
+apiVersion: $APIVERSION
+kind: Pod
+metadata:
+  name: pod-$TAG
+  labels:
+    use: connaisseur-integration-test
+spec:
+  containers:
+    - name: pod-container
+      image: docker.io/securesystemsengineering/testimage:$TAG

@@ -1,0 +1,16 @@
+kubernetes:
+  deployment:
+    replicasCount: 1
+application:
+  validators:
+  - name: allow
+    type: static
+    approve: true
+  - name: deny
+    type: static
+    approve: false
+  policy:
+  - pattern: "securesystemsengineering/connaisseur:*"
+    validator: allow
+  - pattern: "redis:*"
+    validator: allow

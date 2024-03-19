@@ -1,0 +1,40 @@
+application:
+  validators:
+    - name: dockerhub
+      type: notaryv1
+      host: notary.docker.io
+      trustRoots:
+        - name: docker
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            -----END PUBLIC KEY-----
+        - name: sse
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
+    - name: cosign
+      type: cosign
+      trustRoots:
+        - name: default
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvtc/qpHtx7iUUj+rRHR99a8mnGni
+            qiGkmUb9YpWWTS4YwlvwdmMDiGzcsHiDOYz6f88u2hCRF5GUCvyiZAKrsA==
+            -----END PUBLIC KEY-----
+  policy:
+    - pattern: "*:*"
+      validator: dockerhub
+      with:
+        trustRoot: docker
+    - pattern: "securesystemsengineering/testimage"
+      validator: dockerhub
+      with:
+        trustRoot: sse
+    - pattern: "securesystemsengineering/testimage:co-*"
+      validator: cosign
+      with:
+        verifyInTransparencyLog: false

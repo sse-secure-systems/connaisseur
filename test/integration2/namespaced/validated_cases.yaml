@@ -1,0 +1,12 @@
+- id: nsd-04
+  txt: Testing unsigned image in enabled namespace...
+  ref: securesystemsengineering/testimage:unsigned
+  namespace: validatedns
+  expected_msg: error during notaryv1 validation
+- id: nsd-05
+  txt: Testing signed image in enabled namespace...
+  ref: securesystemsengineering/testimage:signed
+  namespace: validatedns
+- id: nsd-06
+  txt: Testing unsigned image in unlabelled namespace...
+  ref: securesystemsengineering/testimage:unsigned

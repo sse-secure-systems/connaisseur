@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: i2u2-deployment
+  labels:
+    app: i2u2
+    use: connaisseur-integration-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: i2u2
+  template:
+    metadata:
+      labels:
+        app: i2u2
+    spec:
+      containers:
+        - name: counsigned
+          image: securesystemsengineering/testimage:co-unsigned
+          ports:
+            - containerPort: 80
+        - name: signed-testimg
+          image: securesystemsengineering/testimage:unsigned

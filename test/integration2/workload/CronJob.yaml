@@ -1,0 +1,17 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+apiVersion: $APIVERSION
+kind: CronJob
+metadata:
+  name: cronjob-$TAG
+  labels:
+    use: connaisseur-integration-test
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cronjob-container
+              image: docker.io/securesystemsengineering/testimage:$TAG
+          restartPolicy: OnFailure

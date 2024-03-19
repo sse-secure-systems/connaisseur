@@ -1,0 +1,17 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/
+apiVersion: $APIVERSION
+kind: ReplicationController
+metadata:
+  name: replicationcontroller-$TAG
+  labels:
+    use: connaisseur-integration-test
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: replicationcontroller-test
+    spec:
+      containers:
+        - name: replicationcontroller-container
+          image: docker.io/securesystemsengineering/testimage:$TAG

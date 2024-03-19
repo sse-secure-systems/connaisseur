@@ -40,3 +40,9 @@ kind-dev:
 
 lint:
 	golangci-lint run --skip-dirs="test"
+
+integration:
+	bash "test/integration2/main.sh" "regular"
+
+alerting:
+	cd test/integration2/alerting && docker build -t securesystemsengineering/alerting-endpoint . && cd -

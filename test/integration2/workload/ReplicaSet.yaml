@@ -1,0 +1,20 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+apiVersion: $APIVERSION
+kind: ReplicaSet
+metadata:
+  name: replicaset-$TAG
+  labels:
+    use: connaisseur-integration-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: replicaset-test
+  template:
+    metadata:
+      labels:
+        app: replicaset-test
+    spec:
+      containers:
+        - name: replicaset-container
+          image: docker.io/securesystemsengineering/testimage:$TAG

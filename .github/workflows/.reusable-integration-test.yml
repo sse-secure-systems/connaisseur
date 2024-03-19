@@ -45,14 +45,15 @@ jobs:
         integration-test-arg:
           [
             "regular",
+            "notaryv1",
             "cosign",
-            "multi-cosigned",
-            "rekor-cosigned",
-            "namespace-val",
+            "namespaced",
             "deployment",
             "pre-config",
+            "cert",
+            "redis-cert",
+            "alerting",
             "other-ns",
-            "configured-cert",
           ]
     services:
       alerting-endpoint:
@@ -80,7 +81,7 @@ jobs:
         uses: ./.github/actions/alerting-endpoint
       - name: Run test
         run: |
-          bash test/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+          bash test/integration2/main.sh "${{ matrix.integration-test-arg }}"
         env:
           ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
       - name: Display Connaisseur configuration
@@ -116,8 +117,8 @@ jobs:
       matrix:
         integration-test-arg:
           [
-            "complexity",
             "load",
+            "complexity",
             "upgrade",
           ]
     services:
@@ -146,7 +147,7 @@ jobs:
         uses: ./.github/actions/alerting-endpoint
       - name: Run test
         run: |
-          bash test/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+          bash test/integration2/main.sh "${{ matrix.integration-test-arg }}"
         env:
           ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
       - name: Display Connaisseur configuration
@@ -202,7 +203,7 @@ jobs:
           k8s-version: ${{ matrix.k8s-version }}
       - name: Run pre-config and workload integration tests
         run: |
-          bash test/integration/integration-test.sh "pre-and-workload"
+          bash test/integration2/main.sh "pre-config-and-workload"
       - name: Display k8s state and logs if integration test failed
         if: failure()
         run: |
@@ -256,7 +257,7 @@ jobs:
           k8s-version: ${{ matrix.k8s-version }}
       - name: Run pre-config and workload integration tests
         run: |
-          bash test/integration/integration-test.sh "pre-and-workload"
+          bash test/integration2/main.sh "pre-config-and-workload"
       - name: Display k8s state and logs if integration test failed
         if: failure()
         run: |

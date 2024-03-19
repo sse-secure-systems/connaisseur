@@ -1,0 +1,18 @@
+{
+    "message": "CONNAISSEUR admitted a request",
+    "alias": "CONNAISSEUR admitted a request to deploy the images ['securesystemsengineering/alice-image:test'].",
+    "description": "CONNAISSEUR admitted a request to deploy the following images:\n ['securesystemsengineering/alice-image:test'] \n\n Please check the logs of the `connaisseur-pod-123` for more details.",
+    "responders": [{"type": "user", "username": "testuser@testcompany.de"}],
+    "visibleTo": [{"type": "user", "username": "testuser@testcompany.de"}],
+    "actions": [],
+    "tags": ["image_deployed"],
+    "details": {
+        "pod": "connaisseur-pod-123",
+        "cluster": "minikube",
+        "namespace": "connaisseur",
+        "request_id": "3a3a7b38-5512-4a85-94bb-3562269e0a6a",
+        "alert_created": "now"
+    },
+    "entity": "Connaisseur",
+    "priority": "P4"
+}

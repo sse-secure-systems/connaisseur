@@ -1,0 +1,20 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: $APIVERSION
+kind: Deployment
+metadata:
+  name: deployment-$TAG
+  labels:
+    use: connaisseur-integration-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deployment-test
+  template:
+    metadata:
+      labels:
+        app: deployment-test
+    spec:
+      containers:
+        - name: deployment-container
+          image: docker.io/securesystemsengineering/testimage:$TAG

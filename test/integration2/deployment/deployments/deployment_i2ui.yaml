@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: i2-uinit-deployment
+  labels:
+    app: i2-uinit
+    use: connaisseur-integration-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: i2-uinit
+  template:
+    metadata:
+      labels:
+        app: i2-uinit
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80
+        - name: signed-testimg
+          image: securesystemsengineering/testimage:co-signed
+      initContainers:
+        - name: waiter
+          image: securesystemsengineering/testimage:unsigned
+          command: ['sh', '-c', 'sleep 10']

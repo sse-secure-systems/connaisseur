@@ -7,7 +7,7 @@ kubernetes:
       # Connaisseur application version depends on the layout of the Helm deployment
       # Thus, if unset, we default to the appVersion of the Chart.yaml
       # tag: v1.2.3
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     replicasCount: 3
     imagePullSecrets: []
     nodeSelector: {}

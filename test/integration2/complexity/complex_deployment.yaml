@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-with-many-instances
+  labels:
+    use: connaisseur-integration-test
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  replicas: 1000
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-many-containers
+  labels:
+    use: connaisseur-integration-test
+spec:
+  containers:
+    - name: container1
+      image: busybox
+      command: ['sh', '-c', 'sleep 3600']
+    - name: container2
+      image: redis
+    - name: container3
+      image: mongo
+    - name: container4
+      image: nginx
+    - name: container5
+      image: rabbitmq
+    - name: container6
+      image: elasticsearch
+    - name: container7
+      image: sonarqube
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-many-containers-and-init-containers
+  labels:
+    use: connaisseur-integration-test
+spec:
+  containers:
+    - name: container1
+      image: busybox
+      command: ['sh', '-c', 'sleep 3600']
+    - name: container2
+      image: redis
+    - name: container3
+      image: mongo
+    - name: container4
+      image: nginx
+    - name: container5
+      image: rabbitmq
+    - name: container6
+      image: elasticsearch
+    - name: container7
+      image: sonarqube
+  initContainers:
+    - name: init2
+      image: maven
+    - name: init3
+      image: vault
+    - name: init4
+      image: postgres
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-some-containers-and-init-containers
+  labels:
+    use: connaisseur-integration-test
+spec:
+  containers:
+    - name: container1
+      image: busybox
+      command: ['sh', '-c', 'sleep 3600']
+    - name: container2
+      image: redis
+    - name: container3
+      image: mongo
+    - name: container4
+      image: nginx
+  initContainers:
+    - name: container5
+      image: rabbitmq
+    - name: container6
+      image: elasticsearch
+    - name: container7
+      image: sonarqube
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-coinciding-containers-and-init-containers
+  labels:
+    use: connaisseur-integration-test
+spec:
+  containers:
+    - name: container1
+      image: busybox
+      command: ['sh', '-c', 'sleep 3600']
+    - name: container2
+      image: redis
+    - name: container3
+      image: mongo
+  initContainers:
+    - name: init1
+      image: busybox
+      command: ['sh', '-c', 'sleep 3600']
+    - name: init2
+      image: redis
+    - name: init3
+      image: mongo
