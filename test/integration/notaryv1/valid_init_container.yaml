@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: connaisseur-integration-test-pod-valid-init
+  namespace: default
+  labels:
+    app.kubernetes.io/instance: connaisseur
+    use: connaisseur-integration-test
+spec:
+  containers:
+    - name: valid-container
+      image: securesystemsengineering/testimage:signed
+      command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+  initContainers:
+    - name: valid-init-container
+      image: securesystemsengineering/testimage:signed
+      command: ['sh', '-c', 'sleep 5']

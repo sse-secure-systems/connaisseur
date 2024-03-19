@@ -1,0 +1,9 @@
+- id: admit
+  txt: Testing image that should cause an admit alert ...
+  ref: securesystemsengineering/testimage:co-signed
+  expected_result: ADMIT
+- id: reject
+  txt: Testing image that should cause a reject alert ...
+  ref: securesystemsengineering/testimage:co-unsigned
+  expected_msg: error during cosign validation
+  expected_result: REJECT

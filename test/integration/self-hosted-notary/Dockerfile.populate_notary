@@ -1,0 +1,14 @@
+FROM debian:bullseye@sha256:ab2b95aa8d7d6d54866b92c322cf0693933c1ae8038652f24ddfda1d1763a45a
+
+COPY notary-service-container/ test/integration/self-hosted-notary/notary-service-container/
+
+RUN apt update &&\
+    apt upgrade -y && \
+    apt install -y docker notary expect ca-certificates && \
+    cp ./test/integration/self-hosted-notary/notary-service-container/server/ca.crt /usr/local/share/ca-certificates/notary_root_ca.crt && \
+    update-ca-certificates
+
+ARG DIGEST
+ENV DIGEST=${DIGEST}
+
+CMD [ "bash", "-c", "./test/integration/self-hosted-notary/notary-service-container/notary_init.sh && ./test/integration/self-hosted-notary/notary-service-container/notary_addhash.sh ${DIGEST}" ]

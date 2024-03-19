@@ -1,7 +1,0 @@
-kubernetes:
-  deployment:
-    image:
-      repository: ${IMAGE}
-      tag: ${TAG}
-    imagePullSecrets:
-    - name: ${IMAGEPULLSECRET}

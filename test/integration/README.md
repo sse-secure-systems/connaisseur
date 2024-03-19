@@ -1,24 +1,30 @@
-# Local Integration Test Setup
+# Integration Testing Script
 
-Local integration testing should be easy if you're running a minikube cluster with the docker driver or a kind cluster. Just run
+This script is designed to facilitate integration testing for various components and features. It supports multiple test cases, each tailored to verify specific functionalities.
 
-`./test/integration/run_integration_tests.sh -h`
+## Usage
 
-from the root folder and start from there!
+To run a specific test case, use the following command:
 
-## Example
+```bash
+bash test/integration/main.sh <test_case>
+```
 
-If you have
+### Available Test Cases
 
-- a running kind cluster and want to run the regular and the cosign integration test and you want to preserve the logs in failure case to `../integration_test_logs` you need to run
-
-        ./test/integration/run_integration_tests.sh -c kind -r "regular cosign" -p ../integration_test_logs
-
-    specifying the `-c` (cluster), `-r` (run-only) and the `-p` (preserve-logs) flags
-
-- a running minikube cluster and you want to run everything including the self-hosted-notary test but not the load and the complexity test you need to run
-
-
-        ./test/integration/run_integration_tests.sh -s "load complexity" -e
-
-    specifying the `-s` (skip) and the `-e` (extended) flag. As the cluster defaults to minkube, it's not necessary to provide the `-c` flag.
+- `regular`: Test basic functionality of all validators.
+- `notaryv1`: Test the Notary v1 validator.
+- `cosign`: Test the Cosign validator.
+- `load`: Test system load.
+- `namespaced`: Test namespace validation feature.
+- `complexity`: Test complex deployments with multiple containers.
+- `deployment`: Test different deployments with containers and init containers.
+- `pre-config`: Test pre-configured values.yaml on deployments.
+- `pre-config-and-workload`: Test pre-configured values.yaml on deployments and all workloads.
+- `cert`: Test a custom TLS certificate for Connaisseur and upgradability to it.
+- `redis-cert`: Test a custom TLS certificate for Redis and upgradability to it.
+- `upgrade`: Test upgradability of Connaisseur.
+- `alerting`: Test alerting mechanisms.
+- `other-ns`: Test whether Connaisseur can be installed in non-default namespaces with limited permissions.
+- `self-hosted-notary`: Test whether Connaisseur works with a self-hosted notary server.
+- `all`: Runs all other test cases (except for `load`) in a loop.
