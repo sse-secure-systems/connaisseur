@@ -38,13 +38,12 @@ jobs:
           CHART_VERSION="${{ inputs.chart_version }}"
           helm package charts/connaisseur
           git checkout . # Remove changes to Chart for git checkout
-          mkdir -p tmp_charts
-          mv connaisseur*.tgz ./tmp_charts
           git checkout gh-pages
-          cd tmp_charts
+          mv connaisseur*.tgz ./charts
+          cd ./charts
           helm repo index . --url https://sse-secure-systems.github.io/connaisseur/charts
           cd ..
-          git add ./tmp_charts
+          git add ./charts
           git commit -m "Publish helm chart ${CHART_VERSION}"
           git push https://${{ secrets.GITHUB_TOKEN }}@github.com/sse-secure-systems/connaisseur.git
 

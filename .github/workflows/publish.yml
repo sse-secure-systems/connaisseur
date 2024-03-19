@@ -15,4 +15,4 @@ jobs:
     permissions:
       contents: write
     with:
-      chart_version: ${{ needs.build.outputs.chart_version }}
+      chart_version: ${{ inputs.chart_version }}
