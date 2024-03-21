@@ -6,9 +6,9 @@ toolchain go1.21.3
 
 require (
 	github.com/alicebob/miniredis/v2 v2.32.1
-	github.com/docker/cli v25.0.4+incompatible
+	github.com/docker/cli v26.0.0+incompatible
 	github.com/docker/distribution v2.8.3+incompatible
-	github.com/docker/docker v25.0.4+incompatible
+	github.com/docker/docker v26.0.0+incompatible
 	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c
 	github.com/docker/go-connections v0.5.0
 	github.com/go-playground/locales v0.14.1
@@ -32,9 +32,9 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/theupdateframework/notary v0.7.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.29.2
-	k8s.io/apimachinery v0.29.2
-	k8s.io/client-go v0.29.2
+	k8s.io/api v0.29.3
+	k8s.io/apimachinery v0.29.3
+	k8s.io/client-go v0.29.3
 )
 
 require (
