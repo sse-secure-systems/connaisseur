@@ -40,5 +40,5 @@ jobs:
 
   cleanup-registry:
     uses: ./.github/workflows/.reusable-cleanup-registry.yml
-    needs: [build]
+    needs: [ci]
     secrets: inherit
