@@ -28,7 +28,7 @@ func Skip(
 	previousImages []string,
 	parentImageFunc func(ctx context.Context) []string,
 ) (skip bool, skipReason, validatedDigest string, validationError error) {
-	if automaticUnchangedApproval(ctx, image, previousImages) {
+	if automaticUnchangedApproval(image, previousImages) {
 		return true, "unchanged image reference", image.Digest(), nil
 	}
 
@@ -46,11 +46,9 @@ func Skip(
 }
 
 // automaticUnchangedApproval checks if the AUTOMATIC_UNCHANGED_APPROVAL feature flag is turned on
-// and if the image is present in the list of old images stored in the context. If both conditions
-// are true, the function returns true, indicating that
-// the validation check should be skipped.
+// and if the image is present in the list of old images. If both conditions are true,
+// the function returns true, indicating that the validation check should be skipped.
 func automaticUnchangedApproval(
-	ctx context.Context,
 	img *image.Image,
 	previousImages []string,
 ) bool {

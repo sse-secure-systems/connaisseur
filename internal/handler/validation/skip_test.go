@@ -272,13 +272,12 @@ func TestAutomaticUnchangedApproval(t *testing.T) {
 	}
 
 	for idx, tc := range testCases {
-		ctx := context.Background()
 		image, err := image.New(tc.img)
 		if err != nil {
 			panic(fmt.Errorf("Image for test must be valid: %s", err))
 		}
 		t.Setenv(constants.AutomaticUnchangedApproval, strconv.FormatBool(tc.enabled))
-		result := automaticUnchangedApproval(ctx, image, tc.oldImages)
+		result := automaticUnchangedApproval(image, tc.oldImages)
 		assert.Equal(t, tc.expected, result, idx+1)
 	}
 }
