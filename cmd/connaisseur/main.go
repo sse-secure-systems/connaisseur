@@ -39,7 +39,7 @@ func startServer(config *config.Config, alerting *alerting.Config) {
 	mux.HandleFunc("/start", handler.HandleStart)
 	mux.HandleFunc("/metrics", promhttp.Handler().ServeHTTP)
 
-	cache := caching.NewRedis()
+	cache := caching.NewCacher()
 
 	var apiClient dynamic.Interface
 	if utils.FeatureFlagOn(constants.AutomaticChildApproval) {

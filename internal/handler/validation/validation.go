@@ -10,7 +10,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -247,7 +246,6 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 				utils.JsonEscapeString(img.Digest()),
 				utils.JsonEscapeString(cacheErr),
 			),
-			constants.CacheExpirySeconds*time.Second,
 		)
 		if err != nil {
 			logrus.Warnf("error caching digest: %v", err)

@@ -2,6 +2,7 @@ package testhelper
 
 import (
 	"connaisseur/internal/caching"
+	"connaisseur/internal/constants"
 	"context"
 	"fmt"
 	"testing"
@@ -51,9 +52,8 @@ func (c FailingCache) Set(
 	ctx context.Context,
 	key string,
 	value interface{},
-	expiration time.Duration,
 ) error {
-	return c.client.Set(ctx, key, value, expiration).Err()
+	return c.client.Set(ctx, key, value, constants.DefaultCacheExpirySeconds*time.Second).Err()
 }
 
 func (c FailingCache) Ping(ctx context.Context) error {

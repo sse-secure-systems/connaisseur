@@ -30,7 +30,7 @@ func TestRedis(t *testing.T) {
 	defer re.Close()
 
 	ctx := context.Background()
-	re.Set(ctx, "key", "value", 0)
+	re.Set(ctx, "key", "value")
 
 	val, _ := re.Get(ctx, "key")
 	assert.Equal(t, "value", val)

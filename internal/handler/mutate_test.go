@@ -14,7 +14,6 @@ import (
 	"strconv"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -565,7 +564,7 @@ func TestMutateReviewCached(t *testing.T) {
 
 	for idx, tc := range testCases {
 		// Prepare Redis
-		err := cache.Set(ctx, tc.cacheKey, tc.cacheValue, 30*time.Second)
+		err := cache.Set(ctx, tc.cacheKey, tc.cacheValue)
 		assert.Nil(t, err, "test case %d", idx+1)
 
 		ar := testhelper.RetrieveAdmissionReview(PRE + "admission_requests/" + tc.admissionFile + ".json")
