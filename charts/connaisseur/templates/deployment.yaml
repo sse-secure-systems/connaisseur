@@ -49,9 +49,9 @@ spec:
               scheme: HTTPS
             periodSeconds: 5
             failureThreshold: 30
-          securityContext: 
+          securityContext:
             {{- toYaml .Values.kubernetes.deployment.securityContext | nindent 12 }}
-          resources: 
+          resources:
             {{- toYaml .Values.kubernetes.deployment.resources | nindent 12 }}
           volumeMounts:
             - name: certs
@@ -60,20 +60,26 @@ spec:
             - name: app-config
               mountPath: /app/config
               readOnly: true
+            {{ if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
             - name: redis-certs
               mountPath: /app/redis-certs/tls.crt
               readOnly: true
               subPath: tls.crt
+            {{- end }}
             {{- include "connaisseur.alertMounts" . | nindent 12 }}
             {{- include "connaisseur.validatorSecretMounts" . | nindent 12 }}
           envFrom:
           - configMapRef:
               name: {{ include "connaisseur.envName" . }}
+          {{ if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
           - secretRef:
               name: {{ include "connaisseur.redisSecret" . }}
+          {{- end }}
           env:
+          {{ if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
           - name: REDIS_HOST
             value: {{ include "connaisseur.redisService" . }}
+          {{- end }}
           {{ if .Values.kubernetes.deployment.envs -}}
           - secretRef:
               name: {{ include "connaisseur.envSecretName" . }}
@@ -82,9 +88,11 @@ spec:
         - name: certs
           secret:
             secretName: {{ include "connaisseur.TLSName" . }}
+        {{ if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
         - name: redis-certs
           secret:
             secretName: {{ include "connaisseur.redisTLS" . }}
+        {{- end }}
         - name: app-config
           configMap:
             name: {{ include "connaisseur.appConfigName" . -}}

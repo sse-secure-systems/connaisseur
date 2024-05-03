@@ -153,6 +153,8 @@ application:
       mode: ignore # 'ignore' or 'validate'
     # validate all resources or only pods (and warn on others)
     resourceValidationMode: "all" # 'all' or 'podsOnly'
+    cache:
+      expirySeconds: 30
 
   logLevel: info
 

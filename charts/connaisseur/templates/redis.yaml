@@ -1,3 +1,4 @@
+{{- if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
 {{- $svc := (include "connaisseur.redisService" .) -}}
 {{- $tlsName := (include "connaisseur.redisTLS" .) -}}
 {{- $input := dict "deployment" .Values.kubernetes.redis "tlsName" $tlsName "svc" $svc "namespace" .Release.Namespace -}}
@@ -133,3 +134,4 @@ spec:
       name: http
   selector:
     {{- include "connaisseur.redisSelectorLabels" . | nindent 4 }}
+{{- end -}}
