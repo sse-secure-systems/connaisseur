@@ -1,4 +1,4 @@
-{{ if print .Values.application.features.automaticChildApproval | default "true" | lower | eq "true" }}
+{{ if dig "features" "automaticChildApproval" "true" .Values.application | toString | lower | eq "true" }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
