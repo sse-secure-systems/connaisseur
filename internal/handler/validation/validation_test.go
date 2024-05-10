@@ -422,6 +422,55 @@ func TestValidateImageCancelledContext(t *testing.T) {
 	assert.Equal(t, float64(1), metric)
 }
 
+func TestValidateImageCachingBevhaiour(t *testing.T) {
+	cfg, _ := config.Load(PRE, "10_mutate_test.yaml")
+	cache := testhelper.MockCache(t, []testhelper.KeyValuePair{})
+	defer cache.Close()
+
+	cfg.Validators = append(cfg.Validators, validator.Validator{
+		Name:              "mock",
+		Type:              "mock",
+		SpecificValidator: testhelper.MockValidator{},
+	})
+
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, constants.ConnaisseurConfig, cfg)
+	ctx = context.WithValue(ctx, constants.Cache, cache)
+
+	// Normally, errors will be cached
+	cachedOutputChannel := make(chan ValidationOutput, 1)
+	ValidateImage(
+		ctx,
+		ValidationInput{
+			IdxsTypes:        []kubernetes.IdxType{{Index: 0, Type: "containers"}},
+			Image:            "will-be-denied-1",
+			ParentImagesFunc: func(ctx context.Context) []string { return []string{} },
+		},
+		cachedOutputChannel,
+	)
+	<-cachedOutputChannel
+	cached, err := cache.Get(ctx, "will-be-denied-1")
+	assert.NotEmpty(t, cached)
+	assert.Nil(t, err)
+
+	// Set option to not cache errors
+	t.Setenv(constants.CacheErrorsKey, strconv.FormatBool(false))
+	nonCachedOutputChannel := make(chan ValidationOutput, 1)
+	ValidateImage(
+		ctx,
+		ValidationInput{
+			IdxsTypes:        []kubernetes.IdxType{{Index: 0, Type: "containers"}},
+			Image:            "will-be-denied-2",
+			ParentImagesFunc: func(ctx context.Context) []string { return []string{} },
+		},
+		nonCachedOutputChannel,
+	)
+	<-nonCachedOutputChannel
+	cached, err = cache.Get(ctx, "will-be-denied-2")
+	assert.Empty(t, cached)
+	assert.NotNil(t, err)
+}
+
 func metricValue(name, label1, label2, label3 string) (float64, error) {
 	var m = &dto.Metric{}
 	switch name {

@@ -23,7 +23,8 @@ const (
 	DefaultDockerRegistry      = "index.docker.io"
 	DefaultRedisPort           = 6379
 	DefaultCacheExpirySeconds  = 30
-	CacheExpirySeconds         = "CACHE_EXPIRY_SECONDS"
+	CacheExpirySecondsKey      = "CACHE_EXPIRY_SECONDS"
+	CacheErrorsKey             = "CACHE_ERRORS"
 	EmptyAuthRegistry          = "EMPTYAUTH"
 )
 

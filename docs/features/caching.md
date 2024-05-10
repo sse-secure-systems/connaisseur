@@ -13,6 +13,7 @@ If set to 0, no caching will be performed and the cache will not be deployed as 
 | Key | Default | Required | Description |
 | - | - | - | - |
 | `expirySeconds` | `30` | - | Number of seconds for which validation results are cached. If set to 0, the Connaisseur deployment will omit the caching infrastructure in its entirety. |
+| `cacheErrors` | `true` | - | Whether validation failures are cached. If set to false, Connaisseur will only cache successfully validated image digests instead of also caching errors. |
 
 ## Example
 
@@ -22,5 +23,6 @@ In `charts/connaisseur/values.yaml`:
 application:
   features:
     cache:
-      expirySeconds: 30
+      expirySeconds: 15
+      cacheErrors: false
 ```

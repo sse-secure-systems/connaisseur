@@ -235,7 +235,12 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 	// cache digest or error
 	if cacheErr != "" || img.Digest() != "" {
 		if cacheErr != "" {
-			img.SetDigest("") // delete digest for clearer caching entries
+			// don't cache errors, if so configured
+			if !caching.CacheErrors() {
+				return
+			}
+			// otherwise, delete digest for clearer caching entries
+			img.SetDigest("")
 		}
 
 		err = cache.Set(

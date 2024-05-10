@@ -155,6 +155,7 @@ application:
     resourceValidationMode: "all" # 'all' or 'podsOnly'
     cache:
       expirySeconds: 30
+      cacheErrors: true
 
   logLevel: info
 

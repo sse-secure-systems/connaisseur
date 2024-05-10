@@ -20,7 +20,7 @@ type Cacher interface {
 }
 
 func NewCacher() Cacher {
-	configuredExpirySeconds, ok := os.LookupEnv(constants.CacheExpirySeconds)
+	configuredExpirySeconds, ok := os.LookupEnv(constants.CacheExpirySecondsKey)
 
 	var expirySeconds int64
 	if !ok {
@@ -40,4 +40,17 @@ func NewCacher() Cacher {
 	}
 
 	return NewRedis(time.Duration(expirySeconds) * time.Second)
+}
+
+func CacheErrors() bool {
+	configuredCacheErrors, ok := os.LookupEnv(constants.CacheErrorsKey)
+	defaultCacheErrors := true
+	if !ok {
+		return defaultCacheErrors
+	}
+	parsedCacheErrors, err := strconv.ParseBool(configuredCacheErrors)
+	if err != nil {
+		logrus.Warnf("Couldn't parse error caching configuration '%s', defaulting to %t", configuredCacheErrors, defaultCacheErrors)
+	}
+	return parsedCacheErrors
 }
