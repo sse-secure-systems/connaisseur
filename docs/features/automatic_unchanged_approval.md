@@ -19,7 +19,7 @@ The creation of resources on the other hand remains unchanged and will enforce v
 
 ## Configuration options
 
-`automaticUnchangedApproval` in `helm/value.yaml` under `application.features` supports the following values:
+`automaticUnchangedApproval` in `charts/connaisseur/values.yaml` under `application.features` supports the following values:
 
 | Key | Default | Required | Description |
 | - | - | - | - |
