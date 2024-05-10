@@ -1313,6 +1313,12 @@ If set to 0, no caching will be performed and the cache will not be deployed as 
 <td>-</td>
 <td>Number of seconds for which validation results are cached. If set to 0, the Connaisseur deployment will omit the caching infrastructure in its entirety.</td>
 </tr>
+<tr>
+<td><code>cacheErrors</code></td>
+<td><code>true</code></td>
+<td>-</td>
+<td>Whether validation failures are cached. If set to false, Connaisseur will only cache successfully validated image digests instead of also caching errors.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
@@ -1320,7 +1326,8 @@ If set to 0, no caching will be performed and the cache will not be deployed as 
 <div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">features</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">cache</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">expirySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">      </span><span class="nt">expirySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
+<span class="w">      </span><span class="nt">cacheErrors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 
 
