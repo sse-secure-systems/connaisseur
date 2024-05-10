@@ -18,6 +18,9 @@ updates:
     commit-message:
       prefix: "update"
     target-branch: "develop"
+    ignore:
+      - dependency-name: "golang"
+        versions: ['> 1.21']
     groups:
       docker-packages:
         patterns:
