@@ -1,10 +1,9 @@
-FROM python:3
+FROM python:3-alpine
 
 COPY ./app ./app
 WORKDIR app
 
-RUN apt-get update -y
-RUN pip3 install flask~=1.1.2
+RUN pip3 install markupsafe==2.0.1 flask~=1.1.2
 
 EXPOSE 56243
 
