@@ -4,8 +4,15 @@ on:
   workflow_call:
     inputs:
       chart_version:
-        description: "Version of the connaisseur helm chart to publish"
+        description: "Version of the Connaisseur Helm chart to publish"
         type: string
+        required: true
+      application_version:
+        description: "Version of the Connaisseur application (same as Git release tag, without v prefix)"
+        type: string
+      latest_docs:
+        description: "Whether the docs corresponding to the application version are to be marked as latest docs"
+        type: boolean
 
 permissions:
   contents: write
@@ -51,3 +58,6 @@ jobs:
     uses: ./.github/workflows/.reusable-docs.yaml
     permissions:
       contents: write
+    with:
+      application_version: ${{ inputs.application_version }}
+      latest_docs: ${{ inputs.latest_docs }}

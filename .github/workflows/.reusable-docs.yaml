@@ -9,6 +9,12 @@ on:
         description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
         type: string
         default: "none"
+      application_version:
+        description: "Version of the Connaisseur application (same as Git release tag, without v prefix)"
+        type: string
+      latest_docs:
+        description: "Whether the docs corresponding to the application version are to be marked as latest docs"
+        type: boolean
 
 jobs:
   deploy:
@@ -35,9 +41,22 @@ jobs:
         run: |
           if [[ "${GITHUB_REF}" == "refs/tags/v"* ]];
           then
+            echo "Releasing latest docs ${RELEASE_VERSION}..."
             mike deploy --push --update-aliases ${RELEASE_VERSION} latest
           elif [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+            echo 'Releasing docs for develop...'
             mike deploy --push ${RELEASE_VERSION}
+          elif [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && -n "${{ inputs.application_version }}" && -n "${{ inputs.latest_docs }}" ]]; then
+            LATEST="${{ inputs.latest_docs }}"
+            DOCS_VERSION="v${{ inputs.application_version }}" # Add v prefix
+            if [[ "${LATEST}" == "true" ]]; then
+              echo "Manual release of docs for version ${DOCS_VERSION} as latest..."
+               mike deploy --push --update-aliases ${DOCS_VERSION} latest
+            else
+              echo "Manual release of docs for version ${DOCS_VERSION}..."
+              mike deploy --push ${DOCS_VERSION}
+            fi
           else
+            echo 'Building docs...'
             mkdocs build
           fi

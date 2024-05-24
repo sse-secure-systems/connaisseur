@@ -6,8 +6,17 @@ on:
   workflow_dispatch:
     inputs:
       chart_version:
-        description: "Version of the connaisseur helm chart to publish"
+        description: "Version of the Connaisseur Helm chart to publish"
         type: string
+        required: true
+      application_version:
+        description: "Version of the Connaisseur application (same as Git release tag, without v prefix)"
+        type: string
+        required: true
+      latest_docs:
+        description: "Whether the docs corresponding to the application version are to be marked as latest docs"
+        type: boolean
+        required: true
 
 jobs:
   publish:
@@ -16,3 +25,5 @@ jobs:
       contents: write
     with:
       chart_version: ${{ inputs.chart_version }}
+      application_version: ${{ inputs.application_version }}
+      latest_docs: ${{ inputs.latest_docs }}
