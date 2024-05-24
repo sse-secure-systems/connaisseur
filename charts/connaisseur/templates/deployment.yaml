@@ -42,13 +42,6 @@ spec:
               path: /ready
               port: https
               scheme: HTTPS
-          startupProbe:
-            httpGet:
-              path: /start
-              port: https
-              scheme: HTTPS
-            periodSeconds: 5
-            failureThreshold: 30
           securityContext:
             {{- toYaml .Values.kubernetes.deployment.securityContext | nindent 12 }}
           resources:

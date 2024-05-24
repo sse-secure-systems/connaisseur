@@ -36,7 +36,6 @@ func startServer(config *config.Config, alerting *alerting.Config) {
 	mux.HandleFunc("/health", handler.HandleHealth)
 	mux.HandleFunc("/ready", handler.HandleHealth)
 	mux.HandleFunc("/mutate", handler.HandleMutate)
-	mux.HandleFunc("/start", handler.HandleStart)
 	mux.HandleFunc("/metrics", promhttp.Handler().ServeHTTP)
 
 	cache := caching.NewCacher()

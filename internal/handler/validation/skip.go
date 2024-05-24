@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -106,6 +107,9 @@ func getCachedDigest(
 
 	val, err := cache.Get(ctx, img.OriginalString())
 	if err != nil {
+		if strings.Contains(err.Error(), "dial tcp") {
+			logrus.Warnf("error connecting to cache: %s", err)
+		}
 		return "", nil, fmt.Errorf("cache miss for image %s: %s", img.OriginalString(), err)
 	}
 
