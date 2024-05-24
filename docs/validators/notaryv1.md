@@ -185,7 +185,7 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 | `trustRoots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). Setting the name of trust root to "*" implements a logical `and` and enables multiple signature verification under any trust root in the validator.  |
 | `trustRoots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). TUF public root key. |
 | `auth` | - | - | Authentication credentials for the Notary server in case the trust data is not public. |
-| `auth.secretName` | - | - | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file `auth.yaml` containing:<br/>&nbsp; `username: <user>` <br/>&nbsp; `password: <password>` <br/>Run `kubectl create secret generic <kube-secret-name> --from-file auth.yaml -n connaisseur` to create the secret.|
+| `auth.secretName` | - | - | (Preferred over `username` + `password` combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file `secret.yaml` containing:<br/>&nbsp; `username: <user>` <br/>&nbsp; `password: <password>` <br/>Run `kubectl create secret generic <kube-secret-name> --from-file secret.yaml -n connaisseur` to create the secret.|
 | `auth.username` | - | - | Username to authenticate with[^2]. |
 | `auth.password` | - | - | Password or access token to authenticate with[^2]. |
 | `cert` | - | - | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
