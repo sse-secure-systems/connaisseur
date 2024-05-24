@@ -9,6 +9,7 @@ Releasing a new version of Connaisseur includes the following steps:
 - pushing a new version of the Connaisseur image to Docker Hub
 - merging in the PR & push tag
 - creating release page
+- check released artifacts
 - shoot some trouble
 
 ## Check readiness
@@ -67,9 +68,21 @@ Then click _Publish release_ and you're done!
 
 ![gh_release_flow](assets/gh_release.png)
 
+## Check released artifacts
+
+To ensure the release worked as intended, check the following artifacts are present:
+
+- [Git tag](https://github.com/sse-secure-systems/connaisseur/tags) is present
+- [Github release](https://github.com/sse-secure-systems/connaisseur/releases) is present
+- [Released docs](https://sse-secure-systems.github.io/connaisseur/latest/) point to the proper tag
+- [Released Helm chart](https://artifacthub.io/packages/helm/connaisseur/connaisseur/) exists (this can take quite some time to sync, so maybe don't wait for this)
+
 ## Shoot trouble
 
 Be aware that this **isn't** a completely fleshed out, highly available, hyper scalable and fully automated workflow, backed up by state-of-the-art blockchain technology and 24/7 incident response team coverage with global dominance!
 Not yet at least.
 For now things will probably break, so make sure that in the end everything looks to be in order and the new release can be seen on the GitHub page, tagged with _Latest release_ and pointing to the correct version of Connaisseur.
 Good Luck!
+
+For breaking changes, the upgrade integration test will fail (as intended), blocking the automatic release.
+In that case, you can manually trigger the [publish job](https://github.com/sse-secure-systems/connaisseur/actions/workflows/publish.yml) with the expected Connaisseur version.
