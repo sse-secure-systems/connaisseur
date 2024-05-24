@@ -3,7 +3,7 @@
 other_ns_test() {
     setup
     install "helm" ${NS} "" false
-    single_test "on" "Testing unsigned image..." "deploy" "securesystemsengineering/testimage:unsigned" "${NS}" "error during notaryv1 validation" "null"
+    single_test "other-ns-01-unsigned" "Testing unsigned image..." "deploy" "securesystemsengineering/testimage:unsigned" "${NS}" "error during notaryv1 validation" "null"
     kubectl config use-context ${DEFAULT_CTX}
     cleanup_other_ns
 }

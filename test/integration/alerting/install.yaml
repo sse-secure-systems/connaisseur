@@ -17,7 +17,7 @@ application:
         verifyInTransparencyLog: false
 
 alerting:
-  clusterIdentifier: "minikube"
+  clusterIdentifier: "integration-test-cluster"
   admitRequest:
     receivers:
       - template: opsgenie

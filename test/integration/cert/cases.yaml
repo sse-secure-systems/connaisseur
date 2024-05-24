@@ -1,7 +1,7 @@
-- id: x509-01
+- id: unsigned
   txt: Testing unsigned image...
   ref: securesystemsengineering/testimage:unsigned
   expected_msg: "error during notaryv1 validation"
-- id: x509-02
+- id: signed
   txt: Testing signed image...
   ref: securesystemsengineering/testimage:signed

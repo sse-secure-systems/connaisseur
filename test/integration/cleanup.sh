@@ -23,6 +23,9 @@ cleanup() {
     # restore the values.yaml file
     mv charts/connaisseur/values.yaml.bak charts/connaisseur/values.yaml >/dev/null
 
+    # stop the notary containers (described in ./selfhosted-notary/test.sh)
+    cleanup_self_hosted_notary
+
     success
 }
 
@@ -30,7 +33,7 @@ preserve_and_cleanup() {
     rv=$?
 
     # if we are running in CI, we want to exit with the return value
-    if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
+    if [[ "${CI-}" == "true" ]]; then
         exit $rv
     fi
 

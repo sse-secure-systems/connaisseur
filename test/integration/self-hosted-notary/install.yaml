@@ -1,0 +1,70 @@
+kubernetes:
+  deployment:
+    replicasCount: 1
+application:
+  validators:
+  - name: allow
+    type: static
+    approve: true
+  - name: deny
+    type: static
+    approve: false
+  - name: dockerhub-basics
+    type: notaryv1
+    host: notary.docker.io
+    trustRoots:
+    - name: docker-official
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+        QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+        -----END PUBLIC KEY-----
+    - name: securesystemsengineering-official
+      key: |
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+        d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+        -----END PUBLIC KEY-----
+  - name: self-hosted-notary
+    type: notaryv1
+    host: notary.server:4443
+    trustRoots:
+      - name: default
+        key: self_hosted_notary_root_key.pub
+    # CA cert signing the cert of the self-hosted notary
+    # (test/integration/notary_service_container/certs/root/ca.crt)
+    cert: |
+      -----BEGIN CERTIFICATE-----
+      MIIDEzCCAfugAwIBAgIUDDvwp5mG7ckbcvJ0jg9he/rSGzAwDQYJKoZIhvcNAQEL
+      BQAwGTEXMBUGA1UEAwwOTm90YXJ5IFJvb3QgQ0EwHhcNMjMxMTIyMjIwOTM5WhcN
+      MjQxMTIxMjIwOTM5WjAZMRcwFQYDVQQDDA5Ob3RhcnkgUm9vdCBDQTCCASIwDQYJ
+      KoZIhvcNAQEBBQADggEPADCCAQoCggEBAO6IjUiNqWDrwO1Yn/Yfc5hSUdH3ZZ1i
+      SzbsYL4ZL3ZN/rXv8rS3JBeNpbcRs85lYIjC8prCh9tJ6FjnMqUVI5pGz9XZPLNO
+      hQA4eW4Z5lHDd1oWCT1Y66zwUYSD59xUzGWCZ5OhZlKanu8OfdGDyoPJxKYmhZQz
+      Vnnh1chZC5eBBzObufWO47aMg4rX7ZLCER/HxLHfSnCVMVwOa3KBHDK3yWy+y86y
+      7/0bl5iW/bR8OZ/cjH4eEN9QdbAYBsavEsJ6wxBDgdweUH+7fQfORn5/IJtqwGha
+      FAyfeTwRI8/8tA4J1U08/p8oIopbzcGTg1LjPHQ8s8RTtknzg+jTrWkCAwEAAaNT
+      MFEwHQYDVR0OBBYEFKkx59QcInNCTOluvzHt3frciFqtMB8GA1UdIwQYMBaAFKkx
+      59QcInNCTOluvzHt3frciFqtMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQEL
+      BQADggEBAKyPiDT0PXTHzpC7sLq7s2pUe3ezqg51m4NTgynO3u+vYftTCMVDIV0P
+      H7ZJNyHHYvglaLjRnsWdjGs4tcqjIYCRL8Tnc/CVorI0QGGwDDlvWXNXleAxjV3t
+      t5hy7t5JpnNgF2GYNnSeuYG21rDDcP9EQZKv1a2KaKcgFRtzktlegRX0kGjDxbYe
+      0jo5j4oJZ944W79GqcQLeRpOU8PnbSaBtRPSeX1VhzpkR3pQy5FgBikQkvRP/dJw
+      H5Ck1P7fRzDnlv4cypSk6v9PWSQMrSYlyp1a40b9U1bIF2cQ+HVDwUg+56OPAey6
+      wBELObfROXagGdjRP+OQJUJgFHS3Uss=
+      -----END CERTIFICATE-----
+  policy:
+  - pattern: "*:*"
+    validator: dockerhub-basics
+    with:
+      trustRoot: "docker-official"
+  - pattern: "docker.io/securesystemsengineering/*:*"
+    validator: dockerhub-basics
+    with:
+      trustRoot: "securesystemsengineering-official"
+  - pattern: "registry.k8s.io/*:*"
+    validator: allow
+  - pattern: docker.io/securesystemsengineering/connaisseur:*
+    validator: allow
+  - pattern: "docker.io/securesystemsengineering/testimage:self-hosted-notary-signed"
+    validator: self-hosted-notary

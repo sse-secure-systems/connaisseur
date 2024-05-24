@@ -52,6 +52,22 @@ trap_add() { # $1: command, $@: trap names
 # inherit them unless the trace attribute is set
 declare -f -t trap_add
 
+search_for_minikube() {
+    if [[ "$(docker inspect minikube 2> /dev/null | jq -r .[].State.Status || echo 'container not found')" != "running" ]]; then
+        # maybe docker-env is set, so try again after unsetting it
+        eval $(minikube docker-env -u) || true
+        if [[ "$(docker inspect minikube 2> /dev/null | jq -r .[].State.Status || echo 'container not found')" != "running" ]]; then
+            return 1
+        else
+            # flag to reset docker-env after test
+            RESET_DOCKER_ENV="true"
+            return 0
+        fi
+    else
+        return 0
+    fi
+}
+
 ## INSTALLATIONS ---------------------------------------------- ##
 install() { # $1: helm or make, $2: namespace, $3: additional helm args $4: create ns flag
     ARGS=$(printf '%s --set kubernetes.additionalLabels.use=connaisseur-integration-test' "${3:-}")
@@ -239,6 +255,7 @@ multi_test() { # $1: file name relative to test/integration path
     for i in $(seq 0 $(($len - 1))); do
         test_case=$(echo ${test_cases} | jq ".[$i]")
         ID=$(echo ${test_case} | jq -r ".id" | null_to_empty)
+        ID=$(printf "%s-%02d-%s" "$(dirname $1)" "$((i+1))" "${ID:=unknown}")
         TEST_CASE_TXT=$(echo ${test_case} | jq -r ".txt" | null_to_empty)
         TYPE=$(echo ${test_case} | jq -r ".type" | null_to_empty)
         REF=$(echo ${test_case} | jq -r ".ref" | null_to_empty)

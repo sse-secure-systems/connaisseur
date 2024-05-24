@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 alerting_test() {
     setup_alerting
@@ -12,7 +13,7 @@ alerting_test() {
 
 setup_alerting() {
     # skip if running in CI
-    if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
+    if [[ "${CI-}" == "true" ]]; then
         return
     fi
 
@@ -36,22 +37,6 @@ setup_alerting() {
     docker network connect ${NETWORK} alerting-endpoint
     export ALERTING_ENDPOINT_IP=$(docker container inspect alerting-endpoint | jq -r --arg network ${NETWORK} '.[].NetworkSettings.Networks[$network].IPAddress')
     echo "Alerting interface spun up at ${ALERTING_ENDPOINT_IP}."
-}
-
-search_for_minikube() {
-    if [[ "$(docker inspect minikube 2> /dev/null | jq -r .[].State.Status || echo 'container not found')" != "running" ]]; then
-        # maybe docker-env is set, so try again after unsetting it
-        eval $(minikube docker-env -u) || true
-        if [[ "$(docker inspect minikube 2> /dev/null | jq -r .[].State.Status || echo 'container not found')" != "running" ]]; then
-            return 1
-        else
-            # flag to reset docker-env after test
-            RESET_DOCKER_ENV="true"
-            return 0
-        fi
-    else
-        return 0
-    fi
 }
 
 check_alerting_endpoint_calls() {
@@ -82,7 +67,7 @@ check_alerting_endpoint_calls() {
 
 cleanup_alerting() {
     # skip if running in CI
-    if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
+    if [[ "${CI-}" == "true" ]]; then
         return
     fi
 

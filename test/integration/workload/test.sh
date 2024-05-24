@@ -35,7 +35,7 @@ workload_test() { # WORKLOAD_KIND
         if [[ "${KIND}" == "StatefulSet" ]]; then
             sleep 30 # StatefulSet provisions a PVC, which needs more time. A lot more sometimes...
         fi
-        if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
+        if [[ "${CI-}" == "true" ]]; then
             SLEEP_TIME=5
         else
             SLEEP_TIME=20

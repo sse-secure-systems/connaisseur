@@ -21,8 +21,8 @@ bash test/integration/main.sh <test_case>
 - `deployment`: Test different deployments with containers and init containers.
 - `pre-config`: Test pre-configured values.yaml on deployments.
 - `pre-config-and-workload`: Test pre-configured values.yaml on deployments and all workloads.
-- `cert`: Test a custom TLS certificate for Connaisseur.
-- `redis-cert`: Test a custom TLS certificate for Redis.
+- `cert`: Test a custom TLS certificate for Connaisseur and upgradability to it.
+- `redis-cert`: Test a custom TLS certificate for Redis and upgradability to it.
 - `upgrade`: Test upgradability of Connaisseur.
 - `alerting`: Test alerting mechanisms.
-- `other-ns`: Test whether Connaisseur works in other namespaces.
+- `other-ns`: Test whether Connaisseur can be installed in non-default namespaces with limited permissions.

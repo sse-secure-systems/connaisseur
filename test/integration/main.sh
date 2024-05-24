@@ -14,7 +14,7 @@ source ${SCRIPT_PATH}/cleanup.sh
 cp charts/connaisseur/values.yaml charts/connaisseur/values.yaml.bak
 
 # cleanup on exit if not running in CI
-if [[ "${GITHUB_ACTIONS-}" != "true" ]]; then
+if [[ "${CI-}" != "true" ]]; then
     trap_add "preserve_and_cleanup" SIGINT SIGTERM EXIT
 fi
 
@@ -104,6 +104,11 @@ case ${1:-} in
     source ${SCRIPT_PATH}/other-ns/test.sh
     other_ns_test
 ;;
+"self-hosted-notary")
+    # testing self-hosted notary
+    source ${SCRIPT_PATH}/self-hosted-notary/test.sh
+    self_hosted_notary_test
+;;
 *)
     # help message
     echo "Usage:"
@@ -124,6 +129,7 @@ case ${1:-} in
     echo -e "\tupgrade"
     echo -e "\talerting"
     echo -e "\tother-ns"
+    echo -e "\tself-hosted-notary"
 
     exit 2
     ;;
@@ -136,6 +142,6 @@ else
     echo -e "${SUCCESS} Passed integration test."
 fi
 
-if [[ "${GITHUB_ACTIONS-}" == "true" ]]; then
+if [[ "${CI-}" == "true" ]]; then
     exit $((${EXIT}))
 fi

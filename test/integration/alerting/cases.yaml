@@ -1,8 +1,8 @@
-- id: alert-01
+- id: admit
   txt: Testing admit request ...
   ref: securesystemsengineering/testimage:co-signed
   expected_result: ADMIT
-- id: alert-02
+- id: reject
   txt: Testing reject request ...
   ref: securesystemsengineering/testimage:co-unsigned
   expected_msg: error during cosign validation
