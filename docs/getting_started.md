@@ -30,7 +30,7 @@ In case you need help, feel free to reach out via [GitHub Discussions](https://g
 You should have a Kubernetes test cluster running.
 Furthermore, `docker`, `git`, `helm` and `kubectl` should be installed and usable, i.e. having run `docker login` and switched to the appropriate `kubectl` context.
 
-If you want to [contribute](./CONTRIBUTING.md) to Connaisseur, then you will also need a Golang v1.21 installation.
+If you want to [contribute](./CONTRIBUTING.md) to Connaisseur, then you will also need a Golang v1.22 installation.
 
 ## Create signing key pairs
 
