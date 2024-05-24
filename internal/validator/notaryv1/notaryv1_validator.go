@@ -215,6 +215,9 @@ func (nv1v *NotaryV1Validator) trustRootKeys(keyRef string) ([]data.PublicKey, e
 
 	for _, tr := range trs {
 		pubDecode, rest := pem.Decode([]byte(tr.Key))
+		if pubDecode == nil {
+			return nil, fmt.Errorf("error decoding public key %s: wrong format, provide a PEM encoded public key", tr.Name)
+		}
 		pub, err := x509.ParsePKIXPublicKey(pubDecode.Bytes)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing public key %s: %s", tr.Name, err)

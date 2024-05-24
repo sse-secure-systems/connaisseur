@@ -277,6 +277,14 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"doesn't match given digest",
 		},
+		{ // 16: Root key in DER format
+			"15_DER_key_format",
+			"never-expire-image:sign",
+			"default",
+			[]string{},
+			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			"wrong format, provide a PEM encoded public key",
+		},
 	}
 
 	for idx, tc := range testCases {

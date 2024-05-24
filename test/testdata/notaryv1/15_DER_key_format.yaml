@@ -1,0 +1,8 @@
+name: default
+type: notaryv1
+host: notary.docker.io
+trustRoots:
+  - name: default
+    key: |
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEUaqgujac1VCdaGHKQMKoDn6/deWJ
+      8cCzsnDqGDgjPBayhJCQiI/qN+iBWEUPM7BkrCyDS878h+qd/MdZS22XwA==
