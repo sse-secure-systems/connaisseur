@@ -1670,7 +1670,7 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 <td><code>auth.secretName</code></td>
 <td>-</td>
 <td>-</td>
-<td>(Preferred over <code>username</code> + <code>password</code> combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file <code>auth.yaml</code> containing:<br/>&nbsp; <code>username: &lt;user&gt;</code> <br/>&nbsp; <code>password: &lt;password&gt;</code> <br/>Run <code>kubectl create secret generic &lt;kube-secret-name&gt; --from-file auth.yaml -n connaisseur</code> to create the secret.</td>
+<td>(Preferred over <code>username</code> + <code>password</code> combination.) Name of a Kubernetes secret that must exist in Connaisseur namespace beforehand. Create a file <code>secret.yaml</code> containing:<br/>&nbsp; <code>username: &lt;user&gt;</code> <br/>&nbsp; <code>password: &lt;password&gt;</code> <br/>Run <code>kubectl create secret generic &lt;kube-secret-name&gt; --from-file secret.yaml -n connaisseur</code> to create the secret.</td>
 </tr>
 <tr>
 <td><code>auth.username</code></td>
