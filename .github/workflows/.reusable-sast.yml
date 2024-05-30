@@ -34,7 +34,7 @@ jobs:
         shell: bash
       - name: Scan
         if: inputs.output == 'table'
-        uses: bridgecrewio/checkov-action@c2b3a20bd4fa3f05794555151c2e53ccd23c5077 # v12.2757.0
+        uses: bridgecrewio/checkov-action@cbef505ba3282486a24541d7c862e19266ad0d96 # v12.2762.0
         with:
           output_format: cli
           output_file_path: console
@@ -42,7 +42,7 @@ jobs:
           file: deployment/deployment.yaml
       - name: Scan
         if: inputs.output == 'sarif'
-        uses: bridgecrewio/checkov-action@c2b3a20bd4fa3f05794555151c2e53ccd23c5077 # v12.2757.0
+        uses: bridgecrewio/checkov-action@cbef505ba3282486a24541d7c862e19266ad0d96 # v12.2762.0
         with:
           output_file_path: console,checkov-results.sarif
           output_format: cli,sarif
