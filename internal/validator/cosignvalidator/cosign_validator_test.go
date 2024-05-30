@@ -4,11 +4,12 @@ import (
 	"connaisseur/internal/constants"
 	"connaisseur/internal/image"
 	"connaisseur/internal/policy"
+	"connaisseur/test/testhelper"
 	"context"
 	"crypto/ecdsa"
-	"fmt"
 	"io"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -306,86 +307,86 @@ func TestSetupOptionsInvalidRekor(t *testing.T) {
 }
 
 func TestValidateImage(t *testing.T) {
-	// falseVar := false
+	var falseVar bool = false
 	var testCases = []struct {
 		file   string
 		image  string
 		args   policy.RuleOptions
 		digest string
-		expErr string
-	}{ // The underneath tests currently don't run offline and should stay commented out until we manage to resolve that issue. Also add positive test for signature that is in transparencyLog.
-		// { // 1:
-		// 	"01_cosign",
-		// 	"securesystemsengineering/testimage:multi-cosigned-alice",
-		// 	policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
-		// 	"sha256:071bf7a986f1ca9cb2a1f0bc8392822a7777f90d58f2d2c6f271913e08de7c81",
-		// 	"",
-		// },
-		// { // 2:
-		// 	"01_cosign",
-		// 	"image",
-		// 	policy.RuleOptions{TrustRoot: "charlie"},
-		// 	"",
-		// 	"error getting verifiers",
-		// },
-		// { // 3:
-		// 	"01_cosign",
-		// 	"securesystemsengineering/testimage:co-unsigned",
-		// 	policy.RuleOptions{TrustRoot: "*"},
-		// 	"",
-		// 	"validation threshold not reached",
-		// },
-		// { // 4:
-		// 	"01_cosign",
-		// 	"securesystemsengineering/testimage:co-nonexistent",
-		// 	policy.RuleOptions{TrustRoot: "*"},
-		// 	"",
-		// 	"image securesystemsengineering/testimage:co-nonexistent does not exist",
-		// },
-		// {
-		// 	"01_cosign",
-		// 	"securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie",
-		// 	policy.RuleOptions{TrustRoot: "*", Threshold: 2, VerifyTLog: &falseVar},
-		// 	"sha256:bfec161fecb0a887df7cb85e4da327c65986ccda7060cf3cd92171c6c90d7533",
-		// 	"",
-		// },
-		// { // 5:
-		// 	"01_cosign",
-		// 	"securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie",
-		// 	policy.RuleOptions{TrustRoot: "*", Threshold: 3, VerifyTLog: &falseVar},
-		// 	"",
-		// 	"validation threshold not reached",
-		// },
-		// { // 6:
-		// 	"01_cosign",
-		// 	"securesystemsengineering/testimage:multi-cosigned-alice",
-		// 	policy.RuleOptions{
-		// 		TrustRoot:  "*",
-		// 		Required:   []string{"bob"},
-		// 		VerifyTLog: &falseVar,
-		// 	},
-		// 	"",
-		// 	"missing required signatures from [bob]",
-		// },
-		// { // 7:
-		// 	"01_cosign",
-		// 	"securesystemsengineering/testimage:multi-cosigned-alice",
-		// 	policy.RuleOptions{
-		// 		TrustRoot:  "*",
-		// 		Required:   []string{"bob", "alice"},
-		// 		VerifyTLog: &falseVar,
-		// 	},
-		// 	"",
-		// 	"missing required signatures from [bob]",
-		// },
-		// { // 8:
-		// 	"01_cosign",
-		// 	"securesystemsengineering/testimage:co-unsigned",
-		// 	policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
-		// 	"",
-		// 	"no signed digests",
-		// },
-		// { // 9: missing tlog entry
+		err    string
+	}{
+		{ // 1: working case
+			"01_cosign",
+			"securesystemsengineering/testimage:multi-cosigned-alice",
+			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
+			"sha256:071bf7a986f1ca9cb2a1f0bc8392822a7777f90d58f2d2c6f271913e08de7c81",
+			"",
+		},
+		{ // 2: unknown trustRoot
+			"01_cosign",
+			"image",
+			policy.RuleOptions{TrustRoot: "charlie"},
+			"",
+			"error getting verifiers",
+		},
+		{ // 3: unmet threshold
+			"01_cosign",
+			"securesystemsengineering/testimage:co-unsigned",
+			policy.RuleOptions{TrustRoot: "*", VerifyTLog: &falseVar},
+			"",
+			"validation threshold not reached",
+		},
+		{ // 4: non-existant image
+			"01_cosign",
+			"securesystemsengineering/testimage:co-nonexistent",
+			policy.RuleOptions{TrustRoot: "*", VerifyTLog: &falseVar},
+			"",
+			"securesystemsengineering/testimage:co-nonexistent does not exist",
+		},
+		{ // 5: working multi signature case
+			"01_cosign",
+			"securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie",
+			policy.RuleOptions{TrustRoot: "*", Threshold: 2, VerifyTLog: &falseVar},
+			"sha256:bfec161fecb0a887df7cb85e4da327c65986ccda7060cf3cd92171c6c90d7533",
+			"",
+		},
+		{ // 6: multi signature threshold not reached
+			"01_cosign",
+			"securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie",
+			policy.RuleOptions{TrustRoot: "*", Threshold: 3, VerifyTLog: &falseVar},
+			"",
+			"validation threshold not reached",
+		},
+		{ // 7: missing required signature
+			"01_cosign",
+			"securesystemsengineering/testimage:multi-cosigned-alice",
+			policy.RuleOptions{
+				TrustRoot:  "*",
+				Required:   []string{"bob"},
+				VerifyTLog: &falseVar,
+			},
+			"",
+			"missing required signatures from [bob]",
+		},
+		{ // 8: missing required signature
+			"01_cosign",
+			"securesystemsengineering/testimage:multi-cosigned-alice",
+			policy.RuleOptions{
+				TrustRoot:  "*",
+				Required:   []string{"bob", "alice"},
+				VerifyTLog: &falseVar,
+			},
+			"",
+			"missing required signatures from [bob]",
+		},
+		{ // 9: no signature present
+			"01_cosign",
+			"securesystemsengineering/testimage:co-unsigned",
+			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
+			"",
+			"no signed digests",
+		},
+		// { // 10: missing tlog entry
 		// 	"01_cosign",
 		// 	"securesystemsengineering/testimage:multi-cosigned-alice",
 		// 	policy.RuleOptions{TrustRoot: "alice"},
@@ -393,27 +394,28 @@ func TestValidateImage(t *testing.T) {
 		// 	"no signed digests",
 		// },
 	}
+
+	reg := testhelper.MockRegistry(PRE)
+	defer reg.Close()
+
 	for idx, tc := range testCases {
-		tc := tc // needed due to for loop reusing variable
-		t.Run(fmt.Sprintf("test case %d", idx+1), func(t *testing.T) {
-			t.Parallel()
+		var cv CosignValidator
+		ctx := context.Background()
+		cvBytes, _ := os.ReadFile(PRE + tc.file + ".yaml")
+		err := yaml.Unmarshal(cvBytes, &cv)
+		assert.Nil(t, err, idx+1)
 
-			var cv CosignValidator
-			ctx := context.Background()
-			cvBytes, _ := os.ReadFile(PRE + tc.file + ".yaml")
-			err := yaml.Unmarshal(cvBytes, &cv)
-			assert.Nil(t, err)
+		img, err := image.New(strings.TrimPrefix(reg.URL, "http://") + "/" + tc.image)
+		assert.NoError(t, err, idx+1)
 
-			img, _ := image.New(tc.image)
-			digest, err := cv.ValidateImage(ctx, img, tc.args)
+		digest, err := cv.ValidateImage(ctx, img, tc.args)
 
-			if tc.expErr != "" {
-				assert.NotNil(t, err)
-				assert.ErrorContains(t, err, tc.expErr)
-			} else {
-				assert.Nil(t, err)
-				assert.Equal(t, tc.digest, digest)
-			}
-		})
+		if tc.err != "" {
+			assert.Error(t, err, idx+1)
+			assert.ErrorContains(t, err, tc.err, idx+1)
+		} else {
+			assert.NoError(t, err)
+			assert.Equal(t, tc.digest, digest)
+		}
 	}
 }

@@ -1,0 +1,1 @@
+{"critical":{"identity":{"docker-reference":"index.docker.io/securesystemsengineering/testimage"},"image":{"docker-manifest-digest":"sha256:071bf7a986f1ca9cb2a1f0bc8392822a7777f90d58f2d2c6f271913e08de7c81"},"type":"cosign container image signature"},"optional":null}

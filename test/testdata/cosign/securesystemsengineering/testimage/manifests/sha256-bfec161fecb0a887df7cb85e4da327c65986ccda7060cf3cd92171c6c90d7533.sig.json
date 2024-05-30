@@ -1,0 +1,35 @@
+{
+    "schemaVersion": 2,
+    "mediaType": "application/vnd.oci.image.manifest.v1+json",
+    "config": {
+        "mediaType": "application/vnd.oci.image.config.v1+json",
+        "size": 451,
+        "digest": "sha256:4f3f54134335a9734c5685d2648387ecaf6339d9cc9ae6dc62d82fba971f889f"
+    },
+    "layers": [
+        {
+            "mediaType": "application/vnd.dev.cosign.simplesigning.v1+json",
+            "size": 266,
+            "digest": "sha256:7248e52a7da336ff63192f2c0a8f12562b0d5368e9cde6ab292cbb4604074f28",
+            "annotations": {
+                "dev.cosignproject.cosign/signature": "MEYCIQCh+3GghHoMXIO6W7Q5U6IuzMuuynFHoAFA6HYhD9E5bwIhAKLlACVSrC3Dob/6IdR2hJlUsdFG8KB4T79E+X6pxNZ7"
+            }
+        },
+        {
+            "mediaType": "application/vnd.dev.cosign.simplesigning.v1+json",
+            "size": 266,
+            "digest": "sha256:7248e52a7da336ff63192f2c0a8f12562b0d5368e9cde6ab292cbb4604074f28",
+            "annotations": {
+                "dev.cosignproject.cosign/signature": "MEYCIQCYrykf76K9aHEX+4LaGr3eJ41TdVKjHjubpE0BlnssEwIhALoFVftlcHFL7rQFsP99JoElW5dQVnMrr3YJ1i1YH1x+"
+            }
+        },
+        {
+            "mediaType": "application/vnd.dev.cosign.simplesigning.v1+json",
+            "size": 266,
+            "digest": "sha256:7248e52a7da336ff63192f2c0a8f12562b0d5368e9cde6ab292cbb4604074f28",
+            "annotations": {
+                "dev.cosignproject.cosign/signature": "MEYCIQCk5Y4WNDrHnK00OKMcle2/2zGPxbpz+DCjM3vCnb0C4gIhAPyWW1EQ0JHMDBPW49OJWurGigTxEdJez94Y6IgLDcvw"
+            }
+        }
+    ]
+}
