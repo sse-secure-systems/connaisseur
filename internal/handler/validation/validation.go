@@ -148,12 +148,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 		errOut = err
 		return
 	}
-	logrus.Debugf(
-		"matched rule: %s for image %s with reqId %s",
-		rule.Pattern,
-		img.Name(),
-		ctx.Value("reqId"),
-	)
+	logrus.Debugf("matched rule %s for image %s", rule.Pattern, img.Name())
 
 	// get validator
 	validator, err := config.Validator(rule.Validator)
