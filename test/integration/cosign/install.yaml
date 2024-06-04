@@ -52,6 +52,17 @@ application:
             MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqxgd/RqCdPnafQmlmX71eICGRBqu
             USHEjAv3FZCROHLYts11xR6Peu8ZEvMXOR46L7+z84DRFK6gnTInbIGFmg==
             -----END PUBLIC KEY-----
+    - name: keyless
+      type: cosign
+      trustRoots:
+        - name: phbelitz
+          keyless:
+            issuerRegex: github
+            subject: philipp.belitz@securesystems.de
+        - name: testa
+          keyless:
+            issuerRegex: github
+            subject: teetje.stark@securesystems.de
   policy:
     - pattern: "*:*"
       with:
@@ -79,4 +90,18 @@ application:
         verifyInTransparencyLog: false
     - pattern: securesystemsengineering/testimage:rekor-*
       validator: rekor-cosign
+    - pattern: securesystemsengineering/testimage:keyless-*
+      validator: keyless
+      with:
+        trustRoot: "*"
+        threshold: 1
+    - pattern: securesystemsengineering/testimage:keyless-multi-*
+      validator: keyless
+      with:
+        trustRoot: "*"
+        threshold: 2
+    - pattern: securesystemsengineering/testimage:keyless-cosigned-diff
+      validator: keyless
+      with:
+        trustRoot: testa
   alerts: []

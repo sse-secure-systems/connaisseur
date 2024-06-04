@@ -2,5 +2,5 @@ validators:
 - name: cosign
   type: cosign
   host:
-    rekor: \\\
+    rekor: :\\\
   trustRoots: [{}]

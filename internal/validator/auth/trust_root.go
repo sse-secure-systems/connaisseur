@@ -7,9 +7,22 @@ type TrustRoot struct {
 	Name string `yaml:"name" validate:"required"`
 	// public key of the trust root. either
 	// inline key or kms reference
-	Key string `yaml:"key" validate:"required_without=Cert,excluded_with=Cert"`
+	Key string `yaml:"key" validate:"required_without_all=Cert Keyless,excluded_with=Cert Keyless,omitempty"`
 	// certificate of the trust root (notaryv2)
-	Cert string `yaml:"cert" validate:"required_without=Key,excluded_with=Key"`
+	Cert string `yaml:"cert" validate:"required_without_all=Key Keyless,excluded_with=Key Keyless,omitempty"`
+	// keyless configuration
+	Keyless Keyless `yaml:"keyless" validate:"required_without_all=Key Cert,excluded_with=Key Cert,omitempty"`
+}
+
+type Keyless struct {
+	// issuer of the trust root (e.g. an oidc provider)
+	Issuer string `yaml:"issuer" validate:"required_without=IssuerRegex,excluded_with=IssuerRegex"`
+	// subject of the trust root (e.g. a mail address)
+	Subject string `yaml:"subject" validate:"required_without=SubjectRegex,excluded_with=SubjectRegex"`
+	// issuer regex of the trust root (e.g. an oidc provider)
+	IssuerRegex string `yaml:"issuerRegex" validate:"required_without=Issuer,excluded_with=Issuer"`
+	// subject regex of the trust root (e.g. a mail address)
+	SubjectRegex string `yaml:"subjectRegex" validate:"required_without=Subject,excluded_with=Subject"`
 }
 
 // Returns the trust roots for the given key references matching

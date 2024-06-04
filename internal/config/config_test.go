@@ -45,7 +45,7 @@ func TestLoadError(t *testing.T) {
 		{"02_val_no_type.yaml", "validator is missing a type"},
 		{"03_unsupported_type.yaml", "unsupported type \"stati\" for validator"},
 		{"04_unmarshal_cosign_error.yaml", "cannot unmarshal"},
-		{"05_invalid_cosign.yaml", "invalid url for rekor"},
+		{"05_invalid_cosign.yaml", "unable to create Rekor client"},
 		{"06_unmarshal_static_error.yaml", "cannot unmarshal"},
 		{"07_invalid_validator.yaml", "cannot unmarshal"},
 		{"08_unknown_field.yaml", "field invalid not found in type staticvalidator"},
@@ -181,9 +181,8 @@ func TestValidate(t *testing.T) {
 					Name: "valName",
 					Type: "cosign",
 					SpecificValidator: &cosignvalidator.CosignValidator{
-						Name:  "valName",
-						Type:  "cosign",
-						Rekor: "https://rekor.sigstore.dev",
+						Name: "valName",
+						Type: "cosign",
 						TrustRoots: []auth.TrustRoot{
 							{Name: "trName", Key: "someKey"},
 						},
@@ -478,7 +477,36 @@ func TestValidateErrors(t *testing.T) {
 					},
 				},
 			},
-			"Key must be set if Cert isn't",
+			"Key must be set if [Cert Keyless] isn't",
+		},
+		{ // 12: keyless need either issuer or issuer regex
+			Config{
+				Validators: []validator.Validator{
+					{
+						Name: "valName",
+						Type: "cosign",
+						SpecificValidator: &cosignvalidator.CosignValidator{
+							Name: "valName",
+							Type: "cosign",
+							TrustRoots: []auth.TrustRoot{
+								{Name: "trName", Keyless: auth.Keyless{
+									Subject:     "subject",
+									Issuer:      "issuer",
+									IssuerRegex: "issuerRegex",
+								}},
+							},
+						},
+					},
+				},
+				Rules: []policy.Rule{
+					{
+						Pattern:   "somePattern",
+						Validator: "valName",
+						With:      policy.RuleOptions{},
+					},
+				},
+			},
+			"Issuer must not be set if IssuerRegex is",
 		},
 	}
 	for idx, tc := range testCases {

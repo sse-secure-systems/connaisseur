@@ -2,7 +2,7 @@
 - id: unsigned
   txt: Testing unsigned cosign image...
   ref: securesystemsengineering/testimage:co-unsigned
-  expected_msg: no signed digests
+  expected_msg: no signatures found
 - id: signed
   txt: Testing signed cosign image...
   ref: securesystemsengineering/testimage:co-signed
@@ -11,7 +11,7 @@
 - id: signed-diff-key
   txt: Testing cosign image signed under different key...
   ref: securesystemsengineering/testimage:co-signed-alt
-  expected_msg: no signed digests
+  expected_msg: no matching signatures
 - id: signed-rsa
   txt: Testing signed cosign image, signed with RSA key...
   ref: securesystemsengineering/testimage:rsa-co-signed
@@ -48,7 +48,22 @@
 - id: no-transparency-log
   txt: Testing signed cosign image WITHOUT transparency log entry...
   ref: securesystemsengineering/testimage:rekor-cosigned-notl
-  expected_msg: no signed digests
+  expected_msg: no matching signatures
 - id: transparency-log
   txt: Testing signed cosign image WITH transparency log entry...
   ref: securesystemsengineering/testimage:rekor-cosigned-tl
+
+# keyless
+- id: keyless-phbelitz
+  txt: Testing signed cosign image with keyless signature by phbelitz...
+  ref: securesystemsengineering/testimage:keyless-cosigned-phbelitz
+- id: keyless-testa
+  txt: Testing signed cosign image with keyless signature by testa...
+  ref: securesystemsengineering/testimage:keyless-cosigned-testa
+- id: keyless-both
+  txt: Testing signed cosign image with keyless signatures by phbelitz and testa...
+  ref: securesystemsengineering/testimage:keyless-multi-cosigned
+- id: keyless-wrong-issuer
+  txt: Testing signed cosign image with keyless signature by wrong issuer...
+  ref: securesystemsengineering/testimage:keyless-cosigned-diff
+  expected_msg: none of the expected identities matched

@@ -18,19 +18,19 @@ func Validate(s interface{}) error {
 	trans, _ := uni.GetTranslator(en.Locale())
 	_ = en_translations.RegisterDefaultTranslations(validate, trans)
 
-	_ = validate.RegisterTranslation("required_without", trans, func(ut ut.Translator) error {
-		return ut.Add("required_without", "{0} must be set if {1} isn't", true) // see universal-translator for details
-	}, func(ut ut.Translator, fe validation.FieldError) string {
-		t, _ := ut.T("required_without", fe.Field(), fe.Param())
-		return t
-	})
-
-	_ = validate.RegisterTranslation("excluded_with", trans, func(ut ut.Translator) error {
-		return ut.Add("excluded_with", "{0} must not be set if {1} is", true) // see universal-translator for details
-	}, func(ut ut.Translator, fe validation.FieldError) string {
-		t, _ := ut.T("excluded_with", fe.Field(), fe.Param())
-		return t
-	})
+	for key, value := range map[string]string{
+		"required_without":     "{0} must be set if {1} isn't",
+		"excluded_with":        "{0} must not be set if {1} is",
+		"required_without_all": "{0} must be set if [{1}] isn't",
+		"excluded_with_all":    "{0} must not be set if [{1}] is",
+	} {
+		_ = validate.RegisterTranslation(key, trans, func(ut ut.Translator) error {
+			return ut.Add(key, value, true)
+		}, func(ut ut.Translator, fe validation.FieldError) string {
+			t, _ := ut.T(key, fe.Field(), fe.Param())
+			return t
+		})
+	}
 
 	err := validate.Struct(s)
 

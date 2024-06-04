@@ -27,7 +27,7 @@
   txt: Testing 1 signed image (second) and 1 unsigned (first) image deployment...
   type: apply
   ref: test/integration/deployment/deployments/deployment_i2u1-1.yaml
-  expected_msg: "denied the request: error during cosign validation of image securesystemsengineering/testimage:co-unsigned: no signed digests"
+  expected_msg: "denied the request: error during cosign validation of image securesystemsengineering/testimage:co-unsigned: error validating image: [no signatures found]"
 - id: 2-unsigned
   txt: Testing 2 unsigned images deployment...
   type: apply

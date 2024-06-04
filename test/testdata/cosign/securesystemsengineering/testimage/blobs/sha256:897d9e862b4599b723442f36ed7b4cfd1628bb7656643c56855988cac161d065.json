@@ -1,0 +1,1 @@
+{"critical":{"identity":{"docker-reference":"index.docker.io/phbelitz/rekor-test"},"image":{"docker-manifest-digest":"sha256:31dc72a13a0c34b40eb95419d2b2fd67320c856baf3b72da518023ee8d370aee"},"type":"cosign container image signature"},"optional":null}

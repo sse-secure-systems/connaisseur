@@ -7,26 +7,25 @@ import (
 	"connaisseur/internal/utils"
 	"connaisseur/internal/validator/auth"
 	"context"
-	"crypto"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
-	"os"
 	"strings"
 
 	"github.com/google/go-containerregistry/pkg/authn"
+	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
+	"github.com/sigstore/cosign/v2/cmd/cosign/cli/fulcio"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/rekor"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/sign"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
 	"github.com/sigstore/cosign/v2/pkg/oci"
 	ociremote "github.com/sigstore/cosign/v2/pkg/oci/remote"
-	sigs "github.com/sigstore/cosign/v2/pkg/signature"
-	sig "github.com/sigstore/sigstore/pkg/signature"
+	"github.com/sigstore/rekor/pkg/generated/client"
+	"github.com/sigstore/sigstore/pkg/tuf"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,10 +34,16 @@ type CosignValidator struct {
 	Name string `validate:"required"`
 	// type of the validator (will always be "cosign")
 	Type string `validate:"eq=cosign"`
-	// url of the Rekor instance
-	Rekor string `validate:"url"`
+	// client for connecting to the Rekor instance
+	Rekor *client.Rekor
+	// public key of the Rekor instance or nil if using the Sigstore one
+	rekorPubkey *cosign.TrustedTransparencyLogPubKeys
+	// certificate of the Fulcio instance or nil if using the Sigstore one
+	fulcioCert *x509.CertPool
+	// public key of the CT log or nil if using the Sigstore one
+	ctLogPubkey *cosign.TrustedTransparencyLogPubKeys
 	// self signed certificate of the registry
-	Cert string
+	Cert *x509.CertPool
 	// authentication for the registry
 	Auth auth.Auth
 	// trust roots of the validator
@@ -50,8 +55,11 @@ type CosignValidatorYaml struct {
 	Name string `yaml:"name"`
 	Type string `yaml:"type"`
 	Host struct {
-		Rekor string `yaml:"rekor"`
-	}
+		Rekor       string `yaml:"rekor"`
+		RekorPubkey string `yaml:"rekorPubkey"`
+		FulcioCert  string `yaml:"fulcioCert"`
+		CTLogPubkey string `yaml:"ctLogPubkey"`
+	} `yaml:"host"`
 	Cert       string           `yaml:"cert"`
 	Auth       auth.Auth        `yaml:"auth"`
 	TrustRoots []auth.TrustRoot `yaml:"trustRoots"`
@@ -78,6 +86,15 @@ type CosignPayloadImage struct {
 	Digest string `json:"Docker-manifest-digest"`
 }
 
+// verifierOutput is a struct to hold the output
+// of internal the verifier goroutine
+type verifierOutput struct {
+	checkedSignatures   []oci.Signature
+	err                 error
+	propagationErr      error
+	validatingTrustRoot string
+}
+
 // Unmarshals the yaml into a CosignValidator object, validating
 // some attributes in the process
 func (cv *CosignValidator) UnmarshalYAML(unmarshal func(interface{}) error) error {
@@ -86,19 +103,26 @@ func (cv *CosignValidator) UnmarshalYAML(unmarshal func(interface{}) error) erro
 		return err
 	}
 
-	// validate rekor url
-	if valData.Host.Rekor != "" {
-		if !utils.HasPrefixes(strings.ToLower(valData.Host.Rekor), "http://", "https://") {
-			valData.Host.Rekor = fmt.Sprintf("https://%s", valData.Host.Rekor)
-		}
-
-		_, err := url.ParseRequestURI(valData.Host.Rekor)
-
-		if err != nil {
-			return fmt.Errorf("invalid url for rekor: %s", err)
-		}
-	} else {
+	// if no rekor host is provided, use default
+	if valData.Host.Rekor == "" {
 		valData.Host.Rekor = constants.DefaultRekorHost
+	}
+
+	// create and validate rekor client
+	rekorClient, err := rekor.NewClient(valData.Host.Rekor)
+	if err != nil {
+		return fmt.Errorf("unable to create Rekor client for %s: %s", valData.Host.Rekor, err)
+	}
+
+	// validate rekor pubkey
+	var rekorPub *cosign.TrustedTransparencyLogPubKeys
+	if valData.Host.RekorPubkey != "" {
+		tempRekorPub := cosign.NewTrustedTransparencyLogPubKeys()
+		err = tempRekorPub.AddTransparencyLogPubKey([]byte(valData.Host.RekorPubkey), tuf.Active)
+		if err != nil {
+			return fmt.Errorf("error adding rekor public key: %s", err)
+		}
+		rekorPub = &tempRekorPub
 	}
 
 	// validate trust roots
@@ -106,17 +130,42 @@ func (cv *CosignValidator) UnmarshalYAML(unmarshal func(interface{}) error) erro
 		return fmt.Errorf("no trust roots provided for validator %s", valData.Name)
 	}
 
+	// validate certificate
+	var cert *x509.CertPool
 	if valData.Cert != "" {
-		certPool := x509.NewCertPool()
-		if !certPool.AppendCertsFromPEM([]byte(valData.Cert)) {
+		cert = x509.NewCertPool()
+		if !cert.AppendCertsFromPEM([]byte(valData.Cert)) {
 			return fmt.Errorf("invalid certificate for validator %s", valData.Name)
 		}
 	}
 
+	// validate fulcio certificate
+	var fulcioCert *x509.CertPool
+	if valData.Host.FulcioCert != "" {
+		fulcioCert = x509.NewCertPool()
+		if !fulcioCert.AppendCertsFromPEM([]byte(valData.Host.FulcioCert)) {
+			return fmt.Errorf("invalid fulcio certificate for validator %s", valData.Name)
+		}
+	}
+
+	// validate ct log public key
+	var ctPub *cosign.TrustedTransparencyLogPubKeys
+	if valData.Host.CTLogPubkey != "" {
+		tempCTPub := cosign.NewTrustedTransparencyLogPubKeys()
+		err := tempCTPub.AddTransparencyLogPubKey([]byte(valData.Host.CTLogPubkey), tuf.Active)
+		if err != nil {
+			return fmt.Errorf("error adding ct log public key: %s", err)
+		}
+		ctPub = &tempCTPub
+	}
+
 	cv.Name = valData.Name
 	cv.Type = valData.Type
-	cv.Rekor = valData.Host.Rekor
-	cv.Cert = valData.Cert
+	cv.Rekor = rekorClient
+	cv.rekorPubkey = rekorPub
+	cv.fulcioCert = fulcioCert
+	cv.ctLogPubkey = ctPub
+	cv.Cert = cert
 	cv.Auth = valData.Auth
 	cv.TrustRoots = valData.TrustRoots
 	return nil
@@ -133,8 +182,8 @@ func (cv *CosignValidator) ValidateImage(
 	// transform image into right format
 	imageRef, _ := sign.GetAttachedImageRef(img, "")
 
+	// collect all trust root names needed for validation
 	var trustRootReferences []string
-
 	if args.TrustRoot == "*" && (args.Threshold > len(args.Required) || len(args.Required) == 0) {
 		trustRootReferences = utils.Map[auth.TrustRoot, string](
 			cv.TrustRoots,
@@ -146,54 +195,32 @@ func (cv *CosignValidator) ValidateImage(
 		trustRootReferences = []string{args.TrustRoot}
 	}
 
-	// get verifiers for public keys
-	verifiers, err := cv.verifiers(
-		ctx,
-		trustRootReferences,
-	)
+	// set up cosign options
+	opts, err := cv.setupOptions(ctx, args, img)
+	if err != nil {
+		return "", fmt.Errorf("error setting up cosign options: %s", err)
+	}
+
+	// load verifiers for trust roots
+	verifiers, err := cv.verifiers(ctx, trustRootReferences)
 	if err != nil {
 		return "", fmt.Errorf("error getting verifiers: %s", err)
 	}
-	type verifierOutput struct {
-		checkedSignatures   []oci.Signature
-		err                 error
-		validatingTrustRoot string
-	}
-	numberOfTrustRoots := len(verifiers)
+
+	numberOfTrustRoots := len(trustRootReferences)
 	verifierOutputChannel := make(chan verifierOutput, numberOfTrustRoots)
+
+	// do cosign validation on image per trust root in parallel
 	for _, verifier := range verifiers {
-		go func(verifier KeyVerifierTuple, verifierOutputChannel chan<- verifierOutput) {
-			// configure validation options
-			opts, err := cv.setupOptions(ctx, args, img, verifier.Verifier)
-			if err != nil {
-				verifierOutputChannel <- verifierOutput{nil, fmt.Errorf("error setting up cosign options: %s", err), ""}
-				return
-			}
-			logrus.Debugf("validating image %s with trust root %s", imageRef, verifier.Name)
-			// do cosign validation on image
-			validSignatures, _, err := cosign.VerifyImageSignatures(
-				ctx,
-				imageRef,
-				opts,
-			)
-			if err != nil {
-				// short-circuit if the image doesn't exist
-				if strings.HasPrefix(err.Error(), "image tag not found:") {
-					msg := fmt.Sprintf("image %s does not exist: %s", imageRef, err)
-					logrus.Info(msg)
-					verifierOutputChannel <- verifierOutput{nil, fmt.Errorf(msg), ""}
-					return
-				}
-				logrus.Debugf("error verifying signatures with verifier for trust root %s: %s", verifier.Name, err)
-				// propagating an error is explicitly not done since at this point it is not entirely clear if an actual error should be thrown. This can only be determined after all other verifier instances have been checked for as well; therefore, error nil is sent to the channel
-				verifierOutputChannel <- verifierOutput{nil, nil, ""}
-				return
-			}
-			verifierOutputChannel <- verifierOutput{validSignatures, nil, verifier.Name}
-		}(verifier, verifierOutputChannel)
+		// copy options since they are
+		// modified in the goroutine
+		copts := *opts
+		go cv.validateWithVerifier(ctx, imageRef, copts, verifier, verifierOutputChannel)
 	}
+
 	validatingTrustRoots := []string{}
 	checkedSignatures := []oci.Signature{}
+	propagateErrors := []error{}
 	for i := 0; i < numberOfTrustRoots; i++ {
 		output := <-verifierOutputChannel
 		if output.err != nil {
@@ -201,6 +228,9 @@ func (cv *CosignValidator) ValidateImage(
 		}
 		checkedSignatures = append(checkedSignatures, output.checkedSignatures...)
 		validatingTrustRoots = append(validatingTrustRoots, output.validatingTrustRoot)
+		if output.propagationErr != nil {
+			propagateErrors = append(propagateErrors, output.propagationErr)
+		}
 	}
 
 	var threshold int
@@ -264,8 +294,55 @@ func (cv *CosignValidator) ValidateImage(
 		return k, nil
 	}
 
+	// propagate errors if no digests were found
+	if len(propagateErrors) > 0 {
+		return "", fmt.Errorf("error validating image: %s", propagateErrors)
+	}
+
 	// no signed digests
 	return "", fmt.Errorf("no signed digests")
+}
+
+func (cv *CosignValidator) validateWithVerifier(
+	ctx context.Context,
+	imageRef name.Reference,
+	opts cosign.CheckOpts,
+	verifier Verifier,
+	verifierOutputChannel chan<- verifierOutput,
+) {
+	if verifier.KeyVerifier != nil { // key verifier
+		opts.SigVerifier = verifier.KeyVerifier
+	} else { // keyless verifier
+		root, intermediate, err := cv.getFulcioCerts()
+		if err != nil {
+			verifierOutputChannel <- verifierOutput{nil, err, nil, ""}
+			return
+		}
+		opts.RootCerts = root
+		opts.IntermediateCerts = intermediate
+		opts.Identities = append(opts.Identities, verifier.KeylessVerifier)
+	}
+
+	logrus.Debugf("validating image %s with trust root %s", imageRef, verifier.Name)
+	// do cosign validation on image
+	validSignatures, _, err := cosign.VerifyImageSignatures(
+		ctx,
+		imageRef,
+		&opts,
+	)
+	if err != nil {
+		// short-circuit if the image doesn't exist
+		if strings.HasPrefix(err.Error(), "image tag not found:") {
+			msg := fmt.Sprintf("image %s does not exist: %s", imageRef, err)
+			logrus.Info(msg)
+			verifierOutputChannel <- verifierOutput{nil, fmt.Errorf(msg), nil, ""}
+			return
+		}
+		logrus.Debugf("error verifying signatures with verifier for trust root %s: %s", verifier.Name, err)
+		verifierOutputChannel <- verifierOutput{nil, nil, err, ""}
+		return
+	}
+	verifierOutputChannel <- verifierOutput{validSignatures, nil, nil, verifier.Name}
 }
 
 // sets up the options for the Cosign validation, which includes
@@ -275,15 +352,15 @@ func (cv *CosignValidator) setupOptions(
 	ctx context.Context,
 	args policy.RuleOptions,
 	img *image.Image,
-	verifier sig.Verifier,
 ) (*cosign.CheckOpts, error) {
-	var ignoreTlog bool
-	if args.VerifyTLog == nil {
-		ignoreTlog = false
-	} else {
-		ignoreTlog = !*args.VerifyTLog
+	boolOrDefault := func(b *bool, default_ bool) bool {
+		if b == nil {
+			return default_
+		}
+		return *b
 	}
-	opts := &cosign.CheckOpts{SigVerifier: verifier, IgnoreTlog: ignoreTlog}
+	verifyTlog, verifySCT := boolOrDefault(args.VerifyTLog, true), boolOrDefault(args.VerifySCT, true)
+	opts := &cosign.CheckOpts{IgnoreTlog: !verifyTlog, IgnoreSCT: !verifySCT}
 
 	// set authentication
 	auth := cv.Auth.LookUp(img.Context().String())
@@ -296,15 +373,12 @@ func (cv *CosignValidator) setupOptions(
 	registryClientOpts := registryOpts.GetRegistryClientOpts(ctx)
 
 	// set self-signed certificate
-	if cv.Cert != "" {
-		certPool := x509.NewCertPool()
-		// certificate was already validated during unmarshalling
-		_ = certPool.AppendCertsFromPEM([]byte(cv.Cert))
+	if cv.Cert != nil {
 		registryClientOpts = append(
 			registryClientOpts,
 			remote.WithTransport(
 				&http.Transport{
-					TLSClientConfig: &tls.Config{RootCAs: certPool, MinVersion: tls.VersionTLS12},
+					TLSClientConfig: &tls.Config{RootCAs: cv.Cert, MinVersion: tls.VersionTLS12},
 				},
 			),
 		)
@@ -315,53 +389,26 @@ func (cv *CosignValidator) setupOptions(
 		ociremote.WithRemoteOptions(registryClientOpts...),
 	}
 
-	if cv.Rekor != "" && !ignoreTlog {
-		rekorClient, err := rekor.NewClient(cv.Rekor)
-		if err != nil { // Currently cannot happen as it only fails for invalid URLs, which are already caught during unmarshalling
-			return nil, fmt.Errorf("unable to create Rekor client for %s: %s", cv.Rekor, err)
-		}
-		opts.RekorClient = rekorClient
-
-		// env var is needed, otherwise cosign tries to create files in readonly FS, which will fail
-		_ = os.Setenv("SIGSTORE_NO_CACHE", "1")
-		pubs, err := cosign.GetRekorPubs(ctx)
+	// set rekor options
+	if verifyTlog {
+		pubs, err := cv.getRekorPubKey(ctx)
 		if err != nil {
-			return nil, fmt.Errorf("error getting rekor public keys: %s", err)
+			return nil, err
 		}
+		opts.RekorClient = cv.Rekor
 		opts.RekorPubKeys = pubs
 	}
 
-	return opts, nil
-}
-
-type KeyVerifierTuple struct {
-	// name of the trust root
-	Name string
-	// verifier for the public keys
-	Verifier sig.Verifier
-}
-
-// Loads a public key from a key inline key or a key reference.
-func LoadKeyVerifierTuple(
-	ctx context.Context,
-	trustRoot auth.TrustRoot,
-) (KeyVerifierTuple, error) {
-	var (
-		verifier sig.Verifier
-		err      error
-	)
-	hashAlgorithm := crypto.SHA256
-
-	if strings.HasPrefix(trustRoot.Key, "-----BEGIN PUBLIC KEY-----") {
-		verifier, err = sigs.LoadPublicKeyRaw([]byte(trustRoot.Key), hashAlgorithm)
-	} else {
-		verifier, err = sigs.PublicKeyFromKeyRefWithHashAlgo(ctx, trustRoot.Key, hashAlgorithm)
+	// set ct log options
+	if verifySCT {
+		ctPubs, err := cv.getCTLogPubKeys(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("error getting ct log public keys: %s", err)
+		}
+		opts.CTLogPubKeys = ctPubs
 	}
 
-	return KeyVerifierTuple{
-		Name:     trustRoot.Name,
-		Verifier: verifier,
-	}, err
+	return opts, nil
 }
 
 // gathers the requested trust roots and turns them into a
@@ -370,20 +417,56 @@ func LoadKeyVerifierTuple(
 func (cv *CosignValidator) verifiers(
 	ctx context.Context,
 	keyRefs []string,
-) ([]KeyVerifierTuple, error) {
+) ([]Verifier, error) {
 	trustRootsKeys, err := auth.GetTrustRoots(keyRefs, cv.TrustRoots, true)
 	if err != nil {
 		return nil, fmt.Errorf("error getting trust roots for validator %s: %s", cv.Name, err)
 	}
 
 	// Fall back to multiple verifiers
-	verifiers := make([]KeyVerifierTuple, 0, len(keyRefs))
+	verifiers := make([]Verifier, 0, len(keyRefs))
 	for _, trustedKey := range trustRootsKeys {
-		tuple, err := LoadKeyVerifierTuple(ctx, trustedKey)
+		verifier, err := LoadVerifier(ctx, trustedKey)
 		if err != nil {
 			return nil, err
 		}
-		verifiers = append(verifiers, tuple)
+		verifiers = append(verifiers, verifier)
 	}
 	return verifiers, nil
+}
+
+func (cv *CosignValidator) getRekorPubKey(ctx context.Context) (*cosign.TrustedTransparencyLogPubKeys, error) {
+	if cv.rekorPubkey != nil {
+		return cv.rekorPubkey, nil
+	}
+	pubs, err := cosign.GetRekorPubs(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("error getting rekor public keys: %s", err)
+	}
+
+	return pubs, nil
+}
+
+func (cv *CosignValidator) getCTLogPubKeys(ctx context.Context) (*cosign.TrustedTransparencyLogPubKeys, error) {
+	if cv.ctLogPubkey != nil {
+		return cv.ctLogPubkey, nil
+	}
+	return cosign.GetCTLogPubs(ctx)
+}
+
+func (cv *CosignValidator) getFulcioCerts() (*x509.CertPool, *x509.CertPool, error) {
+	if cv.fulcioCert != nil {
+		return cv.fulcioCert, nil, nil
+	}
+
+	root, err := fulcio.GetRoots()
+	if err != nil {
+		return nil, nil, fmt.Errorf("error getting fulcio roots: %s", err)
+	}
+	intermediate, err := fulcio.GetIntermediates()
+	if err != nil {
+		return nil, nil, fmt.Errorf("error getting fulcio intermediates: %s", err)
+	}
+
+	return root, intermediate, nil
 }

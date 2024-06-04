@@ -92,7 +92,7 @@ kubernetes:
         type: RuntimeDefault # remove when using Kubernetes prior v1.19, openshift or OKD 4
     podSecurityContext: {}
     tls: {} # set to use custom tls certificates for redis
-# -----------------------------------------------------
+  # -----------------------------------------------------
 
   # additional labels for connaisseur resources
   # (except for pods – see kubernetes.deployment.podLabels for that)
@@ -158,7 +158,6 @@ application:
       cacheErrors: true
 
   logLevel: info
-
 # alerting options: https://sse-secure-systems.github.io/connaisseur/latest/features/alerting/#configuration-options
 # alerting:
 #   clusterIdentifier: example-cluster-staging-europe # defaults to "not specified"

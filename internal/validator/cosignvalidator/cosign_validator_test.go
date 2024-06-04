@@ -7,11 +7,13 @@ import (
 	"connaisseur/test/testhelper"
 	"context"
 	"crypto/ecdsa"
+	"fmt"
 	"io"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/sigstore/cosign/v2/pkg/oci/remote"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
@@ -29,73 +31,85 @@ func TestValidator(t *testing.T) {
 	var testCases = []struct {
 		file       string
 		name       string
-		rekor      string
 		trustRoots []string
 		err        string
 	}{
-		{
+		{ // 1: working case
 			"01_cosign",
 			"default",
-			"",
 			[]string{"alice", "bob"},
 			"",
 		},
-		{
+		{ // 2: working case with rekor
 			"02_rekor",
 			"rekor",
-			"https://definitely-not-rekor.sigstore.dev",
 			[]string{"default"},
 			"",
 		},
-		{
+		{ // 3: unmarshal error
 			"03_unmarshal_err",
-			"",
 			"",
 			[]string{},
 			"yaml: unmarshal errors",
 		},
-		{
+		{ // 4: invalid rekor url error
 			"04_rekor_err",
 			"",
-			"",
 			[]string{},
-			"invalid url for rekor",
+			"unable to create Rekor client",
 		},
-		{
+		{ // 5: no trust roots error
 			"05_no_trust_roots",
-			"",
 			"",
 			[]string{},
 			"no trust roots provided for validator",
 		},
-		{
+		{ // 6: invalid certificate error
 			"10_invalid_cert",
-			"",
 			"",
 			[]string{},
 			"invalid certificate",
 		},
+		{ // 7: working case with keyless
+			"11_keyless",
+			"default",
+			[]string{"philipp-keyless", "bob-keyless"},
+			"",
+		},
+		{ // 8: invalid rekor public key error
+			"12_invalid_rekor_pub_key",
+			"",
+			[]string{},
+			"error adding rekor public key",
+		},
+		{ // 9: invalid fulcio certificate error
+			"13_invalid_fulcio_cert",
+			"",
+			[]string{},
+			"invalid fulcio certificate",
+		},
+		{ // 10: invalid ct log pub key error
+			"14_invalid_ct_log_pub_key",
+			"",
+			[]string{},
+			"error adding ct log public key",
+		},
 	}
 
-	for _, tc := range testCases {
+	for idx, tc := range testCases {
 		var cv CosignValidator
 
 		cvBytes, _ := os.ReadFile(PRE + tc.file + ".yaml")
 		err := yaml.Unmarshal(cvBytes, &cv)
 
 		if tc.err != "" {
-			assert.NotNil(t, err)
-			assert.ErrorContains(t, err, tc.err)
+			assert.NotNil(t, err, idx+1)
+			assert.ErrorContains(t, err, tc.err, idx+1)
 		} else {
-			assert.Nil(t, err)
-			assert.Equal(t, tc.name, cv.Name)
-			if tc.rekor != "" {
-				assert.Equal(t, tc.rekor, cv.Rekor)
-			} else {
-				assert.Equal(t, constants.DefaultRekorHost, cv.Rekor)
-			}
+			assert.Nil(t, err, idx+1)
+			assert.Equal(t, tc.name, cv.Name, idx+1)
 			for i, tr := range tc.trustRoots {
-				assert.Contains(t, tr, cv.TrustRoots[i].Name)
+				assert.Contains(t, tr, cv.TrustRoots[i].Name, idx+1)
 			}
 		}
 	}
@@ -176,7 +190,7 @@ func TestVerifiers(t *testing.T) {
 			assert.Equal(t, len(tc.expPubKeys), len(verifiers))
 
 			for i, verifier := range verifiers {
-				pubKey, _ := verifier.Verifier.PublicKey()
+				pubKey, _ := verifier.KeyVerifier.PublicKey()
 				assert.Equal(t, tc.expPubKeys[i], pubKey.(*ecdsa.PublicKey).X.Int64())
 			}
 		}
@@ -190,120 +204,122 @@ func TestSetupOptions(t *testing.T) {
 	var testCases = []struct {
 		file          string
 		opts          policy.RuleOptions
-		expPubKeys    []int64
-		expIgnoreTLog bool
-		expErr        string
+		expIgnoreTlog bool
+		expIgnoreSCT  bool
+		expUser       string
+		expPass       string
+		expRekorKeys  map[string]int64
+		expCTLogKeys  map[string]int64
 	}{
-		{
+		{ // 1: no options
 			"01_cosign",
-			policy.RuleOptions{TrustRoot: "bob"},
-			[]int64{-7384356341354458600},
+			policy.RuleOptions{},
+			false,
 			false,
 			"",
+			"",
+			nil,
+			nil,
 		},
-		{
-			"06_auth",
-			policy.RuleOptions{TrustRoot: "alice"},
-			[]int64{-3916471775317094451},
+		{ // 2: ignore tlog false
+			"01_cosign",
+			policy.RuleOptions{VerifyTLog: &trueVar},
+			false,
 			false,
 			"",
+			"",
+			nil,
+			nil,
 		},
-		{ // Specifying VerifyTLog as default work
-			"06_auth",
-			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &trueVar},
-			[]int64{-3916471775317094451},
+		{ // 3: ignore tlog true
+			"01_cosign",
+			policy.RuleOptions{VerifyTLog: &falseVar},
+			true,
 			false,
 			"",
+			"",
+			nil,
+			nil,
 		},
-		{ // Specifying VerifyTLog with non-default value changes outcome
+		{ // 4: authentication
 			"06_auth",
-			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
-			[]int64{-3916471775317094451},
+			policy.RuleOptions{},
+			false,
+			false,
+			"user",
+			"pass",
+			nil,
+			nil,
+		},
+		{ // 5: ignore sct true
+			"01_cosign",
+			policy.RuleOptions{VerifySCT: &falseVar},
+			false,
 			true,
 			"",
+			"",
+			nil,
+			nil,
 		},
-		{
-			"07_keychain",
-			policy.RuleOptions{TrustRoot: "alice"},
-			[]int64{-3916471775317094451},
+		{ // 6: rekor and ct log pub keys
+			"11_keyless",
+			policy.RuleOptions{},
+			false,
 			false,
 			"",
-		},
-		{
-			"08_cert",
-			policy.RuleOptions{TrustRoot: "alice"},
-			[]int64{-3916471775317094451},
-			false,
 			"",
-		},
-		{
-			"09_full_config",
-			policy.RuleOptions{TrustRoot: "*"},
-			[]int64{-3916471775317094451, -7384356341354458600, -7401950337678553810},
-			false,
-			"",
-		},
-		{ // Missing verifier
-			"01_cosign",
-			policy.RuleOptions{TrustRoot: "charlie"},
-			[]int64{},
-			false,
-			"error getting verifier",
+			map[string]int64{
+				"c0d23d6ad406973f9559f3ba2d1ca01f84147d8ffc5b8445c224f98b9591801d": 3252071251971923621,
+			},
+			map[string]int64{
+				"dd3d306ac6c7113263191e1c99673702a24a5eb8de3cadff878a72802f29ee8e": -7745516234792056340,
+			},
 		},
 	}
+
+	mock_remote, remote_ctrl := testhelper.MockRemote()
+	defer mock_remote.Close()
+	mock_remote_host := strings.TrimPrefix(mock_remote.URL, "http://")
 
 	for idx, tc := range testCases {
 		var validator CosignValidator
 		ctx := context.Background()
-		img, _ := image.New("test")
+		img, err := image.New(fmt.Sprintf("%s/%s", mock_remote_host, "image"))
+		assert.Nil(t, err, "test case %d: image should be valid", idx+1)
 		cvBytes, err := os.ReadFile(PRE + tc.file + ".yaml")
 		assert.Nil(t, err, "test case %d: config should be valid", idx+1)
 		err = yaml.Unmarshal(cvBytes, &validator)
 		assert.Nil(t, err, "test case %d: validator should be valid", idx+1)
-		verifiers, err := validator.verifiers(ctx, []string{tc.opts.TrustRoot})
-		// In case there's an expected error, verifiers may be nil, otherwise they should be valid
-		if err != nil && tc.expErr == "" {
-			assert.True(t, false, "test case %d: verifiers should be valid", idx+1)
-		}
 
-		// If there's no  error, the should be as many verifiers as expected public keys
-		if tc.expErr == "" {
-			assert.Equal(t, len(tc.expPubKeys), len(verifiers), "test case %d", idx+1)
-		}
-
-		verifierPubKeys := []int64{}
-		for _, verifier := range verifiers {
-			opts, err := validator.setupOptions(ctx, tc.opts, img, verifier.Verifier)
-
-			if tc.expErr != "" {
-				assert.NotNil(t, err, "test case %d", idx+1)
-				assert.ErrorContains(t, err, tc.expErr, "test case %d", idx+1)
-			} else {
-				pubKey, _ := opts.SigVerifier.PublicKey()
-				verifierPubKeys = append(verifierPubKeys, pubKey.(*ecdsa.PublicKey).X.Int64())
-				assert.Nil(t, err, "test case %d", idx+1)
-				assert.Equal(t, tc.expIgnoreTLog, opts.IgnoreTlog, "test case %d", idx+1)
+		if len(validator.Auth.AuthConfigs) > 0 {
+			for _, authConfig := range validator.Auth.AuthConfigs {
+				validator.Auth.AuthConfigs[mock_remote_host] = authConfig
+				break
 			}
 		}
-		assert.ElementsMatch(t, tc.expPubKeys, verifierPubKeys, "test case %d", idx+1)
-	}
-}
 
-func TestSetupOptionsInvalidRekor(t *testing.T) {
-	var validator CosignValidator
-	ctx := context.Background()
-	img, _ := image.New("test")
-	cvBytes, err := os.ReadFile(PRE + "02_rekor.yaml")
-	assert.Nil(t, err)
-	err = yaml.Unmarshal(cvBytes, &validator)
-	assert.Nil(t, err)
-	validator.Rekor = "https://example.com/ invalid %U RL" // monkey-patch rekor URL as otherwise it can't be invalid
-	verifiers, err := validator.verifiers(ctx, []string{})
-	assert.Nil(t, err)
-	opts := policy.RuleOptions{}
-	_, err = validator.setupOptions(ctx, opts, img, verifiers[0].Verifier)
-	assert.NotNil(t, err)
-	assert.ErrorContains(t, err, "unable to create Rekor client")
+		opts, _ := validator.setupOptions(ctx, tc.opts, img)
+		assert.Equal(t, tc.expIgnoreTlog, opts.IgnoreTlog, idx+1)
+		assert.Equal(t, tc.expIgnoreSCT, opts.IgnoreSCT, idx+1)
+
+		remote.DigestTag(img, opts.RegistryClientOpts...)
+		assert.Equal(t, tc.expUser, remote_ctrl.Username, idx+1)
+		assert.Equal(t, tc.expPass, remote_ctrl.Password, idx+1)
+
+		if tc.expRekorKeys != nil {
+			for key, value := range opts.RekorPubKeys.Keys {
+				assert.Contains(t, tc.expRekorKeys, key, idx+1)
+				assert.Equal(t, tc.expRekorKeys[key], value.PubKey.(*ecdsa.PublicKey).X.Int64(), idx+1)
+			}
+		}
+
+		if tc.expCTLogKeys != nil {
+			for key, value := range opts.CTLogPubKeys.Keys {
+				assert.Contains(t, tc.expCTLogKeys, key, idx+1)
+				assert.Equal(t, tc.expCTLogKeys[key], value.PubKey.(*ecdsa.PublicKey).X.Int64(), idx+1)
+			}
+		}
+	}
 }
 
 func TestValidateImage(t *testing.T) {
@@ -384,7 +400,7 @@ func TestValidateImage(t *testing.T) {
 			"securesystemsengineering/testimage:co-unsigned",
 			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
 			"",
-			"no signed digests",
+			"no signatures found",
 		},
 		// { // 10: missing tlog entry
 		// 	"01_cosign",
@@ -416,6 +432,51 @@ func TestValidateImage(t *testing.T) {
 		} else {
 			assert.NoError(t, err)
 			assert.Equal(t, tc.digest, digest)
+		}
+	}
+}
+
+func TestValidateImageKeyless(t *testing.T) {
+	var testCases = []struct {
+		config string
+		image  string
+		args   policy.RuleOptions
+		err    string
+	}{
+		{ // 1: working case
+			"11_keyless",
+			"securesystemsengineering/testimage:keyless",
+			policy.RuleOptions{TrustRoot: "philipp-keyless"},
+			"",
+		},
+		{ // 2: wrong subject / issuer
+			"11_keyless",
+			"securesystemsengineering/testimage:keyless",
+			policy.RuleOptions{TrustRoot: "bob-keyless"},
+			"none of the expected identities matched",
+		},
+	}
+
+	reg := testhelper.MockRegistry(PRE)
+	defer reg.Close()
+
+	for idx, tc := range testCases {
+		var cv CosignValidator
+		ctx := context.Background()
+		cvBytes, _ := os.ReadFile(PRE + tc.config + ".yaml")
+		err := yaml.Unmarshal(cvBytes, &cv)
+		assert.Nil(t, err, idx+1)
+
+		img, err := image.New(strings.TrimPrefix(reg.URL, "http://") + "/" + tc.image)
+		assert.NoError(t, err, idx+1)
+
+		_, err = cv.ValidateImage(ctx, img, tc.args)
+
+		if tc.err != "" {
+			assert.Error(t, err, idx+1)
+			assert.ErrorContains(t, err, tc.err, idx+1)
+		} else {
+			assert.NoError(t, err, idx+1)
 		}
 	}
 }

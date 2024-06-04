@@ -110,6 +110,10 @@ func main() {
 
 	logrus.Debugf("Starting Connaisseur...")
 
+	// disable sigstore caching of public keys/certificates
+	// which would fail because of Connaisseurs read-only filesystem
+	_ = os.Setenv("SIGSTORE_NO_CACHE", "1")
+
 	config, alerting := loadConfigs()
 	startServer(config, alerting)
 }

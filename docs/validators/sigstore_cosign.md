@@ -7,7 +7,7 @@ You can read more about it [here](https://blog.sigstore.dev/).
 Connaisseur currently supports the elementary function of verifying Cosign-generated signatures based on the following types of keys:
 
 - [Locally-generated key pair](https://github.com/sigstore/cosign#generate-a-keypair)
-- [KMS](https://github.com/sigstore/cosign#kms-support) (via [reference URI](https://github.com/sigstore/cosign/blob/main/KMS.md) or [export of the public key](https://github.com/sigstore/cosign#kms-support))
+- [KMS](https://github.com/sigstore/cosign#kms-support) (via [reference URI](https://docs.sigstore.dev/key_management/overview/#basic-usage) or [export of the public key](https://github.com/sigstore/cosign#kms-support))
 - [Hardware-based token](https://github.com/sigstore/cosign#hardware-based-tokens) ([export the public key](https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms))
 
 We plan to expose further features of Cosign and sigstore in upcoming releases, so stay tuned!
@@ -92,8 +92,15 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `type` | - | :heavy_check_mark: | `cosign`; the validator type must be set to `cosign`. |
 | `trustRoots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
-| `trustRoots[*].key` | - | :heavy_check_mark: | See [basics](../basics.md#validators). Public key from `cosign.pub` file or [KMS URI](https://github.com/sigstore/cosign/blob/main/KMS.md). See additional notes [below](#kms-support). |
+| `trustRoots[*].key` | - | :heavy_check_mark: if not using keyless | See [basics](../basics.md#validators). Public key from `cosign.pub` file or [KMS URI](https://docs.sigstore.dev/key_management/overview/#basic-usage). See additional notes [below](#kms-support). |
+| `trustRoots[*].keyless.issuer` | - | :heavy_check_mark: if not using a key or issuerRegex | The OIDC provider URL which attests the identity. |
+| `trustRoots[*].keyless.subject` | - | :heavy_check_mark: if not using a key or subjectRegex | The identity that created the keyless signature. Usually an email address. |
+| `trustRoots[*].keyless.issuerRegex` | - | :heavy_check_mark: if not using a key or issuer | Regex for the OIDC provider URL which attests the identity. |
+| `trustRoots[*].keyless.subjectRegex` | - | :heavy_check_mark: if not using a key or subject | Regex of the identity that created the keyless signature. Usually an email address. When setting this, make sure you control all subject that can be matched. The pattern `your.name@gmail.*` also matches `yourXname@gmail.com` or `your.name@gmail.attacker.com` |
 | `host.rekor` | `rekor.sigstore.dev` | - | Rekor URL to use for validation against the transparency log (default sigstore instance is `rekor.sigstore.dev`). Setting `host` enforces successful transparency log check to pass verification. See additional notes [below](#transparency-log-verification). |
+| `host.rekorPubkey` | Public key of `rekor.sigstore.dev` | - | Public key used to verify signature of log entry from Rekor. |
+| `host.fulcioCert` | Root and intermediate certificates belonging to `fulcio.sigstore.dev` | - | The root certificate belonging the Fulcio CA which is used to create keyless signatures. |
+| `host.ctLogPubkey` | Public key for the certificate transparency log provided by Sigstore | - | The public key needed for verifying Signed Certificate Timestamps (SCT). This will accept a single key. |
 | `auth.` | - | - | Authentication credentials for registries with restricted access (e.g. private registries or ratelimiting). See additional notes [below](#authentication). |
 | `auth.secretName` | - | - | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#dockerconfigjson). |
 | `auth.k8sKeychain` | `false` | - | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s_keychain). |
@@ -107,6 +114,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `with.threshold` | - | - | Minimum number of signatures required in case `with.trustRoot` is set to `"*"`. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
 | `with.required` | `[]` | - | Array of required trust roots referenced by name in case `with.trustRoot` is set to `"*"`. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
 | `with.verifyInTransparencyLog` | `true` | - | Whether to include the verification using the Rekor tranparency log in the verification process. Refer to [Tranparency log verification](#transparency-log-verification) for more information. |
+| `with.verifySCT` | `true` | - | Whether to verify the signed certificate timestamps inside the transparency log. |
 
 
 ### Example
@@ -349,4 +357,37 @@ To disable this feature the `with.verifyInTransparencyLog` key can be set to `fa
 
 ### Keyless signatures
 
-Keyless signatures have not yet been implemented but are planned in upcoming releases.
+Keyless signatures are a feature of Sigstore that allows to sign container images without the need to manage a private key. Instead the signatures are bound to identities, attested by OIDC providers, and use ephemeral keys, short-lived certificates and a transparency log under the hood to provide similar security guarantees. Further information on this topic can be found [here](https://docs.sigstore.dev/signing/overview/).
+
+When using keyless signatures, the `trustRoots[*].keyless` field can be used to specify the issuer and subject of the keyless signature. The issuer is the OIDC provider that attests the identity and the subject is the identity that created the keyless signature, usually an email address. Both fields are also available as regular expressions. The following example shows how to configure a validator for keyless signatures:
+
+```yaml title="charts/connaisseur/values.yaml"
+- name: keylessvalidator
+  type: cosign
+  trustRoots:
+  - name: keyless
+    keyless:
+      issuerRegex: "github"
+      subject: "philipp.belitz@securesystems.de
+```
+
+In case the signature was created using the Sigstore infrastructure, nothing else needs to be configured since Connaisseur will automatically retrieve all needed public keys and certificates from the Sigstore infrastructure. If the signature was created using a private infrastructure, the `host.fulcioCert` field can be used to specify the root certificate belonging to the Fulcio CA which is used to create the keyless signatures. The `host.fulcioCert` field should contain the root certificate in PEM format. The same applies to the `host.ctLogPubkey` field which can be used to specify the public key needed for verifying Signed Certificate Timestamps (SCT) and the `host.rekorPubkey` field which can be used to specify the public key used to verify the signature of log entries from Rekor.
+
+```yaml title="charts/connaisseur/values.yaml"
+name: default
+type: cosign
+host:
+  rekorPubkey: |
+    -----BEGIN PUBLIC KEY-----
+    ...
+    -----END PUBLIC KEY-----
+  ctLogPubkey: | 
+    -----BEGIN PUBLIC KEY-----
+    ...
+    -----END PUBLIC KEY-----
+  fulcioCert: |
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+  ...
+```
