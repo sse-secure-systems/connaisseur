@@ -92,7 +92,7 @@ kubernetes:
         type: RuntimeDefault # remove when using Kubernetes prior v1.19, openshift or OKD 4
     podSecurityContext: {}
     tls: {} # set to use custom tls certificates for redis
-# -----------------------------------------------------
+  # -----------------------------------------------------
 
   # additional labels for connaisseur resources
   # (except for pods – see kubernetes.deployment.podLabels for that)
@@ -125,6 +125,13 @@ application:
             MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
             d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
             -----END PUBLIC KEY-----
+    - name: keyless
+      type: cosign
+      trustRoots:
+        - name: default
+          keyless:
+            issuer: github
+            subject: philipp.belitz@securesystems.de
 
   # policy options: https://sse-secure-systems.github.io/connaisseur/latest/basics/#configuration-options_2
   # explanation of policy patterns: https://sse-secure-systems.github.io/connaisseur/latest/basics/#image-policy
@@ -139,6 +146,8 @@ application:
         trustRoot: sse
     - pattern: "registry.k8s.io/*:*"
       validator: allow
+    - pattern: "phbelitz/*:*"
+      validator: keyless
 
   # feature descriptions: https://sse-secure-systems.github.io/connaisseur/latest/features/
   features:
@@ -158,7 +167,6 @@ application:
       cacheErrors: true
 
   logLevel: info
-
 # alerting options: https://sse-secure-systems.github.io/connaisseur/latest/features/alerting/#configuration-options
 # alerting:
 #   clusterIdentifier: example-cluster-staging-europe # defaults to "not specified"

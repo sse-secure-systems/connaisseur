@@ -7,6 +7,12 @@ import (
 )
 
 func TestGetTrustRoots(t *testing.T) {
+	emptyKeyless := Keyless{}
+	a := TrustRoot{"a", "a", "", emptyKeyless}
+	b := TrustRoot{"b", "b", "", emptyKeyless}
+	c := TrustRoot{"c", "c", "", emptyKeyless}
+	defaultRoot := TrustRoot{"default", "default", "", emptyKeyless}
+
 	var testCases = []struct {
 		keyRefs      []string
 		trustRoots   []TrustRoot
@@ -16,70 +22,70 @@ func TestGetTrustRoots(t *testing.T) {
 	}{
 		{
 			[]string{"a"},
-			[]TrustRoot{{"a", "a", ""}, {"b", "b", ""}},
+			[]TrustRoot{a, b},
 			false,
-			[]TrustRoot{{"a", "a", ""}},
+			[]TrustRoot{a},
 			"",
 		},
 		{
 			[]string{"a", "c"},
-			[]TrustRoot{{"a", "a", ""}, {"b", "b", ""}, {"c", "c", ""}},
+			[]TrustRoot{a, b, c},
 			false,
-			[]TrustRoot{{"a", "a", ""}, {"c", "c", ""}},
+			[]TrustRoot{a, c},
 			"",
 		},
 		{
 			[]string{"*"},
-			[]TrustRoot{{"a", "a", ""}, {"b", "b", ""}, {"c", "c", ""}},
+			[]TrustRoot{a, b, c},
 			false,
-			[]TrustRoot{{"a", "a", ""}, {"b", "b", ""}, {"c", "c", ""}},
+			[]TrustRoot{a, b, c},
 			"",
 		},
 		{
 			[]string{"a"},
-			[]TrustRoot{{"a", "a", ""}, {"default", "default", ""}},
+			[]TrustRoot{a, defaultRoot},
 			true,
-			[]TrustRoot{{"a", "a", ""}},
+			[]TrustRoot{a},
 			"",
 		},
 		{
 			[]string{},
-			[]TrustRoot{{"a", "a", ""}, {"default", "default", ""}},
+			[]TrustRoot{a, defaultRoot},
 			true,
-			[]TrustRoot{{"default", "default", ""}},
+			[]TrustRoot{defaultRoot},
 			"",
 		},
 		{
 			nil,
-			[]TrustRoot{{"a", "a", ""}, {"default", "default", ""}},
+			[]TrustRoot{a, defaultRoot},
 			true,
-			[]TrustRoot{{"default", "default", ""}},
+			[]TrustRoot{defaultRoot},
 			"",
 		},
 		{
 			[]string{"c"},
-			[]TrustRoot{{"a", "a", ""}, {"default", "default", ""}},
+			[]TrustRoot{a, defaultRoot},
 			true,
 			nil,
 			"unable to find trust root c",
 		},
 		{
 			[]string{},
-			[]TrustRoot{{"a", "a", ""}, {"b", "b", ""}},
+			[]TrustRoot{a, b},
 			false,
 			nil,
 			"no trust roots defined for key references",
 		},
 		{
 			[]string{""},
-			[]TrustRoot{{"a", "a", ""}, {"default", "default", ""}},
+			[]TrustRoot{a, defaultRoot},
 			true,
-			[]TrustRoot{{"default", "default", ""}},
+			[]TrustRoot{defaultRoot},
 			"",
 		},
 		{
 			[]string{""},
-			[]TrustRoot{{"a", "a", ""}, {"b", "b", ""}},
+			[]TrustRoot{a, b},
 			false,
 			nil,
 			"unable to find trust root",

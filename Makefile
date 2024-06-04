@@ -27,7 +27,7 @@ annihilate:
 	kubectl delete ns $(NAMESPACE)
 
 test:
-	go test ./... -race -coverprofile=cover.out -covermode=atomic; go tool cover -func cover.out
+	go test ./internal/... -race -coverprofile=cover.out -covermode=atomic; go tool cover -func cover.out
 
 upgrade:
 	helm upgrade connaisseur charts/connaisseur --namespace $(NAMESPACE) --wait

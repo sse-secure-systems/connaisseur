@@ -14,6 +14,8 @@ type RuleOptions struct {
 	TrustRoot string `yaml:"trustRoot"`
 	// flag to indicate whether to verify the image against a transparency log (cosign)
 	VerifyTLog *bool `yaml:"verifyInTransparencyLog"` // pointer to distinguish false and unset
+	// flag to indicate whether to check for signed certificate timestamps in transparency log (cosign)
+	VerifySCT *bool `yaml:"verifySCT"` // pointer to distinguish false and unset
 	// threshold of cosign signatures to require
 	Threshold int `yaml:"threshold" validate:"gte=0"`
 	// list of trust roots whose signatures need to
