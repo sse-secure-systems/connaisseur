@@ -478,7 +478,7 @@ func TestValidateErrors(t *testing.T) {
 					},
 				},
 			},
-			"Key must be set if Cert isn't",
+			"Key is a required field",
 		},
 	}
 	for idx, tc := range testCases {

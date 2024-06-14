@@ -7,11 +7,13 @@ import (
 	"connaisseur/test/testhelper"
 	"context"
 	"crypto/ecdsa"
+	"fmt"
 	"io"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/sigstore/cosign/v2/pkg/oci/remote"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
@@ -176,7 +178,7 @@ func TestVerifiers(t *testing.T) {
 			assert.Equal(t, len(tc.expPubKeys), len(verifiers))
 
 			for i, verifier := range verifiers {
-				pubKey, _ := verifier.Verifier.PublicKey()
+				pubKey, _ := verifier.KeyVerifier.PublicKey()
 				assert.Equal(t, tc.expPubKeys[i], pubKey.(*ecdsa.PublicKey).X.Int64())
 			}
 		}
@@ -190,102 +192,81 @@ func TestSetupOptions(t *testing.T) {
 	var testCases = []struct {
 		file          string
 		opts          policy.RuleOptions
-		expPubKeys    []int64
-		expIgnoreTLog bool
-		expErr        string
+		expIgnoreTlog bool
+		expIgnoreSCT  bool
+		expUser       string
+		expPass       string
 	}{
-		{
+		{ // 1: no options
 			"01_cosign",
-			policy.RuleOptions{TrustRoot: "bob"},
-			[]int64{-7384356341354458600},
+			policy.RuleOptions{},
+			false,
 			false,
 			"",
-		},
-		{
-			"06_auth",
-			policy.RuleOptions{TrustRoot: "alice"},
-			[]int64{-3916471775317094451},
-			false,
 			"",
 		},
-		{ // Specifying VerifyTLog as default work
-			"06_auth",
-			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &trueVar},
-			[]int64{-3916471775317094451},
+		{ // 2: ignore tlog false
+			"01_cosign",
+			policy.RuleOptions{VerifyTLog: &trueVar},
+			false,
 			false,
 			"",
+			"",
 		},
-		{ // Specifying VerifyTLog with non-default value changes outcome
+		{ // 3: ignore tlog true
+			"01_cosign",
+			policy.RuleOptions{VerifyTLog: &falseVar},
+			true,
+			false,
+			"",
+			"",
+		},
+		{ // 4: authentication
 			"06_auth",
-			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
-			[]int64{-3916471775317094451},
+			policy.RuleOptions{},
+			false,
+			false,
+			"user",
+			"pass",
+		},
+		{ // 5: ignore sct true
+			"01_cosign",
+			policy.RuleOptions{VerifySCT: &falseVar},
+			false,
 			true,
 			"",
-		},
-		{
-			"07_keychain",
-			policy.RuleOptions{TrustRoot: "alice"},
-			[]int64{-3916471775317094451},
-			false,
 			"",
-		},
-		{
-			"08_cert",
-			policy.RuleOptions{TrustRoot: "alice"},
-			[]int64{-3916471775317094451},
-			false,
-			"",
-		},
-		{
-			"09_full_config",
-			policy.RuleOptions{TrustRoot: "*"},
-			[]int64{-3916471775317094451, -7384356341354458600, -7401950337678553810},
-			false,
-			"",
-		},
-		{ // Missing verifier
-			"01_cosign",
-			policy.RuleOptions{TrustRoot: "charlie"},
-			[]int64{},
-			false,
-			"error getting verifier",
 		},
 	}
+
+	mock_remote, remote_ctrl := testhelper.MockRemote()
+	defer mock_remote.Close()
+	mock_remote_host := strings.TrimPrefix(mock_remote.URL, "http://")
 
 	for idx, tc := range testCases {
 		var validator CosignValidator
 		ctx := context.Background()
-		img, _ := image.New("test")
+		img, err := image.New(fmt.Sprintf("%s/%s", mock_remote_host, "image"))
+		assert.Nil(t, err, "test case %d: image should be valid", idx+1)
 		cvBytes, err := os.ReadFile(PRE + tc.file + ".yaml")
 		assert.Nil(t, err, "test case %d: config should be valid", idx+1)
 		err = yaml.Unmarshal(cvBytes, &validator)
 		assert.Nil(t, err, "test case %d: validator should be valid", idx+1)
-		verifiers, err := validator.verifiers(ctx, []string{tc.opts.TrustRoot})
-		// In case there's an expected error, verifiers may be nil, otherwise they should be valid
-		if err != nil && tc.expErr == "" {
-			assert.True(t, false, "test case %d: verifiers should be valid", idx+1)
-		}
 
-		// If there's no  error, the should be as many verifiers as expected public keys
-		if tc.expErr == "" {
-			assert.Equal(t, len(tc.expPubKeys), len(verifiers), "test case %d", idx+1)
-		}
-
-		verifierPubKeys := []int64{}
-		for _, verifier := range verifiers {
-			opts, err := validator.setupOptions(ctx, tc.opts, img, verifier.Verifier)
-
-			if tc.expErr != "" {
-				assert.NotNil(t, err, "test case %d", idx+1)
-				assert.ErrorContains(t, err, tc.expErr, "test case %d", idx+1)
-			} else {
-				pubKey, _ := opts.SigVerifier.PublicKey()
-				verifierPubKeys = append(verifierPubKeys, pubKey.(*ecdsa.PublicKey).X.Int64())
-				assert.Nil(t, err, "test case %d", idx+1)
-				assert.Equal(t, tc.expIgnoreTLog, opts.IgnoreTlog, "test case %d", idx+1)
+		if len(validator.Auth.AuthConfigs) > 0 {
+			for _, authConfig := range validator.Auth.AuthConfigs {
+				validator.Auth.AuthConfigs[mock_remote_host] = authConfig
+				break
 			}
 		}
-		assert.ElementsMatch(t, tc.expPubKeys, verifierPubKeys, "test case %d", idx+1)
+
+		opts, _ := validator.setupOptions(ctx, tc.opts, img)
+		assert.Equal(t, tc.expIgnoreTlog, opts.IgnoreTlog, idx+1)
+		assert.Equal(t, tc.expIgnoreSCT, opts.IgnoreSCT, idx+1)
+
+		remote.DigestTag(img, opts.RegistryClientOpts...)
+		assert.Equal(t, tc.expUser, remote_ctrl.Username, idx+1)
+		assert.Equal(t, tc.expPass, remote_ctrl.Password, idx+1)
 	}
 }
 
@@ -298,10 +279,9 @@ func TestSetupOptionsInvalidRekor(t *testing.T) {
 	err = yaml.Unmarshal(cvBytes, &validator)
 	assert.Nil(t, err)
 	validator.Rekor = "https://example.com/ invalid %U RL" // monkey-patch rekor URL as otherwise it can't be invalid
-	verifiers, err := validator.verifiers(ctx, []string{})
 	assert.Nil(t, err)
 	opts := policy.RuleOptions{}
-	_, err = validator.setupOptions(ctx, opts, img, verifiers[0].Verifier)
+	_, err = validator.setupOptions(ctx, opts, img)
 	assert.NotNil(t, err)
 	assert.ErrorContains(t, err, "unable to create Rekor client")
 }
@@ -384,7 +364,7 @@ func TestValidateImage(t *testing.T) {
 			"securesystemsengineering/testimage:co-unsigned",
 			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
 			"",
-			"no signed digests",
+			"no signatures found",
 		},
 		// { // 10: missing tlog entry
 		// 	"01_cosign",
@@ -416,6 +396,51 @@ func TestValidateImage(t *testing.T) {
 		} else {
 			assert.NoError(t, err)
 			assert.Equal(t, tc.digest, digest)
+		}
+	}
+}
+
+func TestValidateImageKeyless(t *testing.T) {
+	var testCases = []struct {
+		config string
+		image  string
+		args   policy.RuleOptions
+		err    string
+	}{
+		{ // 1: working case
+			"11_keyless",
+			"securesystemsengineering/testimage:keyless",
+			policy.RuleOptions{TrustRoot: "philipp-keyless"},
+			"",
+		},
+		{ // 2: wrong subject / issuer
+			"11_keyless",
+			"securesystemsengineering/testimage:keyless",
+			policy.RuleOptions{TrustRoot: "bob-keyless"},
+			"none of the expected identities matched",
+		},
+	}
+
+	reg := testhelper.MockRegistry(PRE)
+	defer reg.Close()
+
+	for idx, tc := range testCases {
+		var cv CosignValidator
+		ctx := context.Background()
+		cvBytes, _ := os.ReadFile(PRE + tc.config + ".yaml")
+		err := yaml.Unmarshal(cvBytes, &cv)
+		assert.Nil(t, err, idx+1)
+
+		img, err := image.New(strings.TrimPrefix(reg.URL, "http://") + "/" + tc.image)
+		assert.NoError(t, err, idx+1)
+
+		_, err = cv.ValidateImage(ctx, img, tc.args)
+
+		if tc.err != "" {
+			assert.Error(t, err, idx+1)
+			assert.ErrorContains(t, err, tc.err, idx+1)
+		} else {
+			assert.NoError(t, err, idx+1)
 		}
 	}
 }

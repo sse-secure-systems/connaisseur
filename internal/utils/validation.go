@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"crypto/x509"
 	"fmt"
 	"reflect"
 
@@ -52,4 +53,12 @@ func Validate(s interface{}) error {
 	}
 
 	return fmt.Errorf("%s has %d errors:\n%s", ty, len(err.(validation.ValidationErrors)), msg)
+}
+
+func ValidateCertificate(cert string) error {
+	certPool := x509.NewCertPool()
+	if !certPool.AppendCertsFromPEM([]byte(cert)) {
+		return fmt.Errorf("invalid certificate")
+	}
+	return nil
 }
