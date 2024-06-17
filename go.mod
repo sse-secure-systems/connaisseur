@@ -15,7 +15,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/gobwas/glob v0.2.3
-	github.com/google/go-containerregistry v0.19.1
+	github.com/google/go-containerregistry v0.19.2
 	github.com/iancoleman/strcase v0.3.0
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/prometheus/client_golang v1.19.1
@@ -28,7 +28,7 @@ require (
 	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.8.4
 	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.8.4
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 	github.com/theupdateframework/notary v0.7.0
 	gopkg.in/yaml.v3 v3.0.1
