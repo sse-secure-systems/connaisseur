@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 pre_workload_test() {
     WOLIST=("CronJob" "DaemonSet" "Deployment" "Job" "Pod" "ReplicaSet" "ReplicationController" "StatefulSet")

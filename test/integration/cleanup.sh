@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 cleanup() {
     RESOURCES="all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets,namespaces"

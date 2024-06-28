@@ -88,7 +88,7 @@ install() { # $1: helm or make, $2: namespace, $3: additional helm args $4: crea
     "release")
         helm repo add connaisseur https://sse-secure-systems.github.io/connaisseur/charts --force-update > /dev/null
 
-        helm show values connaisseur/connaisseur | tee release.yaml >/dev/null
+        helm show values connaisseur/connaisseur > release.yaml
         if ghcr_case; then
             ghcr_update release.yaml
         fi
@@ -149,7 +149,7 @@ create_ghcr_image_pull_secret() { # $1: namespace, $2: create_flag
 
     echo -n 'Creating image pull secret ...'
     kubectl create secret generic "${IMAGEPULLSECRET}" \
-        --from-file=.dockerconfigjson=${HOME}/.docker/config.json \
+        --from-file=.dockerconfigjson="${HOME}"/.docker/config.json \
         --type=kubernetes.io/dockerconfigjson \
         --namespace "${1:-connaisseur}" >/dev/null || fail
     success
@@ -250,18 +250,18 @@ single_test() { # ID TXT TYP REF NS MSG RES
 multi_test() { # $1: file name relative to test/integration path
 
     # converting to json, as yq processing is pretty slow
-    test_cases=$(yq e -o=json "." ${SCRIPT_PATH}/$1)
+    test_cases=$(yq e -o=json "." "${SCRIPT_PATH}"/$1)
     len=$(echo ${test_cases} | jq 'length')
     for i in $(seq 0 $(($len - 1))); do
-        test_case=$(echo ${test_cases} | jq ".[$i]")
-        ID=$(echo ${test_case} | jq -r ".id" | null_to_empty)
+        test_case=$(echo "${test_cases}" | jq ".[$i]")
+        ID=$(echo "${test_case}" | jq -r ".id" | null_to_empty)
         ID=$(printf "%s-%02d-%s" "$(dirname $1)" "$((i+1))" "${ID:=unknown}")
-        TEST_CASE_TXT=$(echo ${test_case} | jq -r ".txt" | null_to_empty)
-        TYPE=$(echo ${test_case} | jq -r ".type" | null_to_empty)
-        REF=$(echo ${test_case} | jq -r ".ref" | null_to_empty)
-        NAMESPACE=$(echo ${test_case} | jq -r ".namespace" | null_to_empty)
-        EXP_MSG=$(echo ${test_case} | jq -r ".expected_msg" | null_to_empty)
-        EXP_RES=$(echo ${test_case} | jq -r ".expected_result" | null_to_empty)
+        TEST_CASE_TXT=$(echo "${test_case}" | jq -r ".txt" | null_to_empty)
+        TYPE=$(echo "${test_case}" | jq -r ".type" | null_to_empty)
+        REF=$(echo "${test_case}" | jq -r ".ref" | null_to_empty)
+        NAMESPACE=$(echo "${test_case}" | jq -r ".namespace" | null_to_empty)
+        EXP_MSG=$(echo "${test_case}" | jq -r ".expected_msg" | null_to_empty)
+        EXP_RES=$(echo "${test_case}" | jq -r ".expected_result" | null_to_empty)
         single_test "${ID}" "${TEST_CASE_TXT}" "${TYPE:=deploy}" "${REF}" "${NAMESPACE:=default}" "${EXP_MSG}" "${EXP_RES:=null}"
     done
 }

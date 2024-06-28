@@ -6,9 +6,9 @@ EXIT="0"
 IT_RUNNING="false"
 
 # install/uninstall/upgrade, utility stuff
-source ${SCRIPT_PATH}/common_functions.sh
+source "${SCRIPT_PATH}"/common_functions.sh
 # cleanup functions
-source ${SCRIPT_PATH}/cleanup.sh
+source "${SCRIPT_PATH}"/cleanup.sh
 
 # backup values.yaml
 cp charts/connaisseur/values.yaml charts/connaisseur/values.yaml.bak
@@ -40,18 +40,18 @@ case ${1:-} in
     ;;
 "load")
     # testing load
-    source ${SCRIPT_PATH}/load/test.sh
+    source "${SCRIPT_PATH}"/load/test.sh
     load_test
     ;;
 "namespaced")
     # testing namespace validation feature
-    source ${SCRIPT_PATH}/namespaced/test.sh
+    source "${SCRIPT_PATH}"/namespaced/test.sh
     namespaced_validation_test
     ;;
 "complexity")
     # testing complex deployments and pods
     # with multiple containers
-    source ${SCRIPT_PATH}/complexity/test.sh
+    source "${SCRIPT_PATH}"/complexity/test.sh
     complexity_test
     ;;
 "deployment")
@@ -70,22 +70,20 @@ case ${1:-} in
     # testing pre-configured values.yaml, without
     # any changes, on deployments and on all workloads
     # and different API versions
-    source ${SCRIPT_PATH}/workload/test.sh
+    source "${SCRIPT_PATH}"/workload/test.sh
     pre_workload_test
     ;;
 "cert")
     # testing a custom TLS certificate 
     # for connaisseur
-    source ${SCRIPT_PATH}/cert/test.sh
+    source "${SCRIPT_PATH}"/cert/test.sh
     cert_test
 ;;
 "redis-cert")
     # testing a custom TLS certificate
     # for redis
-    update_with_file "redis-cert/install.yaml"
-    install "make"
-    update_with_file "redis-cert/update.yaml"
-    upgrade "make"
+    source "${SCRIPT_PATH}"/redis-cert/test.sh
+    redis_cert_test
 ;;
 "upgrade")
     # testing upgradability of connaisseur
@@ -96,17 +94,17 @@ case ${1:-} in
 ;;
 "alerting")
     # testing alerting feature
-    source ${SCRIPT_PATH}/alerting/test.sh
+    source "${SCRIPT_PATH}"/alerting/test.sh
     alerting_test
 ;;
 "other-ns")
     # testing whether connaisseur works in other namespaces
-    source ${SCRIPT_PATH}/other-ns/test.sh
+    source "${SCRIPT_PATH}"/other-ns/test.sh
     other_ns_test
 ;;
 "self-hosted-notary")
     # testing self-hosted notary
-    source ${SCRIPT_PATH}/self-hosted-notary/test.sh
+    source "${SCRIPT_PATH}"/self-hosted-notary/test.sh
     self_hosted_notary_test
 ;;
 *)

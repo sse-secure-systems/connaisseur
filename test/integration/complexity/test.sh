@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 complexity_test() {
     update_with_file "complexity/install.yaml"

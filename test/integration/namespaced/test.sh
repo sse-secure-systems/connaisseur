@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 namespaced_validation_test() {
     create_namespaces

@@ -16,7 +16,7 @@
   ref: docker.io/library/node
   expected_msg: error during notaryv1 validation
 
-#testing static deny
+# testing static deny
 - id: non-docker-non-sse
   txt: Testing non official docker image and non sse testimage...
   ref: non-official/non-sse:test

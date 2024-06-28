@@ -34,8 +34,8 @@ setup_alerting() {
 
     echo "Spinning up alerting interface..."
     docker run -d --name alerting-endpoint -p 56243:56243 docker.io/securesystemsengineering/alerting-endpoint:latest > /dev/null
-    docker network connect ${NETWORK} alerting-endpoint
-    export ALERTING_ENDPOINT_IP=$(docker container inspect alerting-endpoint | jq -r --arg network ${NETWORK} '.[].NetworkSettings.Networks[$network].IPAddress')
+    docker network connect "${NETWORK}" alerting-endpoint
+    export ALERTING_ENDPOINT_IP=$(docker container inspect alerting-endpoint | jq -r --arg network "${NETWORK}" '.[].NetworkSettings.Networks[$network].IPAddress')
     echo "Alerting interface spun up at ${ALERTING_ENDPOINT_IP}."
 }
 

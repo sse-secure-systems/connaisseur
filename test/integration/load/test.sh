@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 create_load() {
     NUMBER_OF_INSTANCES=100
