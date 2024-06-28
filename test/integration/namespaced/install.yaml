@@ -1,0 +1,23 @@
+application:
+  validators:
+    - name: default
+      type: notaryv1
+      host: notary.docker.io
+      trustRoots:
+        - name: default
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
+    - name: allow
+      type: static
+      approve: true
+  policy:
+    - pattern: "*:*"
+    - pattern: "redis"
+      validator: allow
+  alerts: []
+  features:
+    namespacedValidation:
+      mode: ignore

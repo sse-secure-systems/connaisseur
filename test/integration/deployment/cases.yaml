@@ -1,0 +1,45 @@
+- id: signed
+  txt: Testing 1 signed image deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i1.yaml
+  expected_msg: deployment.apps/i1-deployment created
+- id: unsigned
+  txt: Testing 1 unsigned image deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i1u1.yaml
+  expected_msg: "denied the request: error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+- id: no-existent-image
+  txt: Testing 1 nonexistent image (cosign) deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i1n1.yaml
+  expected_msg: 'image index.docker.io/securesystemsengineering/testimage:co-nonexistent does not exist'
+- id: 2-signed
+  txt: Testing 2 signed images deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i2.yaml
+  expected_msg: deployment.apps/i2-deployment created
+- id: 1-signed-1-unsigned
+  txt: Testing 1 signed image (first) and 1 unsigned (second) image deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i2u1-2.yaml
+  expected_msg: "denied the request: error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+- id: 1-unsigned-1-signed
+  txt: Testing 1 signed image (second) and 1 unsigned (first) image deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i2u1-1.yaml
+  expected_msg: "denied the request: error during cosign validation of image securesystemsengineering/testimage:co-unsigned: no signed digests"
+- id: 2-unsigned
+  txt: Testing 2 unsigned images deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i2u2.yaml
+  expected_msg: "denied the request:"
+- id: 2-signed-1-signed-init
+  txt: Testing 2 signed images and 1 signed init container deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i2i.yaml
+  expected_msg: deployment.apps/i2i-deployment created
+- id: 2-signed-1-unsigned-init
+  txt: Testing 2 signed images and 1 unsigned init container deployment...
+  type: apply
+  ref: test/integration/deployment/deployments/deployment_i2ui.yaml
+  expected_msg: "denied the request: error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"

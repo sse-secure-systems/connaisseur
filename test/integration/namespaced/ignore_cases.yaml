@@ -1,0 +1,11 @@
+- id: unlabelled-unsigned
+  txt: Testing unsigned image in unlabelled namespace...
+  ref: securesystemsengineering/testimage:unsigned
+  expected_msg: error during notaryv1 validation
+- id: unlabelled-signed
+  txt: Testing signed image in unlabelled namespace...
+  ref: securesystemsengineering/testimage:signed
+- id: unsigned-ignored
+  txt: Testing unsigned image in ignored namespace...
+  ref: securesystemsengineering/testimage:unsigned
+  namespace: ignoredns

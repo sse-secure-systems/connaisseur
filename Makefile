@@ -4,7 +4,7 @@ VERSION := $(shell yq e '.appVersion' charts/connaisseur/Chart.yaml)
 KD := kubernetes.deployment
 ALL_RS := all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,secrets,serviceaccounts,crds
 
-.PHONY: docker install uninstall annihilate test install-dev upgrade lint
+.PHONY: docker install install-dev uninstall annihilate test upgrade kind-dev lint integration alerting
 
 # meant for local building of docker image
 docker:
@@ -32,11 +32,14 @@ test:
 upgrade:
 	helm upgrade connaisseur charts/connaisseur --namespace $(NAMESPACE) --wait
 
-kind-int-test:
-	./tests/integration/run_integration_tests.sh -c kind -r "regular cosign"
-
 kind-dev:
 	make docker && kind load docker-image $(IMAGE_REPO):v$(VERSION) && make install-dev
 
 lint:
 	golangci-lint run --skip-dirs="test"
+
+integration:
+	bash "test/integration/main.sh" "regular"
+
+alerting:
+	cd test/integration/alerting && docker build -t securesystemsengineering/alerting-endpoint . && cd -

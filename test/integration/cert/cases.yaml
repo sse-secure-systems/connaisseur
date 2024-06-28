@@ -1,0 +1,7 @@
+- id: unsigned
+  txt: Testing unsigned image...
+  ref: securesystemsengineering/testimage:unsigned
+  expected_msg: "error during notaryv1 validation"
+- id: signed
+  txt: Testing signed image...
+  ref: securesystemsengineering/testimage:signed

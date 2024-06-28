@@ -1,0 +1,7 @@
+- id: selfhosted-nv1-01-shnu
+  txt: Testing unsigned image...
+  ref: securesystemsengineering/testimage:unsigned
+  expected_msg: "error during notaryv1 validation of image securesystemsengineering/testimage:unsigned: validated targets don't contain reference: no tag 'unsigned' found in targets"
+- id: selfhosted-nv1-02-shnsi
+  txt: Testing signed image with trust data in self-hosted notary...
+  ref: securesystemsengineering/testimage:self-hosted-notary-signed

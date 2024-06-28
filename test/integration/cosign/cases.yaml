@@ -1,0 +1,54 @@
+# simple
+- id: unsigned
+  txt: Testing unsigned cosign image...
+  ref: securesystemsengineering/testimage:co-unsigned
+  expected_msg: no signed digests
+- id: signed
+  txt: Testing signed cosign image...
+  ref: securesystemsengineering/testimage:co-signed
+
+# different keys
+- id: signed-diff-key
+  txt: Testing cosign image signed under different key...
+  ref: securesystemsengineering/testimage:co-signed-alt
+  expected_msg: no signed digests
+- id: signed-rsa
+  txt: Testing signed cosign image, signed with RSA key...
+  ref: securesystemsengineering/testimage:rsa-co-signed
+
+# tag AND digest
+- id: tag-and-digest
+  txt: Testing signed cosign image with tag and digest...
+  ref: securesystemsengineering/testimage:co-signed@sha256:c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7
+
+# threshold and required
+- id: threshold-undefined-not-reached
+  txt: Testing multi-cosigned image `threshold` => undefined, not reached...
+  ref: securesystemsengineering/testimage:multi-cosigned-alice
+  expected_msg: validation threshold not reached (1/3)
+- id: threshold-undefined-reached
+  txt: Testing multi-cosigned image `threshold` => undefined, reached...
+  ref: securesystemsengineering/testimage:multi-cosigned-alice-bob-charlie
+- id: threshold-defined-not-reached
+  txt: Testing multi-cosigned image `threshold` => 2, not reached...
+  ref: securesystemsengineering/testimage:multi-cosigned-bob
+  expected_msg: validation threshold not reached (1/2)
+- id: threshold-defined-reached
+  txt: Testing multi-cosigned image `threshold` => 2, reached...
+  ref: securesystemsengineering/testimage:multi-cosigned-bob-charlie
+- id: required-not-reached
+  txt: Testing multi-cosigned image `required` signers => ['alice', 'charlie'], not reached...
+  ref: securesystemsengineering/testimage:multi-cosigned-charlie
+  expected_msg: missing required signatures from [alice]
+- id: required-reached
+  txt: Testing multi-cosigned image `required` signers => ['alice', 'charlie'], reached...
+  ref: securesystemsengineering/testimage:multi-cosigned-charlie-alice
+
+# rekor tests
+- id: no-transparency-log
+  txt: Testing signed cosign image WITHOUT transparency log entry...
+  ref: securesystemsengineering/testimage:rekor-cosigned-notl
+  expected_msg: no signed digests
+- id: transparency-log
+  txt: Testing signed cosign image WITH transparency log entry...
+  ref: securesystemsengineering/testimage:rekor-cosigned-tl

@@ -1,0 +1,56 @@
+# simple test cases for notaryv1
+- id: unsigned
+  txt: Testing unsigned image...
+  ref: securesystemsengineering/testimage:unsigned
+  expected_msg: error during notaryv1 validation
+- id: signed
+  txt: Testing signed image...
+  ref: securesystemsengineering/testimage:signed
+
+  # different keys
+- id: diff-key
+  txt: Testing image signed under different key...
+  ref: library/redis
+  expected_msg: error during notaryv1 validation
+
+# delegation tests
+- id: designated-signer
+  txt: Testing signed image with designated signer...
+  ref: securesystemsengineering/testimage:special_sig
+- id: missing-designated-signer
+  txt: Testing image with missing designated signer...
+  ref: securesystemsengineering/testimage:wrong_signer
+  expected_msg: error during notaryv1 validation
+- id: diff-designated-signer
+  txt: Testing image with differing designated signers...
+  ref: securesystemsengineering/testimage:double_sig
+  expected_msg: validator dockerhub found 2 digests for image double_sig, expected 1
+
+# init container tests
+- id: signed-init-signed
+  txt: Testing deployment of valid init container along with a valid container...
+  type: apply
+  ref: test/integration/notaryv1/valid_init_container.yaml
+  expected_msg: pod/connaisseur-integration-test-pod-valid-init created
+- id: unsigned-init-signed
+  txt: Testing deployment of unsigned init container along with a valid container...
+  type: apply
+  ref: test/integration/notaryv1/valid_container_with_unsigned_init_container_image.yaml
+  expected_msg: error during notaryv1 validation
+
+# tag AND digest
+- id: tag-and-digest
+  txt: Testing signed image with tag and digest...
+  ref: securesystemsengineering/testimage:signed@sha256:fe542477b92fb84c38eda9c824f6566d5c2536ef30af9c47152fa8a5fadb58dd
+
+# ephemeral container tests
+- id: unsigned-ephemeral
+  txt: Testing ephemeral container with unsigned image...
+  type: debug
+  ref: securesystemsengineering/testimage:unsigned
+  expected_msg: "error during notaryv1 validation"
+- id: signed-ephemeral
+  txt: Testing ephemeral container with signed image...
+  type: debug
+  ref: securesystemsengineering/testimage:signed@sha256:fe542477b92fb84c38eda9c824f6566d5c2536ef30af9c47152fa8a5fadb58dd
+  expected_msg: Defaulting debug container name to debugger-

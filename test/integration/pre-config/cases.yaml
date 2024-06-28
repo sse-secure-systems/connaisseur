@@ -1,0 +1,23 @@
+# testing sse images
+- id: unsigned-sse
+  txt: Testing unsigned sse testimage...
+  ref: securesystemsengineering/testimage:unsigned
+  expected_msg: no tag 'unsigned' found in targets
+- id: signed-sse
+  txt: Testing signed sse testimage...
+  ref: securesystemsengineering/testimage:signed
+
+# testing docker official images
+- id: signed-docker-official
+  txt: Testing signed official docker image...
+  ref: docker.io/library/nginx
+- id: unsigned-docker-official
+  txt: Testing unsigned official docker image...
+  ref: docker.io/library/node
+  expected_msg: error during notaryv1 validation
+
+# testing static deny
+- id: non-docker-non-sse
+  txt: Testing non official docker image and non sse testimage...
+  ref: non-official/non-sse:test
+  expected_msg: static deny

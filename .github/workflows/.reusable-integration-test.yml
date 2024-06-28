@@ -45,14 +45,15 @@ jobs:
         integration-test-arg:
           [
             "regular",
+            "notaryv1",
             "cosign",
-            "multi-cosigned",
-            "rekor-cosigned",
-            "namespace-val",
+            "namespaced",
             "deployment",
             "pre-config",
+            "cert",
+            "redis-cert",
+            "alerting",
             "other-ns",
-            "configured-cert",
           ]
     services:
       alerting-endpoint:
@@ -80,7 +81,7 @@ jobs:
         uses: ./.github/actions/alerting-endpoint
       - name: Run test
         run: |
-          bash test/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+          bash test/integration/main.sh "${{ matrix.integration-test-arg }}"
         env:
           ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
       - name: Display Connaisseur configuration
@@ -116,8 +117,8 @@ jobs:
       matrix:
         integration-test-arg:
           [
-            "complexity",
             "load",
+            "complexity",
             "upgrade",
           ]
     services:
@@ -146,7 +147,7 @@ jobs:
         uses: ./.github/actions/alerting-endpoint
       - name: Run test
         run: |
-          bash test/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+          bash test/integration/main.sh "${{ matrix.integration-test-arg }}"
         env:
           ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
       - name: Display Connaisseur configuration
@@ -202,7 +203,7 @@ jobs:
           k8s-version: ${{ matrix.k8s-version }}
       - name: Run pre-config and workload integration tests
         run: |
-          bash test/integration/integration-test.sh "pre-and-workload"
+          bash test/integration/main.sh "pre-config-and-workload"
       - name: Display k8s state and logs if integration test failed
         if: failure()
         run: |
@@ -256,7 +257,7 @@ jobs:
           k8s-version: ${{ matrix.k8s-version }}
       - name: Run pre-config and workload integration tests
         run: |
-          bash test/integration/integration-test.sh "pre-and-workload"
+          bash test/integration/main.sh "pre-config-and-workload"
       - name: Display k8s state and logs if integration test failed
         if: failure()
         run: |
@@ -303,13 +304,13 @@ jobs:
           sudo snap install yq
       - name: Setup notary signer instance
         run: |
-          docker run -d -p 7899:7899 -v ./test/integration/notary_service_container/signer:/etc/docker/notary-signer/ notary:signer -config=/etc/docker/notary-signer/config.json
+          docker run -d -p 7899:7899 -v ./test/integration/self-hosted-notary/notary-service-container/signer:/etc/docker/notary-signer/ notary:signer -config=/etc/docker/notary-signer/config.json
       - name: Get notary signer instance IP
         id: get_notary_signer_ip
         uses: ./.github/actions/notary-signer-ip
       - name: Setup notary server instance
         run: |
-          docker run -d -p 4443:4443 --add-host notary.signer:${{ steps.get_notary_signer_ip.outputs.notary_signer_ip }} -v ./test/integration/notary_service_container/server:/etc/docker/notary-server notary:server -config=/etc/docker/notary-server/config.json -logf=json
+          docker run -d -p 4443:4443 --add-host notary.signer:${{ steps.get_notary_signer_ip.outputs.notary_signer_ip }} -v ./test/integration/self-hosted-notary/notary-service-container/server:/etc/docker/notary-server notary:server -config=/etc/docker/notary-server/config.json -logf=json
       - name: Get container IPs
         id: get_notary_server_ip
         uses: ./.github/actions/notary-server-ip
@@ -324,7 +325,7 @@ jobs:
           k8s-version: v1.28
       - name: Run test
         run: |
-          bash test/integration/integration-test.sh "${{ matrix.integration-test-arg }}"
+          bash test/integration/main.sh "${{ matrix.integration-test-arg }}"
         env:
           NOTARY_IP: ${{ steps.get_notary_server_ip.outputs.notary_ip }}
       - name: Display Connaisseur configuration

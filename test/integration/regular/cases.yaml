@@ -1,0 +1,26 @@
+# static
+- id: static-allow
+  txt: Testing static allow...
+  ref: node
+- id: static-deny
+  txt: Testing static deny...
+  ref: redis
+  expected_msg: static deny
+
+# notaryv1
+- id: unsigned-nv1
+  txt: Testing unsigned nv1 image...
+  ref: securesystemsengineering/testimage:unsigned
+  expected_msg: error during notaryv1 validation
+- id: signed-nv1
+  txt: Testing signed nv1 image...
+  ref: securesystemsengineering/testimage:signed
+
+# cosign
+- id: unsigned-cosign
+  txt: Testing unsigned cosign image...
+  ref: securesystemsengineering/testimage:co-unsigned
+  expected_msg: error during cosign validation
+- id: signed-cosign
+  txt: Testing signed cosign image...
+  ref: securesystemsengineering/testimage:co-signed

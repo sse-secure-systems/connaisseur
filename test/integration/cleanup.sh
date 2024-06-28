@@ -1,28 +1,64 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-preserve_info_and_cleanup() {
-	kubectl config use-context ${DEFAULT_CTX}
-	echo "Preserving log files..."
-	(kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1 2>&1 || kubectl logs -n security -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1 ) > connaisseur.log
-	cat charts/connaisseur/values.yaml > connaisseur.yaml
-	( (kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur 2>&1 &&
-	  kubectl describe deployments.apps -n connaisseur -lapp.kubernetes.io/name=connaisseur 2>&1) ||
-	  (kubectl describe pods -n security -lapp.kubernetes.io/name=connaisseur &&
-      kubectl describe deployments.apps -n security -lapp.kubernetes.io/name=connaisseur)) > connaisseur.state
-    echo 'Cleaning up installation and test resources...'
-    make uninstall >/dev/null 2>&1 || true
-    helm uninstall connaisseur -n security >/dev/null 2>&1 || true
-    kubectl delete ns security >/dev/null 2>&1 || true
-    kubectl delete clusterrole auxillary >/dev/null 2>&1 || true
-    kubectl delete clusterrolebinding securityadmin >/dev/null 2>&1 || true
-    kubectl config delete-context deployconnaisseur >/dev/null 2>&1 || true
-    kubectl delete all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets,namespaces -luse="connaisseur-integration-test" -A >/dev/null 2>&1 || true
-    kubectl delete ns connaisseur >/dev/null 2>&1 || true
-    rm ghcr-values ghcr-validator >/dev/null 2>&1 || true
-    rm release.yaml release_patched.yaml >/dev/null 2>&1 || true
-    rm root.json >/dev/null 2>&1 || true
-    mv values.yaml.backup charts/connaisseur/values.yaml >/dev/null 2>&1 || true
-    mv deployment.yaml.backup charts/connaisseur/templates/deployment.yaml >/dev/null 2>&1 || true
-    echo 'Finished cleanup of integration test leftovers.'
+cleanup() {
+    RESOURCES="all,cronjobs,daemonsets,jobs,replicationcontrollers,statefulsets,namespaces"
+    
+    echo -n "Cleaning up ..."
+
+    # delete all resources with the label "use=connaisseur-integration-test"
+    if [[ !($(kubectl get $RESOURCES -luse="connaisseur-integration-test" -A 2>&1) =~ "No resources found" ) ]]; then
+        kubectl delete $RESOURCES -luse="connaisseur-integration-test" -A >/dev/null 2>&1 || true
+    fi
+    
+    # delete the connaisseur namespace if it exists
+    if [[ !($(kubectl get ns connaisseur 2>&1) =~ "not found") ]]; then
+        kubectl delete ns connaisseur >/dev/null 2>&1 || true
+    fi
+
+    # delete the connaisseur-webhook mutating webhook configuration if it exists
+    if [[ !($(kubectl get mutatingwebhookconfigurations 2>&1) =~ "No resources found") ]]; then
+        kubectl delete mutatingwebhookconfigurations connaisseur-webhook >/dev/null 2>&1 || true
+    fi
+
+    # restore the values.yaml file
+    mv charts/connaisseur/values.yaml.bak charts/connaisseur/values.yaml >/dev/null || true
+
+    # stop the notary containers (described in ./selfhosted-notary/test.sh)
+    cleanup_self_hosted_notary >/dev/null 2>&1 || true
+
+    success
+}
+
+preserve_and_cleanup() {
+    rv=$?
+
+    # if we are running in CI, we want to exit with the return value
+    if [[ "${CI-}" == "true" ]]; then
+        exit $rv
+    fi
+
+    # if the help message was printed, we just want to exit
+    if [[ $rv == 2 ]]; then
+        rm charts/connaisseur/values.yaml.bak >/dev/null
+        exit 0
+    fi
+
+    # if the integration test is still running, we want to preserve the log, state and values.yaml files
+    # (this will be the case if the test was interrupted with SIGINT)
+    if [[ ${IT_RUNNING} == "true" ]]; then
+        echo -n "Preserving log, state and values.yaml files ..."
+        
+        kubectl logs -n connaisseur -lapp.kubernetes.io/name=connaisseur --prefix=true --tail=-1 > connaisseur.log 2>&1 || true
+        cat charts/connaisseur/values.yaml > connaisseur.yaml 2>&1 || true
+        (kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur 2>&1 &&
+        kubectl describe deployments.apps -n connaisseur -lapp.kubernetes.io/name=connaisseur 2>&1) > connaisseur.state || true
+
+        success
+    fi
+
+    # the actual cleanup
+    cleanup
+
+    exit $rv
 }
