@@ -26,3 +26,5 @@ bash test/integration/main.sh <test_case>
 - `upgrade`: Test upgradability of Connaisseur.
 - `alerting`: Test alerting mechanisms.
 - `other-ns`: Test whether Connaisseur can be installed in non-default namespaces with limited permissions.
+- `self-hosted-notary`: Test whether Connaisseur works with a self-hosted notary server.
+- `all`: Runs all other test cases (except for `load`) in a loop.

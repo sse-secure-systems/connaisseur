@@ -14,7 +14,7 @@ source "${SCRIPT_PATH}"/cleanup.sh
 cp charts/connaisseur/values.yaml charts/connaisseur/values.yaml.bak
 
 # cleanup on exit if not running in CI
-if [[ "${CI-}" != "true" ]]; then
+if [[ "${CI-}" != "true" && "${NO_TRAP-}" != "true" ]]; then
     trap_add "preserve_and_cleanup" SIGINT SIGTERM EXIT
 fi
 
@@ -107,6 +107,28 @@ case ${1:-} in
     source "${SCRIPT_PATH}"/self-hosted-notary/test.sh
     self_hosted_notary_test
 ;;
+"all")
+    # running all test cases (except load test)
+    TESTS=("regular" "notaryv1" "cosign" "namespaced" "complexity" "deployment" "pre-config" "pre-config-and-workload" "cert" "redis-cert" "upgrade" "alerting" "other-ns" "self-hosted-notary")
+
+    FAILED_TESTS=()
+
+    for test in "${TESTS[@]}"; do
+        echo "--- Running test case: ${test} ---"
+        NO_TRAP=true bash "${SCRIPT_PATH}"/main.sh "${test}"
+
+        if [[ $? -ne 0 ]]; then
+            FAILED_TESTS+=("${test}")
+            EXIT="1"
+        fi
+        cleanup
+        echo -e "\n"
+    done
+
+    if [[ ${#FAILED_TESTS[@]} -ne 0 ]]; then
+        echo -e "${FAILED} Failed test cases: ${FAILED_TESTS[*]}"
+    fi
+;;
 *)
     # help message
     echo "Usage:"
@@ -128,6 +150,7 @@ case ${1:-} in
     echo -e "\talerting"
     echo -e "\tother-ns"
     echo -e "\tself-hosted-notary"
+    echo -e "\tall"
 
     exit 2
     ;;
