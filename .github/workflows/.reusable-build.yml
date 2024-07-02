@@ -66,7 +66,7 @@ jobs:
       build_labels: ${{ steps.get_context.outputs.build_labels }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Get context
         id: get_context
         uses: ./.github/actions/context
@@ -83,7 +83,7 @@ jobs:
       cosign_public_key: ${{ steps.build.outputs.cosign_public_key }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Build Connaisseur
         id: build
         uses: ./.github/actions/build
