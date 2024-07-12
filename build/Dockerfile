@@ -13,7 +13,8 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     go build -o /go/bin ./cmd/connaisseur
 
 FROM alpine:3 as certs
-RUN apk --update --no-cache add ca-certificates=20240226-r0
+# hadolint ignore=DL3018
+RUN apk --update --no-cache add ca-certificates
 
 FROM scratch
 
