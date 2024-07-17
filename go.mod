@@ -15,7 +15,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/gobwas/glob v0.2.3
-	github.com/google/go-containerregistry v0.20.0
+	github.com/google/go-containerregistry v0.20.1
 	github.com/iancoleman/strcase v0.3.0
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/prometheus/client_golang v1.19.1
