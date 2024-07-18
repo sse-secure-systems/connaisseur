@@ -15,7 +15,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/gobwas/glob v0.2.3
-	github.com/google/go-containerregistry v0.20.0
+	github.com/google/go-containerregistry v0.20.1
 	github.com/iancoleman/strcase v0.3.0
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/prometheus/client_golang v1.19.1
@@ -32,9 +32,9 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/theupdateframework/notary v0.7.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.30.2
-	k8s.io/apimachinery v0.30.2
-	k8s.io/client-go v0.30.2
+	k8s.io/api v0.30.3
+	k8s.io/apimachinery v0.30.3
+	k8s.io/client-go v0.30.3
 )
 
 require (
