@@ -1690,12 +1690,6 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 <td>-</td>
 <td>Self-signed certificate of the Notary instance, if used. Certificate must be supplied in <code>.pem</code> format.</td>
 </tr>
-<tr>
-<td><code>isAcr</code></td>
-<td><code>false</code></td>
-<td>-</td>
-<td><code>true</code> if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs.</td>
-</tr>
 </tbody>
 </table>
 <p><code>.application.policy[*]</code> in <code>charts/connaisseur/values.yaml</code> supports the following additional keys for Notary (V1) (refer to <a href="../../basics/#image-policy">basics</a> for more information on default keys):</p>
@@ -1788,8 +1782,7 @@ You can also add multiple signer names to the list in which case Connaisseur wil
 <p>The delegation feature can be useful in complex organisations where certain people may be required to sign specific critical images.
 Another use case is to sign an image with delegation keys in various stages of your CI and enforce that certain checks were passed, i.e. enforcing the signature of your linter, your security scanner and your software lisence compliance check.</p>
 <h3 id="using-azure-container-registry">Using Azure Container Registry<a class="headerlink" href="#using-azure-container-registry" title="Permanent link">⚓︎</a></h3>
-<p>Using Azure Container Registry (ACR) must be specified in the <a href="./#configuration-options">validator configuration</a> by setting <code>isAcr</code> to <code>true</code>.</p>
-<p>Moreover, you need to provide credentials of an Azure Identity having at least <code>read</code> access to the ACR (and, thus, to the associated Notary instance). Assuming you have the <code>az cli</code> installed you can create a Service Principal for this by running:</p>
+<p>You need to provide credentials of an Azure Identity having at least <code>read</code> access to the ACR (and, thus, to the associated Notary instance). Assuming you have the <code>az cli</code> installed you can create a Service Principal for this by running:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Retrieve the ID of your registry</span>
 <span class="nv">REGISTRY_ID</span><span class="o">=</span><span class="k">$(</span>az<span class="w"> </span>acr<span class="w"> </span>show<span class="w"> </span>--name<span class="w"> </span>&lt;ACR-NAME&gt;<span class="w">  </span>--query<span class="w"> </span><span class="s1">&#39;id&#39;</span><span class="w"> </span>-otsv<span class="k">)</span>
 
