@@ -189,7 +189,6 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 | `auth.username` | - | - | Username to authenticate with[^2]. |
 | `auth.password` | - | - | Password or access token to authenticate with[^2]. |
 | `cert` | - | - | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
-| `isAcr` | `false` | - | `true` if using Azure Container Registry (ACR) as ACR does not offer a health endpoint according to Notary API specs. |
 
 `.application.policy[*]` in `charts/connaisseur/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
@@ -291,9 +290,7 @@ Another use case is to sign an image with delegation keys in various stages of y
 
 ### Using Azure Container Registry
 
-Using Azure Container Registry (ACR) must be specified in the [validator configuration](./notaryv1.md#configuration-options) by setting `isAcr` to `true`.
-
-Moreover, you need to provide credentials of an Azure Identity having at least `read` access to the ACR (and, thus, to the associated Notary instance). Assuming you have the `az cli` installed you can create a Service Principal for this by running:
+You need to provide credentials of an Azure Identity having at least `read` access to the ACR (and, thus, to the associated Notary instance). Assuming you have the `az cli` installed you can create a Service Principal for this by running:
 
 ```bash
 # Retrieve the ID of your registry
