@@ -43,3 +43,6 @@ integration:
 
 alerting:
 	cd test/integration/alerting && docker build -t securesystemsengineering/alerting-endpoint . && cd -
+
+build-testimage-%:
+	docker build --build-arg="MESSAGE=$*" -t securesystemsengineering/testimage:$* -f test/testdata/dockerfiles/Dockerfile test/testdata/dockerfiles

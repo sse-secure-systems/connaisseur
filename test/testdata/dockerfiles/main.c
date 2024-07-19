@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 
-const char message[] = "Wrong_signer.\n";
+const char message[] = "$MESSAGE\n";
 
 int main()
 { 

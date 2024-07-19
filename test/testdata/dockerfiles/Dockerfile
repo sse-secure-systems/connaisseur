@@ -1,3 +1,18 @@
-FROM alpine:3.18@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978
-RUN echo "while true; do echo 'Hello World of signing ;)'; sleep 3; done" >> hello.sh
-CMD ["sh", "hello.sh"]
+FROM gcc@sha256:f993601701a37bef71e7f8fc1ef9410b09b15556f4371b06dcc10202cc81f9ea AS builder
+
+ARG MESSAGE
+ENV MESSAGE=$MESSAGE
+
+WORKDIR /
+
+RUN apt update && apt install -y gettext
+
+COPY main.c /main.c
+RUN envsubst < /main.c > /main_.c
+RUN gcc -o /main -static /main_.c
+
+FROM scratch
+
+COPY --from=builder /main /main
+
+ENTRYPOINT ["./main"]
