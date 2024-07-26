@@ -1494,7 +1494,7 @@ You can read more about it <a href="https://blog.sigstore.dev/">here</a>.</p>
 <p>Connaisseur currently supports the elementary function of verifying Cosign-generated signatures based on the following types of keys:</p>
 <ul>
 <li><a href="https://github.com/sigstore/cosign#generate-a-keypair">Locally-generated key pair</a></li>
-<li><a href="https://github.com/sigstore/cosign#kms-support">KMS</a> (via <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">reference URI</a> or <a href="https://github.com/sigstore/cosign#kms-support">export of the public key</a>)</li>
+<li><a href="https://github.com/sigstore/cosign#kms-support">KMS</a> (via <a href="https://docs.sigstore.dev/key_management/overview/#basic-usage">reference URI</a> or <a href="https://github.com/sigstore/cosign#kms-support">export of the public key</a>)</li>
 <li><a href="https://github.com/sigstore/cosign#hardware-based-tokens">Hardware-based token</a> (<a href="https://github.com/sigstore/cosign/blob/main/USAGE.md#retrieve-the-public-key-from-a-private-key-or-kms">export the public key</a>)</li>
 </ul>
 <p>We plan to expose further features of Cosign and sigstore in upcoming releases, so stay tuned!</p>
@@ -1574,14 +1574,56 @@ In case you just use the default values for the validator and image policy given
 <tr>
 <td><code>trustRoots[*].key</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>See <a href="../../basics/#validators">basics</a>. Public key from <code>cosign.pub</code> file or <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">KMS URI</a>. See additional notes <a href="#kms-support">below</a>.</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using keyless</td>
+<td>See <a href="../../basics/#validators">basics</a>. Public key from <code>cosign.pub</code> file or <a href="https://docs.sigstore.dev/key_management/overview/#basic-usage">KMS URI</a>. See additional notes <a href="#kms-support">below</a>.</td>
+</tr>
+<tr>
+<td><code>trustRoots[*].keyless.issuer</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or issuerRegex</td>
+<td>The OIDC provider URL which attests the identity.</td>
+</tr>
+<tr>
+<td><code>trustRoots[*].keyless.subject</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or subjectRegex</td>
+<td>The identity that created the keyless signature. Usually an email address.</td>
+</tr>
+<tr>
+<td><code>trustRoots[*].keyless.issuerRegex</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or issuer</td>
+<td>Regex for the OIDC provider URL which attests the identity.</td>
+</tr>
+<tr>
+<td><code>trustRoots[*].keyless.subjectRegex</code></td>
+<td>-</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or subject</td>
+<td>Regex of the identity that created the keyless signature. Usually an email address. When setting this, make sure you control all subject that can be matched. The pattern <code>your.name@gmail.*</code> also matches <code>yourXname@gmail.com</code> or <code>your.name@gmail.attacker.com</code></td>
 </tr>
 <tr>
 <td><code>host.rekor</code></td>
 <td><code>rekor.sigstore.dev</code></td>
 <td>-</td>
 <td>Rekor URL to use for validation against the transparency log (default sigstore instance is <code>rekor.sigstore.dev</code>). Setting <code>host</code> enforces successful transparency log check to pass verification. See additional notes <a href="#transparency-log-verification">below</a>.</td>
+</tr>
+<tr>
+<td><code>host.rekorPubkey</code></td>
+<td>Public key of <code>rekor.sigstore.dev</code></td>
+<td>-</td>
+<td>Public key used to verify signature of log entry from Rekor.</td>
+</tr>
+<tr>
+<td><code>host.fulcioCert</code></td>
+<td>Root and intermediate certificates belonging to <code>fulcio.sigstore.dev</code></td>
+<td>-</td>
+<td>The root certificate belonging the Fulcio CA which is used to create keyless signatures.</td>
+</tr>
+<tr>
+<td><code>host.ctLogPubkey</code></td>
+<td>Public key for the certificate transparency log provided by Sigstore</td>
+<td>-</td>
+<td>The public key needed for verifying Signed Certificate Timestamps (SCT). This will accept a single key.</td>
 </tr>
 <tr>
 <td><code>auth.</code></td>
@@ -1643,6 +1685,12 @@ In case you just use the default values for the validator and image policy given
 <td><code>true</code></td>
 <td>-</td>
 <td>Whether to include the verification using the Rekor tranparency log in the verification process. Refer to <a href="#transparency-log-verification">Tranparency log verification</a> for more information.</td>
+</tr>
+<tr>
+<td><code>with.verifySCT</code></td>
+<td><code>true</code></td>
+<td>-</td>
+<td>Whether to verify the signed certificate timestamps inside the transparency log.</td>
 </tr>
 </tbody>
 </table>
@@ -1805,7 +1853,34 @@ When the <code>host.rekor</code> key is set, e.g. to <code>rekor.sigstore.dev</c
 Furthermore, the <code>host.rekor</code> allows switching to private Rekor instances, e.g. for usage with <a href="#keyless-signatures">keyless signatures</a>.
 To disable this feature the <code>with.verifyInTransparencyLog</code> key can be set to <code>false</code>. This is useful for example if the signature was made without an upload to the transparency log in the first place.</p>
 <h3 id="keyless-signatures">Keyless signatures<a class="headerlink" href="#keyless-signatures" title="Permanent link">⚓︎</a></h3>
-<p>Keyless signatures have not yet been implemented but are planned in upcoming releases.</p>
+<p>Keyless signatures are a feature of Sigstore that allows to sign container images without the need to manage a private key. Instead the signatures are bound to identities, attested by OIDC providers, and use ephemeral keys, short-lived certificates and a transparency log under the hood to provide similar security guarantees. Further information on this topic can be found <a href="https://docs.sigstore.dev/signing/overview/">here</a>.</p>
+<p>When using keyless signatures, the <code>trustRoots[*].keyless</code> field can be used to specify the issuer and subject of the keyless signature. The issuer is the OIDC provider that attests the identity and the subject is the identity that created the keyless signature, usually an email address. Both fields are also available as regular expressions. The following example shows how to configure a validator for keyless signatures:</p>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keylessvalidator</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
+<span class="w">  </span><span class="nt">trustRoots</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keyless</span>
+<span class="w">    </span><span class="nt">keyless</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">issuerRegex</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;github&quot;</span>
+<span class="w">      </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;philipp.belitz@securesystems.de</span>
+</code></pre></div>
+<p>In case the signature was created using the Sigstore infrastructure, nothing else needs to be configured since Connaisseur will automatically retrieve all needed public keys and certificates from the Sigstore infrastructure. If the signature was created using a private infrastructure, the <code>host.fulcioCert</code> field can be used to specify the root certificate belonging to the Fulcio CA which is used to create the keyless signatures. The <code>host.fulcioCert</code> field should contain the root certificate in PEM format. The same applies to the <code>host.ctLogPubkey</code> field which can be used to specify the public key needed for verifying Signed Certificate Timestamps (SCT) and the <code>host.rekorPubkey</code> field which can be used to specify the public key used to verify the signature of log entries from Rekor.</p>
+<div class="highlight"><span class="filename">charts/connaisseur/values.yaml</span><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cosign</span>
+<span class="nt">host</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rekorPubkey</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">-----END PUBLIC KEY-----</span>
+<span class="w">  </span><span class="nt">ctLogPubkey</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"> </span>
+<span class="w">    </span><span class="no">-----BEGIN PUBLIC KEY-----</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">-----END PUBLIC KEY-----</span>
+<span class="w">  </span><span class="nt">fulcioCert</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN CERTIFICATE-----</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">-----END CERTIFICATE-----</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
 <div class="footnote">
 <hr />
 <ol>
