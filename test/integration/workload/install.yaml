@@ -1,0 +1,36 @@
+application:
+  validators:
+    - name: allow
+      type: static
+      approve: true
+    - name: deny
+      type: static
+      approve: false
+    - name: dockerhub
+      type: notaryv1
+      trustRoots:
+        - name: default # root from dockerhub
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            -----END PUBLIC KEY-----
+        - name: sse # root from sse
+          key: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
+            -----END PUBLIC KEY-----
+  policy:
+    - pattern: "*:*"
+      validator: deny
+    - pattern: "docker.io/library/*:*"
+      validator: dockerhub
+    - pattern: "docker.io/securesystemsengineering/*:*"
+      validator: dockerhub
+      with:
+        trustRoot: sse
+    - pattern: "registry.k8s.io/*:*"
+      validator: allow
+    - pattern: "rancher/mirrored-library-busybox:*"
+      validator: allow

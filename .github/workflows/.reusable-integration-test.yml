@@ -201,9 +201,12 @@ jobs:
         name: Setup k8s cluster
         with:
           k8s-version: ${{ matrix.k8s-version }}
-      - name: Run pre-config and workload integration tests
+      - name: Run pre-config integration tests
         run: |
-          bash test/integration/main.sh "pre-config-and-workload"
+          bash test/integration/main.sh "pre-config"
+      - name: Run workload integration tests
+        run: |
+          bash test/integration/main.sh "workload"
       - name: Display k8s state and logs if integration test failed
         if: failure()
         run: |
@@ -255,9 +258,12 @@ jobs:
         name: Setup k8s cluster
         with:
           k8s-version: ${{ matrix.k8s-version }}
-      - name: Run pre-config and workload integration tests
+      - name: Run pre-config integration tests
         run: |
-          bash test/integration/main.sh "pre-config-and-workload"
+          bash test/integration/main.sh "pre-config"
+      - name: Run workload integration tests
+        run: |
+          bash test/integration/main.sh "workload"
       - name: Display k8s state and logs if integration test failed
         if: failure()
         run: |

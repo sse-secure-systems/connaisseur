@@ -66,12 +66,11 @@ case ${1:-} in
     multi_test "pre-config/cases.yaml"
     uninstall "make"
     ;;
-"pre-config-and-workload")
-    # testing pre-configured values.yaml, without
-    # any changes, on deployments and on all workloads
+"workload")
+    # testing on all workloads
     # and different API versions
     source "${SCRIPT_PATH}"/workload/test.sh
-    pre_workload_test
+    workload_test
     ;;
 "cert")
     # testing a custom TLS certificate 
@@ -109,7 +108,7 @@ case ${1:-} in
 ;;
 "all")
     # running all test cases (except load test)
-    TESTS=("regular" "notaryv1" "cosign" "namespaced" "complexity" "deployment" "pre-config" "pre-config-and-workload" "cert" "redis-cert" "upgrade" "alerting" "other-ns" "self-hosted-notary")
+    TESTS=("regular" "notaryv1" "cosign" "namespaced" "complexity" "deployment" "pre-config" "workload" "cert" "redis-cert" "upgrade" "alerting" "other-ns" "self-hosted-notary")
 
     FAILED_TESTS=()
 
@@ -143,7 +142,7 @@ case ${1:-} in
     echo -e "\tcomplexity"
     echo -e "\tdeployment"
     echo -e "\tpre-config"
-    echo -e "\tpre-config-and-workload"
+    echo -e "\tworkload"
     echo -e "\tcert"
     echo -e "\tredis-cert"
     echo -e "\tupgrade"

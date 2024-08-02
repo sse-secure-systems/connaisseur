@@ -20,7 +20,7 @@ bash test/integration/main.sh <test_case>
 - `complexity`: Test complex deployments with multiple containers.
 - `deployment`: Test different deployments with containers and init containers.
 - `pre-config`: Test pre-configured values.yaml on deployments.
-- `pre-config-and-workload`: Test pre-configured values.yaml on deployments and all workloads.
+- `workload`: Test on all available workloads.
 - `cert`: Test a custom TLS certificate for Connaisseur and upgradability to it.
 - `redis-cert`: Test a custom TLS certificate for Redis and upgradability to it.
 - `upgrade`: Test upgradability of Connaisseur.
