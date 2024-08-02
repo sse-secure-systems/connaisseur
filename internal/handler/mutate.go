@@ -104,6 +104,7 @@ func handleMutate(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				}
 				response.Response.Allowed = true
 				response.Response.Patch = nil
+				response.Response.PatchType = nil
 			}
 
 			// detection mode
@@ -250,21 +251,23 @@ func mutateReview(ctx context.Context, ar admission.AdmissionReview) (*admission
 		}
 		skipped = skipped && valOut.Skipped
 	}
-	pt := admission.PatchTypeJSONPatch
-	jsonPatchesStr := "[" + strings.Join(jsonPatches, ",") + "]"
-	imagesStr := strings.Join(images, ", ")
-	notificationValues.Images = imagesStr
 
+	ares := admission.AdmissionResponse{
+		UID:     ar.Request.UID,
+		Allowed: true,
+	}
+	if len(jsonPatches) > 0 {
+		pt := admission.PatchTypeJSONPatch
+		ares.PatchType = &pt
+		ares.Patch = []byte("[" + strings.Join(jsonPatches, ",") + "]")
+	}
+
+	notificationValues.Images = strings.Join(images, ", ")
 	if skipped {
 		notificationValues.Result = constants.NotificationResultSkip
 	} else {
 		notificationValues.Result = constants.NotificationResultSuccess
 	}
 
-	return &admission.AdmissionResponse{
-		UID:       ar.Request.UID,
-		Allowed:   true,
-		PatchType: &pt,
-		Patch:     []byte(jsonPatchesStr),
-	}, notificationValues
+	return &ares, notificationValues
 }

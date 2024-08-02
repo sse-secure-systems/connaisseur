@@ -369,7 +369,7 @@ func TestMutateReview(t *testing.T) {
 		{ // 3: Admits with static_allow and doesn't cache, producing no patch
 			"18_allow_me_pod",
 			true,
-			"[]",
+			"",
 			"my.reg/allow-me@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff",
 			"",
 			"",
@@ -387,7 +387,7 @@ func TestMutateReview(t *testing.T) {
 		{ // 5: Admits with static_allow and caches success, producing no patch, even though index.docker.io/library would be appended
 			"22_allow_me_with_index_docker_io",
 			true,
-			"[]",
+			"",
 			"test-image",
 			"",
 			"",
@@ -396,7 +396,7 @@ func TestMutateReview(t *testing.T) {
 		{ // 6: Admits and stores correct hash, when validation is successful. Produces no patch, since image reference doesn't change (sha only)
 			"23_alice_digest_dpl",
 			true,
-			`[]`,
+			"",
 			"securesystemsengineering/alice-image@sha256:1234567890123456123456789012345612345678901234561234567890123456",
 			"{\"digest\":\"sha256:1234567890123456123456789012345612345678901234561234567890123456\",\"error\":\"\"}",
 			"",
@@ -405,7 +405,7 @@ func TestMutateReview(t *testing.T) {
 		{ // 7: Admits and stores correct hash, when validation is successful. Produces no patch, since image reference doesn't change (tag+sha)
 			"24_alice_tag_digest_dpl",
 			true,
-			`[]`,
+			"",
 			"securesystemsengineering/alice-image:test@sha256:1234567890123456123456789012345612345678901234561234567890123456",
 			"{\"digest\":\"sha256:1234567890123456123456789012345612345678901234561234567890123456\",\"error\":\"\"}",
 			"",
@@ -441,8 +441,10 @@ func TestMutateReview(t *testing.T) {
 		// Patch as expected or not present if not expected
 		if tc.patch != "" {
 			assert.Equalf(t, []byte(tc.patch), res.Patch, "test case %d", i+1)
+			assert.Equalf(t, v1.PatchTypeJSONPatch, *res.PatchType, "test case %d", i+1)
 		} else {
 			assert.Nil(t, res.Patch, "test case %d", i+1)
+			assert.Nil(t, res.PatchType, "test case %d", i+1)
 		}
 
 		// Cache value is as expected
@@ -527,7 +529,7 @@ func TestMutateReviewCached(t *testing.T) {
 		{ // Admits without patch
 			"18_allow_me_pod",
 			true,
-			"[]",
+			"",
 			"my.reg/allow-me@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff",
 			"{\"digest\":\"sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff\",\"error\":\"\"}",
 			"",
