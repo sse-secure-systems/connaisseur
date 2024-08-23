@@ -68,15 +68,15 @@ spec:
           - secretRef:
               name: {{ include "connaisseur.redisSecret" . }}
           {{- end }}
-          env:
-          {{ if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
-          - name: REDIS_HOST
-            value: {{ include "connaisseur.redisService" . }}
-          {{- end }}
           {{ if .Values.kubernetes.deployment.envs -}}
           - secretRef:
               name: {{ include "connaisseur.envSecretName" . }}
           {{- end }}
+          env:
+          {{ if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
+          - name: REDIS_HOST
+            value: {{ include "connaisseur.redisService" . }}
+          {{- end }}       
       volumes:
         - name: certs
           secret:
