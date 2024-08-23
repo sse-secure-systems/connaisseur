@@ -7,6 +7,7 @@ import (
 	"connaisseur/internal/utils"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -119,7 +120,7 @@ func getCachedDigest(
 	}
 
 	if cached.Error != "" {
-		return "", fmt.Errorf(cached.Error), nil
+		return "", errors.New(cached.Error), nil
 	}
 
 	if cached.Digest == "" {

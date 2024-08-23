@@ -10,6 +10,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -251,7 +252,7 @@ func (cv *CosignValidator) ValidateImage(
 	}
 
 	// check required signatures
-	if args.Required != nil && len(args.Required) > 0 {
+	if len(args.Required) > 0 {
 		logrus.Debugf("required signatures: %s", args.Required)
 		// find missing required signatures
 		missing := utils.SetSubstract(args.Required, validatingTrustRoots)
@@ -335,7 +336,7 @@ func (cv *CosignValidator) validateWithVerifier(
 		if strings.HasPrefix(err.Error(), "image tag not found:") {
 			msg := fmt.Sprintf("image %s does not exist: %s", imageRef, err)
 			logrus.Info(msg)
-			verifierOutputChannel <- verifierOutput{nil, fmt.Errorf(msg), nil, ""}
+			verifierOutputChannel <- verifierOutput{nil, errors.New(msg), nil, ""}
 			return
 		}
 		logrus.Debugf("error verifying signatures with verifier for trust root %s: %s", verifier.Name, err)

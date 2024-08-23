@@ -36,7 +36,7 @@ kind-dev:
 	make docker && kind load docker-image $(IMAGE_REPO):v$(VERSION) && make install-dev
 
 lint:
-	golangci-lint run --skip-dirs="test"
+	golangci-lint run --exclude-dirs="test" --tests="false"
 
 integration:
 	bash "test/integration/main.sh" "regular"

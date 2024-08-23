@@ -11,6 +11,7 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"net/url"
 	"reflect"
@@ -225,7 +226,7 @@ func (nv1v *NotaryV1Validator) trustRootKeys(keyRef string) ([]data.PublicKey, e
 		if len(rest) != 0 {
 			msg := fmt.Sprintf("key material for key %s of validator %s contains extraneous characters", tr.Name, nv1v.Name)
 			logrus.Error(msg)
-			return nil, fmt.Errorf(msg)
+			return nil, errors.New(msg)
 		}
 
 		var alg string
