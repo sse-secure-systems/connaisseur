@@ -4,9 +4,9 @@ go 1.22.5
 
 require (
 	github.com/alicebob/miniredis/v2 v2.33.0
-	github.com/docker/cli v27.1.2+incompatible
+	github.com/docker/cli v27.2.0+incompatible
 	github.com/docker/distribution v2.8.3+incompatible
-	github.com/docker/docker v27.1.2+incompatible
+	github.com/docker/docker v27.2.0+incompatible
 	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c
 	github.com/docker/go-connections v0.5.0
 	github.com/go-playground/locales v0.14.1
@@ -16,7 +16,7 @@ require (
 	github.com/google/go-containerregistry v0.20.2
 	github.com/iancoleman/strcase v0.3.0
 	github.com/opencontainers/go-digest v1.0.0
-	github.com/prometheus/client_golang v1.20.1
+	github.com/prometheus/client_golang v1.20.2
 	github.com/prometheus/client_model v0.6.1
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/sigstore/cosign/v2 v2.4.0
