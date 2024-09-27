@@ -103,7 +103,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `host.ctLogPubkey` | Public key for the certificate transparency log provided by Sigstore | - | The public key needed for verifying Signed Certificate Timestamps (SCT). This will accept a single key. |
 | `auth.` | - | - | Authentication credentials for registries with restricted access (e.g. private registries or ratelimiting). See additional notes [below](#authentication). |
 | `auth.secretName` | - | - | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#dockerconfigjson). |
-| `auth.k8sKeychain` | `false` | - | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s_keychain). |
+| `auth.useKeychain` | `false` | - | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s-keychain). |
 | `cert` | - | - | A TLS certificate in PEM format for private registries with self-signed certificates. |
 
 `.application.policy[*]` in `charts/connaisseur/values.yaml` supports the following additional keys and modifications for sigstore/Cosign (refer to [basics](../basics.md#image-policy) for more information on default keys):
@@ -177,9 +177,9 @@ kubectl create secret docker-registry my-secret \
 In the above cases, the secret name in Connaisseur configuration would be `secretName: my-secret`.
 It is possible to provide one Kubernetes secret with a `config.json` for authentication to multiple private registries and referencing this in multiple validators.
 
-#### k8s_keychain
+#### K8s keychain
 
-Specification of `auth.k8sKeychain: true` in the validator configuration passes the `--k8s-keychain` to `cosign` when performing image validation.
+Specification of `auth.useKeychain: true` in the validator configuration passes the `--k8s-keychain` to `cosign` when performing image validation.
 Thus, [k8schain](https://pkg.go.dev/github.com/google/go-containerregistry/pkg/authn/k8schain) is used by `cosign` to pick up ambient registry credentials from the environment and for example use workload identities in case of common cloud providers.
 
 For example, when validating against an ECR private repository, the credentials of an IAM user allowed to perform actions
@@ -198,7 +198,7 @@ data:
   ...
 ```
 
-If `k8sKeychain` is set to `true` in the validator configuration, `cosign` will log into ECR at time of validation.
+If `useKeychain` is set to `true` in the validator configuration, `cosign` will log into ECR at time of validation.
 See [this cosign pull request](https://github.com/sigstore/cosign/pull/972) for more details.
 
 ### KMS Support
