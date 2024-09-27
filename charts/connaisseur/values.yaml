@@ -47,6 +47,7 @@ kubernetes:
     tls: {} # set to use custom tls certificates for webhook (key and cert fields)
     envs: {} # set to use custom environment variables for connaisseur
     podLabels: {} # additional labels to attach to the pods created
+    annotations: {} # additional annotations to attach to the deployment
   # -----------------------------------------------------
 
   # changes to connaisseur service

@@ -7,6 +7,9 @@ metadata:
     {{- include "connaisseur.labels" . | nindent 4 }}
   annotations:
     checksum/config: {{ include "connaisseur.getConfigChecksum" . }}
+    {{- if .Values.kubernetes.deployment.annotations -}}
+      {{ toYaml .Values.kubernetes.deployment.annotations | nindent 4 }}
+    {{- end }}
 spec:
   replicas: {{ .Values.kubernetes.deployment.replicasCount }}
   selector:
