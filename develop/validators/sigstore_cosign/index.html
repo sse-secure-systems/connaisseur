@@ -537,9 +537,9 @@ You're not viewing the docs of the latest version.
 </li>
         
           <li class="md-nav__item">
-  <a href="#k8s_keychain" class="md-nav__link">
+  <a href="#k8s-keychain" class="md-nav__link">
     <span class="md-ellipsis">
-      k8s_keychain
+      K8s keychain
     </span>
   </a>
   
@@ -1418,9 +1418,9 @@ You're not viewing the docs of the latest version.
 </li>
         
           <li class="md-nav__item">
-  <a href="#k8s_keychain" class="md-nav__link">
+  <a href="#k8s-keychain" class="md-nav__link">
     <span class="md-ellipsis">
-      k8s_keychain
+      K8s keychain
     </span>
   </a>
   
@@ -1638,10 +1638,10 @@ In case you just use the default values for the validator and image policy given
 <td>Name of a Kubernetes secret in Connaisseur namespace that contains <a href="https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets">dockerconfigjson</a> for registry authentication. See additional notes <a href="#dockerconfigjson">below</a>.</td>
 </tr>
 <tr>
-<td><code>auth.k8sKeychain</code></td>
+<td><code>auth.useKeychain</code></td>
 <td><code>false</code></td>
 <td>-</td>
-<td>When true, pass <code>--k8s-keychain</code> argument to <code>cosign verify</code> in order to use workload identities for authentication. See additional notes <a href="#k8s_keychain">below</a>.</td>
+<td>When true, pass <code>--k8s-keychain</code> argument to <code>cosign verify</code> in order to use workload identities for authentication. See additional notes <a href="#k8s-keychain">below</a>.</td>
 </tr>
 <tr>
 <td><code>cert</code></td>
@@ -1741,8 +1741,8 @@ This may become unnecessary in the future.</p>
 </div>
 <p>In the above cases, the secret name in Connaisseur configuration would be <code>secretName: my-secret</code>.
 It is possible to provide one Kubernetes secret with a <code>config.json</code> for authentication to multiple private registries and referencing this in multiple validators.</p>
-<h4 id="k8s_keychain">k8s_keychain<a class="headerlink" href="#k8s_keychain" title="Permanent link">⚓︎</a></h4>
-<p>Specification of <code>auth.k8sKeychain: true</code> in the validator configuration passes the <code>--k8s-keychain</code> to <code>cosign</code> when performing image validation.
+<h4 id="k8s-keychain">K8s keychain<a class="headerlink" href="#k8s-keychain" title="Permanent link">⚓︎</a></h4>
+<p>Specification of <code>auth.useKeychain: true</code> in the validator configuration passes the <code>--k8s-keychain</code> to <code>cosign</code> when performing image validation.
 Thus, <a href="https://pkg.go.dev/github.com/google/go-containerregistry/pkg/authn/k8schain">k8schain</a> is used by <code>cosign</code> to pick up ambient registry credentials from the environment and for example use workload identities in case of common cloud providers.</p>
 <p>For example, when validating against an ECR private repository, the credentials of an IAM user allowed to perform actions
 <code>ecr:GetAuthorizationToken</code>, <code>ecr:BatchGetImage</code>, and <code>ecr:GetDownloadUrlForLayer</code> could be added to the secret <code>connaisseur-env-secrets</code>:</p>
@@ -1757,7 +1757,7 @@ Thus, <a href="https://pkg.go.dev/github.com/google/go-containerregistry/pkg/aut
 <span class="w">  </span><span class="nt">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span><span class="w"> </span><span class="err">***</span>
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </code></pre></div>
-<p>If <code>k8sKeychain</code> is set to <code>true</code> in the validator configuration, <code>cosign</code> will log into ECR at time of validation.
+<p>If <code>useKeychain</code> is set to <code>true</code> in the validator configuration, <code>cosign</code> will log into ECR at time of validation.
 See <a href="https://github.com/sigstore/cosign/pull/972">this cosign pull request</a> for more details.</p>
 <h3 id="kms-support">KMS Support<a class="headerlink" href="#kms-support" title="Permanent link">⚓︎</a></h3>
 <p>Connaisseur supports Cosign's URI-based <a href="https://github.com/sigstore/cosign/blob/main/KMS.md">KMS integration</a> to manage the signing and verification keys.
