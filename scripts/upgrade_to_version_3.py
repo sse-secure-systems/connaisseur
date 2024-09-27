@@ -91,7 +91,7 @@ if __name__ == "__main__":
             validator["auth"]["secretName"] = secret_name
         k8s_keychain = validator.get("auth", {}).pop("k8s_keychain", None)
         if k8s_keychain is not None:
-            validator["auth"]["k8sKeychain"] = k8s_keychain
+            validator["auth"]["useKeychain"] = k8s_keychain
         if validator.pop("is_acr", False):
             validator["isAcr"] = True
 
