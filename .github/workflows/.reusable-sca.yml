@@ -41,7 +41,7 @@ jobs:
       image: docker:stable
     steps:
       - name: Checkout code
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
       - name: Run
         uses: ./.github/actions/trivy-image
         with:
@@ -64,7 +64,7 @@ jobs:
       image: docker:stable
     steps:
       - name: Checkout code
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
       - name: Run
         uses: ./.github/actions/grype
         with:
@@ -93,7 +93,7 @@ jobs:
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run
-        uses: anchore/sbom-action@61119d458adab75f756bc0b9e4bde25725f86a7a # v0.17.2
+        uses: anchore/sbom-action@f5e124a5e5e1d497a692818ae907d3c45829d033 # v0.17.3
         with:
           image: ${{ inputs.image }}
           format: cyclonedx-json
