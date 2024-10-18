@@ -12,10 +12,10 @@ The pipeline grew into a complicated construct that is, at times, confusing to w
 
 ## Current Setup
 
-The current setup uses a reusable CI definition (`.reusable-ci.yaml`), which itself consists of reusable parts. Occasionally, self written actions are used which are found in the `action` directory. The CI looks something like this:
+The current setup uses a reusable CI definition (`.reusable-ci.yaml`), which itself consists of reusable parts. Occasionally, self-written actions are used which are found in the `action` directory. The CI looks something like this:
 
 - ci
-    - conditionals [prints summary + pass through for args]
+    - conditionals [prints summary + pass-through for args]
     - build
         - context **action** [yq metadata for build]
         - build **action** [build the app + push to ghcr]
@@ -73,11 +73,11 @@ Issues I see with this setup are as follows:
 
 Some general things first.
 
-1. Let the workflows be in the `workflow` directory and put the reusable parts into it's own (e.g. `reusable` or `components` :shrug:).
+1. ~~Let the workflows be in the `workflow` directory and put the reusable parts into it's own (e.g. `reusable` or `components` :shrug:).~~ Technically not possible because of [reasons](https://docs.github.com/en/actions/sharing-automations/reusing-workflows#creating-a-reusable-workflow)
 2. Get rid of all actions that are not being reused and put their code to where it belongs.
 3. Create an action for the integration tests. The one place where these actions make sense, we are not using them :facepalm:
 
-For the actual CI definition i propose:
+For the actual CI definition I propose:
 
 - ci
     - conditionals [prints summary + pass through for args]
@@ -93,15 +93,15 @@ For the actual CI definition i propose:
             - ~~sign~~  *// not worth the effort*
             - ~~verify~~  *// not worth the effort*
             - ~~upload pub key~~  *// not worth the effort*
-            - ~~print summary~~  *// no one is looking at this*
+            - print summary
     - compliance
-        - (ossf [scoring for open source projects])  *// only on push, not pr*
+        - ~~ossf [scoring for open source projects]~~  *// largely pseudo findings that create clutter*
         - dependency review [dependency scanning]
         - check-commit-message [linting for commit messages]
     - unit-test [unit tests :shrug:]
     - sast
         - ~~checkov [helm chart scanning]~~  *// we have enough helm scanning*
-        - (codeql [GitHub's "industry-leading" semantic code analysis engine])  *// only on push, not pr as this is by far the slowest*
+        - codeql [GitHub's "industry-leading" semantic code analysis engine]
         - golangci-lint [linting]
         - gosec [go security checker]
         - hadolint [dockerfile linter]
@@ -122,6 +122,13 @@ For the actual CI definition i propose:
         - old-k8s-versions
         - self-hosted-notary
 
+### Option 2
+
+Leave things as they are.
+
+### Option X
+
+...?
 
 ## Decision
 
