@@ -1,4 +1,4 @@
-name: publish
+name: manual_publish
 
 permissions: {}
 
@@ -20,7 +20,7 @@ on:
 
 jobs:
   publish:
-    uses: ./.github/workflows/.reusable-publish.yml
+    uses: ./.github/workflows/200_publish.yml
     permissions:
       contents: write
     with:

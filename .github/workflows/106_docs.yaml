@@ -5,10 +5,10 @@ permissions: {}
 on:
   workflow_call:
     inputs:
-      skip:
-        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+      jobs_to_run:
+        description: "Which doc jobs should be run: 'all', 'only-required', 'skip-all'?"
         type: string
-        default: "none"
+        default: "all"
       application_version:
         description: "Version of the Connaisseur application (same as Git release tag, without v prefix)"
         type: string
@@ -19,7 +19,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: inputs.skip != 'all'
+    if: inputs.jobs_to_run != 'skip-all'
     permissions:
       contents: write
     steps:
@@ -37,7 +37,7 @@ jobs:
         run: |
           pip install -r docs/requirements_docs.txt
       - name: Deploy
-        if: inputs.skip != 'non-required'
+        if: inputs.jobs_to_run == 'all'
         run: |
           if [[ "${GITHUB_REF}" == "refs/tags/v"* ]];
           then

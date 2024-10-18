@@ -1,0 +1,147 @@
+name: ci
+
+permissions: {}
+
+on:
+  workflow_call:
+    inputs:
+      build:
+        description: "Which build jobs should be run: 'all', 'only-required', 'skip-all'?"
+        type: string
+        default: "all"
+        required: false
+      compliance_checks:
+        description: "Which compliance checks should be run: 'all', 'only-required', 'skip-all'?"
+        type: string
+        default: "all"
+        required: false
+      unit_tests:
+        description: "Which unit tests should be run: 'all', 'only-required', 'skip-all'?"
+        type: string
+        default: "all"
+        required: false
+      sast:
+        description: "Which sast jobs should be run: 'all', 'only-required', 'skip-all'?"
+        type: string
+        default: "all"
+        required: false
+      sca:
+        description: "Which sca jobs should be run: 'all', 'only-required', 'skip-all'?"
+        type: string
+        default: "all"
+        required: false
+      docs:
+        description: "Which doc jobs should be run: 'all', 'only-required', 'skip-all'?"
+        type: string
+        default: "all"
+        required: false
+      integration_tests:
+        description: "Which integration tests should be run: 'all', 'only-required', 'skip-all'?"
+        type: string
+        default: "all"
+        required: false
+      output_type:
+        description: 'Output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
+        type: string
+        default: 'sarif'
+        required: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ci-settings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show ci settings
+        run: |
+          get_output() { case "$1" in "all") echo ":white_check_mark:";; "only-required") echo ":information_source:";; "skip-all") echo ":x:";; *) echo "Unknown value";; esac; }
+          echo "# :pencil: CI Settings" >> ${GITHUB_STEP_SUMMARY}
+          echo "<table>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><th>Setting</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Build</td><td>$(get_output ${{ inputs.build }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Compliance</td><td>$(get_output ${{ inputs.compliance_checks }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Unit Tests</td><td>$(get_output ${{ inputs.unit_tests }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run SAST</td><td>$(get_output ${{ inputs.sast }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run SCA</td><td>$(get_output ${{ inputs.sca }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Docs</td><td>$(get_output ${{ inputs.docs }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Integration Tests</td><td>$(get_output ${{ inputs.integration_tests }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Report type</td><td><code>${{ inputs.output_type }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "</table>" >> ${GITHUB_STEP_SUMMARY}
+          echo "($(get_output 'all') - run all jobs, $(get_output 'only-required') - run important/required jobs only, $(get_output 'skip-all') - skip all jobs)" >> ${GITHUB_STEP_SUMMARY}
+          echo "" >> ${GITHUB_STEP_SUMMARY}
+
+  build:
+    uses: ./.github/workflows/101_build.yml
+    needs: [ci-settings]
+    if: ${{ inputs.build != 'skip-all' }}
+    permissions:
+      packages: write
+    secrets: inherit
+    with:
+      jobs_to_run: ${{ inputs.build }}
+
+  compliance:
+    uses: ./.github/workflows/102_compliance.yml
+    needs: [ci-settings]
+    if: ${{ inputs.compliance_checks != 'skip-all' }}
+    permissions:
+      contents: read
+    with:
+      jobs_to_run: ${{ inputs.compliance_checks }}
+
+  unit-test:
+    uses: ./.github/workflows/103_unit-test.yml
+    needs: [ci-settings]
+    if: ${{ inputs.unit_tests != 'skip-all' }}
+    with:
+      jobs_to_run: ${{ inputs.unit_tests }}
+
+  sast:
+    uses: ./.github/workflows/104_sast.yml
+    needs: [ci-settings]
+    if: ${{ inputs.sast != 'skip-all' }}
+    permissions:
+      security-events: write
+    with:
+      jobs_to_run: ${{ inputs.sast }}
+      output: ${{ inputs.output_type }}
+
+  sca:
+    uses: ./.github/workflows/105_sca.yml
+    needs: [ci-settings, build]
+    if: ${{ inputs.sca != 'skip-all' }}
+    permissions:
+      security-events: write
+      packages: read
+    secrets: inherit
+    with:
+      image: ${{ needs.build.outputs.build_image }}
+      registry: ${{ needs.build.outputs.build_registry }}
+      repo_owner: ${{ github.repository_owner }}
+      jobs_to_run: ${{ inputs.sca }}
+      output: ${{ inputs.output_type }}
+
+  docs:
+    uses: ./.github/workflows/106_docs.yaml
+    needs: [ci-settings]
+    if: ${{ inputs.docs != 'skip-all' }}
+    permissions:
+      contents: write
+    with:
+      jobs_to_run: ${{ inputs.docs }}
+
+  integration-test:
+    uses: ./.github/workflows/107_integration-test.yml
+    needs: [ci-settings, build]
+    if: ${{ inputs.integration_tests != 'skip-all' }}
+    permissions:
+      packages: read
+    secrets: inherit
+    with:
+      build_registry: ${{ needs.build.outputs.build_registry }}
+      repo_owner: ${{ github.repository_owner }}
+      build_image_repository: ${{ needs.build.outputs.build_registry }}/${{ needs.build.outputs.build_repo }}
+      build_tag: ${{ needs.build.outputs.build_tag }}
+      jobs_to_run: ${{ inputs.integration_tests }}

@@ -1,0 +1,31 @@
+name: nightly
+
+on:
+  schedule:
+    - cron: "30 1 * * *"
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ci:
+    uses: ./.github/workflows/100_ci.yml
+    permissions:
+      packages: write
+      contents: write
+      security-events: write
+    secrets: inherit
+    with:
+      unit_tests: skip-all
+      sast: skip-all
+      docs: skip-all
+      integration_tests: skip-all
+      output_type: table
+
+  cleanup-registry:
+    uses: ./.github/workflows/201_cleanup-registry.yml
+    needs: [ci]
+    secrets: inherit

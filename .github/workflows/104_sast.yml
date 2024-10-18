@@ -3,10 +3,10 @@ name: sast
 on:
   workflow_call:
     inputs:
-      skip:
-        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+      jobs_to_run:
+        description: "Which sast jobs should be run: 'all', 'only-required', 'skip-all'?"
         type: string
-        default: "none"
+        default: "all"
       output:
         description: 'Output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
         type: string
@@ -20,8 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.skip != 'non-required' &&
-      inputs.skip != 'all' &&
+      inputs.jobs_to_run == 'all' &&
       inputs.output == 'sarif'
     permissions:
       security-events: write
@@ -39,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.skip != 'all'
+      inputs.jobs_to_run != 'skip-all'
     permissions:
       security-events: write
     steps:
@@ -59,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.skip != 'all'
+      inputs.jobs_to_run != 'skip-all'
     permissions:
       security-events: write
     steps:
@@ -79,8 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.skip != 'non-required' &&
-      inputs.skip != 'all'
+      inputs.jobs_to_run == 'all'
     permissions:
       security-events: write
     steps:
@@ -103,8 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.skip != 'non-required' &&
-      inputs.skip != 'all'
+      inputs.jobs_to_run == 'all'
     permissions:
       security-events: write
     steps:
@@ -128,8 +125,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.skip != 'non-required' &&
-      inputs.skip != 'all'
+      inputs.jobs_to_run == 'all'
     permissions:
       security-events: write
     steps:

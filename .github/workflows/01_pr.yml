@@ -1,0 +1,22 @@
+name: pr
+
+permissions: {}
+
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ci:
+    uses: ./.github/workflows/100_ci.yml
+    permissions:
+      packages: write
+      contents: write
+      security-events: write
+    secrets: inherit

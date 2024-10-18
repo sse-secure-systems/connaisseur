@@ -19,10 +19,10 @@ on:
         type: string
         required: false
         default: ''
-      skip:
-        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+      jobs_to_run:
+        description: "Which sca jobs should be run: 'all', 'only-required', 'skip-all'?"
         type: string
-        default: "none"
+        default: "all"
       output:
         description: 'Output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
         type: string
@@ -33,7 +33,7 @@ jobs:
   trivy-image-scan:
     name: trivy image
     runs-on: ubuntu-latest
-    if: inputs.skip != 'all'
+    if: inputs.jobs_to_run != 'skip-all'
     permissions:
       packages: read
       security-events: write

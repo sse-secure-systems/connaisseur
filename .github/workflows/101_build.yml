@@ -1,14 +1,14 @@
 name: build
 
-permissions: {} 
+permissions: {}
 
 on:
   workflow_call:
     inputs:
-      skip:
-        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+      jobs_to_run:
+        description: "Which build jobs should be run: 'all', 'only-required', 'skip-all'?"
         type: string
-        default: "none"
+        default: "all"
     outputs:
       chart_version: 
         description: "Connaisseur Helm chart version"
@@ -44,7 +44,7 @@ on:
 jobs:
   context:
     runs-on: ubuntu-latest
-    if: inputs.skip != 'all'
+    if: inputs.jobs_to_run != 'skip-all'
     permissions: {}
     outputs:
       chart_version: ${{ steps.output_context.outputs.CHART_VERSION }}
@@ -135,9 +135,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: |
-      inputs.skip != 'non-required' &&
-      inputs.skip != 'all'
+    if: inputs.jobs_to_run != 'skip-all'
     needs: [context]
     permissions:
       packages: write

@@ -26,12 +26,12 @@ jobs:
           timestamp-to-use: updated_at
           account: sse-secure-systems
           token: ${{ secrets.GHCR_PAT }}
-      # - name: Cleanup all connaisseur images
-      #   uses: snok/container-retention-policy@4f22ef80902ad409ed55a99dc5133cc1250a0d03 # v3.0.0
-      #   with:
-      #     image-names: connaisseur
-      #     image-tags: !master, !develop, !v*, !sha256-*
-      #     cut-off: 4d
-      #     timestamp-to-use: updated_at
-      #     account: sse-secure-systems
-      #     token: ${{ secrets.GHCR_PAT }}
+      - name: Cleanup all connaisseur images
+        uses: snok/container-retention-policy@4f22ef80902ad409ed55a99dc5133cc1250a0d03 # v3.0.0
+        with:
+          image-names: connaisseur
+          image-tags: "!master !develop !v*"
+          cut-off: 4d
+          timestamp-to-use: updated_at
+          account: sse-secure-systems
+          token: ${{ secrets.GHCR_PAT }}

@@ -55,7 +55,7 @@ jobs:
           git push https://${{ secrets.GITHUB_TOKEN }}@github.com/sse-secure-systems/connaisseur.git
 
   publish_docs:
-    uses: ./.github/workflows/.reusable-docs.yaml
+    uses: ./.github/workflows/106_docs.yaml
     needs: [publish_chart]
     permissions:
       contents: write

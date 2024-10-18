@@ -3,12 +3,10 @@ name: compliance
 on:
   workflow_call:
     inputs:
-      skip:
-        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+      jobs_to_run:
+        description: "Which compliance checks should be run: 'all', 'only-required', 'skip-all'?"
         type: string
-        default: "none"
-
-permissions: read-all
+        default: "all"
 
 jobs:
   dependency-review:
@@ -16,8 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'pull_request' &&
-      inputs.skip != 'non-required' &&
-      inputs.skip != 'all'
+      inputs.jobs_to_run == 'all'
     permissions:
       contents: read
     steps:
@@ -30,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'pull_request' &&
-      inputs.skip != 'all'
+      inputs.jobs_to_run != 'skip-all'
     permissions: {}
     steps:
       - name: Checkout code
