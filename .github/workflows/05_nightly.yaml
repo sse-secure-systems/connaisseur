@@ -1,12 +1,10 @@
-name: push
-
-permissions: {}
+name: nightly
 
 on:
-  push:
-    branches:
-      - master
-      - develop
+  schedule:
+    - cron: "30 1 * * *"
+
+permissions: {}
 
 defaults:
   run:
@@ -14,7 +12,7 @@ defaults:
 
 jobs:
   ci:
-    uses: ./.github/workflows/.reusable-ci.yml
+    uses: ./.github/workflows/100_ci.yml
     permissions:
       packages: write
       contents: write
@@ -32,11 +30,13 @@ jobs:
       attestations: read
     secrets: inherit
     with:
-      skip_build: "none"
-      skip_compliance_checks: "none"
-      skip_unit_tests: "none"
-      skip_sast: "none"
-      skip_sca: "none"
-      skip_docs: "none"
-      skip_integration_tests: "none"
-      output_type: "sarif"
+      unit_tests: "none"
+      sast: "none"
+      docs: "none"
+      integration_tests: "none"
+      output_type: "table"
+
+  cleanup-registry:
+    uses: ./.github/workflows/201_cleanup-registry.yml
+    needs: [ci]
+    secrets: inherit
