@@ -32,4 +32,5 @@ jobs:
     #   attestations: read
     secrets: inherit
     with:
-      run_build: 'none'
+      run_build: none
+      run_compliance_checks: none

@@ -89,11 +89,11 @@ jobs:
     with:
       run_compliance_checks: ${{ inputs.run_compliance_checks }}
 
-  # unit-test:
-  #   uses: ./.github/workflows/unit-test.yml
-  #   needs: [conditionals]
-  #   with:
-  #     skip: ${{ needs.conditionals.outputs.skip_unit_tests }}
+  unit-test:
+    uses: ./.github/workflows/103_unit-test.yml
+    needs: [ci-settings]
+    with:
+      run_unit_tests: ${{ inputs.run_unit_tests }}
 
   # sast:
   #   uses: ./.github/workflows/sast.yml
