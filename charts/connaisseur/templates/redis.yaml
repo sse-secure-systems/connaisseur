@@ -51,7 +51,7 @@ spec:
       automountServiceAccountToken: false
       containers:
       - name: redis
-        image: redis:7
+        image: {{ .Values.kubernetes.redis.image.repository }}:{{ .Values.kubernetes.redis.image.tag }}
         imagePullPolicy: {{ .Values.kubernetes.redis.pullPolicy }}
         args:
           - --requirepass
