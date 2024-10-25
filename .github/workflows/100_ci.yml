@@ -95,15 +95,14 @@ jobs:
     with:
       run_unit_tests: ${{ inputs.run_unit_tests }}
 
-  # sast:
-  #   uses: ./.github/workflows/sast.yml
-  #   needs: [conditionals]
-  #   permissions:
-  #     security-events: write
-  #     pull-requests: read
-  #   with:
-  #     skip: ${{ needs.conditionals.outputs.skip_sast }}
-  #     output: ${{ needs.conditionals.outputs.output_type }}
+  sast:
+    uses: ./.github/workflows/104_sast.yml
+    needs: [ci-settings]
+    permissions:
+      security-events: write
+    with:
+      run_sast: ${{ inputs.run_sast }}
+      output: ${{ inputs.output_type }}
 
   # sca:
   #   uses: ./.github/workflows/sca.yml
