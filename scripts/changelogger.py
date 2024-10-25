@@ -1,5 +1,6 @@
 import argparse
 import base64
+import re
 import subprocess
 import sys
 import time
@@ -26,7 +27,7 @@ class Commit:
         self.hash_ = hash_.strip()
         cat_sub_split = sub_cat_.split(":", 1)
         try:
-            self.subject_ = cat_sub_split[1].strip()
+            self.subject_ = self.curate_subject(cat_sub_split[1])
             self.categories_ = cat_sub_split[0].split("/")
         except IndexError:
             print_stderr("WARN: Non semantic commit")
@@ -34,6 +35,10 @@ class Commit:
             self.categories_ = ["none"]
         self.token = token
         self.pr_ = self.get_pr_link()
+
+    def curate_subject(self, subject: str):
+        subject = subject.strip()
+        return re.sub("\(#\d+\)$", "", subject).strip()
 
     def get_pr_link(self):
         header = None
@@ -169,7 +174,7 @@ if __name__ == "__main__":
             for category in commit.categories_:
                 category = category.lower()
                 change_log.setdefault(category, []).append(str(commit))
-            if len(commits) > 9 and index + 1 < len(commits):
+            if len(commits) > 9 and index + 1 < len(commits) and index > 5:
                 if args.token:
                     time.sleep(2)
                 else:
