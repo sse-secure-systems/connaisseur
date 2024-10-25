@@ -71,6 +71,9 @@ kubernetes:
 
   # changes to redis key-value store
   redis:
+    image:
+      repository: redis
+      tag: 7
     pullPolicy: Always
     resources:
       limits:
