@@ -56,7 +56,7 @@ jobs:
     steps:
       - name: Show ci settings
         run: |
-          get_output() { case "$1" in "all") echo ":white_check_mark:";; "required") echo ":information_source:";; "all") echo ":x:";; *) echo "Unknown value";; esac; }
+          get_output() { case "$1" in "all") echo ":white_check_mark:";; "required") echo ":information_source:";; "none") echo ":x:";; *) echo "Unknown value";; esac; }
           echo "# :pencil: CI Settings" >> ${GITHUB_STEP_SUMMARY}
           echo "<table>" >> ${GITHUB_STEP_SUMMARY}
           echo "<tr><th>Setting</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
@@ -81,27 +81,13 @@ jobs:
     with:
       run_build: ${{ inputs.run_build }}
 
-  # compliance:
-  #   uses: ./.github/workflows/102_compliance.yml
-  #   needs: [conditionals]
-  #   permissions:
-  #     contents: write
-  #     id-token: write
-  #     security-events: write
-  #     actions: read
-  #     checks: read
-  #     deployments: read
-  #     issues: read
-  #     discussions: read
-  #     packages: read
-  #     pages: read
-  #     pull-requests: read
-  #     repository-projects: read
-  #     statuses: read
-  #     attestations: read
-  #   secrets: inherit
-  #   with:
-  #     run: ${{ needs.conditionals.outputs.compliance_checks }}
+  compliance:
+    uses: ./.github/workflows/102_compliance.yml
+    needs: [ci-settings]
+    permissions:
+      contents: read
+    with:
+      run_compliance_checks: ${{ inputs.run_compliance_checks }}
 
   # unit-test:
   #   uses: ./.github/workflows/unit-test.yml

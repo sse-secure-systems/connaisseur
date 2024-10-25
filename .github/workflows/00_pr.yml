@@ -17,7 +17,7 @@ jobs:
     uses: ./.github/workflows/100_ci.yml
     permissions:
       packages: write
-    #   contents: write
+      contents: read
     #   id-token: write
     #   security-events: write
     #   actions: read
@@ -31,3 +31,5 @@ jobs:
     #   statuses: read
     #   attestations: read
     secrets: inherit
+    with:
+      run_build: 'none'
