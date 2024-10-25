@@ -7,9 +7,6 @@ on:
     branches:
       - master
       - develop
-  push: # for testing
-    branches:
-      - ci/rework
 
 defaults:
   run:
@@ -18,8 +15,8 @@ defaults:
 jobs:
   ci:
     uses: ./.github/workflows/100_ci.yml
-    # permissions:
-    #   packages: write
+    permissions:
+      packages: write
     #   contents: write
     #   id-token: write
     #   security-events: write

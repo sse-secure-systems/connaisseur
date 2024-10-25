@@ -1,11 +1,9 @@
 name: build
 
-permissions: {} 
-
 on:
   workflow_call:
     inputs:
-      run:
+      run_build:
         description: "Which build jobs should be run: 'all', 'required', 'none'?"
         type: string
         default: "all"
@@ -44,20 +42,20 @@ on:
 jobs:
   context:
     runs-on: ubuntu-latest
-    if: inputs.run != 'none'
+    if: inputs.run_build != 'none'
     permissions: {}
     outputs:
-      chart_version: ${{ steps.get_context.outputs.CHART_VERSION }}
-      original_registry: ${{ steps.get_context.outputs.ORIGINAL_REGISTRY }}
-      original_repo: ${{ steps.get_context.outputs.ORIGINAL_REPO }}
-      original_image: ${{ steps.get_context.outputs.ORIGINAL_IMAGE }}
-      original_tag: ${{ steps.get_context.outputs.ORIGINAL_TAG }}
-      build_registry: ${{ steps.get_context.outputs.BUILD_REGISTRY }}
-      build_repo: ${{ steps.get_context.outputs.BUILD_REPO }}
-      build_tag: ${{ steps.get_context.outputs.BUILD_TAG }}
-      build_image: ${{ steps.get_context.outputs.BUILD_IMAGE }}
+      chart_version: ${{ steps.output_context.outputs.CHART_VERSION }}
+      original_registry: ${{ steps.output_context.outputs.ORIGINAL_REGISTRY }}
+      original_repo: ${{ steps.output_context.outputs.ORIGINAL_REPO }}
+      original_image: ${{ steps.output_context.outputs.ORIGINAL_IMAGE }}
+      original_tag: ${{ steps.output_context.outputs.ORIGINAL_TAG }}
+      build_registry: ${{ steps.output_context.outputs.BUILD_REGISTRY }}
+      build_repo: ${{ steps.output_context.outputs.BUILD_REPO }}
+      build_tag: ${{ steps.output_context.outputs.BUILD_TAG }}
+      build_image: ${{ steps.output_context.outputs.BUILD_IMAGE }}
       build_labels: ${{ steps.meta.outputs.labels }}
-      ref_tags: ${{ steps.get_context.outputs.REF_TAGS }}
+      ref_tags: ${{ steps.output_context.outputs.REF_TAGS }}
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -76,17 +74,10 @@ jobs:
         uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
         with:
           cmd: yq '.kubernetes.deployment.image.repository' charts/connaisseur/values.yaml
-      - name: Get context
-        id: get_context
+      - name: Get repo name
+        id: get_repo_name
         run: |
           GHREF=${{ github.ref }}
-          echo "github.ref is: ${GHREF}"
-          CHART_VERSION=${{ steps.get_chart_version.outputs.result }}
-          CONFIGURED_IMAGE_REPO=${{ steps.get_original_image_repository.outputs.result }}
-          ORIGINAL_REGISTRY=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 1)
-          ORIGINAL_REPO=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 2- | cut -d ":" -f 1)
-          ORIGINAL_TAG=v${{ steps.get_app_version.outputs.result }}
-          BUILD_REGISTRY="ghcr.io"
           BUILD_REPO=${{ github.repository }}
           if [[ "${GHREF}" != "refs/heads/master" &&
             "${GHREF}" != "refs/tags/v"* &&
@@ -94,20 +85,13 @@ jobs:
           ]]; then
             BUILD_REPO="${BUILD_REPO}-test"
           fi
-  
-          echo CHART_VERSION=${CHART_VERSION} >> ${GITHUB_OUTPUT}
-          echo ORIGINAL_REGISTRY=${ORIGINAL_REGISTRY} >> ${GITHUB_OUTPUT}
-          echo ORIGINAL_REPO=${ORIGINAL_REPO} >> ${GITHUB_OUTPUT}
-          echo ORIGINAL_TAG=${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
-          echo ORIGINAL_IMAGE=${CONFIGURED_IMAGE_REPO}:${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
-          echo BUILD_REGISTRY=${BUILD_REGISTRY} >> ${GITHUB_OUTPUT}
           echo BUILD_REPO=${BUILD_REPO} >> ${GITHUB_OUTPUT}
         shell: bash
       - name: Generate metadata
         id: meta
         uses: docker/metadata-action@507c2f2dc502c992ad446e3d7a5dfbe311567a96 # v4.3.0
         with:
-          images: ${{ steps.get_context.outputs.BUILD_REGISTRY }}/${{ steps.get_context.outputs.BUILD_REPO }}
+          images: ghcr.io/${{ steps.get_repo_name.outputs.BUILD_REPO }}
           flavor: |
             latest=true
           tags: |
@@ -116,32 +100,40 @@ jobs:
             type=ref,event=tag
             type=ref,event=pr
             type=sha
-      - name: Show context
-        id: show_context
+      - name: Output context
+        id: output_context
         run: |
-          PREFIX=$(echo "${{ steps.get_context.outputs.BUILD_REGISTRY }}/${{ steps.get_context.outputs.BUILD_REPO }}:" | sed 's%/%\/%g')
+          CHART_VERSION=${{ steps.get_chart_version.outputs.result }}
+          CONFIGURED_IMAGE_REPO=${{ steps.get_original_image_repository.outputs.result }}
+          ORIGINAL_REGISTRY=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 1)
+          ORIGINAL_REPO=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 2- | cut -d ":" -f 1)
+          ORIGINAL_TAG=v${{ steps.get_app_version.outputs.result }}
+          BUILD_REGISTRY="ghcr.io"
+          BUILD_REPO=${{ steps.get_repo_name.outputs.BUILD_REPO }}
+          PREFIX=$(echo "${BUILD_REGISTRY}/${BUILD_REPO}:" | sed 's%/%\/%g')
           TAGS="${{ steps.meta.outputs.tags }}"
           REF_TAGS="${TAGS//${PREFIX}/}"
           BUILD_IMAGE=$(echo "${TAGS}" | tail -2 | head -1)
           BUILD_TAG="${BUILD_IMAGE//${PREFIX}/}"
           [[ ${BUILD_TAG} == "sha-"* ]] || exit 1 # check as parsing of the BUILD_TAG maybe fragile and dependent on docker/metadata-action priorities
           REF_TAGS="${REF_TAGS//${BUILD_TAG}/}"
+          
+  
+          echo CHART_VERSION=${CHART_VERSION} >> ${GITHUB_OUTPUT}
+          echo ORIGINAL_REGISTRY=${ORIGINAL_REGISTRY} >> ${GITHUB_OUTPUT}
+          echo ORIGINAL_REPO=${ORIGINAL_REPO} >> ${GITHUB_OUTPUT}
+          echo ORIGINAL_TAG=${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
+          echo ORIGINAL_IMAGE=${CONFIGURED_IMAGE_REPO}:${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
+          echo BUILD_REGISTRY=${BUILD_REGISTRY} >> ${GITHUB_OUTPUT}
+          echo BUILD_REPO=${BUILD_REPO} >> ${GITHUB_OUTPUT}
           echo BUILD_TAG=${BUILD_TAG} >> ${GITHUB_OUTPUT}
           echo BUILD_IMAGE=${BUILD_IMAGE} >> ${GITHUB_OUTPUT}
           echo REF_TAGS=${REF_TAGS} >> ${GITHUB_OUTPUT}
-          echo "# :clipboard: Context" >> ${GITHUB_STEP_SUMMARY}
-          echo "<table>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><th>Build Context</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Helm chart version</td><td><code>${{ steps.get_context.outputs.CHART_VERSION }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Original image</td><td><code>${{ steps.get_context.outputs.ORIGINAL_IMAGE }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Build image</td><td><code>${BUILD_IMAGE}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>All build images</td><td><code>${{ steps.meta.outputs.tags }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "</table>" >> ${GITHUB_STEP_SUMMARY}
         shell: bash
 
   build:
     runs-on: ubuntu-latest
-    if: inputs.run != 'none'
+    if: inputs.run_build != 'none'
     needs: [context]
     permissions:
       packages: write
@@ -180,9 +172,10 @@ jobs:
         run: |
           echo "# :building_construction: Build Information" >> ${GITHUB_STEP_SUMMARY}
           echo "<table>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><th>Build artifacts</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Helm chart version</td><td><code>${{ needs.context.outputs.chart_version }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Original image</td><td><code>${{ needs.context.outputs.original_image }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
           echo "<tr><td>Workflow image</td><td><code>${{ needs.context.outputs.build_registry }}/${{ needs.context.outputs.build_repo }}:${{ needs.context.outputs.build_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>All reference tags</td><td><code>$(echo ${{ steps.tags.outputs.tags }} | tr ',' '\n')</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>All images</td><td><code>$(echo ${{ steps.tags.outputs.tags }} | tr ',' '\n')</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
           echo "<tr><td>Digest</td><td><code>${{ steps.build.outputs.digest }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
           echo "</table>" >> ${GITHUB_STEP_SUMMARY}
           echo "" >> ${GITHUB_STEP_SUMMARY}

@@ -5,37 +5,37 @@ permissions: {}
 on:
   workflow_call:
     inputs:
-      build:
+      run_build:
         description: "Which build jobs should be run: 'all', 'required', 'none'?"
         type: string
         default: "all"
         required: false
-      compliance_checks:
+      run_compliance_checks:
         description: "Which compliance checks should be run: 'all', 'required', 'none'?"
         type: string
         default: "all"
         required: false
-      unit_tests:
+      run_unit_tests:
         description: "Which unit tests should be run: 'all', 'required', 'none'?"
         type: string
         default: "all"
         required: false
-      sast:
+      run_sast:
         description: "Which sast jobs should be run: 'all', 'required', 'none'?"
         type: string
         default: "all"
         required: false
-      sca:
+      run_sca:
         description: "Which sca jobs should be run: 'all', 'required', 'none'?"
         type: string
         default: "all"
         required: false
-      docs:
+      run_docs:
         description: "Which doc jobs should be run: 'all', 'required', 'none'?"
         type: string
         default: "all"
         required: false
-      integration_tests:
+      run_integration_tests:
         description: "Which integration tests should be run: 'all', 'required', 'none'?"
         type: string
         default: "all"
@@ -51,56 +51,35 @@ defaults:
     shell: bash
 
 jobs:
-  conditionals:
+  ci-settings:
     runs-on: ubuntu-latest
-    outputs:
-      build: ${{ steps.conditionals.outputs.build }}
-      compliance_checks: ${{ steps.conditionals.outputs.compliance_checks }}
-      unit_tests: ${{ steps.conditionals.outputs.unit_tests }}
-      sast: ${{ steps.conditionals.outputs.sast }}
-      sca: ${{ steps.conditionals.outputs.sca }}
-      docs: ${{ steps.conditionals.outputs.docs }}
-      integration_tests: ${{ steps.conditionals.outputs.integration_tests }}
-      output_type: ${{ steps.conditionals.outputs.output_type }}
     steps:
-      - name: CI conditionals
-        id: conditionals
-        run: |
-          echo "build=${{ inputs.build }}" >> ${GITHUB_OUTPUT}
-          echo "compliance_checks=${{ inputs.compliance_checks }}" >> ${GITHUB_OUTPUT}
-          echo "unit_tests=${{ inputs.unit_tests }}" >> ${GITHUB_OUTPUT}
-          echo "sast=${{ inputs.sast }}" >> ${GITHUB_OUTPUT}
-          echo "sca=${{ inputs.sca }}" >> ${GITHUB_OUTPUT}
-          echo "docs=${{ inputs.docs }}" >> ${GITHUB_OUTPUT}
-          echo "integration_tests=${{ inputs.integration_tests }}" >> ${GITHUB_OUTPUT}
-          echo "output_type=${{ inputs.output_type }}" >> ${GITHUB_OUTPUT}
-      - name: Show conditionals
-        id: show_conditionals
+      - name: Show ci settings
         run: |
           get_output() { case "$1" in "all") echo ":white_check_mark:";; "required") echo ":information_source:";; "all") echo ":x:";; *) echo "Unknown value";; esac; }
           echo "# :pencil: CI Settings" >> ${GITHUB_STEP_SUMMARY}
           echo "<table>" >> ${GITHUB_STEP_SUMMARY}
           echo "<tr><th>Setting</th><th>Value</th></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Run Docs</td><td>$(get_output ${{ steps.conditionals.outputs.docs }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Run Build</td><td>$(get_output ${{ steps.conditionals.outputs.build }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Run Compliance</td><td>$(get_output ${{ steps.conditionals.outputs.compliance_checks }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Run Unit Tests</td><td>$(get_output ${{ steps.conditionals.outputs.unit_tests }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Run SAST</td><td>$(get_output ${{ steps.conditionals.outputs.sast }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Run SCA</td><td>$(get_output ${{ steps.conditionals.outputs.sca }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Run Integration Tests</td><td>$(get_output ${{ steps.conditionals.outputs.integration_tests }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Report type</td><td><code>${{ steps.conditionals.outputs.output_type }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Docs</td><td>$(get_output ${{ inputs.run_docs }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Build</td><td>$(get_output ${{ inputs.run_build }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Compliance</td><td>$(get_output ${{ inputs.run_compliance_checks }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Unit Tests</td><td>$(get_output ${{ inputs.run_unit_tests }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run SAST</td><td>$(get_output ${{ inputs.run_sast }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run SCA</td><td>$(get_output ${{ inputs.run_sca }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Run Integration Tests</td><td>$(get_output ${{ inputs.run_integration_tests }})</td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Report type</td><td><code>${{ inputs.output_type }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
           echo "</table>" >> ${GITHUB_STEP_SUMMARY}
           echo "($(get_output 'all') - run all jobs, $(get_output 'required') - run important/required jobs only, $(get_output 'none') - skip jobs)" >> ${GITHUB_STEP_SUMMARY}
           echo "" >> ${GITHUB_STEP_SUMMARY}
 
-  # build:
-  #   uses: ./.github/workflows/101_build.yml
-  #   needs: [conditionals]
-  #   permissions:
-  #     packages: write
-  #   secrets: inherit
-  #   with:
-  #     run: ${{ needs.conditionals.outputs.build }}
+  build:
+    uses: ./.github/workflows/101_build.yml
+    needs: [ci-settings]
+    permissions:
+      packages: write
+    secrets: inherit
+    with:
+      run_build: ${{ inputs.run_build }}
 
   # compliance:
   #   uses: ./.github/workflows/102_compliance.yml
