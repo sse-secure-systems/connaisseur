@@ -1,0 +1,40 @@
+name: pr
+
+permissions: {}
+
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ci:
+    uses: ./.github/workflows/100_ci.yml
+    permissions:
+      packages: write
+      contents: write
+      security-events: write
+      # pull-requests: read
+    #   id-token: write
+    #   actions: read
+    #   checks: read
+    #   deployments: read
+    #   issues: read
+    #   discussions: read
+    #   pages: read
+    #   repository-projects: read
+    #   statuses: read
+    #   attestations: read
+    secrets: inherit
+    with:
+      # build: skip
+      compliance_checks: skip
+      unit_tests: skip
+      sast: skip
+      sca: skip
+      docs: skip

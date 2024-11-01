@@ -1,0 +1,161 @@
+name: sast
+
+on:
+  workflow_call:
+    inputs:
+      jobs_to_run:
+        description: "Which sast jobs should be run: 'all', 'only-required', 'skip'?"
+        type: string
+        default: "all"
+      output:
+        description: 'Output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
+        type: string
+        required: false
+        default: 'sarif'
+
+permissions: {}
+
+jobs:
+  codeql:
+    runs-on: ubuntu-latest
+    if: |
+      (github.actor != 'dependabot[bot]') &&
+      inputs.jobs_to_run == 'all' &&
+      inputs.output == 'sarif'
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        with:
+          languages: 'go'
+      - name: Analyze
+        uses: github/codeql-action/analyze@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+
+  golangci-lint:
+    runs-on: ubuntu-latest
+    if: |
+      (github.actor != 'dependabot[bot]') &&
+      inputs.jobs_to_run != 'skip'
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+        with:
+          cache: false
+          go-version: '1.21'
+      - name: Analyze
+        uses: golangci/golangci-lint-action@971e284b6050e8a5849b72094c50ab08da042db8 # v6.1.1
+        with:
+          version: latest
+          args: '--timeout=10m --exclude-dirs="test" --tests=false'
+
+  gosec:
+    runs-on: ubuntu-latest
+    if: |
+      (github.actor != 'dependabot[bot]') &&
+      inputs.jobs_to_run != 'skip'
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Analyze
+        uses: securego/gosec@d4617f51baf75f4f809066386a4f9d27b3ac3e46 # v2.21.4
+        with:
+          args: "-exclude-dir=test -exclude-dir=tools ${{ inputs.output == 'sarif' && '-no-fail -fmt sarif -out gosec-results.sarif' || '-fmt text' }} ./..."
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        if: inputs.output == 'sarif'
+        with:
+          sarif_file: 'gosec-results.sarif'
+
+  hadolint:
+    runs-on: ubuntu-latest
+    if: |
+      (github.actor != 'dependabot[bot]') &&
+      inputs.jobs_to_run == 'all'
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Scan
+        uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          dockerfile: build/Dockerfile
+          format: ${{ inputs.output == 'sarif' && 'sarif' || 'tty' }}
+          no-fail: ${{ inputs.output == 'sarif' && 'true' || 'false' }}
+          output-file: ${{ inputs.output == 'sarif' && 'hadolint-results.sarif' || '' }}
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        if: inputs.output == 'sarif'
+        with:
+          sarif_file: 'hadolint-results.sarif'
+
+  kubelinter:
+    runs-on: ubuntu-latest
+    if: |
+      (github.actor != 'dependabot[bot]') &&
+      inputs.jobs_to_run == 'all'
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Scan
+        uses: stackrox/kube-linter-action@5792edc6a03735d592b13c08201711327a935735 # v1.0.5
+        with:
+          config: .github/.kube-linter/config.yaml
+          directory: charts/connaisseur
+          format: ${{ inputs.output == 'sarif' && 'sarif' || 'plain' }}
+          output-file: ${{ inputs.output == 'sarif' && 'kubelinter-results.sarif' || 'kube-linter.log' }}
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        if: inputs.output == 'sarif'
+        with:
+          sarif_file: 'kubelinter-results.sarif'
+
+  trivy-config-scan:
+    name: trivy config
+    runs-on: ubuntu-latest
+    if: |
+      (github.actor != 'dependabot[bot]') &&
+      inputs.jobs_to_run == 'all'
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Create reports folder
+        run: |
+          mkdir reports
+        shell: bash
+      - name: Render Helm charts
+        run: |
+          mkdir deployment
+          helm template charts/connaisseur > deployment/deployment.yaml
+        shell: bash
+      - name: Scan deployment.yaml
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+        with:
+          scan-type: config
+          scan-ref: deployment
+          format: ${{ inputs.output }}
+          output: ${{ inputs.output == 'sarif' && 'reports/trivy-k8s-results.sarif' || '' }}
+      - name: Scan Dockerfiles
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+        with:
+          scan-type: config
+          scan-ref: build
+          format: ${{ inputs.output }}
+          output: ${{ inputs.output == 'sarif' && 'reports/trivy-docker-results.sarif' || '' }}
+      - name: Upload
+        uses: github/codeql-action/upload-sarif@32dc499307d133bb5085bae78498c0ac2cf762d5 # v2.2.5
+        if: inputs.output == 'sarif'
+        with:
+          sarif_file: 'reports'

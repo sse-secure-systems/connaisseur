@@ -180,20 +180,12 @@ ghcr_update() { # $1: file
     yq e -i '.kubernetes.deployment.image.tag = env(TAG)' $1
     # add imagePullSecrets
     yq e -i '.kubernetes.deployment.image.imagePullSecrets[0].name = env(IMAGEPULLSECRET)' $1
-    # add cosign validator:
-    # name: connaisseur-ghcr
-    #   type: cosign
-    #   trustRoots:
-    #     - name: default
-    #       key: |-
-    #         ${COSIGN_PUBLIC_KEY}
-    #   auth:
-    #     secretName: ${IMAGEPULLSECRET}
-    export PKEY=${COSIGN_PUBLIC_KEY//$'<br>'/'\n'}
-    export PKEY=$(echo -e $PKEY)
-    yq e -i '.application.validators += [{"name":"connaisseur-ghcr","type":"cosign","trustRoots":[{"name":"default","key":strenv(PKEY)}],"auth":{"secretName":strenv(IMAGEPULLSECRET)}}]' $1
+    # add static allow if not present
+    if [[  "$(yq e '.application.validators[] | select(.name == "allow")' $1)" == "" ]]; then
+        yq e -i '.application.validators += [{"name":"allow","type":"static","approve": true}]' $1
+    fi
     # add policy for ghcr image
-    yq e -i '.application.policy += [{"pattern":env(IMAGE)+":"+env(TAG),"validator":"connaisseur-ghcr"}]' $1
+    yq e -i '.application.policy += [{"pattern":env(IMAGE)+":"+env(TAG),"validator":"allow"}]' $1
 }
 
 

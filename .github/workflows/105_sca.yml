@@ -1,0 +1,80 @@
+name: sca
+
+permissions: {}
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: "Image used for testing, i.e. registry + repository + tag"
+        type: string
+        required: true
+      registry:
+        description: 'Registry to login to pull image, e.g. "ghcr.io" for GHCR, leave empty if image is public'
+        type: string
+        required: false
+        default: ''
+      repo_owner:
+        description: 'Name of repository owner, e.g. "github.repository_owner" for ghcr.io'
+        type: string
+        required: false
+        default: ''
+      jobs_to_run:
+        description: "Which sca jobs should be run: 'all', 'only-required', 'skip'?"
+        type: string
+        default: "all"
+      output:
+        description: 'Output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
+        type: string
+        required: false
+        default: 'sarif'
+
+jobs:
+  trivy-image-scan:
+    name: trivy image
+    runs-on: ubuntu-latest
+    if: inputs.jobs_to_run != 'skip'
+    permissions:
+      packages: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Login with registry
+        if: inputs.registry != ''
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ inputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create reports folder
+        run: |
+          mkdir reports
+        shell: bash
+      - name: Run Trivy on image
+        if: inputs.output == 'sarif'
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+        with:
+          image-ref: ${{ inputs.image }}
+          scan-type: "image"
+          format: 'sarif'
+          output: 'reports/trivy-vuln-results.sarif'
+        env:
+          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
+          TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
+      - name: Run Trivy on image
+        if: inputs.output == 'table'
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+        with:
+          image-ref: ${{ inputs.image }}
+          scan-type: "image"
+          exit-code: 1
+          format: 'table'
+        env:
+          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
+          TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
+      - name: Upload
+        if: inputs.output == 'sarif'
+        uses: github/codeql-action/upload-sarif@32dc499307d133bb5085bae78498c0ac2cf762d5 # v2.2.5
+        with:
+          sarif_file: 'reports'

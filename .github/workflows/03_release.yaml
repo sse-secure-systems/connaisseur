@@ -26,7 +26,7 @@ jobs:
           echo "skip_integration_tests=${SKIP_INTEGRATION_TESTS}" >> ${GITHUB_OUTPUT}
 
   build:
-    uses: ./.github/workflows/.reusable-build.yml
+    uses: ./.github/workflows/101_build.yml
     permissions:
       packages: write
     secrets: inherit
@@ -49,7 +49,7 @@ jobs:
           exit 1
 
   integration-test:
-    uses: ./.github/workflows/.reusable-integration-test.yml
+    uses: ./.github/workflows/107_integration-test.yml
     needs: [conditionals, build, version-match]
     permissions:
       packages: read
@@ -63,7 +63,7 @@ jobs:
       cosign_public_key: ${{ needs.build.outputs.cosign_public_key }}
 
   publish:
-    uses: ./.github/workflows/.reusable-publish.yml
+    uses: ./.github/workflows/200_publish.yml
     needs: [build, version-match, integration-test]
     permissions:
       contents: write
