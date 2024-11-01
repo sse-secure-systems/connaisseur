@@ -3,8 +3,8 @@ name: build
 on:
   workflow_call:
     inputs:
-      run_build:
-        description: "Which build jobs should be run: 'all', 'required', 'none'?"
+      jobs_to_run:
+        description: "Which build jobs should be run: 'all', 'only-required', 'skip'?"
         type: string
         default: "all"
     outputs:
@@ -42,7 +42,7 @@ on:
 jobs:
   context:
     runs-on: ubuntu-latest
-    if: inputs.run_build != 'none'
+    if: inputs.jobs_to_run != 'skip'
     permissions: {}
     outputs:
       chart_version: ${{ steps.output_context.outputs.CHART_VERSION }}
@@ -133,7 +133,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: inputs.run_build != 'none'
+    if: inputs.jobs_to_run != 'skip'
     needs: [context]
     permissions:
       packages: write

@@ -3,10 +3,10 @@ name: sast
 on:
   workflow_call:
     inputs:
-      run_sast:
-        description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
+      jobs_to_run:
+        description: "Which sast jobs should be run: 'all', 'only-required', 'skip'?"
         type: string
-        default: "none"
+        default: "all"
       output:
         description: 'Output either "sarif" (GITHUB_TOKEN with security-events:write) or print results as "table" and fail on error'
         type: string
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.run_sast == 'all' &&
+      inputs.jobs_to_run == 'all' &&
       inputs.output == 'sarif'
     permissions:
       security-events: write
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.run_sast != 'none'
+      inputs.jobs_to_run != 'skip'
     permissions:
       security-events: write
     steps:
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.run_sast != 'none'
+      inputs.jobs_to_run != 'skip'
     permissions:
       security-events: write
     steps:
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.run_sast == 'all'
+      inputs.jobs_to_run == 'all'
     permissions:
       security-events: write
     steps:
@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.run_sast == 'all'
+      inputs.jobs_to_run == 'all'
     permissions:
       security-events: write
     steps:
@@ -125,7 +125,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.actor != 'dependabot[bot]') &&
-      inputs.run_sast == 'all'
+      inputs.jobs_to_run == 'all'
     permissions:
       security-events: write
     steps:

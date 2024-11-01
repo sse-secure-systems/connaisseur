@@ -31,9 +31,9 @@ jobs:
     #   statuses: read
     #   attestations: read
     secrets: inherit
-    with:
-      run_build: none
-      run_compliance_checks: none
-      run_unit_tests: none
-      run_sast: none
-      run_sca: none
+    # with:
+    #   build: skip
+    #   compliance_checks: skip
+    #   unit_tests: skip
+    #   sast: skip
+    #   sca: skip
