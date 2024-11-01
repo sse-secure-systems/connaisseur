@@ -62,14 +62,17 @@ runs:
         kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
       shell: bash
     - name: Get IP
-      if: ${{ inputs.test }} == 'alerting'
       id: get_ip
       run: |
-        CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
-        CONTAINER_ID=$(echo ${CONTAINER} | jq -r .ID)
-        CONTAINER_NETWORK=$(echo ${CONTAINER} | jq -r .Networks)
-        SEARCH_PATH=.[0].NetworkSettings.Networks."${CONTAINER_NETWORK}".IPAddress
-        IP=$(docker container inspect ${CONTAINER_ID} | jq -r ${SEARCH_PATH})
+        if [[ ${{ inputs.test }} -eq "alerting" ]]; then
+          CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
+          CONTAINER_ID=$(echo ${CONTAINER} | jq -r .ID)
+          CONTAINER_NETWORK=$(echo ${CONTAINER} | jq -r .Networks)
+          SEARCH_PATH=.[0].NetworkSettings.Networks."${CONTAINER_NETWORK}".IPAddress
+          IP=$(docker container inspect ${CONTAINER_ID} | jq -r ${SEARCH_PATH})
+        else
+          IP=""
+        fi
         echo IP=${IP} >> ${GITHUB_OUTPUT}
       shell: bash
     - name: Run test
