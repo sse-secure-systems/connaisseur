@@ -39,6 +39,9 @@ runs:
         scan-type: "image"
         format: 'sarif'
         output: 'reports/trivy-vuln-results.sarif'
+      env:
+        TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
+        TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
     - name: Run Trivy on image
       if: inputs.output == 'table'
       uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
@@ -47,6 +50,9 @@ runs:
         scan-type: "image"
         exit-code: 1
         format: 'table'
+      env:
+        TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
+        TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
     - name: Upload
       if: inputs.output == 'sarif'
       uses: github/codeql-action/upload-sarif@32dc499307d133bb5085bae78498c0ac2cf762d5 # v2.2.5
