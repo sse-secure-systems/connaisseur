@@ -13,7 +13,7 @@ jobs:
         uses: snok/container-retention-policy@4f22ef80902ad409ed55a99dc5133cc1250a0d03 # v3.0.0
         with:
           image-names: connaisseur-test
-          cut-off: three weeks ago UTC+1
+          cut-off: 3w
           timestamp-to-use: updated_at
           account: sse-secure-systems
           token: ${{ secrets.GHCR_PAT }}
@@ -22,7 +22,7 @@ jobs:
         with:
           image-names: connaisseur*
           tag-selection: untagged
-          cut-off: four hours ago UTC+1
+          cut-off: 4h
           timestamp-to-use: updated_at
           account: sse-secure-systems
           token: ${{ secrets.GHCR_PAT }}
@@ -31,7 +31,7 @@ jobs:
       #   with:
       #     image-names: connaisseur
       #     image-tags: !master, !develop, !v*, !sha256-*
-      #     cut-off: four days ago UTC+1
+      #     cut-off: 4d
       #     timestamp-to-use: updated_at
       #     account: sse-secure-systems
       #     token: ${{ secrets.GHCR_PAT }}
