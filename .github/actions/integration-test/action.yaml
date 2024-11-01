@@ -64,7 +64,7 @@ runs:
     - name: Get IP
       id: get_ip
       run: |
-        if [[ ${{ inputs.test }} -eq "alerting" ]]; then
+        if [ "${{ inputs.test }}" == "alerting" ]; then
           CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
           CONTAINER_ID=$(echo ${CONTAINER} | jq -r .ID)
           CONTAINER_NETWORK=$(echo ${CONTAINER} | jq -r .Networks)
