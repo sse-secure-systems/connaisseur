@@ -104,20 +104,19 @@ jobs:
       run_sast: ${{ inputs.run_sast }}
       output: ${{ inputs.output_type }}
 
-  # sca:
-  #   uses: ./.github/workflows/sca.yml
-  #   needs: [conditionals, build]
-  #   permissions:
-  #     contents: write
-  #     security-events: write
-  #     packages: read
-  #   secrets: inherit
-  #   with:
-  #     registry: ${{ needs.build.outputs.build_registry }}
-  #     repo_owner: ${{ github.repository_owner }}
-  #     image: ${{ needs.build.outputs.build_image }}
-  #     skip: ${{ needs.conditionals.outputs.skip_sca }}
-  #     output: ${{ needs.conditionals.outputs.output_type }}
+  sca:
+    uses: ./.github/workflows/105_sca.yml
+    needs: [ci-settings, build]
+    permissions:
+      security-events: write
+      packages: read
+    secrets: inherit
+    with:
+      image: ${{ needs.build.outputs.build_image }}
+      registry: ${{ needs.build.outputs.build_registry }}
+      repo_owner: ${{ github.repository_owner }}
+      run_sca: ${{ inputs.run_sca }}
+      output: ${{ inputs.output_type }}
 
   # docs:
   #   uses: ./.github/workflows/docs.yaml

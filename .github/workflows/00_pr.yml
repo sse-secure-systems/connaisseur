@@ -32,7 +32,7 @@ jobs:
     #   attestations: read
     secrets: inherit
     with:
-      run_build: none
+      run_build: all
       run_compliance_checks: none
       run_unit_tests: none
-      output_type: table
+      run_sast: none
