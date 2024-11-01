@@ -182,7 +182,7 @@ ghcr_update() { # $1: file
     yq e -i '.kubernetes.deployment.image.imagePullSecrets[0].name = env(IMAGEPULLSECRET)' $1
     # add static allow if not present
     if [[  "$(yq e '.application.validators[] | select(.name == "allow")' $1)" == "" ]]; then
-        yq e -i '.application.validators += [{"name":"allow","type":"static","aprove": true}]' $1
+        yq e -i '.application.validators += [{"name":"allow","type":"static","approve": true}]' $1
     fi
     # add policy for ghcr image
     yq e -i '.application.policy += [{"pattern":env(IMAGE)+":"+env(TAG),"validator":"allow"}]' $1

@@ -17,8 +17,7 @@ inputs:
     required: true
   k8s-version:
     description: "Kubernetes version to install"
-    required: false
-    default: "v1.25"
+    required: true
   test:
     description: "Test to run"
     required: true
@@ -115,7 +114,7 @@ runs:
         if [ -n "${logs_out}" ]; then
           echo "${logs_out}"
           echo "<details><summary>connaisseur logs</summary>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<pre lang=\"yaml\"><code>${logs_out}</code></pre>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<pre lang=\"bash\"><code>${logs_out}</code></pre>" >> ${GITHUB_STEP_SUMMARY}
           echo "</details>" >> ${GITHUB_STEP_SUMMARY}
         fi
       shell: bash
