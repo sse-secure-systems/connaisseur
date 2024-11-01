@@ -36,3 +36,4 @@ jobs:
       run_compliance_checks: none
       run_unit_tests: none
       run_sast: none
+      output_type: table
