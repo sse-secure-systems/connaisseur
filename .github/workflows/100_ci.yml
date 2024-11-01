@@ -118,13 +118,13 @@ jobs:
       run_sca: ${{ inputs.run_sca }}
       output: ${{ inputs.output_type }}
 
-  # docs:
-  #   uses: ./.github/workflows/docs.yaml
-  #   needs: [conditionals]
-  #   permissions:
-  #     contents: write
-  #   with:
-  #     skip: ${{ needs.conditionals.outputs.skip_docs }}
+  docs:
+    uses: ./.github/workflows/106_docs.yaml
+    needs: [ci-settings]
+    permissions:
+      contents: write
+    with:
+      run_docs: ${{ inputs.run_docs }}
 
   # integration-test:
   #   uses: ./.github/workflows/integration-test.yml
