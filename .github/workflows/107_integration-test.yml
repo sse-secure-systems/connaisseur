@@ -143,8 +143,8 @@ jobs:
           registry: ${{ inputs.build_registry }}
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: ./.github/actions/k8s-versions
-        name: Kubernetes versions
+      - uses: ./.github/actions/integration-test
+        name: Integration test
         with:
           registry: ${{ inputs.build_registry }}
           username: ${{ inputs.repo_owner }}
