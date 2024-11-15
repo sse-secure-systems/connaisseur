@@ -32,8 +32,9 @@ func TestValidateWorkloadObject(t *testing.T) {
 	var testCases = []struct {
 		newWLO kubernetes.WorkloadObject
 		out    map[string]struct {
-			img string
-			err error
+			img            string
+			validationMode string
+			err            error
 		}
 	}{
 		// test case with one image
@@ -43,10 +44,11 @@ func TestValidateWorkloadObject(t *testing.T) {
 				InitContainers: []core.Container{{Image: "nginx"}},
 			},
 			map[string]struct {
-				img string
-				err error
+				img            string
+				validationMode string
+				err            error
 			}{
-				"nginx": {"index.docker.io/library/nginx:latest", nil},
+				"nginx": {"index.docker.io/library/nginx:latest", constants.MutateMode, nil},
 			},
 		},
 		// test case with validationMode set to mutate
@@ -56,11 +58,13 @@ func TestValidateWorkloadObject(t *testing.T) {
 				InitContainers: []core.Container{{Image: "docker.io/securesystemsengineering/sample"}},
 			},
 			map[string]struct {
-				img string
-				err error
+				img            string
+				validationMode string
+				err            error
 			}{
 				"docker.io/securesystemsengineering/sample": {
 					"index.docker.io/securesystemsengineering/sample:latest",
+					constants.MutateMode,
 					nil,
 				},
 			},
@@ -72,11 +76,13 @@ func TestValidateWorkloadObject(t *testing.T) {
 				InitContainers: []core.Container{{Image: "docker.io/securesystemsengineering/sample:v1"}},
 			},
 			map[string]struct {
-				img string
-				err error
+				img            string
+				validationMode string
+				err            error
 			}{
 				"docker.io/securesystemsengineering/sample:v1": {
 					"index.docker.io/securesystemsengineering/sample:v1",
+					constants.ValidateMode,
 					nil,
 				},
 			},
@@ -89,11 +95,12 @@ func TestValidateWorkloadObject(t *testing.T) {
 				EphemeralContainers: []core.EphemeralContainer{{EphemeralContainerCommon: core.EphemeralContainerCommon{Image: "debian"}}},
 			},
 			map[string]struct {
-				img string
-				err error
+				img            string
+				validationMode string
+				err            error
 			}{
-				"nginx":  {"index.docker.io/library/nginx:latest", nil},
-				"debian": {"index.docker.io/library/debian:latest", nil},
+				"nginx":  {"index.docker.io/library/nginx:latest", constants.MutateMode, nil},
+				"debian": {"index.docker.io/library/debian:latest", constants.MutateMode, nil},
 			},
 		},
 	}
@@ -108,16 +115,18 @@ func TestValidateWorkloadObject(t *testing.T) {
 	for idx, tc := range testCases {
 		voChannel := ValidateWorkloadObject(ctx, &tc.newWLO, &kubernetes.WorkloadObject{})
 		validatedImages := map[string]struct {
-			img string
-			err error
+			img  string
+			mode string
+			err  error
 		}{}
 		containers := tc.newWLO.ConsolidatedContainers()
 		for range containers {
 			vo := <-voChannel
 			validatedImages[vo.RawImage] = struct {
-				img string
-				err error
-			}{vo.NewImage, vo.Error}
+				img  string
+				mode string
+				err  error
+			}{vo.NewImage, vo.ValidationMode, vo.Error}
 		}
 		assert.Equalf(t, len(tc.out), len(validatedImages), "test case %i", idx+1)
 		for expectedValidatedImg := range tc.out {
@@ -127,6 +136,13 @@ func TestValidateWorkloadObject(t *testing.T) {
 				t,
 				tc.out[expectedValidatedImg].img,
 				actualValidatedImg.img,
+				"test case %i",
+				idx+1,
+			)
+			assert.Equalf(
+				t,
+				tc.out[expectedValidatedImg].validationMode,
+				actualValidatedImg.mode,
 				"test case %i",
 				idx+1,
 			)

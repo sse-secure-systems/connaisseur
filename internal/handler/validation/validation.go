@@ -9,7 +9,6 @@ import (
 	"connaisseur/internal/utils"
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -161,7 +160,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 	logrus.Debugf("validator: %s", validatorName)
 
 	// get validation mode
-	switch strings.ToLower(rule.With.ValidationMode) {
+	switch rule.With.ValidationMode {
 	case constants.MutateMode:
 		validationMode = constants.MutateMode
 	case constants.ValidateMode:
