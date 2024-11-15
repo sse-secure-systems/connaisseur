@@ -90,8 +90,8 @@ kubernetes:
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      runAsUser: 10001 # remove when using openshift or OKD 4
-      runAsGroup: 20001 # remove when using openshift or OKD 4
+      runAsUser: 999 # redis user id; remove when using openshift or OKD 4
+      runAsGroup: 999 # redis group id; remove when using openshift or OKD 4
       seccompProfile: # remove when using Kubernetes prior v1.19, openshift or OKD 4
         type: RuntimeDefault # remove when using Kubernetes prior v1.19, openshift or OKD 4
     podSecurityContext: {}
