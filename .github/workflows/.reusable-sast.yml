@@ -34,7 +34,7 @@ jobs:
         shell: bash
       - name: Scan
         if: inputs.output == 'table'
-        uses: bridgecrewio/checkov-action@a36096a3a272a684d48058e101498cddb9a1599d # v12.2884.0
+        uses: bridgecrewio/checkov-action@416bcc9b9b7e2e046b8003075241629761c3a810 # v12.2908.0
         with:
           output_format: cli
           output_file_path: console
@@ -42,7 +42,7 @@ jobs:
           file: deployment/deployment.yaml
       - name: Scan
         if: inputs.output == 'sarif'
-        uses: bridgecrewio/checkov-action@a36096a3a272a684d48058e101498cddb9a1599d # v12.2884.0
+        uses: bridgecrewio/checkov-action@416bcc9b9b7e2e046b8003075241629761c3a810 # v12.2908.0
         with:
           output_file_path: console,checkov-results.sarif
           output_format: cli,sarif
@@ -50,7 +50,7 @@ jobs:
           file: deployment/deployment.yaml
       - name: Upload
         if: inputs.output == 'sarif'
-        uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        uses: github/codeql-action/upload-sarif@ea9e4e37992a54ee68a9622e985e60c8e8f12d9f # v3.27.4
         with:
           sarif_file: checkov-results.sarif
 
@@ -68,11 +68,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        uses: github/codeql-action/init@ea9e4e37992a54ee68a9622e985e60c8e8f12d9f # v3.27.4
         with:
           languages: 'go'
       - name: Analyze
-        uses: github/codeql-action/analyze@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        uses: github/codeql-action/analyze@ea9e4e37992a54ee68a9622e985e60c8e8f12d9f # v3.27.4
 
   golangci-lint:
     runs-on: ubuntu-latest
@@ -115,7 +115,7 @@ jobs:
         with:
           args: '-exclude-dir=test -exclude-dir=tools -no-fail -fmt sarif -out gosec-results.sarif ./...'
       - name: Upload
-        uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        uses: github/codeql-action/upload-sarif@ea9e4e37992a54ee68a9622e985e60c8e8f12d9f # v3.27.4
         if: inputs.output == 'sarif'
         with:
           sarif_file: 'gosec-results.sarif'
@@ -147,7 +147,7 @@ jobs:
           no-fail: true
           output-file: hadolint-results.sarif
       - name: Upload
-        uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        uses: github/codeql-action/upload-sarif@ea9e4e37992a54ee68a9622e985e60c8e8f12d9f # v3.27.4
         if: inputs.output == 'sarif'
         with:
           sarif_file: 'hadolint-results.sarif'
@@ -179,7 +179,7 @@ jobs:
           format: sarif
           output-file: kubelinter-results.sarif
       - name: Upload
-        uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        uses: github/codeql-action/upload-sarif@ea9e4e37992a54ee68a9622e985e60c8e8f12d9f # v3.27.4
         if: inputs.output == 'sarif'
         with:
           sarif_file: 'kubelinter-results.sarif'
@@ -204,7 +204,7 @@ jobs:
         if: inputs.output == 'sarif'
         run: semgrep ci --config=auto --suppress-errors --sarif --output=semgrep-results.sarif || exit 0
       - name: Upload
-        uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.27.0
+        uses: github/codeql-action/upload-sarif@ea9e4e37992a54ee68a9622e985e60c8e8f12d9f # v3.27.4
         if: inputs.output == 'sarif'
         with:
           sarif_file: semgrep-results.sarif
