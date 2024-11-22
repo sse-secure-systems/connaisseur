@@ -21,9 +21,6 @@ on:
         description: "Want to skip running certain jobs 'none', 'non-required', 'all'?"
         type: string
         default: "none"
-      cosign_public_key:
-        description: "Cosign public key used for signing the build image"
-        type: string
 
 env:
   IMAGEPULLSECRET: dockerconfigjson-ghcr
@@ -38,7 +35,6 @@ jobs:
     env:
       IMAGE: ${{ inputs.build_image_repository }}
       TAG: ${{ inputs.build_tag }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
@@ -111,7 +107,6 @@ jobs:
     env:
       IMAGE: ${{ inputs.build_image_repository }}
       TAG: ${{ inputs.build_tag }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
@@ -175,7 +170,6 @@ jobs:
     env:
       IMAGE: ${{ inputs.build_image_repository }}
       TAG: ${{ inputs.build_tag }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
@@ -231,7 +225,6 @@ jobs:
     env:
       IMAGE: ${{ inputs.build_image_repository }}
       TAG: ${{ inputs.build_tag }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:
@@ -288,7 +281,6 @@ jobs:
     env:
       IMAGE: ${{ inputs.build_image_repository }}
       TAG: ${{ inputs.build_tag }}
-      COSIGN_PUBLIC_KEY: ${{ inputs.cosign_public_key }}
     strategy:
       fail-fast: false
       matrix:

@@ -10,9 +10,6 @@ on:
         type: string
         default: "none"
     outputs:
-      cosign_public_key: 
-        description: "Cosign public key used for signing Connaisseur image"
-        value: ${{ jobs.build.outputs.cosign_public_key }}
       chart_version: 
         description: "Connaisseur Helm chart version"
         value: ${{ jobs.context.outputs.chart_version }}
@@ -37,9 +34,6 @@ on:
       build_tag:
         description: "Workflow build tag used for testing (unique for each run)"
         value: ${{ jobs.context.outputs.build_tag }}
-      branch_tag:
-        description: "Branch tag used for all builds on branch"
-        value: ${{ jobs.context.outputs.branch_tag }}
       build_image:
         description: "Workflow build image used for testing, i.e. registry + repository + tag"
         value: ${{ jobs.context.outputs.build_image }}
@@ -53,23 +47,91 @@ jobs:
     if: inputs.skip != 'all'
     permissions: {}
     outputs:
-      chart_version: ${{ steps.get_context.outputs.chart_version }}
-      original_registry: ${{ steps.get_context.outputs.original_registry }}
-      original_repo: ${{ steps.get_context.outputs.original_repo }}
-      original_image: ${{ steps.get_context.outputs.original_image }}
-      original_tag: ${{ steps.get_context.outputs.original_tag }}
-      build_registry: ${{ steps.get_context.outputs.build_registry }}
-      build_repo: ${{ steps.get_context.outputs.build_repo }}
-      build_tag: ${{ steps.get_context.outputs.build_tag }}
-      ref_tags: ${{ steps.get_context.outputs.ref_tags }}
-      build_image: ${{ steps.get_context.outputs.build_image }}
-      build_labels: ${{ steps.get_context.outputs.build_labels }}
+      chart_version: ${{ steps.output_context.outputs.CHART_VERSION }}
+      original_registry: ${{ steps.output_context.outputs.ORIGINAL_REGISTRY }}
+      original_repo: ${{ steps.output_context.outputs.ORIGINAL_REPO }}
+      original_image: ${{ steps.output_context.outputs.ORIGINAL_IMAGE }}
+      original_tag: ${{ steps.output_context.outputs.ORIGINAL_TAG }}
+      build_registry: ${{ steps.output_context.outputs.BUILD_REGISTRY }}
+      build_repo: ${{ steps.output_context.outputs.BUILD_REPO }}
+      build_tag: ${{ steps.output_context.outputs.BUILD_TAG }}
+      build_image: ${{ steps.output_context.outputs.BUILD_IMAGE }}
+      build_labels: ${{ steps.meta.outputs.labels }}
+      ref_tags: ${{ steps.output_context.outputs.REF_TAGS }}
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Get context
-        id: get_context
-        uses: ./.github/actions/context
+      - name: Get chart version
+        id: get_chart_version
+        uses: mikefarah/yq@bc5b54cb1d1f720db16c9f75c5b45384d00e5cbf # v4.44.5
+        with:
+          cmd: yq '.version' charts/connaisseur/Chart.yaml
+      - name: Get app version
+        id: get_app_version
+        uses: mikefarah/yq@bc5b54cb1d1f720db16c9f75c5b45384d00e5cbf # v4.44.5
+        with:
+          cmd: yq '.appVersion' charts/connaisseur/Chart.yaml
+      - name: Get original image
+        id: get_original_image_repository
+        uses: mikefarah/yq@bc5b54cb1d1f720db16c9f75c5b45384d00e5cbf # v4.44.5
+        with:
+          cmd: yq '.kubernetes.deployment.image.repository' charts/connaisseur/values.yaml
+      - name: Get repo name
+        id: get_repo_name
+        run: |
+          GHREF=${{ github.ref }}
+          BUILD_REPO=${{ github.repository }}
+          if [[ "${GHREF}" != "refs/heads/master" &&
+            "${GHREF}" != "refs/tags/v"* &&
+            "${GHREF}" != "refs/heads/develop"
+          ]]; then
+            BUILD_REPO="${BUILD_REPO}-test"
+          fi
+          echo BUILD_REPO=${BUILD_REPO} >> ${GITHUB_OUTPUT}
+        shell: bash
+      - name: Generate metadata
+        id: meta
+        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96 # v5.6.1
+        with:
+          images: ghcr.io/${{ steps.get_repo_name.outputs.BUILD_REPO }}
+          flavor: |
+            latest=true
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=sha
+      - name: Output context
+        id: output_context
+        run: |
+          CHART_VERSION=${{ steps.get_chart_version.outputs.result }}
+          CONFIGURED_IMAGE_REPO=${{ steps.get_original_image_repository.outputs.result }}
+          ORIGINAL_REGISTRY=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 1)
+          ORIGINAL_REPO=$(echo "${CONFIGURED_IMAGE_REPO}" | cut -d "/" -f 2- | cut -d ":" -f 1)
+          ORIGINAL_TAG=v${{ steps.get_app_version.outputs.result }}
+          BUILD_REGISTRY="ghcr.io"
+          BUILD_REPO=${{ steps.get_repo_name.outputs.BUILD_REPO }}
+          PREFIX=$(echo "${BUILD_REGISTRY}/${BUILD_REPO}:" | sed 's%/%\/%g')
+          TAGS="${{ steps.meta.outputs.tags }}"
+          REF_TAGS="${TAGS//${PREFIX}/}"
+          BUILD_IMAGE=$(echo "${TAGS}" | tail -2 | head -1)
+          BUILD_TAG="${BUILD_IMAGE//${PREFIX}/}"
+          [[ ${BUILD_TAG} == "sha-"* ]] || exit 1 # check as parsing of the BUILD_TAG maybe fragile and dependent on docker/metadata-action priorities
+          REF_TAGS="${REF_TAGS//${BUILD_TAG}/}"
+          
+  
+          echo CHART_VERSION=${CHART_VERSION} >> ${GITHUB_OUTPUT}
+          echo ORIGINAL_REGISTRY=${ORIGINAL_REGISTRY} >> ${GITHUB_OUTPUT}
+          echo ORIGINAL_REPO=${ORIGINAL_REPO} >> ${GITHUB_OUTPUT}
+          echo ORIGINAL_TAG=${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
+          echo ORIGINAL_IMAGE=${CONFIGURED_IMAGE_REPO}:${ORIGINAL_TAG} >> ${GITHUB_OUTPUT}
+          echo BUILD_REGISTRY=${BUILD_REGISTRY} >> ${GITHUB_OUTPUT}
+          echo BUILD_REPO=${BUILD_REPO} >> ${GITHUB_OUTPUT}
+          echo BUILD_TAG=${BUILD_TAG} >> ${GITHUB_OUTPUT}
+          echo BUILD_IMAGE=${BUILD_IMAGE} >> ${GITHUB_OUTPUT}
+          echo REF_TAGS=${REF_TAGS} >> ${GITHUB_OUTPUT}
+        shell: bash
 
   build:
     runs-on: ubuntu-latest
@@ -79,21 +141,46 @@ jobs:
     needs: [context]
     permissions:
       packages: write
-    outputs:
-      cosign_public_key: ${{ steps.build.outputs.cosign_public_key }}
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Build Connaisseur
-        id: build
-        uses: ./.github/actions/build
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
+      - name: Login with registry
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
-          image_registry: ${{ needs.context.outputs.build_registry }}
-          image_repo: ${{ needs.context.outputs.build_repo }}
-          image_tag: ${{ needs.context.outputs.build_tag }}
-          ref_tags: ${{ needs.context.outputs.ref_tags }}
-          image_labels: ${{ needs.context.outputs.build_labels }}
-          repo_owner: ${{ github.repository_owner }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          cosign_private_key: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          cosign_password: ${{ secrets.COSIGN_PASSWORD }}
+          registry: ${{ needs.context.outputs.build_registry }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate tags
+        id: tags
+        run: |
+          echo "${{ needs.context.outputs.ref_tags }}"
+          export PREFIX="${{ needs.context.outputs.build_registry }}/${{ needs.context.outputs.build_repo }}:"
+          TAGS="${PREFIX}${{ needs.context.outputs.build_tag }},$(echo ${{ needs.context.outputs.ref_tags }} | tr ' ' '\n' | awk '{print "${PREFIX}"$1}' | envsubst | tr '\n' ',')"
+          echo tags=${TAGS} >> ${GITHUB_OUTPUT}
+        shell: bash
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75 # v6.9.0
+        with:
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: build/Dockerfile
+          labels: ${{ needs.context.outputs.build_labels }}
+          tags: ${{ steps.tags.outputs.tags }}
+          sbom: false
+          provenance: false  #TODO: Set to false, as resulting format is not OCI (GHCR) compliant (https://github.com/docker/build-push-action/issues/820) and causes problems with GHCR and e.g. image deletion (https://github.com/snok/container-retention-policy/issues/63)
+      - name: Show build information
+        run: |
+          echo "# :building_construction: Build Information" >> ${GITHUB_STEP_SUMMARY}
+          echo "<table>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Helm chart version</td><td><code>${{ needs.context.outputs.chart_version }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Original image</td><td><code>${{ needs.context.outputs.original_image }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Workflow image</td><td><code>${{ needs.context.outputs.build_registry }}/${{ needs.context.outputs.build_repo }}:${{ needs.context.outputs.build_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>All images</td><td><code>$(echo ${{ steps.tags.outputs.tags }} | tr ',' '\n')</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Digest</td><td><code>${{ steps.build.outputs.digest }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "</table>" >> ${GITHUB_STEP_SUMMARY}
+          echo "" >> ${GITHUB_STEP_SUMMARY}
+        shell: bash

@@ -175,4 +175,3 @@ jobs:
       build_image_repository: ${{ needs.build.outputs.build_registry }}/${{ needs.build.outputs.build_repo }}
       build_tag: ${{ needs.build.outputs.build_tag }}
       skip: ${{ needs.conditionals.outputs.skip_integration_tests }}
-      cosign_public_key: ${{ needs.build.outputs.cosign_public_key }}
