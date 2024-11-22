@@ -48,17 +48,17 @@ runs:
   steps:
     - name: Get chart version
       id: get_chart_version
-      uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
+      uses: mikefarah/yq@bc5b54cb1d1f720db16c9f75c5b45384d00e5cbf # v4.44.5
       with:
         cmd: yq '.version' charts/connaisseur/Chart.yaml
     - name: Get app version
       id: get_app_version
-      uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
+      uses: mikefarah/yq@bc5b54cb1d1f720db16c9f75c5b45384d00e5cbf # v4.44.5
       with:
         cmd: yq '.appVersion' charts/connaisseur/Chart.yaml
     - name: Get original image
       id: get_original_image_repository
-      uses: mikefarah/yq@47f4f8c7939f887e851b35f14def6741b8f5396e # v4.31.2
+      uses: mikefarah/yq@bc5b54cb1d1f720db16c9f75c5b45384d00e5cbf # v4.44.5
       with:
         cmd: yq '.kubernetes.deployment.image.repository' charts/connaisseur/values.yaml
     - name: Get context
@@ -90,7 +90,7 @@ runs:
       shell: bash
     - name: Generate metadata
       id: meta
-      uses: docker/metadata-action@507c2f2dc502c992ad446e3d7a5dfbe311567a96 # v4.3.0
+      uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96 # v5.6.1
       with:
         images: ${{ steps.get_context.outputs.BUILD_REGISTRY }}/${{ steps.get_context.outputs.BUILD_REPO }}
         flavor: |

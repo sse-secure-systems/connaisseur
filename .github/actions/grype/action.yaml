@@ -22,14 +22,14 @@ runs:
   steps:
     - name: Login with registry
       if: inputs.registry != ''
-      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+      uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
       with:
         registry: ${{ inputs.registry }}
         username: ${{ inputs.repo_owner }}
         password: ${{ inputs.repo_token }}
     - name: Scan
       if: inputs.output == 'table'
-      uses: anchore/scan-action@dafbc97d7259af88b61bd260f2fde565d0668a72 # v3.3.4
+      uses: anchore/scan-action@869c549e657a088dc0441b08ce4fc0ecdac2bb65 # v5.3.0
       with:
         image: ${{ inputs.image }}
         fail-build: true
@@ -37,13 +37,13 @@ runs:
     - name: Scan
       id: scan
       if: inputs.output == 'sarif'
-      uses: anchore/scan-action@dafbc97d7259af88b61bd260f2fde565d0668a72 # v3.3.4
+      uses: anchore/scan-action@869c549e657a088dc0441b08ce4fc0ecdac2bb65 # v5.3.0
       with:
         image: ${{ inputs.image }}
         fail-build: false
         output-format: sarif
     - name: Upload
       if: inputs.output == 'sarif'
-      uses: github/codeql-action/upload-sarif@32dc499307d133bb5085bae78498c0ac2cf762d5 # v2.2.5
+      uses: github/codeql-action/upload-sarif@f09c1c0a94de965c15400f5634aa42fac8fb8f88 # v3.27.5
       with:
         sarif_file: ${{ steps.scan.outputs.sarif }}

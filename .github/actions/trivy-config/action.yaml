@@ -17,21 +17,21 @@ runs:
         helm template charts/connaisseur > deployment/deployment.yaml
       shell: bash
     - name: Scan deployment.yaml
-      uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+      uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
       if: inputs.output == 'table'
       with:
         scan-type: "config"
         scan-ref: "deployment"
         format: 'table'
     - name: Scan Dockerfiles
-      uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+      uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
       if: inputs.output == 'table'
       with:
         scan-type: "config"
         scan-ref: "build"
         format: 'table'
     - name: Scan deployment.yaml
-      uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+      uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
       if: inputs.output == 'sarif'
       with:
         scan-type: "config"
@@ -39,7 +39,7 @@ runs:
         format: 'sarif'
         output: 'reports/trivy-k8s-results.sarif'
     - name: Scan Dockerfiles
-      uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+      uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
       if: inputs.output == 'sarif'
       with:
         scan-type: "config"
@@ -47,7 +47,7 @@ runs:
         format: 'sarif'
         output: 'reports/trivy-docker-results.sarif'
     - name: Upload
-      uses: github/codeql-action/upload-sarif@32dc499307d133bb5085bae78498c0ac2cf762d5 # v2.2.5
+      uses: github/codeql-action/upload-sarif@f09c1c0a94de965c15400f5634aa42fac8fb8f88 # v3.27.5
       if: inputs.output == 'sarif'
       with:
         sarif_file: 'reports'
