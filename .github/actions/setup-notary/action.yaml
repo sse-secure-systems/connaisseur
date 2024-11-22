@@ -9,6 +9,7 @@ runs:
   steps:
     - name: Install notary and docker client and expect
       run: |
+        sudo apt update
         sudo apt install docker
         sudo apt install notary
         sudo apt install expect
