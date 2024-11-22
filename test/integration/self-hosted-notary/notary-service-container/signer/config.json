@@ -1,9 +1,9 @@
 {
     "server": {
         "grpc_addr": ":7899",
-        "tls_cert_file": "./notary-signer.crt",
-        "tls_key_file": "./notary-signer.key",
-        "client_ca_file": "./ca.crt"
+        "tls_cert_file": "./notary.crt",
+        "tls_key_file": "./notary.key",
+        "client_ca_file": "./notary.crt"
     },
     "storage": {
         "backend": "memory"

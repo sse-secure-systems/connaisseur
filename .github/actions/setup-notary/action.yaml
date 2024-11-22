@@ -16,7 +16,7 @@ runs:
       shell: bash
     - name: Trust root cert of notary instance
       run: |
-        sudo cp ./test/integration/self-hosted-notary/notary-service-container/server/ca.crt /usr/local/share/ca-certificates/notary_root_ca.crt
+        sudo cp ./test/integration/self-hosted-notary/notary-service-container/server/notary.crt /usr/local/share/ca-certificates/notary_root_ca.crt
         sudo update-ca-certificates
       shell: bash
     - name: Append notary ip to /etc/hosts

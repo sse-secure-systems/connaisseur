@@ -32,26 +32,21 @@ application:
       - name: default
         key: self_hosted_notary_root_key.pub
     # CA cert signing the cert of the self-hosted notary
-    # (test/integration/notary_service_container/certs/root/ca.crt)
+    # (test/integration/notary_service_container/server/notary.crt)
     cert: |
       -----BEGIN CERTIFICATE-----
-      MIIDEzCCAfugAwIBAgIUDDvwp5mG7ckbcvJ0jg9he/rSGzAwDQYJKoZIhvcNAQEL
-      BQAwGTEXMBUGA1UEAwwOTm90YXJ5IFJvb3QgQ0EwHhcNMjMxMTIyMjIwOTM5WhcN
-      MjQxMTIxMjIwOTM5WjAZMRcwFQYDVQQDDA5Ob3RhcnkgUm9vdCBDQTCCASIwDQYJ
-      KoZIhvcNAQEBBQADggEPADCCAQoCggEBAO6IjUiNqWDrwO1Yn/Yfc5hSUdH3ZZ1i
-      SzbsYL4ZL3ZN/rXv8rS3JBeNpbcRs85lYIjC8prCh9tJ6FjnMqUVI5pGz9XZPLNO
-      hQA4eW4Z5lHDd1oWCT1Y66zwUYSD59xUzGWCZ5OhZlKanu8OfdGDyoPJxKYmhZQz
-      Vnnh1chZC5eBBzObufWO47aMg4rX7ZLCER/HxLHfSnCVMVwOa3KBHDK3yWy+y86y
-      7/0bl5iW/bR8OZ/cjH4eEN9QdbAYBsavEsJ6wxBDgdweUH+7fQfORn5/IJtqwGha
-      FAyfeTwRI8/8tA4J1U08/p8oIopbzcGTg1LjPHQ8s8RTtknzg+jTrWkCAwEAAaNT
-      MFEwHQYDVR0OBBYEFKkx59QcInNCTOluvzHt3frciFqtMB8GA1UdIwQYMBaAFKkx
-      59QcInNCTOluvzHt3frciFqtMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQEL
-      BQADggEBAKyPiDT0PXTHzpC7sLq7s2pUe3ezqg51m4NTgynO3u+vYftTCMVDIV0P
-      H7ZJNyHHYvglaLjRnsWdjGs4tcqjIYCRL8Tnc/CVorI0QGGwDDlvWXNXleAxjV3t
-      t5hy7t5JpnNgF2GYNnSeuYG21rDDcP9EQZKv1a2KaKcgFRtzktlegRX0kGjDxbYe
-      0jo5j4oJZ944W79GqcQLeRpOU8PnbSaBtRPSeX1VhzpkR3pQy5FgBikQkvRP/dJw
-      H5Ck1P7fRzDnlv4cypSk6v9PWSQMrSYlyp1a40b9U1bIF2cQ+HVDwUg+56OPAey6
-      wBELObfROXagGdjRP+OQJUJgFHS3Uss=
+      MIICDzCCAZWgAwIBAgIUK6opKzStr7qjcHx40VGw4bprm/IwCgYIKoZIzj0EAwIw
+      GDEWMBQGA1UEAwwNbm90YXJ5LnNlcnZlcjAeFw0yNDExMjIwOTIwMDNaFw0zNDEx
+      MjAwOTIwMDNaMBgxFjAUBgNVBAMMDW5vdGFyeS5zZXJ2ZXIwdjAQBgcqhkjOPQIB
+      BgUrgQQAIgNiAAT0Nn7WJQUykFnPT12RtldK9ruKhd75uttXV6JwVfV0AtHnPHx/
+      KH7VzA/nyoXCPGvod5RCX6Idb0LcFq7+/gFlM4tFscmCS53VAuhs1/NhLnEE+sAn
+      bPqDw1BuReMghAejgZ8wgZwwHQYDVR0OBBYEFH5CMJZfe2/ETr2PWIHB76vYshys
+      MB8GA1UdIwQYMBaAFH5CMJZfe2/ETr2PWIHB76vYshysMA8GA1UdEwEB/wQFMAMB
+      Af8wSQYDVR0RBEIwQIINbm90YXJ5LnNlcnZlcoIPKi5ub3Rhcnkuc2VydmVygg1u
+      b3Rhcnkuc2lnbmVygg8qLm5vdGFyeS5zaWduZXIwCgYIKoZIzj0EAwIDaAAwZQIx
+      ALoqIiOjUxbrmHMcJY4awMbVrbu2AXmfcrcbaRuKAHHe1v92Xlc8vo1Bvo5BwOzb
+      cwIwQbAe7FfQKykKWCN6Vs4GfzQVWtQjN0WoMW5L4KgDREjseuU2bRMojWViuBih
+      vvNj
       -----END CERTIFICATE-----
   policy:
   - pattern: "*:*"

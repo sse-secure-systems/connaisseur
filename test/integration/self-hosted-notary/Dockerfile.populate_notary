@@ -5,7 +5,7 @@ COPY notary-service-container/ test/integration/self-hosted-notary/notary-servic
 RUN apt update &&\
     apt upgrade -y && \
     apt install -y docker notary expect ca-certificates && \
-    cp ./test/integration/self-hosted-notary/notary-service-container/server/ca.crt /usr/local/share/ca-certificates/notary_root_ca.crt && \
+    cp ./test/integration/self-hosted-notary/notary-service-container/server/notary.crt /usr/local/share/ca-certificates/notary_root_ca.crt && \
     update-ca-certificates
 
 ARG DIGEST
