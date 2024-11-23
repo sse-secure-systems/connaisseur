@@ -40,49 +40,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Run
-        uses: ./.github/actions/trivy-image
-        with:
-          image: ${{ inputs.image }}
-          registry: ${{ inputs.registry }}
-          repo_owner: ${{ inputs.repo_owner }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          output: ${{ inputs.output }}
-
-  grype:
-    name: grype
-    runs-on: ubuntu-latest
-    if: |
-      inputs.skip != 'non-required' &&
-      inputs.skip != 'all'
-    permissions:
-      packages: read
-      security-events: write
-    container:
-      image: docker:stable
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Run
-        uses: ./.github/actions/grype
-        with:
-          image: ${{ inputs.image }}
-          registry: ${{ inputs.registry }}
-          repo_owner: ${{ inputs.repo_owner }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          output: ${{ inputs.output }}
-
-# WIP: Syft issue seems to cause error (https://github.com/anchore/syft/issues/1622)
-  dependency-submission:
-    name: syft / dependency review
-    runs-on: ubuntu-latest
-    if: |
-      inputs.skip != 'non-required' &&
-      inputs.skip != 'all'
-    permissions:
-      packages: read
-      contents: write
-    steps:
       - name: Login with registry
         if: inputs.registry != ''
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
@@ -90,9 +47,23 @@ jobs:
           registry: ${{ inputs.registry }}
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run
-        uses: anchore/sbom-action@55dc4ee22412511ee8c3142cbea40418e6cec693 # v0.17.8
+      - name: Create reports folder
+        run: |
+          mkdir reports
+        shell: bash
+      - name: Run Trivy on image
+        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
         with:
-          image: ${{ inputs.image }}
-          format: cyclonedx-json
-          dependency-snapshot: ${{ inputs.output == 'sarif' }}
+          image-ref: ${{ inputs.image }}
+          scan-type: "image"
+          format: ${{ inputs.output == 'sarif' && 'sarif' || 'table' }}
+          output: ${{ inputs.output == 'sarif' && 'reports/trivy-vuln-results.sarif' || '/dev/stdout' }}
+          exit-code: ${{ inputs.output == 'sarif' && 0 || 1 }}
+        env:
+          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
+          TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
+      - name: Upload
+        if: inputs.output == 'sarif'
+        uses: github/codeql-action/upload-sarif@f09c1c0a94de965c15400f5634aa42fac8fb8f88 # v3.27.5
+        with:
+          sarif_file: 'reports'
