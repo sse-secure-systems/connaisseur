@@ -102,9 +102,14 @@ func loadConfigs() (*config.Config, *alerting.Config) {
 // Main function
 func main() {
 	// set logging
-	logrus.SetFormatter(&logrus.JSONFormatter{
-		PrettyPrint: true,
-	})
+	switch utils.ConnaisseurLogFormat() {
+		case constants.LogFormatJson:
+			logrus.SetFormatter(&logrus.JSONFormatter{})
+		default:
+			logrus.SetFormatter(&logrus.JSONFormatter{
+				PrettyPrint: true,
+			})
+	}
 	logrus.SetOutput(os.Stdout)
 	logrus.SetLevel(utils.ConnaisseurLogLevel())
 

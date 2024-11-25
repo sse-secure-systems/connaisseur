@@ -17,6 +17,7 @@ const (
 	DetectionMode              = "DETECTION_MODE"
 	ResourceValidationMode     = "RESOURCE_VALIDATION_MODE"
 	LogLevel                   = "LOG_LEVEL"
+	LogFormat                  = "LOG_FORMAT"
 	PodName                    = "POD_NAME"
 	DefaultAuthFile            = "secret.yaml"
 	DockerAuthFile             = ".dockerconfigjson"
@@ -81,4 +82,11 @@ const (
 	NotificationResultSkip    = "skip"
 	NotificationResultTimeout = "timeout"
 	NotificationResultInvalid = "invalid"
+)
+
+type ConnaisseurLogFormat uint32
+
+const (
+	LogFormatJson ConnaisseurLogFormat = iota
+	LogFormatJsonPretty
 )

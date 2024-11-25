@@ -83,6 +83,27 @@ func TestConnaisseurLogLevel(t *testing.T) {
 	}
 }
 
+func TestConnaisseurLogFormat(t *testing.T) {
+	var testCases = []struct {
+		logFormat string
+		want      constants.ConnaisseurLogFormat
+	}{
+		{
+			logFormat: "json",
+			want:      constants.LogFormatJson,
+		},
+		{
+			logFormat: "json-pretty",
+			want:      constants.LogFormatJsonPretty,
+		},
+	}
+	for _, tc := range testCases {
+		(*testing.T).Setenv(t, constants.LogFormat, tc.logFormat)
+		logFormat := ConnaisseurLogFormat()
+		assert.Equal(t, tc.want, logFormat)
+	}
+}
+
 func TestCompare(t *testing.T) {
 	var testCases = []struct {
 		level1   logrus.Level
