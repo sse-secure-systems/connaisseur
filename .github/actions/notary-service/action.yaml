@@ -1,0 +1,41 @@
+name: notary-service
+description: 'Sets up a notary service (signer or server)'
+inputs:
+  service:
+    description: "Which kind of service is to be started (signer or server)"
+    required: true
+  port_map:
+    description: "The port mapping for the service container"
+    required: true
+  add_host:
+    description: "What additional hosts to add to the service"
+    required: false
+outputs:
+  ip:
+    description: "IP address of the notary service"
+    value: ${{ steps.get_service_ip.outputs.service_ip }}
+runs:
+  using: composite
+  steps:
+    - name: Setup service
+      run: |
+        DOCKER_ARGS='-d -p ${{ inputs.port_map }} -v ./test/integration/self-hosted-notary/notary-service-container/${{ inputs.service }}:/etc/docker/notary-${{ inputs.service }}'
+        SERVICE_ARGS='-config=/etc/docker/notary-${{ inputs.service }}/config.json'
+
+        if [[ "${{ inputs.add_host }}" ]]; then
+          DOCKER_ARGS=${DOCKER_ARGS}' --add-host notary.signer:${{ inputs.add_host }}'
+          SERVICE_ARGS=${SERVICE_ARGS}' -logf=json'
+        fi
+
+        docker run ${DOCKER_ARGS} notary:${{ inputs.service }} ${SERVICE_ARGS}
+      shell: bash
+    - name: Get IP
+      id: get_service_ip
+      run: |
+        NOTARY_CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("notary:${{ inputs.service }}"))')
+        NOTARY_CONTAINER_ID=$(echo ${NOTARY_CONTAINER} | jq -r .ID)
+        NOTARY_CONTAINER_NETWORK=$(echo ${NOTARY_CONTAINER} | jq -r .Networks)
+        NOTARY_SEARCH_PATH=.[0].NetworkSettings.Networks."${NOTARY_CONTAINER_NETWORK}".IPAddress
+        NOTARY_IP=$(docker container inspect ${NOTARY_CONTAINER_ID} | jq -r ${NOTARY_SEARCH_PATH})
+        echo service_ip=${NOTARY_IP} >> ${GITHUB_OUTPUT}
+      shell: bash
