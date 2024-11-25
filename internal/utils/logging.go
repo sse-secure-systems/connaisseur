@@ -31,6 +31,22 @@ func ConnaisseurLogLevel() logrus.Level {
 	return LogLevel(os.Getenv(constants.LogLevel))
 }
 
+func logFormat(logFormat string) constants.ConnaisseurLogFormat {
+	switch strings.ToLower(logFormat) {
+	case "json":
+		return constants.LogFormatJson
+	case "json-pretty":
+		return constants.LogFormatJsonPretty
+	default:
+		// default for backwards compatibility
+		return constants.LogFormatJsonPretty
+	}
+}
+
+func ConnaisseurLogFormat() constants.ConnaisseurLogFormat {
+	return logFormat(os.Getenv(constants.LogFormat))
+}
+
 func InitiateThirdPartyLibraryLogging() {
 	currentLevel := ConnaisseurLogLevel()
 	// Cosign uses debug logs.Debug to redirect registry request log

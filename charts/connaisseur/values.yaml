@@ -162,6 +162,7 @@ application:
       cacheErrors: true
 
   logLevel: info
+  logFormat: json-pretty  # or json, for single line logging
 # alerting options: https://sse-secure-systems.github.io/connaisseur/latest/features/alerting/#configuration-options
 # alerting:
 #   clusterIdentifier: example-cluster-staging-europe # defaults to "not specified"
