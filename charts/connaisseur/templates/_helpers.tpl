@@ -166,6 +166,13 @@ Create the name of the redis tls secret
 {{- end -}}
 
 {{/*
+Create the name of the pod disruption budget
+*/}}
+{{- define "connaisseur.podDisruptionBudget" -}}
+{{- include "connaisseur.name" . }}-pod-disruption-budget
+{{- end -}}
+
+{{/*
 Extract Kubernetes Minor Version.
 */}}
 {{- define "connaisseur.k8s-version-minor" -}}

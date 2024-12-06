@@ -1,0 +1,21 @@
+{{ if .Values.kubernetes.podDisruptionBudget -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "connaisseur.podDisruptionBudget" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+      {{- include "connaisseur.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.kubernetes.podDisruptionBudget }}
+  {{- if hasKey . "minAvailable" }}
+  minAvailable: {{ .minAvailable }}
+  {{- end }}
+  {{- if hasKey . "maxUnavailable" }}
+  maxUnavailable: {{ .maxUnavailable }}
+  {{- end }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "connaisseur.selectorLabels" . | nindent 8 }}
+{{- end }}

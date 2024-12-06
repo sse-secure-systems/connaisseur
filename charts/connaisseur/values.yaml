@@ -102,6 +102,10 @@ kubernetes:
   # (except for pods – see kubernetes.deployment.podLabels for that)
   additionalLabels: {}
 
+  # activate pod disruption budget
+  # can set `minAvailable` and `maxUnavailable` values
+  podDisruptionBudget: {}
+
 # -----------------------------------------------------
 
 # changes to connaisseur application logic
