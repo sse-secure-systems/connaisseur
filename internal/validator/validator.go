@@ -6,6 +6,7 @@ import (
 	"connaisseur/internal/policy"
 	cosign "connaisseur/internal/validator/cosignvalidator"
 	nv1 "connaisseur/internal/validator/notaryv1"
+	"connaisseur/internal/validator/notation"
 	static "connaisseur/internal/validator/staticvalidator"
 	"context"
 	"fmt"
@@ -15,7 +16,7 @@ type Validator struct {
 	// Name of the validator
 	Name string `validate:"required,eqcsfield=SpecificValidator.Name"`
 	// Type of the validator
-	Type string `validate:"oneof=static notaryv1 cosign,eqcsfield=SpecificValidator.Type"`
+	Type string `validate:"oneof=static notaryv1 cosign notation,eqcsfield=SpecificValidator.Type"`
 	// the specific validator (e.g. cosign, static)
 	SpecificValidator SpecificValidator `validate:"required"`
 	Validate
@@ -63,6 +64,8 @@ func (v *Validator) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		specific = &cosign.CosignValidator{}
 	case constants.NotaryV1Validator:
 		specific = &nv1.NotaryV1Validator{}
+	case constants.NotationValidator:
+		specific = &notation.NotationValidator{}
 	default:
 		return fmt.Errorf("unsupported type \"%s\" for validator", v.Type)
 	}

@@ -38,6 +38,11 @@ case ${1:-} in
     # testing cosign validator
     test_case "cosign/install.yaml" "cosign/cases.yaml" "make"
     ;;
+"notation")
+    # testing notation feature
+    source "${SCRIPT_PATH}"/notation/test.sh
+    notation_test
+    ;;
 "load")
     # testing load
     source "${SCRIPT_PATH}"/load/test.sh
