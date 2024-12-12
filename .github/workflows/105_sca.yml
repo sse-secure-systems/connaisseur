@@ -58,7 +58,7 @@ jobs:
           scan-type: "image"
           format: ${{ inputs.output == 'sarif' && 'sarif' || 'table' }}
           output: ${{ inputs.output == 'sarif' && 'reports/trivy-vuln-results.sarif' || '/dev/stdout' }}
-          exit-code: ${{ inputs.output == 'sarif' && 0 || 1 }}
+          exit-code: ${{ inputs.output == 'sarif' && '0' || '1' }}
         env:
           TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
           TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
