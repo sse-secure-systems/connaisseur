@@ -1,0 +1,32 @@
+name: ghcr-notation
+type: notation
+trustRoots:
+  - name: default
+    cert: |
+      -----BEGIN CERTIFICATE-----
+      MIIDrjCCApagAwIBAgIUfA/t/J6eINSu566aAozkOjQKey4wDQYJKoZIhvcNAQEL
+      BQAwbDELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJlcmxpbjEPMA0GA1UEBwwGQmVy
+      bGluMQwwCgYDVQQKDANTU0UxEjAQBgNVBAsMCURlZmVuc2l2ZTEZMBcGA1UEAwwQ
+      c2VjdXJlc3lzdGVtcy5kZTAgFw0yNTAxMjQxMjQzMTRaGA8yMTI0MTIzMTEyNDMx
+      NFowbDELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJlcmxpbjEPMA0GA1UEBwwGQmVy
+      bGluMQwwCgYDVQQKDANTU0UxEjAQBgNVBAsMCURlZmVuc2l2ZTEZMBcGA1UEAwwQ
+      c2VjdXJlc3lzdGVtcy5kZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+      AJSmGE+Knp0Qc2RqIkMys8e7X1F8zVbpVMmRxvkuZIrWb84Xb+XVeQgE1o5JQgPL
+      7PSgG6EHL/XjY1wKO2bwlC4AxLm3Cvo/r764yUTqGFoeImEsiT/BW8bFKndJYkP8
+      b8iHUkrRX7ZYkhjby91zwFzeewDb9dZPkqiV7npATOL/T5KSUVQ6uIIozX5GCj+b
+      B/iqZWB0bP33uqPEu+GUyYZudJlYe/Yv9aw8vioVXdoEHH10DtTosfXlub/Xd8bC
+      8a7qOBITpWJRrjWRwjaWgnKUlJxymhqU5Iudi57VgtkzD2AgRGLZEN27x67o5p0X
+      aN2O2cFDCCY/7DMlW965++sCAwEAAaNGMEQwDgYDVR0PAQH/BAQDAgeAMBMGA1Ud
+      JQQMMAoGCCsGAQUFBwMDMB0GA1UdDgQWBBSiqJeF6lNSF21K51ePceEtsIBPajAN
+      BgkqhkiG9w0BAQsFAAOCAQEAhaKvo0ofGKIoMNaCqv4qYCBsnXTLWqeRMzrxY3WP
+      RmGkiLoKivXP2ZL4R2igERW8IbXSDqC9u1to7ahwLiiM9Ikjik8I/x3EYJz3DAkz
+      eTDqS227EhSOOGo1G6f0ph/GPO4o71s8ek55Q92ZNrAqHwzGwsByGFbHcwABwtAA
+      1gqAB5luiuokUXhmlqkH46wbQLiVLYnetqIQ8uJiSnUFrWaKQSICnCY1kxptqepv
+      Vfgbd7LIriH+m57IWD2fil6qRXV7c0J6v+N5N7gf2TgDvRBxYRhHV+fQpxRWm+Ti
+      fyEquTrEhfXY4yfYWnpJ/EbjsHheqK+F4EacAqBTjhzW+g==
+      -----END CERTIFICATE-----
+    tsCert: |
+      -----BEGIN CERTIFICATE-----
+      ????
+      -----END CERTIFICATE-----
+

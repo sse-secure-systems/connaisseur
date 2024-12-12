@@ -1,0 +1,28 @@
+# simple test cases for notation
+- id: unsigned
+  txt: Testing unsigned image...
+  ref: securesystemsengineering/testimage:notation-unsigned
+  expected_msg: error during notation validation
+- id: signed
+  txt: Testing signed image...
+  ref: securesystemsengineering/testimage:notation-signed
+- id: signed-with-tsa
+  txt: Testing signed image with TSA...
+  ref: securesystemsengineering/testimage:notation-tsa
+- id: signed-without-tsa-required-tsa
+  txt: Testing signed image without TSA but required TSA...
+  ref: securesystemsengineering/testimage:notation-no-tsa
+  expected_msg: no timestamp countersignature was found
+- id: signed-without-tsa-no-required-tsa
+  txt: Testing signed image without TSA and no required TSA...
+  ref: securesystemsengineering/testimage:notation-no-tsa-not-required
+- id: signed-without-tsa-permissive
+  txt: Testing signed image without TSA and permissive verificationLevel...
+  ref: securesystemsengineering/testimage:notation-no-tsa-permissive
+- id: signed-with-wrong-key
+  txt: Testing signed image with wrong trust root...
+  ref: securesystemsengineering/testimage:notation-wrong-key
+  expected_msg: error during notation validation
+- id: signed-with-wrong-key-audit
+  txt: Testing signed image with wrong trust root but audit verification level...
+  ref: securesystemsengineering/testimage:notation-wrong-key-audit

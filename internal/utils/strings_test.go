@@ -205,3 +205,24 @@ func TestEscapeNotificationOpts(t *testing.T) {
 		assert.Equal(t, *tc.expected, *tc.opts, idx+1)
 	}
 }
+
+func TestStringDefault(t *testing.T) {
+	var testCases = []struct {
+		s, def, expected string
+	}{
+		{
+			"test",
+			"default",
+			"test",
+		},
+		{
+			"",
+			"default",
+			"default",
+		},
+	}
+
+	for idx, tc := range testCases {
+		assert.Equal(t, tc.expected, StringDefault(tc.s, tc.def), idx+1)
+	}
+}

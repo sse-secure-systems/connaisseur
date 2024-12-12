@@ -24,3 +24,12 @@
 - id: signed-cosign
   txt: Testing signed cosign image...
   ref: securesystemsengineering/testimage:co-signed
+
+# notation
+- id: unsigned-notation
+  txt: Testing unsigned image...
+  ref: securesystemsengineering/testimage:notation-unsigned
+  expected_msg: error during notation validation
+- id: signed-notation
+  txt: Testing signed image...
+  ref: securesystemsengineering/testimage:notation-signed

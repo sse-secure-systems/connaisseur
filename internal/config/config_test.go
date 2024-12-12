@@ -295,7 +295,7 @@ func TestValidateErrors(t *testing.T) {
 					},
 				},
 			},
-			"Type must be one of [static notaryv1 cosign]",
+			"Type must be one of [static notaryv1 cosign notation]",
 		},
 		{ // 5: validator type matches its Type field
 			Config{
@@ -507,6 +507,31 @@ func TestValidateErrors(t *testing.T) {
 				},
 			},
 			"Issuer must not be set if IssuerRegex is",
+		},
+		{ // 13: Verification level
+			Config{
+				Validators: []validator.Validator{
+					{
+						Name: "valName",
+						Type: "static",
+						SpecificValidator: static.StaticValidator{
+							Name:    "valName",
+							Type:    "static",
+							Approve: false,
+						},
+					},
+				},
+				Rules: []policy.Rule{
+					{
+						Pattern:   "somePattern",
+						Validator: "valName",
+						With: policy.RuleOptions{
+							VerificationLevel: "invalid",
+						},
+					},
+				},
+			},
+			"VerificationLevel must be one of [strict permissive audit]",
 		},
 	}
 	for idx, tc := range testCases {

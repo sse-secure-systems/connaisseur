@@ -9,3 +9,4 @@ connaisseur.yaml
 *.key
 *.pem
 *.csr
+!test/testdata/**/*.pem

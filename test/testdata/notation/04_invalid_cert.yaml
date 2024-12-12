@@ -1,0 +1,9 @@
+name: ghcr-notation
+type: notation
+trustRoots:
+  - name: default
+    cert: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
+      QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+      -----END PUBLIC KEY-----

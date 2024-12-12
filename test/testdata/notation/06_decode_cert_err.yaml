@@ -1,0 +1,8 @@
+name: ghcr-notation
+type: notation
+trustRoots:
+  - name: default
+    cert: |
+      -----BEGIN CERTIFICATE-----
+      ?????????????
+      -----END CERTIFICATE-----

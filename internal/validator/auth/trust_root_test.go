@@ -8,10 +8,10 @@ import (
 
 func TestGetTrustRoots(t *testing.T) {
 	emptyKeyless := Keyless{}
-	a := TrustRoot{"a", "a", "", emptyKeyless}
-	b := TrustRoot{"b", "b", "", emptyKeyless}
-	c := TrustRoot{"c", "c", "", emptyKeyless}
-	defaultRoot := TrustRoot{"default", "default", "", emptyKeyless}
+	a := TrustRoot{"a", "a", "", "", emptyKeyless}
+	b := TrustRoot{"b", "b", "", "", emptyKeyless}
+	c := TrustRoot{"c", "c", "", "", emptyKeyless}
+	defaultRoot := TrustRoot{"default", "default", "", "", emptyKeyless}
 
 	var testCases = []struct {
 		keyRefs      []string

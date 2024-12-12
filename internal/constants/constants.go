@@ -53,7 +53,7 @@ const (
 	StaticValidator   = "static"
 	CosignValidator   = "cosign"
 	NotaryV1Validator = "notaryv1"
-	NotaryV2Validator = "notaryv2"
+	NotationValidator = "notation"
 )
 
 const (

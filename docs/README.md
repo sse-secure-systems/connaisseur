@@ -13,7 +13,7 @@ It is built to be extendable and currently aims to support the following signing
 
 - [Notary (V1)](https://github.com/theupdateframework/notary) / [Docker Content Trust](https://docs.docker.com/engine/security/trust/)
 - [sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign)
-- [Notary V2](https://github.com/notaryproject/nv2) (PLANNED)
+- [Notation](https://github.com/notaryproject/notation)
 
 It provides several additional features such as:
 

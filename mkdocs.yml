@@ -94,7 +94,7 @@ nav:
       - validators/README.md
       - validators/notaryv1.md
       - validators/sigstore_cosign.md
-      - validators/notaryv2.md
+      - validators/notation.md
     - Features:
       - features/README.md
       - features/alerting.md

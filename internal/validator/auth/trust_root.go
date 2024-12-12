@@ -8,8 +8,10 @@ type TrustRoot struct {
 	// public key of the trust root. either
 	// inline key or kms reference
 	Key string `yaml:"key" validate:"required_without_all=Cert Keyless,excluded_with=Cert Keyless,omitempty"`
-	// certificate of the trust root (notaryv2)
+	// certificate of the trust root (notation)
 	Cert string `yaml:"cert" validate:"required_without_all=Key Keyless,excluded_with=Key Keyless,omitempty"`
+	// timestamp certificate of the trust root (notation)
+	TSCert string `yaml:"tsCert" validate:"omitempty"`
 	// keyless configuration
 	Keyless Keyless `yaml:"keyless" validate:"required_without_all=Key Cert,excluded_with=Key Cert,omitempty"`
 }

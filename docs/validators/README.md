@@ -4,7 +4,7 @@ Connaisseur is built to be extendable and currently aims to support the followin
 
 - [Docker Content Trust (DCT)](https://docs.docker.com/engine/security/trust/) / [Notary V1](https://github.com/theupdateframework/notary)
 - [sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign)
-- [Notary V2](https://github.com/notaryproject/nv2) (PLANNED)
+- [Notation](https://github.com/notaryproject/notation)
 
 Feel free to use any or a combination of all solutions.
 The integration with Connaisseur is detailed on the following pages.

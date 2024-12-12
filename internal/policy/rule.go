@@ -28,4 +28,12 @@ type RuleOptions struct {
 	// or to insecurely skip its mutation and only validate
 	// that an image exists that would pass validation
 	ValidationMode string `yaml:"mode" validate:"omitempty,oneof=mutate insecureValidateOnly"`
+	// verification level used in notation validator
+	// see https://github.com/notaryproject/specifications/blob/main/specs/trust-store-trust-policy.md#signature-verification-details for more information
+	// leaving out skip intentionally as this is already
+	// covered by static validators
+	VerificationLevel string `yaml:"verificationLevel" validate:"omitempty,oneof=strict permissive audit"`
+	// timestamp verification configuration for notation validator
+	// see https://github.com/notaryproject/specifications/blob/main/specs/trust-store-trust-policy.md#version-10-1 for more information
+	VerifyTimestamp string `yaml:"verifyTimestamp" validate:"omitempty,oneof=always afterCertExpiry"`
 }
