@@ -215,7 +215,7 @@ jobs:
       - name: Install packages
         run: |
           sudo apt update
-          sudo apt install docker notary expect
+          sudo apt install notary expect
           sudo snap install yq
       - name: Setup notary signer service
         id: signer_service
