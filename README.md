@@ -1,9 +1,8 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/sse-secure-systems/connaisseur/blob/master/LICENSE)
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/connaisseur)](https://artifacthub.io/packages/search?repo=connaisseur)
-![pipeline status](https://github.com/sse-secure-systems/connaisseur/workflows/cicd/badge.svg)
-[![nightly-build](https://github.com/sse-secure-systems/connaisseur/actions/workflows/nightly-build.yaml/badge.svg)](https://github.com/sse-secure-systems/connaisseur/actions/workflows/nightly-build.yaml)
+[![cicd](https://github.com/sse-secure-systems/connaisseur/actions/workflows/02_push.yml/badge.svg)](https://github.com/sse-secure-systems/connaisseur/actions/workflows/02_push.yml)
+[![nightly](https://github.com/sse-secure-systems/connaisseur/actions/workflows/05_nightly.yaml/badge.svg)](https://github.com/sse-secure-systems/connaisseur/actions/workflows/05_nightly.yaml)
 [![codecov](https://codecov.io/gh/sse-secure-systems/connaisseur/branch/master/graph/badge.svg)](https://codecov.io/gh/sse-secure-systems/connaisseur)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/sse-secure-systems/connaisseur/badge)](https://api.securityscorecards.dev/projects/github.com/sse-secure-systems/connaisseur)
 
 ![](docs/assets/connaisseur_fulllogo.svg)
 

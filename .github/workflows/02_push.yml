@@ -1,4 +1,4 @@
-name: push
+name: cicd  # used as name for status badge and thus not called 'push'
 
 permissions: {}
 
