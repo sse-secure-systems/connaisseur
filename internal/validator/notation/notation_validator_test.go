@@ -160,6 +160,7 @@ func TestSetUpTrustPolicy(t *testing.T) {
 		registryScope     string
 		trustStores       []string
 		verificationLevel string
+		VerifyTimestamp   trustpolicy.TimestampOption
 		err               string
 	}{
 		{ // 1: simple working case
@@ -169,6 +170,7 @@ func TestSetUpTrustPolicy(t *testing.T) {
 			"ghcr.io/test/test",
 			[]string{"ca:default"},
 			trustpolicy.LevelStrict.Name,
+			trustpolicy.OptionAlways,
 			"",
 		},
 		{ // 2: named trust root
@@ -178,6 +180,7 @@ func TestSetUpTrustPolicy(t *testing.T) {
 			"ghcr.io/test/test",
 			[]string{"ca:cosign-cert"},
 			trustpolicy.LevelStrict.Name,
+			trustpolicy.OptionAlways,
 			"",
 		},
 		{ // 3: missing trust root
@@ -187,15 +190,27 @@ func TestSetUpTrustPolicy(t *testing.T) {
 			"",
 			[]string{},
 			"",
+			trustpolicy.OptionAlways,
 			"failed to get trust roots",
 		},
-		{
+		{ // 4: testing verification level
 			"01_notation",
 			"ghcr.io/test/test:latest",
 			policy.RuleOptions{VerificationLevel: "audit"},
 			"ghcr.io/test/test",
 			[]string{"ca:default"},
 			trustpolicy.LevelAudit.Name,
+			trustpolicy.OptionAlways,
+			"",
+		},
+		{ // 5: testing timestamp verification
+			"01_notation",
+			"ghcr.io/test/test:latest",
+			policy.RuleOptions{VerifyTimestamp: "afterCertExpiry"},
+			"ghcr.io/test/test",
+			[]string{"ca:default"},
+			trustpolicy.LevelStrict.Name,
+			trustpolicy.OptionAfterCertExpiry,
 			"",
 		},
 	}
@@ -221,6 +236,8 @@ func TestSetUpTrustPolicy(t *testing.T) {
 			for i, tr := range tc.trustStores {
 				assert.Equal(t, tr, tp.TrustStores[i], idx+1)
 			}
+			assert.Equal(t, tc.verificationLevel, tp.SignatureVerification.VerificationLevel, idx+1)
+			assert.Equal(t, tc.VerifyTimestamp, tp.SignatureVerification.VerifyTimestamp, idx+1)
 		}
 	}
 }

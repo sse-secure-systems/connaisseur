@@ -148,10 +148,8 @@ func (nv *NotationValidator) setUpTrustPolicy(
 		return nil, fmt.Errorf("failed to get trust roots: %s", err)
 	}
 
-	vl := args.VerificationLevel
-	if vl == "" {
-		vl = trustpolicy.LevelStrict.Name
-	}
+	vl := utils.StringDefault(args.VerificationLevel, trustpolicy.LevelStrict.Name)
+	vt := trustpolicy.TimestampOption(utils.StringDefault(args.VerifyTimestamp, "always"))
 
 	return &trustpolicy.Document{
 		Version: "1.0",
@@ -161,6 +159,7 @@ func (nv *NotationValidator) setUpTrustPolicy(
 				RegistryScopes: []string{image.Context().String()},
 				SignatureVerification: trustpolicy.SignatureVerification{
 					VerificationLevel: vl,
+					VerifyTimestamp:   vt,
 				},
 				TrustStores: utils.Map(
 					trs,

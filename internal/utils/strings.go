@@ -91,3 +91,11 @@ func JsonEscapeStruct(v any) {
 		}
 	}
 }
+
+// StringDefault returns the default value if the input string is empty.
+func StringDefault(s, default_ string) string {
+	if s == "" {
+		return default_
+	}
+	return s
+}
