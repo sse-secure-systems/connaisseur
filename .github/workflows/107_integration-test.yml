@@ -43,6 +43,7 @@ jobs:
             "regular",
             "notaryv1",
             "cosign",
+            "notation",
             "namespaced",
             "deployment",
             "pre-config",

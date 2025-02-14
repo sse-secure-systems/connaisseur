@@ -1,0 +1,8 @@
+# simple test cases for notation
+- id: unsigned
+  txt: Testing unsigned image...
+  ref: ghcr.io/sse-secure-systems/testimage:notation-unsign
+  expected_msg: error during notation validation
+- id: signed
+  txt: Testing signed image...
+  ref: ghcr.io/sse-secure-systems/testimage:notation-sign
