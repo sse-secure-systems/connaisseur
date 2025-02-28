@@ -64,6 +64,6 @@ jobs:
           TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
       - name: Upload
         if: inputs.output == 'sarif'
-        uses: github/codeql-action/upload-sarif@ee117c905ab18f32fa0f66c2fe40ecc8013f3e04 # v3.28.4
+        uses: github/codeql-action/upload-sarif@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # v3.28.10
         with:
           sarif_file: 'reports'
