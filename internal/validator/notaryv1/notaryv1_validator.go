@@ -127,8 +127,7 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 	// gather targets to choose and potentially download them
 	targets := []string{}
 	// there are no delegations, so we can just use the canonical targets role
-	if (args.Delegations == nil ||
-		len(args.Delegations) < 1) && !repo.HasDelegations() {
+	if len(args.Delegations) < 1 && !repo.HasDelegations() {
 		targets = append(targets, data.CanonicalTargetsRole.String())
 	} else { // there are delegations, so we need to download+validate them
 		if !repo.HasDelegations() {
