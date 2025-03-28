@@ -10,7 +10,7 @@ import (
 
 // Finds the longest common prefix of a slice of strings.
 func LongestCommonPrefix(strs []string) string {
-	var longestPrefix string = ""
+	var longestPrefix string = "" //nolint:staticcheck
 
 	if len(strs) > 0 {
 		slices.Sort(strs)

@@ -81,7 +81,7 @@ func newNotaryClient(
 	if err != nil {
 		return nil, fmt.Errorf("error pinging notary server: %s", err)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	var roundTripper http.RoundTripper
 	if resp.StatusCode == http.StatusUnauthorized {
@@ -235,7 +235,7 @@ func (nc *NotaryClient) FetchTrustData(
 		errOut = fmt.Errorf("error doing request trust data %s: %s", role, err)
 		return
 	} else {
-		defer resp.Body.Close()
+		defer resp.Body.Close() //nolint:errcheck
 		if resp.StatusCode != http.StatusOK {
 			errOut = fmt.Errorf(
 				"error acquiring trust data %s: %s",

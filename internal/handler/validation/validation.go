@@ -85,7 +85,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 		skipped        bool
 		skipReason     string
 		validationMode string
-		validatorType  string = "unknown"
+		validatorType  string = "unknown" //nolint:staticcheck
 	)
 
 	defer func() {

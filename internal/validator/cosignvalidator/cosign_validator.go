@@ -235,7 +235,7 @@ func (cv *CosignValidator) ValidateImage(
 	}
 
 	var threshold int
-	if args.TrustRoot == "*" && len(args.Required) == 0 && !(args.Threshold > 0) {
+	if args.TrustRoot == "*" && len(args.Required) == 0 && !(args.Threshold > 0) { //nolint:staticcheck
 		threshold = len(verifiers)
 	} else if args.TrustRoot == "*" && args.Threshold > 0 {
 		threshold = args.Threshold
