@@ -76,7 +76,7 @@ cleanup_alerting() {
     docker rm alerting-endpoint || true
 
     # reset docker-env if it was changed
-    if [[ "${RESET_DOCKER_ENV}" == "true" ]]; then
+    if [[ "${RESET_DOCKER_ENV-}" == "true" ]]; then
         eval $(minikube docker-env) || true
     fi
 }
