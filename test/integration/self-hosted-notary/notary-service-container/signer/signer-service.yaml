@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notary-signer
+spec:
+  selector:
+    app: notary-signer
+  ports:
+  - protocol: TCP
+    port: 7899
+    targetPort: 7899

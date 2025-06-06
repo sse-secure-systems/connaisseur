@@ -1,0 +1,65 @@
+name: Integration test setup
+description: |
+  Setup a k3s cluster to run integration tests on
+inputs:
+  k8s-version:
+    description: "Kubernetes version to install"
+    required: true
+  test:
+    description: "Test to run"
+    required: true
+outputs:
+  alerting_ip:
+    description: "IP address of the alerting service"
+    value: ${{ steps.alerting.outputs.ip }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install required packages
+      run: |
+        sudo snap install yq
+        sudo apt update
+        sudo apt install bash -y
+      shell: bash
+    - name: Setup k3s ${{ inputs.k8s-version }}
+      run: |
+        curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL="${{ inputs.k8s-version }}" sh -s -
+      shell: bash
+    # By providing a kubeconfig owned by the current user with 600 permissions,
+    # kubectl becomes usable without sudo, and helm won't emit warnings about
+    # bloated access to group/world.
+    - name: Prepare a kubeconfig in ~/.kube/config
+      run: |
+        mkdir -p ~/.kube
+        sudo cat /etc/rancher/k3s/k3s.yaml > "$HOME/.kube/config"
+        chmod 600 "$HOME/.kube/config"
+        echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+      shell: bash
+    - name: Setup Helm
+      run: |
+        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+      shell: bash
+    - name: Wait for coredns, metrics server, traefik
+      run: |
+        # Wait for a few seconds to allow deployments spin up
+        sleep 10
+        kubectl rollout status --watch --timeout 300s deployment/coredns -n kube-system
+        kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
+        kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik-crd -n kube-system || true
+        kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik -n kube-system || true
+        kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
+      shell: bash
+    - name: Deploy alerting
+      id: alerting
+      run: |
+        if [ "${{ inputs.test }}" == "alerting" ]; then
+          IP=alerting-service.default.svc.cluster.local
+          kubectl apply -f test/integration/alerting/alerting-deployment.yaml
+          kubectl apply -f test/integration/alerting/alerting-service.yaml
+          kubectl rollout status --watch --timeout 300s deployment alerting-service
+        else
+          IP=""
+        fi
+        echo IP=${IP} >> ${GITHUB_OUTPUT}
+      shell: bash

@@ -41,6 +41,12 @@ setup_alerting() {
 
 check_alerting_endpoint_calls() {
     echo -n "Checking whether alert endpoints have been called successfully..."
+    if [[ "${CI-}" == "true" ]]; then
+        # make alerting service reachable from here (outside k3s), so test instrumentation can access endpoint
+        kubectl port-forward services/alerting-service 56243:56243 &
+        sleep 2 # allow forwarding to start
+        export ALERTING_ENDPOINT_IP=localhost # due to port-forwarding the service is now available locally
+    fi
     ENDPOINT_HITS="$(curl -s ${ALERTING_ENDPOINT_IP}:56243 --header 'Content-Type: application/json' || echo '{"msg": "Failed to retrieve alert endpoint hits"}')"
     NUMBER_OF_DEPLOYMENTS=$((${DEPLOYMENT_RES["ADMIT"]} + ${DEPLOYMENT_RES["REJECT"]}))
     EXPECTED_ENDPOINT_HITS=$(jq -n \

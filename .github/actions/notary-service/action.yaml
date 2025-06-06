@@ -19,23 +19,16 @@ runs:
   steps:
     - name: Setup service
       run: |
-        DOCKER_ARGS='-d -p ${{ inputs.port_map }} -v ./test/integration/self-hosted-notary/notary-service-container/${{ inputs.service }}:/etc/docker/notary-${{ inputs.service }}'
-        SERVICE_ARGS='-config=/etc/docker/notary-${{ inputs.service }}/config.json'
-
-        if [[ "${{ inputs.add_host }}" ]]; then
-          DOCKER_ARGS=${DOCKER_ARGS}' --add-host notary.signer:${{ inputs.add_host }}'
-          SERVICE_ARGS=${SERVICE_ARGS}' -logf=json'
-        fi
-
-        docker run ${DOCKER_ARGS} notary:${{ inputs.service }} ${SERVICE_ARGS}
+        sed -i 's+WORKSPACE_FOLDER+${{ github.workspace }}+' test/integration/self-hosted-notary/notary-service-container/server/server-deployment.yaml
+        sed -i 's+WORKSPACE_FOLDER+${{ github.workspace }}+' test/integration/self-hosted-notary/notary-service-container/signer/signer-deployment.yaml
+        kubectl apply -f test/integration/self-hosted-notary/notary-service-container/signer/signer-deployment.yaml --wait=true
+        kubectl apply -f test/integration/self-hosted-notary/notary-service-container/signer/signer-service.yaml --wait=true
+        kubectl apply -f test/integration/self-hosted-notary/notary-service-container/server/server-deployment.yaml --wait=true
+        kubectl apply -f test/integration/self-hosted-notary/notary-service-container/server/server-service.yaml --wait=true
       shell: bash
     - name: Get IP
       id: get_service_ip
       run: |
-        NOTARY_CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("notary:${{ inputs.service }}"))')
-        NOTARY_CONTAINER_ID=$(echo ${NOTARY_CONTAINER} | jq -r .ID)
-        NOTARY_CONTAINER_NETWORK=$(echo ${NOTARY_CONTAINER} | jq -r .Networks)
-        NOTARY_SEARCH_PATH=.[0].NetworkSettings.Networks."${NOTARY_CONTAINER_NETWORK}".IPAddress
-        NOTARY_IP=$(docker container inspect ${NOTARY_CONTAINER_ID} | jq -r ${NOTARY_SEARCH_PATH})
+        NOTARY_IP=$(kubectl get service notary-server -o jsonpath='{.spec.clusterIP}')
         echo service_ip=${NOTARY_IP} >> ${GITHUB_OUTPUT}
       shell: bash

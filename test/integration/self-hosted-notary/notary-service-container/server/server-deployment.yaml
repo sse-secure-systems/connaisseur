@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notary-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notary-server
+  template:
+    metadata:
+      labels:
+        app: notary-server
+    spec:
+      containers:
+      - name: server
+        image: notary:server
+        args: ["-config=/etc/docker/notary-server/config.json", "-logf=json"]
+        ports:
+        - containerPort: 4443
+        volumeMounts:
+        - mountPath: /etc/docker/notary-server
+          name: host
+          readOnly: true
+      volumes:
+      - name: host
+        hostPath:
+          path: WORKSPACE_FOLDER/test/integration/self-hosted-notary/notary-service-container/server
+          type: Directory

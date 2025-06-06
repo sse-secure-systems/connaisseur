@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notary-signer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notary-signer
+  template:
+    metadata:
+      labels:
+        app: notary-signer
+    spec:
+      containers:
+      - name: signer
+        image: notary:signer
+        args: ["-config=/etc/docker/notary-signer/config.json"]
+        ports:
+        - containerPort: 7899
+        volumeMounts:
+        - mountPath: /etc/docker/notary-signer
+          name: host
+          readOnly: true
+        readinessProbe:
+          tcpSocket:
+            port: 7899
+          initialDelaySeconds: 3
+          periodSeconds: 5
+      volumes:
+      - name: host
+        hostPath:
+          path: WORKSPACE_FOLDER/test/integration/self-hosted-notary/notary-service-container/signer
+          type: Directory

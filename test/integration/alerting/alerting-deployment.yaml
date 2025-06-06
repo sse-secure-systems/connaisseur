@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alerting-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alerting-service
+  template:
+    metadata:
+      labels:
+        app: alerting-service
+    spec:
+      containers:
+      - name: alerting
+        image: securesystemsengineering/alerting-endpoint
+        ports:
+        - containerPort: 56243

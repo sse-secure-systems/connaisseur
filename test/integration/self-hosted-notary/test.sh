@@ -33,14 +33,14 @@ setup_self_hosted_notary() {
     docker pull docker.io/securesystemsengineering/testimage:self-hosted-notary-signed
     PREFIXED_DIGEST=$(docker images --digests | grep self-hosted-notary-signed | awk '{print $3}')
     export DIGEST=$(echo ${PREFIXED_DIGEST#sha256:})
-    docker run --rm -d --name notary-signer -p 7899:7899 -v ./test/integration/self-hosted-notary/notary-service-container/signer:/etc/docker/notary-signer/ --network "${NETWORK}" notary:signer -config=/etc/docker/notary-signer/config.json
-    NOTARY_SIGNER_IP=$(docker container inspect notary-signer | jq -r --arg network "${NETWORK}" '.[].NetworkSettings.Networks[$network].IPAddress')
-    docker run --rm -d --name notary-server -p 4443:4443 --add-host notary.signer:${NOTARY_SIGNER_IP} -v ./test/integration/self-hosted-notary/notary-service-container/server:/etc/docker/notary-server --network "${NETWORK}" notary:server -config=/etc/docker/notary-server/config.json -logf=json
-    export NOTARY_SERVER_IP=$(docker container inspect notary-server | jq -r --arg network "${NETWORK}" '.[].NetworkSettings.Networks[$network].IPAddress')
+    docker run --rm -d --name notary-signer.default.svc.cluster.local -p 7899:7899 -v ./test/integration/self-hosted-notary/notary-service-container/signer:/etc/docker/notary-signer/ --network "${NETWORK}" notary:signer -config=/etc/docker/notary-signer/config.json
+    NOTARY_SIGNER_IP=$(docker container inspect notary-signer.default.svc.cluster.local | jq -r --arg network "${NETWORK}" '.[].NetworkSettings.Networks[$network].IPAddress')
+    docker run --rm -d --name notary-server.default.svc.cluster.local -p 4443:4443 --add-host notary-signer.default.svc.cluster.local:${NOTARY_SIGNER_IP} -v ./test/integration/self-hosted-notary/notary-service-container/server:/etc/docker/notary-server --network "${NETWORK}" notary:server -config=/etc/docker/notary-server/config.json -logf=json
+    export NOTARY_SERVER_IP=$(docker container inspect notary-server.default.svc.cluster.local | jq -r --arg network "${NETWORK}" '.[].NetworkSettings.Networks[$network].IPAddress')
     cd test/integration/self-hosted-notary
     docker build --build-arg "DIGEST=${DIGEST}" -f Dockerfile.populate_notary . -t populate-notary
     cd -
-    docker run --rm --network "${NETWORK}" --add-host notary.server:${NOTARY_SERVER_IP} populate-notary
+    docker run --rm --network "${NETWORK}" --add-host notary-server.default.svc.cluster.local:${NOTARY_SERVER_IP} populate-notary
     export NOTARY_IP=${NOTARY_SERVER_IP}
     echo "Done spinning up notary..."
 }
@@ -65,8 +65,7 @@ render_notary_host() {
 }
 
 cleanup_self_hosted_notary() {
-    docker stop notary-signer >/dev/null 2>&1 || true
-    docker stop notary-server >/dev/null 2>&1 || true
+    docker stop notary-signer.default.svc.cluster.local >/dev/null 2>&1 || true
+    docker stop notary-server.default.svc.cluster.local >/dev/null 2>&1 || true
     docker stop populate-notary >/dev/null 2>&1 || true
 }
-

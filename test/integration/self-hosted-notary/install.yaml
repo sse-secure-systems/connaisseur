@@ -27,7 +27,7 @@ application:
         -----END PUBLIC KEY-----
   - name: self-hosted-notary
     type: notaryv1
-    host: notary.server:4443
+    host: notary-server.default.svc.cluster.local:4443
     trustRoots:
       - name: default
         key: self_hosted_notary_root_key.pub
@@ -35,18 +35,21 @@ application:
     # (test/integration/notary_service_container/server/notary.crt)
     cert: |
       -----BEGIN CERTIFICATE-----
-      MIICDzCCAZWgAwIBAgIUK6opKzStr7qjcHx40VGw4bprm/IwCgYIKoZIzj0EAwIw
-      GDEWMBQGA1UEAwwNbm90YXJ5LnNlcnZlcjAeFw0yNDExMjIwOTIwMDNaFw0zNDEx
-      MjAwOTIwMDNaMBgxFjAUBgNVBAMMDW5vdGFyeS5zZXJ2ZXIwdjAQBgcqhkjOPQIB
-      BgUrgQQAIgNiAAT0Nn7WJQUykFnPT12RtldK9ruKhd75uttXV6JwVfV0AtHnPHx/
-      KH7VzA/nyoXCPGvod5RCX6Idb0LcFq7+/gFlM4tFscmCS53VAuhs1/NhLnEE+sAn
-      bPqDw1BuReMghAejgZ8wgZwwHQYDVR0OBBYEFH5CMJZfe2/ETr2PWIHB76vYshys
-      MB8GA1UdIwQYMBaAFH5CMJZfe2/ETr2PWIHB76vYshysMA8GA1UdEwEB/wQFMAMB
-      Af8wSQYDVR0RBEIwQIINbm90YXJ5LnNlcnZlcoIPKi5ub3Rhcnkuc2VydmVygg1u
-      b3Rhcnkuc2lnbmVygg8qLm5vdGFyeS5zaWduZXIwCgYIKoZIzj0EAwIDaAAwZQIx
-      ALoqIiOjUxbrmHMcJY4awMbVrbu2AXmfcrcbaRuKAHHe1v92Xlc8vo1Bvo5BwOzb
-      cwIwQbAe7FfQKykKWCN6Vs4GfzQVWtQjN0WoMW5L4KgDREjseuU2bRMojWViuBih
-      vvNj
+      MIICsTCCAjagAwIBAgIUe2dlhvaJ4b8AZnHdte+HcNre/a0wCgYIKoZIzj0EAwIw
+      MjEwMC4GA1UEAwwnbm90YXJ5LXNlcnZlci5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxv
+      Y2FsMB4XDTI1MDYyMDExMzcxNloXDTM1MDYxODExMzcxNlowMjEwMC4GA1UEAwwn
+      bm90YXJ5LXNlcnZlci5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsMHYwEAYHKoZI
+      zj0CAQYFK4EEACIDYgAEIDO/iwMH5C4mgjs5/65yl34qOwbno2Lk7C5fuqwmAdfr
+      cW9VowmrCxRucS8HSBXKMXlwTwJ6qv3qY2oiawbHRB3HKtMZrRYhiVSnXvEJTcmn
+      wIxFyrM/xFc93KYFdBYOo4IBCzCCAQcwHQYDVR0OBBYEFL+WbxVxWLtGjWhIHfki
+      vUkQqGvbMB8GA1UdIwQYMBaAFL+WbxVxWLtGjWhIHfkivUkQqGvbMA8GA1UdEwEB
+      /wQFMAMBAf8wgbMGA1UdEQSBqzCBqIInbm90YXJ5LXNlcnZlci5kZWZhdWx0LnN2
+      Yy5jbHVzdGVyLmxvY2FsgikqLm5vdGFyeS1zZXJ2ZXIuZGVmYXVsdC5zdmMuY2x1
+      c3Rlci5sb2NhbIInbm90YXJ5LXNpZ25lci5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxv
+      Y2FsgikqLm5vdGFyeS1zaWduZXIuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbDAK
+      BggqhkjOPQQDAgNpADBmAjEAw+o4YlvPyVaEM35FBldn2g/rety2ZDq8YEzV6x5S
+      3VviVmOwShyH4jXjIlkodM+gAjEAlMEAef/epQVXnRJGf5Tt45X0SsmdhBRz28e0
+      bBAzRFC5+ObXaBZ6rIlREG2p6rvu
       -----END CERTIFICATE-----
   policy:
   - pattern: "*:*"

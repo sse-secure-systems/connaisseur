@@ -51,11 +51,6 @@ jobs:
             "alerting",
             "other-ns",
           ]
-    services:
-      alerting-endpoint:
-        image: securesystemsengineering/alerting-endpoint
-        ports:
-          - 56243:56243
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -65,6 +60,12 @@ jobs:
           registry: ${{ inputs.build_registry }}
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ./.github/actions/integration-setup
+        name: Integration test setup
+        id: setup
+        with:
+          k8s-version: "v1.31"
+          test: ${{ matrix.integration-test-arg }}
       - uses: ./.github/actions/integration-test
         name: Integration test
         with:
@@ -72,8 +73,8 @@ jobs:
           username: ${{ inputs.repo_owner }}
           image: ${{ inputs.build_image_repository }}
           tag: ${{ inputs.build_tag }}
-          k8s-version: "v1.31"
           test: ${{ matrix.integration-test-arg }}
+          alerting_ip: ${{ steps.setup.outputs.alerting_ip }}
 
   optional-integration-test:
     name: optional
@@ -108,6 +109,12 @@ jobs:
           registry: ${{ inputs.build_registry }}
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ./.github/actions/integration-setup
+        name: Integration test setup
+        id: setup
+        with:
+          k8s-version: "v1.31"
+          test: ${{ matrix.integration-test-arg }}
       - uses: ./.github/actions/integration-test
         name: Integration test
         with:
@@ -115,8 +122,8 @@ jobs:
           username: ${{ inputs.repo_owner }}
           image: ${{ inputs.build_image_repository }}
           tag: ${{ inputs.build_tag }}
-          k8s-version: "v1.31"
           test: ${{ matrix.integration-test-arg }}
+          alerting_ip: ${{ steps.setup.outputs.alerting_ip }}
 
   k8s-versions:
     name: k8s versions
@@ -144,6 +151,12 @@ jobs:
           registry: ${{ inputs.build_registry }}
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ./.github/actions/integration-setup
+        name: Integration test setup
+        id: setup
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+          test: "pre-config"
       - uses: ./.github/actions/integration-test
         name: Integration test
         with:
@@ -151,8 +164,8 @@ jobs:
           username: ${{ inputs.repo_owner }}
           image: ${{ inputs.build_image_repository }}
           tag: ${{ inputs.build_tag }}
-          k8s-version: ${{ matrix.k8s-version }}
           test: "pre-config"
+          alerting_ip: ${{ steps.setup.outputs.alerting_ip }}
 
   optional-k8s-versions:
     name: optional k8s versions
@@ -181,6 +194,12 @@ jobs:
           registry: ${{ inputs.build_registry }}
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ./.github/actions/integration-setup
+        name: Integration test setup
+        id: setup
+        with:
+          k8s-version: ${{ matrix.k8s-version }}
+          test: "pre-config"
       - uses: ./.github/actions/integration-test
         name: Integration test
         with:
@@ -188,8 +207,8 @@ jobs:
           username: ${{ inputs.repo_owner }}
           image: ${{ inputs.build_image_repository }}
           tag: ${{ inputs.build_tag }}
-          k8s-version: ${{ matrix.k8s-version }}
           test: "pre-config"
+          alerting_ip: ${{ steps.setup.outputs.alerting_ip }}
 
   self-hosted-notary:
     name: self-hosted-notary
@@ -212,30 +231,30 @@ jobs:
           registry: ${{ inputs.build_registry }}
           username: ${{ inputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ./.github/actions/integration-setup
+        name: Integration test setup
+        id: setup
+        with:
+          k8s-version: "v1.31"
+          test: "self-hosted-notary"
       - name: Install packages
         run: |
           sudo apt update
           sudo apt install notary expect
           sudo snap install yq
-      - name: Setup notary signer service
-        id: signer_service
+      - name: Install notary setup to cluster
+        id: notary
         uses: ./.github/actions/notary-service
-        with:
-          service: signer
-          port_map: 7899:7899
-      - name: Setup notary server service
-        id: server_service
-        uses: ./.github/actions/notary-service
-        with:
-          service: server
-          port_map: 4443:4443
-          add_host: ${{ steps.signer_service.outputs.ip }}
       - name: Setup notary with data
         run: |
           sudo cp ./test/integration/self-hosted-notary/notary-service-container/server/notary.crt /usr/local/share/ca-certificates/notary_root_ca.crt
           sudo update-ca-certificates
 
-          sudo  -- sh -c "echo '${{ steps.server_service.outputs.ip }}       notary.server' >> /etc/hosts"
+          sudo  -- sh -c "echo '127.0.0.1       notary-server.default.svc.cluster.local' >> /etc/hosts"
+
+          sleep 15 # pod being ready isn't enough for port-forwarding to succeed, so we wait a bit
+          kubectl port-forward services/notary-server 4443:4443 &
+          sleep 5
 
           ./test/integration/self-hosted-notary/notary-service-container/notary_init.sh
           docker pull docker.io/securesystemsengineering/testimage:self-hosted-notary-signed
@@ -249,7 +268,7 @@ jobs:
           username: ${{ inputs.repo_owner }}
           image: ${{ inputs.build_image_repository }}
           tag: ${{ inputs.build_tag }}
-          k8s-version: "v1.31"
           test: "self-hosted-notary"
+          alerting_ip: ${{ steps.setup.outputs.alerting_ip }}
         env:
-          NOTARY_IP: ${{ steps.server_service.outputs.ip }}
+          NOTARY_IP: ${{ steps.notary.outputs.ip }}

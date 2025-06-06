@@ -1,4 +1,4 @@
       hostAliases:
         - ip: ${NOTARY_IP}
           hostnames:
-            - "notary.server"
+            - "notary-server.default.svc.cluster.local"

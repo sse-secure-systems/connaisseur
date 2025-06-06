@@ -6,7 +6,7 @@
     },
     "trust_service": {
         "type": "remote",
-        "hostname": "notary.signer",
+        "hostname": "notary-signer.default.svc.cluster.local",
         "port": "7899",
         "tls_ca_file": "./notary.crt",
         "key_algorithm": "ecdsa",

@@ -79,7 +79,7 @@ spec:
           {{ if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
           - name: REDIS_HOST
             value: {{ include "connaisseur.redisService" . }}
-          {{- end }}       
+          {{- end }}
       volumes:
         - name: certs
           secret:

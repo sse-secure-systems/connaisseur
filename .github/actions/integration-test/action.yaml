@@ -14,69 +14,27 @@ inputs:
   tag:
     description: "Tag of the image to pull"
     required: true
-  k8s-version:
-    description: "Kubernetes version to install"
-    required: true
   test:
     description: "Test to run"
+    required: true
+  alerting_ip:
+    description: "IP address of the alerting service"
     required: true
 
 runs:
   using: composite
   steps:
-    - name: Install required packages
-      run: |
-        sudo snap install yq
-        sudo apt update
-        sudo apt install bash -y
-      shell: bash
-    - name: Setup k3s ${{ inputs.k8s-version }}
-      run: |
-        curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL="${{ inputs.k8s-version }}" sh -s -
-      shell: bash
-    # By providing a kubeconfig owned by the current user with 600 permissions,
-    # kubectl becomes usable without sudo, and helm won't emit warnings about
-    # bloated access to group/world.
-    - name: Prepare a kubeconfig in ~/.kube/config
-      run: |
-        mkdir -p ~/.kube
-        sudo cat /etc/rancher/k3s/k3s.yaml > "$HOME/.kube/config"
-        chmod 600 "$HOME/.kube/config"
-        echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
-      shell: bash
-    - name: Setup Helm
-      run: |
-        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-      shell: bash
-    - name: Wait for coredns, metrics server, traefik
-      run: |
-        # Wait for a few seconds to allow deployments spin up
-        sleep 10
-        kubectl rollout status --watch --timeout 300s deployment/coredns -n kube-system
-        kubectl rollout status --watch --timeout 300s deployment/metrics-server -n kube-system
-        kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik-crd -n kube-system || true
-        kubectl wait --for=condition=complete --timeout=300s job/helm-install-traefik -n kube-system || true
-        kubectl rollout status --watch --timeout 300s deployment/traefik -n kube-system
-      shell: bash
-    - name: Get IP
-      id: get_ip
-      run: |
-        if [ "${{ inputs.test }}" == "alerting" ]; then
-          CONTAINER=$(docker container ls --no-trunc --format "{{json . }}" | jq ' . | select(.Image|match("alerting-endpoint"))')
-          CONTAINER_ID=$(echo ${CONTAINER} | jq -r .ID)
-          CONTAINER_NETWORK=$(echo ${CONTAINER} | jq -r .Networks)
-          SEARCH_PATH=.[0].NetworkSettings.Networks."${CONTAINER_NETWORK}".IPAddress
-          IP=$(docker container inspect ${CONTAINER_ID} | jq -r ${SEARCH_PATH})
-        else
-          IP=""
-        fi
-        echo IP=${IP} >> ${GITHUB_OUTPUT}
-      shell: bash
     - name: Run test
       run: |
+        if [ "${{ inputs.test }}" == "self-hosted-notary" ]; then
+          kubectl wait --for=condition=ready pod -l app=notary-server --timeout=60s
+          sleep 15 # pod being ready isn't enough for port-forwarding to succeed, so we wait a bit
+          kubectl port-forward services/notary-server 4443:4443 &
+          sleep 5
+        fi
         bash test/integration/main.sh "${{ inputs.test }}"
       env:
-        ALERTING_ENDPOINT_IP: ${{ steps.get_ip.outputs.ip }}
+        ALERTING_ENDPOINT_IP: ${{ inputs.alerting_ip }}
       shell: bash
     - name: Display Connaisseur configuration
       if: always()
@@ -99,7 +57,7 @@ runs:
           echo "<pre lang=\"yaml\"><code>${deploy_out}</code></pre>" >> ${GITHUB_STEP_SUMMARY}
           echo "</details>" >> ${GITHUB_STEP_SUMMARY}
         fi
-        
+
         pod_out=$(kubectl describe pods -n connaisseur -lapp.kubernetes.io/name=connaisseur)
         if [ -n "${pod_out}" ]; then
           echo "${pod_out}"
