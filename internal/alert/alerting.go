@@ -83,7 +83,7 @@ func (a *Config) EvalAndSendNotifications(ctx context.Context, opts *Notificatio
 		select {
 		case <-ctx.Done():
 			return fmt.Errorf(
-				"timeout after handling %d/%d receivers of %s alerts",
+				"timeout during handling of receiver %d/%d of %s alerts",
 				i,
 				len(receivers),
 				stream,
