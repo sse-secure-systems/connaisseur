@@ -65,6 +65,7 @@ render_notary_host() {
 }
 
 cleanup_self_hosted_notary() {
+    mv charts/connaisseur/deployment.yaml.bak charts/connaisseur/templates/deployment.yaml
     docker stop notary-signer.default.svc.cluster.local >/dev/null 2>&1 || true
     docker stop notary-server.default.svc.cluster.local >/dev/null 2>&1 || true
     docker stop populate-notary >/dev/null 2>&1 || true
