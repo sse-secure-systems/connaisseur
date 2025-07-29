@@ -8,7 +8,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.35.0
 	github.com/docker/cli v28.3.1+incompatible
 	github.com/docker/distribution v2.8.3+incompatible
-	github.com/docker/docker v28.3.1+incompatible
+	github.com/docker/docker v28.3.3+incompatible
 	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c
 	github.com/docker/go-connections v0.5.0
 	github.com/go-playground/locales v0.14.1
