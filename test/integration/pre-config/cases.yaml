@@ -7,13 +7,13 @@
   txt: Testing signed sse testimage...
   ref: securesystemsengineering/testimage:signed
 
-# testing docker official images
+# testing no-longer-docker official images
 - id: signed-docker-official
-  txt: Testing signed official docker image...
-  ref: docker.io/library/nginx
+  txt: Testing signed no-longer-official docker image...
+  ref: securesystemsengineering/testimage:signed
 - id: unsigned-docker-official
-  txt: Testing unsigned official docker image...
-  ref: docker.io/library/node
+  txt: Testing unsigned no-longer-official docker image...
+  ref: securesystemsengineering/testimage:unsigned
   expected_msg: error during notaryv1 validation
 
 # testing static deny

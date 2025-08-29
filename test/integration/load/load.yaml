@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis-${index}
+  name: no-longer-redis-${index}
   labels:
     use: connaisseur-integration-test
 spec:
@@ -15,5 +15,5 @@ spec:
         use: connaisseur-integration-test
     spec:
       containers:
-        - name: redis
-          image: redis
+        - name: no-longer-redis
+          image: securesystemsengineering/testimage:signed

@@ -69,13 +69,13 @@ search_for_minikube() {
 }
 
 ## INSTALLATIONS ---------------------------------------------- ##
-install() { # $1: helm or make, $2: namespace, $3: additional helm args $4: create ns flag
+install() { # $1: helm, make or release, $2: namespace, $3: additional helm args $4: create ns flag
     ARGS=$(printf '%s --set kubernetes.additionalLabels.use=connaisseur-integration-test' "${3:-}")
 
     if ghcr_case; then
         create_ghcr_image_pull_secret ${2:-connaisseur} ${4:-true}
     fi
-    
+
     echo -n "Installing Connaisseur using $1..."
     case $1 in
     "helm")
@@ -195,7 +195,7 @@ single_test() { # ID TXT TYP REF NS MSG RES
     echo -n "[$1] $2"
     i=0                                                              # intialize iterator
     export RAND=$(head -c 5 /dev/urandom | hexdump -ve '1/1 "%.2x"') # creating a random index to label the pods and avoid name collision for repeated runs
-    
+
     if [[ "$6" == "" ]]; then
         MSG="pod/pod-$1-${RAND} created"
     else

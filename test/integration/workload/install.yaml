@@ -6,14 +6,14 @@ application:
     - name: deny
       type: static
       approve: false
-    - name: dockerhub
+    - name: no-longer-dockerhub
       type: notaryv1
       trustRoots:
-        - name: default # root from dockerhub
+        - name: default # root no longer from dockerhub
           key: |
             -----BEGIN PUBLIC KEY-----
-            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
             -----END PUBLIC KEY-----
         - name: sse # root from sse
           key: |
@@ -25,9 +25,9 @@ application:
     - pattern: "*:*"
       validator: deny
     - pattern: "docker.io/library/*:*"
-      validator: dockerhub
+      validator: no-longer-dockerhub
     - pattern: "docker.io/securesystemsengineering/*:*"
-      validator: dockerhub
+      validator: no-longer-dockerhub
       with:
         trustRoot: sse
     - pattern: "registry.k8s.io/*:*"

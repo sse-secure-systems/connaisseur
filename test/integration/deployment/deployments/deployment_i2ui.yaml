@@ -16,8 +16,8 @@ spec:
         app: i2-uinit
     spec:
       containers:
-        - name: nginx
-          image: nginx:1.14.2
+        - name: no-longer-nginx
+          image: securesystemsengineering/testimage:signed
           ports:
             - containerPort: 80
         - name: signed-testimg

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis-with-many-instances
+  name: no-longer-redis-with-many-instances
   labels:
     use: connaisseur-integration-test
 spec:
@@ -15,8 +15,8 @@ spec:
         app: redis
     spec:
       containers:
-        - name: redis
-          image: redis
+        - name: no-longer-redis
+          image: securesystemsengineering/testimage:signed
 ---
 apiVersion: v1
 kind: Pod
@@ -27,20 +27,20 @@ metadata:
 spec:
   containers:
     - name: container1
-      image: busybox
+      image: securesystemsengineering/testimage:signed
       command: ['sh', '-c', 'sleep 3600']
     - name: container2
-      image: redis
+      image: securesystemsengineering/testimage:signed2
     - name: container3
-      image: mongo
+      image: securesystemsengineering/testimage:signed3
     - name: container4
-      image: nginx
+      image: securesystemsengineering/testimage:signed4
     - name: container5
-      image: rabbitmq
+      image: securesystemsengineering/testimage:signed5
     - name: container6
-      image: elasticsearch
+      image: securesystemsengineering/testimage:signed6
     - name: container7
-      image: sonarqube
+      image: securesystemsengineering/testimage:signed7
 ---
 apiVersion: v1
 kind: Pod
@@ -51,27 +51,27 @@ metadata:
 spec:
   containers:
     - name: container1
-      image: busybox
+      image: securesystemsengineering/testimage:signed
       command: ['sh', '-c', 'sleep 3600']
     - name: container2
-      image: redis
+      image: securesystemsengineering/testimage:signed2
     - name: container3
-      image: mongo
+      image: securesystemsengineering/testimage:signed3
     - name: container4
-      image: nginx
+      image: securesystemsengineering/testimage:signed4
     - name: container5
-      image: rabbitmq
+      image: securesystemsengineering/testimage:signed5
     - name: container6
-      image: elasticsearch
+      image: securesystemsengineering/testimage:signed6
     - name: container7
-      image: sonarqube
+      image: securesystemsengineering/testimage:signed7
   initContainers:
     - name: init2
-      image: maven
+      image: securesystemsengineering/testimage:signed8
     - name: init3
-      image: vault
+      image: securesystemsengineering/testimage:signed9
     - name: init4
-      image: postgres
+      image: securesystemsengineering/testimage:signed10
 ---
 apiVersion: v1
 kind: Pod
@@ -82,21 +82,21 @@ metadata:
 spec:
   containers:
     - name: container1
-      image: busybox
+      image: securesystemsengineering/testimage:signed
       command: ['sh', '-c', 'sleep 3600']
     - name: container2
-      image: redis
+      image: securesystemsengineering/testimage:signed2
     - name: container3
-      image: mongo
+      image: securesystemsengineering/testimage:signed3
     - name: container4
-      image: nginx
+      image: securesystemsengineering/testimage:signed4
   initContainers:
     - name: container5
-      image: rabbitmq
+      image: securesystemsengineering/testimage:signed5
     - name: container6
-      image: elasticsearch
+      image: securesystemsengineering/testimage:signed6
     - name: container7
-      image: sonarqube
+      image: securesystemsengineering/testimage:signed7
 ---
 apiVersion: v1
 kind: Pod
@@ -107,17 +107,17 @@ metadata:
 spec:
   containers:
     - name: container1
-      image: busybox
+      image: securesystemsengineering/testimage:signed
       command: ['sh', '-c', 'sleep 3600']
     - name: container2
-      image: redis
+      image: securesystemsengineering/testimage:signed2
     - name: container3
-      image: mongo
+      image: securesystemsengineering/testimage:signed3
   initContainers:
     - name: init1
-      image: busybox
+      image: securesystemsengineering/testimage:signed4
       command: ['sh', '-c', 'sleep 3600']
     - name: init2
-      image: redis
+      image: securesystemsengineering/testimage:signed5
     - name: init3
-      image: mongo
+      image: securesystemsengineering/testimage:signed6

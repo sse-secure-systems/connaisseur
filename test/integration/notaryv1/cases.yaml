@@ -24,7 +24,7 @@
 - id: diff-designated-signer
   txt: Testing image with differing designated signers...
   ref: securesystemsengineering/testimage:double_sig
-  expected_msg: validator dockerhub found 2 digests for image double_sig, expected 1
+  expected_msg: validator no-longer-dockerhub found 2 digests for image double_sig, expected 1
 
 # init container tests
 - id: signed-init-signed

@@ -1,14 +1,14 @@
 application:
   validators:
-    - name: dockerhub
+    - name: no-longer-dockerhub
       type: notaryv1
       host: notary.docker.io
       trustRoots:
-        - name: docker
+        - name: no-longer-docker
           key: |
             -----BEGIN PUBLIC KEY-----
-            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+            d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
             -----END PUBLIC KEY-----
         - name: sse
           key: |
@@ -27,11 +27,11 @@ application:
             -----END PUBLIC KEY-----
   policy:
     - pattern: "*:*"
-      validator: dockerhub
+      validator: no-longer-dockerhub
       with:
-        trustRoot: docker
+        trustRoot: no-longer-docker
     - pattern: "securesystemsengineering/testimage"
-      validator: dockerhub
+      validator: no-longer-dockerhub
       with:
         trustRoot: sse
     - pattern: "securesystemsengineering/testimage:co-*"

@@ -9,15 +9,15 @@ application:
   - name: deny
     type: static
     approve: false
-  - name: dockerhub-basics
+  - name: no-longer-dockerhub-basics
     type: notaryv1
     host: notary.docker.io
     trustRoots:
-    - name: docker-official
+    - name: no-longer-docker-official
       key: |
         -----BEGIN PUBLIC KEY-----
-        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-        QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEsx28WV7BsQfnHF1kZmpdCTTLJaWe
+        d0CA+JOi8H4REuBaWSZ5zPDe468WuOJ6f71E7WFg3CVEVYHuoZt2UYbN/Q==
         -----END PUBLIC KEY-----
     - name: securesystemsengineering-official
       key: |
@@ -53,11 +53,11 @@ application:
       -----END CERTIFICATE-----
   policy:
   - pattern: "*:*"
-    validator: dockerhub-basics
+    validator: no-longer-dockerhub-basics
     with:
-      trustRoot: "docker-official"
+      trustRoot: "no-longer-docker-official"
   - pattern: "docker.io/securesystemsengineering/*:*"
-    validator: dockerhub-basics
+    validator: no-longer-dockerhub-basics
     with:
       trustRoot: "securesystemsengineering-official"
   - pattern: "registry.k8s.io/*:*"

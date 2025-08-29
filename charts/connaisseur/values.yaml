@@ -121,12 +121,6 @@ application:
     - name: dockerhub
       type: notaryv1
       trustRoots:
-        - name: default # root from dockerhub
-          key: |
-            -----BEGIN PUBLIC KEY-----
-            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOXYta5TgdCwXTCnLU09W5T4M4r9f
-            QQrqJuADP6U7g5r9ICgPSmZuRHP/1AYUfOQW3baveKsT969EfELKj1lfCA==
-            -----END PUBLIC KEY-----
         - name: sse # root from sse
           key: |
             -----BEGIN PUBLIC KEY-----
@@ -139,8 +133,10 @@ application:
   policy:
     - pattern: "*:*"
       validator: deny
-    - pattern: "docker.io/library/*:*"
-      validator: dockerhub
+    # since Docker Content Trust is deprecated, we need to statically allow redis:7 which used to be signed by Docker Hub
+    # only required if caching is enabled
+    - pattern: "docker.io/library/redis:7"
+      validator: allow
     - pattern: "docker.io/securesystemsengineering/*:*"
       validator: dockerhub
       with:
