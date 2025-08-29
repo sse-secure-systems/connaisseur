@@ -161,8 +161,15 @@ jobs:
           scan-ref: build
           format: ${{ inputs.output }}
           output: ${{ inputs.output == 'sarif' && 'reports/trivy-docker-results.sarif' || '' }}
-      - name: Upload
+      - name: Upload k8s report
         uses: github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b # v3.29.2
         if: inputs.output == 'sarif'
         with:
-          sarif_file: 'reports'
+          sarif_file: 'reports/trivy-k8s-results.sarif'
+          category: 'k8s'
+      - name: Upload docker report
+        uses: github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b # v3.29.2
+        if: inputs.output == 'sarif'
+        with:
+          sarif_file: 'reports/trivy-docker-results.sarif'
+          category: 'docker'
