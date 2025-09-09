@@ -52,7 +52,7 @@ jobs:
           mkdir reports
         shell: bash
       - name: Run Trivy on image
-        uses: aquasecurity/trivy-action@f9424c10c36e288d5fa79bd3dfd1aeb2d6eae808 # v0.33.0
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
         with:
           image-ref: ${{ inputs.image }}
           scan-type: "image"
@@ -64,6 +64,6 @@ jobs:
           TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
       - name: Upload
         if: inputs.output == 'sarif'
-        uses: github/codeql-action/upload-sarif@3c3833e0f8c1c83d449a7478aa59c036a9165498 # v3.29.11
+        uses: github/codeql-action/upload-sarif@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
         with:
           sarif_file: 'reports'
