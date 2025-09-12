@@ -74,6 +74,8 @@ kubernetes:
     image:
       repository: redis
       tag: 7
+      # digest supersedes tag
+      digest: "83edc2b8e9ffb1781a67bdab260a94674f802881838e20bba0f9a69d8cb40d70" # https://hub.docker.com/layers/library/redis/7/images/sha256-83edc2b8e9ffb1781a67bdab260a94674f802881838e20bba0f9a69d8cb40d70
     pullPolicy: Always
     resources:
       limits:
@@ -133,9 +135,9 @@ application:
   policy:
     - pattern: "*:*"
       validator: deny
-    # since Docker Content Trust is deprecated, we need to statically allow redis:7 which used to be signed by Docker Hub
+    # since Docker Content Trust is deprecated, we need to statically allow redis which used to be signed by Docker Hub
     # only required if caching is enabled
-    - pattern: "docker.io/library/redis:7"
+    - pattern: "docker.io/library/redis@sha256:83edc2b8e9ffb1781a67bdab260a94674f802881838e20bba0f9a69d8cb40d70"
       validator: allow
     - pattern: "docker.io/securesystemsengineering/*:*"
       validator: dockerhub

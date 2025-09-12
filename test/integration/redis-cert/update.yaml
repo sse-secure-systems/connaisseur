@@ -75,5 +75,7 @@ application:
       validator: allow
     - pattern: "redis:*"
       validator: allow
+    - pattern: "redis@sha256:*"
+      validator: allow
     - pattern: "securesystemsengineering/testimage:*"
       validator: notaryv1
