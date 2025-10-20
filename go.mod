@@ -18,7 +18,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/prometheus/client_golang v1.23.2
 	github.com/prometheus/client_model v0.6.2
-	github.com/redis/go-redis/v9 v9.14.0
+	github.com/redis/go-redis/v9 v9.14.1
 	github.com/sigstore/cosign/v2 v2.6.1
 	github.com/sigstore/rekor v1.4.2
 	github.com/sigstore/sigstore v1.9.6-0.20250729224751-181c5d3339b3
