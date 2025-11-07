@@ -110,7 +110,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 
 | Key | Default | Required | Description |
 | - | - | - | - |
-| `with.trustRoot` | - | :heavy_check_mark: | Setting the name of trust root to `"*"` enables verification of multiple trust roots. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
+| `with.trustRoot` | - | - | Setting the name of trust root to `"*"` enables verification of multiple trust roots. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
 | `with.threshold` | - | - | Minimum number of signatures required in case `with.trustRoot` is set to `"*"`. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
 | `with.required` | `[]` | - | Array of required trust roots referenced by name in case `with.trustRoot` is set to `"*"`. Refer to section on [multi-signature verification](#multi-signature-verification) for more information. |
 | `with.verifyInTransparencyLog` | `true` | - | Whether to include the verification using the Rekor tranparency log in the verification process. Refer to [Tranparency log verification](#transparency-log-verification) for more information. |
@@ -381,7 +381,7 @@ host:
     -----BEGIN PUBLIC KEY-----
     ...
     -----END PUBLIC KEY-----
-  ctLogPubkey: | 
+  ctLogPubkey: |
     -----BEGIN PUBLIC KEY-----
     ...
     -----END PUBLIC KEY-----
