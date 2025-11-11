@@ -4,7 +4,7 @@ go 1.24.6
 
 require (
 	github.com/alicebob/miniredis/v2 v2.35.0
-	github.com/docker/cli v28.5.2+incompatible
+	github.com/docker/cli v29.0.0+incompatible
 	github.com/docker/distribution v2.8.3+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c
