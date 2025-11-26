@@ -4,11 +4,16 @@ VERSION := $(shell yq e '.appVersion' charts/connaisseur/Chart.yaml)
 KD := kubernetes.deployment
 ALL_RS := all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,configmaps,secrets,serviceaccounts,crds
 
-.PHONY: docker install install-dev uninstall annihilate test upgrade kind-dev lint integration alerting
+.PHONY: docker docker-multiarch install install-dev uninstall annihilate test upgrade kind-dev lint integration alerting
 
-# meant for local building of docker image
+# meant for local building of docker image (single platform)
 docker:
 	docker buildx build --pull -f build/Dockerfile -t $(IMAGE_REPO):v$(VERSION) .
+
+# build multi-architecture docker images (amd64, arm64)
+# NOTE: buildx requires --push or --load; for multi-arch, must push to registry
+docker-multiarch:
+	docker buildx build --platform linux/amd64,linux/arm64 --pull -f build/Dockerfile -t $(IMAGE_REPO):v$(VERSION) --push .
 
 install:
 	helm install connaisseur charts/connaisseur --atomic --create-namespace --namespace $(NAMESPACE) $(HELM_ARGS)
