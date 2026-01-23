@@ -982,6 +982,48 @@ You're not viewing the docs of the latest version.
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#multi-arch-builds" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi Arch Builds
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi Arch Builds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#notary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cosign" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cosign
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1398,6 +1440,48 @@ You're not viewing the docs of the latest version.
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#multi-arch-builds" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi Arch Builds
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi Arch Builds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#notary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cosign" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cosign
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1457,7 +1541,7 @@ This file will include all new commits, categorized by their type (e.g. fix, fea
 Run <code>make docker</code> to build the new version of the docker image and then <code>DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:&lt;new-version&gt;</code> to push and sign it.
 You'll obviously need the right private key and passphrase for doing so.
 You also need to be in the list of valid signers for Connaisseur.
-If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:philipp.belitz@securesystems.de">Philipp Belitz</a>.</p>
+If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:pbe@systemsecurity.com">Philipp Belitz</a>.</p>
 <h2 id="merge-pr">Merge PR<a class="headerlink" href="#merge-pr" title="Permanent link">⚓︎</a></h2>
 <p>Run <code>git checkout master</code> to switch to the <code>master</code> branch and then run <code>git merge develop</code> to merge <code>develop</code> in.
 Then run <code>git push origin master --tags</code> to publish all changes and the new tag.</p>
@@ -1483,6 +1567,23 @@ For now things will probably break, so make sure that in the end everything look
 Good Luck!</p>
 <p>For breaking changes, the upgrade integration test will fail (as intended), blocking the automatic release.
 In that case, you can manually trigger the <a href="https://github.com/sse-secure-systems/connaisseur/actions/workflows/publish.yml">publish job</a> with the expected Connaisseur version.</p>
+<h2 id="multi-arch-builds">Multi Arch Builds<a class="headerlink" href="#multi-arch-builds" title="Permanent link">⚓︎</a></h2>
+<p>Multi-arch builds are optional and can be done instead of the regular single-arch Docker image push.
+To build and push multi-arch images, run <code>make docker-multiarch</code>.
+This command automatically builds the images for multiple architectures and pushes them to Docker Hub.</p>
+<p>After pushing the multi-arch images, they can be signed using one of three options:</p>
+<h3 id="notary">Notary<a class="headerlink" href="#notary" title="Permanent link">⚓︎</a></h3>
+<p>Set the <code>DOCKER_CONTENT_TRUST=1</code> environment variable during the build command:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>make<span class="w"> </span>docker-multiarch
+</code></pre></div>
+<h3 id="cosign">Cosign<a class="headerlink" href="#cosign" title="Permanent link">⚓︎</a></h3>
+<p>Run the following command and enter the passphrase when prompted:</p>
+<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> </span>&lt;private-key&gt;<span class="w"> </span>docker.io/securesystemsengineering/connaisseur:v&lt;version&gt;
+</code></pre></div>
+<h3 id="notation">Notation<a class="headerlink" href="#notation" title="Permanent link">⚓︎</a></h3>
+<p>Run the following command:</p>
+<div class="highlight"><pre><span></span><code>notation<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> </span>&lt;key-name&gt;<span class="w"> </span>--timestamp-url<span class="w"> </span><span class="s2">&quot;http://timestamp.digicert.com&quot;</span><span class="w"> </span>--timestamp-root-cert<span class="w"> </span>public-keys/digi_cert.crt<span class="w"> </span>docker.io/securesystemsengineering/connaisseur:v&lt;version&gt;
+</code></pre></div>
 
 
 
