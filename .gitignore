@@ -10,3 +10,4 @@ connaisseur.yaml
 *.pem
 *.csr
 !test/testdata/**/*.pem
+!public-keys/**/*.crt

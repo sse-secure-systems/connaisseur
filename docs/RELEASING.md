@@ -51,7 +51,7 @@ When the PR is approved and ready to be merged, first push the new Connaisseur i
 Run `make docker` to build the new version of the docker image and then `DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:<new-version>` to push and sign it.
 You'll obviously need the right private key and passphrase for doing so.
 You also need to be in the list of valid signers for Connaisseur.
-If not already (you can check with `docker trust inspect securesystemsengineering/connaisseur --pretty`) you'll need to contact [Philipp Belitz](mailto:philipp.belitz@securesystems.de).
+If not already (you can check with `docker trust inspect securesystemsengineering/connaisseur --pretty`) you'll need to contact [Philipp Belitz](mailto:pbe@systemsecurity.com).
 
 ## Merge PR
 
@@ -86,3 +86,35 @@ Good Luck!
 
 For breaking changes, the upgrade integration test will fail (as intended), blocking the automatic release.
 In that case, you can manually trigger the [publish job](https://github.com/sse-secure-systems/connaisseur/actions/workflows/publish.yml) with the expected Connaisseur version.
+
+## Multi Arch Builds
+
+Multi-arch builds are optional and can be done instead of the regular single-arch Docker image push.
+To build and push multi-arch images, run `make docker-multiarch`.
+This command automatically builds the images for multiple architectures and pushes them to Docker Hub.
+
+After pushing the multi-arch images, they can be signed using one of three options:
+
+### Notary
+
+Set the `DOCKER_CONTENT_TRUST=1` environment variable during the build command:
+
+```bash
+DOCKER_CONTENT_TRUST=1 make docker-multiarch
+```
+
+### Cosign
+
+Run the following command and enter the passphrase when prompted:
+
+```bash
+cosign sign --key <private-key> docker.io/securesystemsengineering/connaisseur:v<version>
+```
+
+### Notation
+
+Run the following command:
+
+```bash
+notation sign --key <key-name> --timestamp-url "http://timestamp.digicert.com" --timestamp-root-cert public-keys/digi_cert.crt docker.io/securesystemsengineering/connaisseur:v<version>
+```
