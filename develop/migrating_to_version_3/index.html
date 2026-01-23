@@ -1242,8 +1242,8 @@ You're not viewing the docs of the latest version.
 
 
 <h1 id="migrate-to-connaisseur-version-30">Migrate to Connaisseur version 3.0<a class="headerlink" href="#migrate-to-connaisseur-version-30" title="Permanent link">⚓︎</a></h1>
-<p>It's been a while since our last major update, but it is time again <img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f389.svg" title=":tada:" />
-Connaisseur version 3.0 is out and brings along many new features, but also breaking changes <img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4a5.svg" title=":boom:" />
+<p>It's been a while since our last major update, but it is time again <img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f389.svg" title=":tada:" />
+Connaisseur version 3.0 is out and brings along many new features, but also breaking changes <img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f4a5.svg" title=":boom:" />
 For those breaking changes, we've set up a <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration.
 Read on for the list of most interesting changes.</p>
 <h2 id="how-to-migrate">How to migrate<a class="headerlink" href="#how-to-migrate" title="Permanent link">⚓︎</a></h2>
@@ -1252,24 +1252,24 @@ Read on for the list of most interesting changes.</p>
 <li>Run <code>python3 scripts/upgrade_to_version_3.py</code></li>
 <li>Check the diff of your <code>helm/values.yaml</code> and make sure everything is as expected</li>
 <li>Run <code>make upgrade</code> or alternatively <code>helm upgrade connaisseur helm -n &lt;your-namespace&gt; --wait</code></li>
-<li>Enjoy the new version <img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f389.svg" title=":tada:" /> :crossed_fingers:</li>
+<li>Enjoy the new version <img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f389.svg" title=":tada:" /> :crossed_fingers:</li>
 </ol>
 <h2 id="major-changes">Major changes<a class="headerlink" href="#major-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li>NEW: Support for Cosign 2.0<ul>
-<li><img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4a5.svg" title=":boom:" /> This is a breaking change, because Connaisseur now supports transparency log verification by default.
+<li><img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f4a5.svg" title=":boom:" /> This is a breaking change, because Connaisseur now supports transparency log verification by default.
 If all your Cosign signature artifacts are already part of Rekor's default transparency log (or part of your configured Rekor host) or you don't use Cosign, this is not breaking for you.</li>
 </ul>
 </li>
 <li><a href="#api-changes">Changes</a> to the Helm <code>values.yaml</code> file<ul>
-<li><img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f4a5.svg" title=":boom:" /> This is a breaking change as we touched quite a bunch of configuration keys to make the configuration API more consistent and more intuitive</li>
-<li><img alt="🤖" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f916.svg" title=":robot:" /> We've prepared a <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments <img alt="😢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f622.svg" title=":cry:" /> Simply run <code>python3 scripts/upgrade_to_version_3.py</code> and your <code>helm/values.yaml</code> will be updated (and we'll store a backup of your previous config in <code>helm/values.yaml.old</code>)</li>
+<li><img alt="💥" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f4a5.svg" title=":boom:" /> This is a breaking change as we touched quite a bunch of configuration keys to make the configuration API more consistent and more intuitive</li>
+<li><img alt="🤖" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f916.svg" title=":robot:" /> We've prepared a <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/scripts/upgrade_to_version_3.py">script</a> that migrates your existing Connaisseur configuration to the new format. Limitation: It won't migrate your comments <img alt="😢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f622.svg" title=":cry:" /> Simply run <code>python3 scripts/upgrade_to_version_3.py</code> and your <code>helm/values.yaml</code> will be updated (and we'll store a backup of your previous config in <code>helm/values.yaml.old</code>)</li>
 </ul>
 </li>
 </ul>
 <h2 id="minor-changes">Minor changes<a class="headerlink" href="#minor-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
-<li>Changed the log format to JSON <img alt="😎" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f60e.svg" title=":sunglasses:" /><ul>
+<li>Changed the log format to JSON <img alt="😎" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f60e.svg" title=":sunglasses:" /><ul>
 <li>The logging format of Connaisseur is now fully transformed into JSON. It includes a <code>timestamp</code> and a <code>message</code> field, next to additional fields depending on the context. Logs of the HTTP request do not contain a <code>message</code> field.</li>
 </ul>
 </li>

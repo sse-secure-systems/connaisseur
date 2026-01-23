@@ -1556,49 +1556,49 @@ In case you just use the default values for the validator and image policy given
 <tr>
 <td><code>name</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>See <a href="../../basics/#validators">basics</a>.</td>
 </tr>
 <tr>
 <td><code>type</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td><code>cosign</code>; the validator type must be set to <code>cosign</code>.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].name</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
 <td>See <a href="../../basics/#validators">basics</a>.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].key</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using keyless</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using keyless</td>
 <td>See <a href="../../basics/#validators">basics</a>. Public key from <code>cosign.pub</code> file or <a href="https://docs.sigstore.dev/key_management/overview/#basic-usage">KMS URI</a>. See additional notes <a href="#kms-support">below</a>.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].keyless.issuer</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or issuerRegex</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or issuerRegex</td>
 <td>The OIDC provider URL which attests the identity.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].keyless.subject</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or subjectRegex</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or subjectRegex</td>
 <td>The identity that created the keyless signature. Usually an email address.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].keyless.issuerRegex</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or issuer</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or issuer</td>
 <td>Regex for the OIDC provider URL which attests the identity.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].keyless.subjectRegex</code></td>
 <td>-</td>
-<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or subject</td>
+<td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /> if not using a key or subject</td>
 <td>Regex of the identity that created the keyless signature. Usually an email address. When setting this, make sure you control all subject that can be matched. The pattern <code>your.name@gmail.*</code> also matches <code>yourXname@gmail.com</code> or <code>your.name@gmail.attacker.com</code></td>
 </tr>
 <tr>
