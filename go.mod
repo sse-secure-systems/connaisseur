@@ -3,8 +3,8 @@ module connaisseur
 go 1.25.5
 
 require (
-	github.com/alicebob/miniredis/v2 v2.36.0
-	github.com/docker/cli v29.1.5+incompatible
+	github.com/alicebob/miniredis/v2 v2.36.1
+	github.com/docker/cli v29.2.0+incompatible
 	github.com/docker/distribution v2.8.3+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c
@@ -19,7 +19,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/prometheus/client_golang v1.23.2
 	github.com/prometheus/client_model v0.6.2
-	github.com/redis/go-redis/v9 v9.17.2
+	github.com/redis/go-redis/v9 v9.17.3
 	github.com/sigstore/cosign/v2 v2.6.2
 	github.com/sigstore/rekor v1.5.0
 	github.com/sigstore/sigstore v1.10.4
@@ -225,7 +225,6 @@ require (
 	github.com/sigstore/rekor-tiles/v2 v2.1.0 // indirect
 	github.com/sigstore/sigstore-go v1.1.4 // indirect
 	github.com/sigstore/timestamp-authority/v2 v2.0.4 // indirect
-	github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
