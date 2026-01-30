@@ -93,14 +93,37 @@ Multi-arch builds are optional and can be done instead of the regular single-arc
 To build and push multi-arch images, run `make docker-multiarch`.
 This command automatically builds the images for multiple architectures and pushes them to Docker Hub.
 
-After pushing the multi-arch images, they can be signed using one of three options:
+After pushing the multi-arch images, they can be signed using one of three options.
+
+### Gathering Signing Values
+
+Before signing, you need to extract the image reference, tag, size, and SHA256 digest from the multi-arch manifest. Run the following commands:
+
+```bash
+REF=$(yq e '.kubernetes.deployment.image.repository' charts/connaisseur/values.yaml)
+TAG=v$(yq e '.appVersion' charts/connaisseur/Chart.yaml)
+RAW="$(docker buildx imagetools inspect --raw "${REF}:${TAG}")"
+SIZE="$(printf "%s" "${RAW}" | wc -c | tr -d ' ')"
+SHA="$(printf "%s" "${RAW}" | sha256sum | awk '{print $1}')"
+
+echo "image=${REF}:${TAG}"
+echo "size=${SIZE} sha256=${SHA}"
+```
+
+This will output the `<version>` (the tag), `<size>` (byte length of the raw manifest), and `<sha256>` (digest of the manifest) values needed for the signing commands below.
 
 ### Notary
 
-Set the `DOCKER_CONTENT_TRUST=1` environment variable during the build command:
+Run the following command to sign with notary:
 
 ```bash
-DOCKER_CONTENT_TRUST=1 make docker-multiarch
+notary -s "https://notary.docker.io" -d "${HOME}/.docker/trust" addhash \
+  "docker.io/securesystemsengineering/connaisseur" \
+  "${TAG}" \
+  "${SIZE}" \
+  --sha256 "${SHA}" \
+  --roles "targets/releases" \
+  --publish
 ```
 
 ### Cosign
@@ -108,13 +131,26 @@ DOCKER_CONTENT_TRUST=1 make docker-multiarch
 Run the following command and enter the passphrase when prompted:
 
 ```bash
-cosign sign --key <private-key> docker.io/securesystemsengineering/connaisseur:v<version>
+cosign sign --key "${HOME}/.config/cosign/sse.key" securesystemsengineering/connaisseur@sha256:${SHA}
 ```
+
+For a scripted version or how the retrieve the values, see the [automation script](../scripts/multi_arch_sign.sh).
 
 ### Notation
 
 Run the following command:
 
 ```bash
-notation sign --key <key-name> --timestamp-url "http://timestamp.digicert.com" --timestamp-root-cert public-keys/digi_cert.crt docker.io/securesystemsengineering/connaisseur:v<version>
+notation sign --key "sse" docker.io/securesystemsengineering/connaisseur@sha256:${SHA}
+```
+
+### Automated Signing Script
+
+For convenience, the [scripts/multi_arch_sign.sh](../scripts/multi_arch_sign.sh) script automates the signing process for all three signature types.
+This script automatically extracts the image reference, tag, size, and SHA256 digest from the manifest and signs the image with Notary, Cosign, and Notation (if the respective keys are available).
+
+To use the script, simply run:
+
+```bash
+bash scripts/multi_arch_sign.sh
 ```
