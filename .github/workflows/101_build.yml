@@ -63,17 +63,17 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Get chart version
         id: get_chart_version
-        uses: mikefarah/yq@065b200af9851db0d5132f50bc10b1406ea5c0a8 # v4.50.1
+        uses: mikefarah/yq@2be0094729a1006f61e8339ce9934bfb3cbb549f # v4.52.2
         with:
           cmd: yq '.version' charts/connaisseur/Chart.yaml
       - name: Get app version
         id: get_app_version
-        uses: mikefarah/yq@065b200af9851db0d5132f50bc10b1406ea5c0a8 # v4.50.1
+        uses: mikefarah/yq@2be0094729a1006f61e8339ce9934bfb3cbb549f # v4.52.2
         with:
           cmd: yq '.appVersion' charts/connaisseur/Chart.yaml
       - name: Get original image
         id: get_original_image_repository
-        uses: mikefarah/yq@065b200af9851db0d5132f50bc10b1406ea5c0a8 # v4.50.1
+        uses: mikefarah/yq@2be0094729a1006f61e8339ce9934bfb3cbb549f # v4.52.2
         with:
           cmd: yq '.kubernetes.deployment.image.repository' charts/connaisseur/values.yaml
       - name: Get repo name
