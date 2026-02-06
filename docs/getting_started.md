@@ -205,12 +205,14 @@ replicaset.apps/connaisseur-deployment-6876c87c8c   3         3         3       
 
 Now that we created our key pairs, configured and deployed Connaisseur, the next step is to test our setup.
 So let's create and push a test image.
-Feel free to use our simple test Dockerfile under `tests/Dockerfile` (make sure to set your own `IMAGE` name):
+Feel free to use any image you like (make sure to set your own `IMAGE` name).
+Below, we will use the `hello-world` image:
 
 ```bash
 # Typically, IMAGE=<REGISTRY>/<REPOSITORY-NAME>/<IMAGE-NAME>:<TAG>, like
 IMAGE=docker.io/securesystemsengineering/demo:test
-docker build -f tests/Dockerfile -t ${IMAGE} .
+docker pull hello-world
+docker image tag hello-world ${IMAGE}
 docker push ${IMAGE}
 ```
 
