@@ -90,7 +90,7 @@ Besides the unit testing and before any PR can be merged, an integration test is
 - a signed image is deployed to the cluster and passed
 - Connaisseur is successfully uninstalled
 
-You can also run this integration test on a local cluster. There is a more [detailed guided](https://github.com/sse-secure-systems/connaisseur/blob/master/tests/integration/README.md) on how to do that.
+You can also run this integration test on a local cluster. There is a more [detailed guided](../test/integration/README.md) on how to do that.
 
 If you are changing documentation, you can simply inspect your changes locally via:
 
