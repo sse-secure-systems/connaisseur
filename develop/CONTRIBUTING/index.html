@@ -1472,7 +1472,7 @@ docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint golangci-lint run 
 <li>a signed image is deployed to the cluster and passed</li>
 <li>Connaisseur is successfully uninstalled</li>
 </ul>
-<p>You can also run this integration test on a local cluster. There is a more <a href="https://github.com/sse-secure-systems/connaisseur/blob/master/tests/integration/README.md">detailed guided</a> on how to do that.</p>
+<p>You can also run this integration test on a local cluster. There is a more <a href="../test/integration/README.md">detailed guided</a> on how to do that.</p>
 <p>If you are changing documentation, you can simply inspect your changes locally via:</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>-v<span class="w"> </span><span class="si">${</span><span class="nv">PWD</span><span class="si">}</span>:/docs<span class="w"> </span>squidfunk/mkdocs-material
 </code></pre></div>

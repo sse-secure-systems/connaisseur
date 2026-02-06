@@ -1529,10 +1529,12 @@ replicaset.apps/connaisseur-deployment-6876c87c8c<span class="w">   </span><span
 <h2 id="test-connaisseur">Test Connaisseur<a class="headerlink" href="#test-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>Now that we created our key pairs, configured and deployed Connaisseur, the next step is to test our setup.
 So let's create and push a test image.
-Feel free to use our simple test Dockerfile under <code>tests/Dockerfile</code> (make sure to set your own <code>IMAGE</code> name):</p>
+Feel free to use any image you like (make sure to set your own <code>IMAGE</code> name).
+Below, we will use the <code>hello-world</code> image:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Typically, IMAGE=&lt;REGISTRY&gt;/&lt;REPOSITORY-NAME&gt;/&lt;IMAGE-NAME&gt;:&lt;TAG&gt;, like</span>
 <span class="nv">IMAGE</span><span class="o">=</span>docker.io/securesystemsengineering/demo:test
-docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>tests/Dockerfile<span class="w"> </span>-t<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span><span class="w"> </span>.
+docker<span class="w"> </span>pull<span class="w"> </span>hello-world
+docker<span class="w"> </span>image<span class="w"> </span>tag<span class="w"> </span>hello-world<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 docker<span class="w"> </span>push<span class="w"> </span><span class="si">${</span><span class="nv">IMAGE</span><span class="si">}</span>
 </code></pre></div>
 <blockquote>
