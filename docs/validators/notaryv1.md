@@ -136,7 +136,7 @@ You also need to create a corresponding entry in the image policy via `applicati
 After installation, you are ready to verify your images against your public key:
 
 ```bash
-helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+helm install connaisseur helm --rollback-on-failure --create-namespace --namespace connaisseur
 ```
 
 Connaisseur now rejects all images from the given repository that have not been signed based on the provided public key.

@@ -43,7 +43,7 @@ git clone https://github.com/sse-secure-systems/connaisseur.git
 Next, install Connaisseur via [Helm](https://helm.sh):
 
 ```bash
-helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+helm install connaisseur helm --rollback-on-failure --create-namespace --namespace connaisseur
 ```
 
 Once installation has finished, you are good to go.

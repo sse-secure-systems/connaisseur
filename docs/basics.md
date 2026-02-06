@@ -82,7 +82,7 @@ Install Connaisseur via Helm or Kubernetes manifests:
     Install Connaisseur by using the Helm template definition files in the `helm` directory:
 
     ```bash
-    helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+    helm install connaisseur helm --rollback-on-failure --create-namespace --namespace connaisseur
     ```
 
 === "Helm chart"
@@ -90,13 +90,13 @@ Install Connaisseur via Helm or Kubernetes manifests:
     Install Connaisseur using the default configuration from the chart repository:
 
     ```bash
-    helm install connaisseur connaisseur/connaisseur --atomic --create-namespace --namespace connaisseur
+    helm install connaisseur connaisseur/connaisseur --rollback-on-failure --create-namespace --namespace connaisseur
     ```
 
     To customize Connaisseur, craft a `values.yaml` according to your needs and apply:
 
     ```bash
-    helm install connaisseur connaisseur/connaisseur --atomic --create-namespace --namespace connaisseur -f values.yaml
+    helm install connaisseur connaisseur/connaisseur --rollback-on-failure --create-namespace --namespace connaisseur -f values.yaml
     ```
 
 === "Kubernetes manifests"

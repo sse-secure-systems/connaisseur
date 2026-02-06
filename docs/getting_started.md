@@ -168,7 +168,7 @@ Consequently, we leave the rest untouched in this tutorial, but strongly recomme
 So let's deploy Connaisseur to the cluster:
 
 ```bash
-helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+helm install connaisseur helm --rollback-on-failure --create-namespace --namespace connaisseur
 ```
 
 This can take a few minutes.

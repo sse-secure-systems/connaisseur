@@ -61,7 +61,7 @@ In `.application.policy`, add a pattern to match your public key to your own rep
 After installation, you are ready to verify your images against your public key:
 
 ```bash
-helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+helm install connaisseur helm --rollback-on-failure --create-namespace --namespace connaisseur
 ```
 
 A quick guide for installation and testing is available in [getting started](../getting_started.md#deploy-connaisseur).

@@ -107,7 +107,7 @@ In `.application.policy`, add a pattern to match your repository:
 After installation, Connaisseur will verify your images against the configured certificates:
 
 ```bash
-helm install connaisseur helm --atomic --create-namespace --namespace connaisseur
+helm install connaisseur helm --rollback-on-failure --create-namespace --namespace connaisseur
 ```
 
 ### Testing validation

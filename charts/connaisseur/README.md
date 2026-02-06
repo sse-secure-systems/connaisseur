@@ -13,7 +13,7 @@ To learn more about Connaisseur, visit the [full documentation](https://sse-secu
 
 ## Get started
 
-To get started, locally add the Connaisseur [Helm](https://helm.sh/) repository 
+To get started, locally add the Connaisseur [Helm](https://helm.sh/) repository
 
 ```console
 helm repo add connaisseur https://sse-secure-systems.github.io/connaisseur/charts
@@ -22,7 +22,7 @@ helm repo add connaisseur https://sse-secure-systems.github.io/connaisseur/chart
 and install the Connaisseur Helm chart from there:
 
 ```console
-helm install connaisseur connaisseur/connaisseur --atomic --create-namespace --namespace connaisseur
+helm install connaisseur connaisseur/connaisseur --rollback-on-failure --create-namespace --namespace connaisseur
 ```
 
 The default configuration of Connaisseur holds the public root key for [Docker official images](https://docs.docker.com/docker-hub/official_images/), so running such an official Docker image like the `hello-world` should succeed
