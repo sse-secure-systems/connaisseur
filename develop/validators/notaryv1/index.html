@@ -1591,7 +1591,7 @@ The corresponding entry should look similar to the following (using the extracte
 <span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
 </code></pre></div>
 <p>After installation, you are ready to verify your images against your public key:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--rollback-on-failure<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>Connaisseur now rejects all images from the given repository that have not been signed based on the provided public key.
 A quick guide for installation and testing is available in <a href="../../getting_started/#deploy-connaisseur">getting started</a>.

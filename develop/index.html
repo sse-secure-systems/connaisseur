@@ -1490,7 +1490,7 @@ For a quick start, clone the Connaisseur repository:</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sse-secure-systems/connaisseur.git
 </code></pre></div>
 <p>Next, install Connaisseur via <a href="https://helm.sh">Helm</a>:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--rollback-on-failure<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>Once installation has finished, you are good to go.
 Successful verification can be tested via official Docker images like <code>hello-world</code>:</p>

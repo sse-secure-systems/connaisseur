@@ -1529,7 +1529,7 @@ The entry in <code>.application.validators</code> should look something like thi
 <span class="w">  </span><span class="nt">validator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customvalidator</span>
 </code></pre></div>
 <p>After installation, you are ready to verify your images against your public key:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--rollback-on-failure<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>A quick guide for installation and testing is available in <a href="../../getting_started/#deploy-connaisseur">getting started</a>.
 In case you just use the default values for the validator and image policy given above, you are able to successfully validate our signed testimage:</p>

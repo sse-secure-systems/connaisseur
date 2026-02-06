@@ -1868,15 +1868,15 @@ However, validating your own images requires additional configuration.</p>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Install Connaisseur by using the Helm template definition files in the <code>helm</code> directory:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--rollback-on-failure<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 </div>
 <div class="tabbed-block">
 <p>Install Connaisseur using the default configuration from the chart repository:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>connaisseur/connaisseur<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>connaisseur/connaisseur<span class="w"> </span>--rollback-on-failure<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>To customize Connaisseur, craft a <code>values.yaml</code> according to your needs and apply:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>connaisseur/connaisseur<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur<span class="w"> </span>-f<span class="w"> </span>values.yaml
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>connaisseur/connaisseur<span class="w"> </span>--rollback-on-failure<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur<span class="w"> </span>-f<span class="w"> </span>values.yaml
 </code></pre></div>
 </div>
 <div class="tabbed-block">

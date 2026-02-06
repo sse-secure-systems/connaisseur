@@ -1500,7 +1500,7 @@ Per default, Connaisseur's image policy under <code>.application.policy</code> i
 Consequently, we leave the rest untouched in this tutorial, but strongly recommend to read the <a href="../basics/">basics</a> to leverage the full potential of Connaisseur.</p>
 <h2 id="deploy-connaisseur">Deploy Connaisseur<a class="headerlink" href="#deploy-connaisseur" title="Permanent link">⚓︎</a></h2>
 <p>So let's deploy Connaisseur to the cluster:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--atomic<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>connaisseur<span class="w"> </span>helm<span class="w"> </span>--rollback-on-failure<span class="w"> </span>--create-namespace<span class="w"> </span>--namespace<span class="w"> </span>connaisseur
 </code></pre></div>
 <p>This can take a few minutes.
 You should be prompted something like:</p>
