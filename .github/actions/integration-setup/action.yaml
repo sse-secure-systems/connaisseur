@@ -38,7 +38,7 @@ runs:
       shell: bash
     - name: Setup Helm
       run: |
-        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+        curl -sf https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-4 | bash
       shell: bash
     - name: Wait for coredns, metrics server, traefik
       run: |
