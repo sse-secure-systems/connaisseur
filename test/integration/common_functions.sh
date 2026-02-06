@@ -79,7 +79,7 @@ install() { # $1: helm, make or release, $2: namespace, $3: additional helm args
     echo -n "Installing Connaisseur using $1..."
     case $1 in
     "helm")
-        helm install connaisseur charts/connaisseur --atomic --namespace "${2:-connaisseur}" \
+        helm install connaisseur charts/connaisseur --rollback-on-failure --namespace "${2:-connaisseur}" \
             ${ARGS} >/dev/null || fail
         ;;
     "make")
@@ -92,7 +92,7 @@ install() { # $1: helm, make or release, $2: namespace, $3: additional helm args
         if ghcr_case; then
             ghcr_update release.yaml
         fi
-        helm install connaisseur connaisseur/connaisseur --atomic --namespace "${2:-connaisseur}" \
+        helm install connaisseur connaisseur/connaisseur --rollback-on-failure --namespace "${2:-connaisseur}" \
             --create-namespace --values release.yaml ${ARGS} >/dev/null || fail
         rm release.yaml
     ;;

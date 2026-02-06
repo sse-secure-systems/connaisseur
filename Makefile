@@ -16,11 +16,11 @@ docker-multiarch:
 	docker buildx build --platform linux/amd64,linux/arm64 --pull -f build/Dockerfile -t $(IMAGE_REPO):v$(VERSION) --push .
 
 install:
-	helm install connaisseur charts/connaisseur --atomic --create-namespace --namespace $(NAMESPACE) $(HELM_ARGS)
+	helm install connaisseur charts/connaisseur --rollback-on-failure --create-namespace --namespace $(NAMESPACE) $(HELM_ARGS)
 
 install-dev:
 	helm install --set $(KD).replicasCount=1,$(KD).pullPolicy=Never,application.logLevel=debug \
-	 connaisseur charts/connaisseur --atomic --create-namespace --namespace $(NAMESPACE) $(HELM_ARGS)
+	 connaisseur charts/connaisseur --rollback-on-failure --create-namespace --namespace $(NAMESPACE) $(HELM_ARGS)
 
 uninstall:
 	helm uninstall connaisseur -n $(NAMESPACE)
