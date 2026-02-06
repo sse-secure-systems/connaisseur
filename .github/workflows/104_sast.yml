@@ -28,11 +28,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4.32.0
+        uses: github/codeql-action/init@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         with:
           languages: 'go'
       - name: Analyze
-        uses: github/codeql-action/analyze@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4.32.0
+        uses: github/codeql-action/analyze@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
 
   golangci-lint:
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
         with:
           args: "-exclude-dir=test -exclude-dir=tools ${{ inputs.output == 'sarif' && '-no-fail -fmt sarif -out gosec-results.sarif' || '-fmt text' }} ./..."
       - name: Upload
-        uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4.32.0
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         if: inputs.output == 'sarif'
         with:
           sarif_file: 'gosec-results.sarif'
@@ -99,7 +99,7 @@ jobs:
           no-fail: ${{ inputs.output == 'sarif' && 'true' || 'false' }}
           output-file: ${{ inputs.output == 'sarif' && 'hadolint-results.sarif' || '' }}
       - name: Upload
-        uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4.32.0
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         if: inputs.output == 'sarif'
         with:
           sarif_file: 'hadolint-results.sarif'
@@ -122,7 +122,7 @@ jobs:
           format: ${{ inputs.output == 'sarif' && 'sarif' || 'plain' }}
           output-file: ${{ inputs.output == 'sarif' && 'kubelinter-results.sarif' || 'kube-linter.log' }}
       - name: Upload
-        uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4.32.0
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         if: inputs.output == 'sarif'
         with:
           sarif_file: 'kubelinter-results.sarif'
@@ -162,13 +162,13 @@ jobs:
           format: ${{ inputs.output }}
           output: ${{ inputs.output == 'sarif' && 'reports/trivy-docker-results.sarif' || '' }}
       - name: Upload k8s report
-        uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4.32.0
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         if: inputs.output == 'sarif'
         with:
           sarif_file: 'reports/trivy-k8s-results.sarif'
           category: 'k8s'
       - name: Upload docker report
-        uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30 # v4.32.0
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         if: inputs.output == 'sarif'
         with:
           sarif_file: 'reports/trivy-docker-results.sarif'
