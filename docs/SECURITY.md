@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-While all known vulnerabilities in the Connaisseur application are listed below and we intent to fix vulnerabilities as soon as we become aware, both, Python and OS packages of the Connaisseur image may become vulnerable over time and we suggest to frequently update to the latest version of Connaisseur or rebuilding the image from source yourself.
+While all known vulnerabilities in the Connaisseur application are listed below and we intent to fix vulnerabilities as soon as we become aware, both, Go and OS packages of the Connaisseur image may become vulnerable over time and we suggest to frequently update to the latest version of Connaisseur or rebuilding the image from source yourself.
 At present, we only support the latest version.
 We stick to semantic versioning, so unless the major version changes, updating Conaisseur should never break your installation.
 
