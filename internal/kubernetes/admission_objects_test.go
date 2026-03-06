@@ -1,7 +1,6 @@
 package kubernetes
 
 import (
-	"connaisseur/internal/constants"
 	"connaisseur/test/testhelper"
 	"errors"
 	"testing"
@@ -15,14 +14,12 @@ func TestNewAdmissionRequestObjects(t *testing.T) {
 	trueVar := true
 	const PRE = "../../test/testdata/admission_requests/"
 	var testCases = []struct {
-		admissionReview         string
-		automaticUpdateApproval string
-		expectedAro             *AdmissionRequestObjects
-		expectedErr             error
+		admissionReview string
+		expectedAro     *AdmissionRequestObjects
+		expectedErr     error
 	}{
 		{
 			"01_deployment",
-			"false",
 			&AdmissionRequestObjects{
 				NewObj: &WorkloadObject{
 					"charlie-deployment",
@@ -43,6 +40,7 @@ func TestNewAdmissionRequestObjects(t *testing.T) {
 					nil,
 					nil,
 					nil,
+					false,
 				},
 				OldObj: &WorkloadObject{
 					Containers:     []core.Container{},
@@ -56,7 +54,6 @@ func TestNewAdmissionRequestObjects(t *testing.T) {
 		},
 		{
 			"10_update",
-			"true",
 			&AdmissionRequestObjects{
 				NewObj: &WorkloadObject{
 					"test-58d59c69bf",
@@ -81,6 +78,7 @@ func TestNewAdmissionRequestObjects(t *testing.T) {
 						Controller:         &trueVar,
 						BlockOwnerDeletion: &trueVar,
 					}},
+					false,
 				},
 				OldObj: &WorkloadObject{
 					"test-58d59c69bf",
@@ -105,6 +103,7 @@ func TestNewAdmissionRequestObjects(t *testing.T) {
 						Controller:         &trueVar,
 						BlockOwnerDeletion: &trueVar,
 					}},
+					false,
 				},
 				Kind:      "ReplicaSet",
 				Namespace: "default",
@@ -114,20 +113,17 @@ func TestNewAdmissionRequestObjects(t *testing.T) {
 		},
 		{
 			"21_broken_admission_request",
-			"false",
 			nil,
 			errors.New("error decoding new workload object: unknown workload kind \"\""),
 		},
 		{
-			"21_broken_admission_request",
-			"true",
+			"26_broken_update_admission_request",
 			nil,
 			errors.New("error decoding old workload object: unknown workload kind \"\""),
 		},
 	}
 
 	for _, tc := range testCases {
-		t.Setenv(constants.AutomaticUnchangedApproval, tc.automaticUpdateApproval)
 		ar := testhelper.RetrieveAdmissionReview(PRE + tc.admissionReview + ".json")
 		aro, err := NewAdmissionRequestObjects(ar.Request)
 		assert.Equal(t, tc.expectedAro, aro)

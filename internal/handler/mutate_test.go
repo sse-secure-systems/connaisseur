@@ -411,6 +411,33 @@ func TestMutateReview(t *testing.T) {
 			"",
 			constants.NotificationResultSuccess,
 		},
+		{ // 8: Denies a create request with resource marked for deletion
+			"27_deleted_deployment",
+			false,
+			"",
+			"busybox",
+			"{\"digest\":\"\",\"error\":\"error during mock validation of image busybox: unabled to find signed digest for image docker.io/library/busybox:latest\"}",
+			"unabled to find signed digest for image docker.io/library/busybox:latest",
+			constants.NotificationResultError,
+		},
+		{ // 9: Admits an update request, where the old workload object was already marked for deletion
+			"28_deleted_deployment_updated",
+			true,
+			"",
+			"",
+			"",
+			"",
+			constants.NotificationResultSuccess,
+		},
+		{ // 10: Denies an update request, where the old workload object wasn't marked for deletion, but the new one is
+			"29_deleted_deployment_update_for_delete",
+			false,
+			"",
+			"busybox",
+			"{\"digest\":\"\",\"error\":\"error during mock validation of image busybox: unabled to find signed digest for image docker.io/library/busybox:latest\"}",
+			"unabled to find signed digest for image docker.io/library/busybox:latest",
+			constants.NotificationResultError,
+		},
 	}
 
 	cache := testhelper.MockCache(t, []testhelper.KeyValuePair{})

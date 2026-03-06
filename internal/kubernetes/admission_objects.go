@@ -1,8 +1,6 @@
 package kubernetes
 
 import (
-	"connaisseur/internal/constants"
-	"connaisseur/internal/utils"
 	"fmt"
 
 	admission "k8s.io/api/admission/v1"
@@ -26,14 +24,10 @@ type AdmissionRequestObjects struct {
 
 func NewAdmissionRequestObjects(ar *admission.AdmissionRequest) (*AdmissionRequestObjects, error) {
 	var err error
-	oldWLO := &WorkloadObject{Containers: []core.Container{}, InitContainers: []core.Container{}}
+	oldWLO := &WorkloadObject{Containers: []core.Container{}, InitContainers: []core.Container{}, Deleted: false}
 
-	// the old obj has empty containers, init containers and ephemeral containers per default and is
-	// only
-	// filled if the request is an UPDATE one and the automatic unchanged approval
-	// feature flag is on.
-	if utils.FeatureFlagOn(constants.AutomaticUnchangedApproval) &&
-		ar.Operation == admission.Update {
+	// Old workload object is only required if there's an update happening
+	if ar.Operation == admission.Update {
 		oldWLO, err = NewWorkloadObjectFromBytes(ar.OldObject.Raw, (schema.GroupVersionKind)(ar.Kind), ar.Namespace)
 		if err != nil {
 			return nil, fmt.Errorf("error decoding old workload object: %s", err)

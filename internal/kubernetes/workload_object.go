@@ -31,6 +31,8 @@ type WorkloadObject struct {
 	EphemeralContainers []core.EphemeralContainer
 	// OwnerReferences of the workload object
 	Owners []meta.OwnerReference
+	// Whether the workload object has been marked for deletion
+	Deleted bool
 }
 
 type IdxType struct {
@@ -52,6 +54,7 @@ func NewWorkloadObjectFromBytes(
 		initContainers      []core.Container
 		ephemeralContainers []core.EphemeralContainer
 		owners              []meta.OwnerReference
+		deleted             bool
 		err                 error
 		obj                 runtime.Object
 		ok                  bool
@@ -73,6 +76,7 @@ func NewWorkloadObjectFromBytes(
 		initContainers = pod.Spec.InitContainers
 		ephemeralContainers = pod.Spec.EphemeralContainers
 		owners = pod.OwnerReferences
+		deleted = pod.DeletionTimestamp != nil
 	case "Deployment":
 		deployment := &apps.Deployment{}
 		obj, err = Deserialize(raw, &kind, deployment)
@@ -85,6 +89,7 @@ func NewWorkloadObjectFromBytes(
 		containers = deployment.Spec.Template.Spec.Containers
 		initContainers = deployment.Spec.Template.Spec.InitContainers
 		owners = deployment.OwnerReferences
+		deleted = deployment.DeletionTimestamp != nil
 	case "ReplicationController":
 		rplc := &core.ReplicationController{}
 		obj, err = Deserialize(raw, &kind, rplc)
@@ -97,6 +102,7 @@ func NewWorkloadObjectFromBytes(
 		containers = rplc.Spec.Template.Spec.Containers
 		initContainers = rplc.Spec.Template.Spec.InitContainers
 		owners = rplc.OwnerReferences
+		deleted = rplc.DeletionTimestamp != nil
 	case "ReplicaSet":
 		rpls := &apps.ReplicaSet{}
 		obj, err = Deserialize(raw, &kind, rpls)
@@ -109,6 +115,7 @@ func NewWorkloadObjectFromBytes(
 		containers = rpls.Spec.Template.Spec.Containers
 		initContainers = rpls.Spec.Template.Spec.InitContainers
 		owners = rpls.OwnerReferences
+		deleted = rpls.DeletionTimestamp != nil
 	case "DaemonSet":
 		ds := &apps.DaemonSet{}
 		obj, err = Deserialize(raw, &kind, ds)
@@ -121,6 +128,7 @@ func NewWorkloadObjectFromBytes(
 		containers = ds.Spec.Template.Spec.Containers
 		initContainers = ds.Spec.Template.Spec.InitContainers
 		owners = ds.OwnerReferences
+		deleted = ds.DeletionTimestamp != nil
 	case "StatefulSet":
 		sts := &apps.StatefulSet{}
 		obj, err = Deserialize(raw, &kind, sts)
@@ -133,6 +141,7 @@ func NewWorkloadObjectFromBytes(
 		containers = sts.Spec.Template.Spec.Containers
 		initContainers = sts.Spec.Template.Spec.InitContainers
 		owners = sts.OwnerReferences
+		deleted = sts.DeletionTimestamp != nil
 	case "Job":
 		job := &batch.Job{}
 		obj, err = Deserialize(raw, &kind, job)
@@ -145,6 +154,7 @@ func NewWorkloadObjectFromBytes(
 		containers = job.Spec.Template.Spec.Containers
 		initContainers = job.Spec.Template.Spec.InitContainers
 		owners = job.OwnerReferences
+		deleted = job.DeletionTimestamp != nil
 	case "CronJob":
 		cj := &batch.CronJob{}
 		obj, err = Deserialize(raw, &kind, cj)
@@ -157,6 +167,7 @@ func NewWorkloadObjectFromBytes(
 		containers = cj.Spec.JobTemplate.Spec.Template.Spec.Containers
 		initContainers = cj.Spec.JobTemplate.Spec.Template.Spec.InitContainers
 		owners = cj.OwnerReferences
+		deleted = cj.DeletionTimestamp != nil
 	default:
 		err = fmt.Errorf("unknown workload kind \"%s\"", kind.Kind)
 	}
@@ -175,6 +186,7 @@ func NewWorkloadObjectFromBytes(
 		InitContainers:      initContainers,
 		EphemeralContainers: ephemeralContainers,
 		Owners:              owners,
+		Deleted:             deleted,
 	}, nil
 }
 

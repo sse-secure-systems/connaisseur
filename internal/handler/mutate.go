@@ -172,9 +172,28 @@ func mutateReview(ctx context.Context, ar admission.AdmissionReview) (*admission
 	if err != nil {
 		notificationValues.Result = constants.NotificationResultInvalid
 		logrus.Errorf("error creating admission request objects: %v", err)
-		return &admission.AdmissionResponse{Result: &meta.Status{
-			Message: err.Error(),
-		}}, notificationValues
+		return &admission.AdmissionResponse{
+			UID: ar.Request.UID,
+			Result: &meta.Status{
+				Message: err.Error(),
+			}}, notificationValues
+	}
+
+	// if the previous object was already marked for deletion, it cannot be modified
+	// except for the deletion of finalizers, so update is fine
+	// see https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/
+	// if we don't handle this, then Connaisseur could block deletion of resources with
+	// finalizers indefinetely if they're not or no longer signed as we'd block the PATCH
+	// to remove the finalizer.
+	// since users likely want to remove unsigned resources from their cluster, this could
+	// become a problem, see https://github.com/sse-secure-systems/connaisseur/issues/2053
+	if aro.OldObj.Deleted {
+		logrus.Infof("skipped validation on update request for %s resource '%s' already marked for deletion", aro.OldObj.Kind, aro.OldObj.Name)
+		notificationValues.Result = constants.NotificationResultSuccess
+		return &admission.AdmissionResponse{
+			UID:     ar.Request.UID,
+			Allowed: true,
+		}, notificationValues
 	}
 	ctx = context.WithValue(ctx, constants.RequestId, ar.Request.UID)
 	// do validation
