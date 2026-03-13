@@ -105,6 +105,7 @@ nav:
       - features/namespaced_validation.md
       - features/resource_validation_mode.md
       - features/caching.md
+    - advanced.md
   - Security:
     - threat_model.md
     - SECURITY.md
@@ -124,4 +125,3 @@ nav:
       - adr/ADR-9_multi-pod.md
   - Releases ⧉: https://github.com/sse-secure-systems/connaisseur/releases
   - Support ⧉: https://github.com/sse-secure-systems/connaisseur/discussions
-
