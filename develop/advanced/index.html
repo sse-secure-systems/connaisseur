@@ -10,28 +10,28 @@
       
       
       
-        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/features/automatic_unchanged_approval/">
+        <link rel="canonical" href="https://sse-secure-systems.github.io/connaisseur/develop/advanced/">
       
       
-        <link rel="prev" href="../automatic_child_approval/">
+        <link rel="prev" href="../features/caching/">
       
       
-        <link rel="next" href="../detection_mode/">
+        <link rel="next" href="../threat_model/">
       
       
-      <link rel="icon" href="../../assets/favicon.svg">
+      <link rel="icon" href="../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
       
-        <title>Automatic Unchanged Approval - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
+        <title>Advanced information - CONNAISSEUR - Verify Container Image Signatures in Kubernetes</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.a40c8224.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.a40c8224.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -50,7 +50,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#automatic-unchanged-approval" class="md-skip">
+        <a href="#advanced-information" class="md-skip">
           Skip to content
         </a>
       
@@ -102,7 +102,7 @@
             <div class="md-banner__inner md-grid md-typeset">
               
 You're not viewing the docs of the latest version.
-<a href="../../.."><strong>Click here to go to the latest version.</strong></a>
+<a href="../.."><strong>Click here to go to the latest version.</strong></a>
 
             </div>
             <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
@@ -117,9 +117,9 @@ You're not viewing the docs of the latest version.
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-header__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -136,7 +136,7 @@ You're not viewing the docs of the latest version.
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Automatic Unchanged Approval
+              Advanced information
             
           </span>
         </div>
@@ -223,9 +223,9 @@ You're not viewing the docs of the latest version.
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
+    <a href=".." title="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" class="md-nav__button md-logo" aria-label="CONNAISSEUR - Verify Container Image Signatures in Kubernetes" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
     CONNAISSEUR - Verify Container Image Signatures in Kubernetes
@@ -252,7 +252,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -272,7 +272,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/" class="md-nav__link">
+      <a href="../getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -329,7 +329,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../basics/" class="md-nav__link">
+      <a href="../basics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -385,7 +385,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../validators/" class="md-nav__link">
+      <a href="../validators/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -406,7 +406,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../validators/notaryv1/" class="md-nav__link">
+      <a href="../validators/notaryv1/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -427,7 +427,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../validators/sigstore_cosign/" class="md-nav__link">
+      <a href="../validators/sigstore_cosign/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -448,7 +448,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../validators/notation/" class="md-nav__link">
+      <a href="../validators/notation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -474,19 +474,17 @@ You're not viewing the docs of the latest version.
                 
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
         
           
           <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
@@ -500,7 +498,7 @@ You're not viewing the docs of the latest version.
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
             Features
@@ -514,7 +512,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../features/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -535,7 +533,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../alerting/" class="md-nav__link">
+      <a href="../features/alerting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -556,7 +554,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../automatic_child_approval/" class="md-nav__link">
+      <a href="../features/automatic_child_approval/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -574,30 +572,10 @@ You're not viewing the docs of the latest version.
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Automatic Unchanged Approval
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../features/automatic_unchanged_approval/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -606,44 +584,6 @@ You're not viewing the docs of the latest version.
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration options
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -656,7 +596,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../detection_mode/" class="md-nav__link">
+      <a href="../features/detection_mode/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -677,7 +617,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../metrics/" class="md-nav__link">
+      <a href="../features/metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -698,7 +638,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../namespaced_validation/" class="md-nav__link">
+      <a href="../features/namespaced_validation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -719,7 +659,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../resource_validation_mode/" class="md-nav__link">
+      <a href="../features/resource_validation_mode/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -740,7 +680,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../caching/" class="md-nav__link">
+      <a href="../features/caching/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -766,10 +706,30 @@ You're not viewing the docs of the latest version.
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../advanced/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Advanced information
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -778,6 +738,44 @@ You're not viewing the docs of the latest version.
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#finalizer-removal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Finalizer removal
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#starting-a-cluster-with-connaisseur-installed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Starting a cluster with Connaisseur installed
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -832,7 +830,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../threat_model/" class="md-nav__link">
+      <a href="../threat_model/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -853,7 +851,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../SECURITY/" class="md-nav__link">
+      <a href="../SECURITY/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -916,7 +914,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../CONTRIBUTING/" class="md-nav__link">
+      <a href="../CONTRIBUTING/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -937,7 +935,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../RELEASING/" class="md-nav__link">
+      <a href="../RELEASING/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -993,7 +991,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/" class="md-nav__link">
+      <a href="../adr/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1014,7 +1012,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
+      <a href="../adr/ADR-1_bootstrap-sentinel/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1035,7 +1033,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-2_release-management/" class="md-nav__link">
+      <a href="../adr/ADR-2_release-management/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1056,7 +1054,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-3_multi_notary_config/" class="md-nav__link">
+      <a href="../adr/ADR-3_multi_notary_config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1077,7 +1075,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-4_modular/" class="md-nav__link">
+      <a href="../adr/ADR-4_modular/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1098,7 +1096,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
+      <a href="../adr/ADR-5_no-more-bootstrap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1119,7 +1117,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-6_dynamic-config/" class="md-nav__link">
+      <a href="../adr/ADR-6_dynamic-config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1140,7 +1138,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-7_wsgi-server/" class="md-nav__link">
+      <a href="../adr/ADR-7_wsgi-server/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1161,7 +1159,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-8_go-transition/" class="md-nav__link">
+      <a href="../adr/ADR-8_go-transition/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1182,7 +1180,7 @@ You're not viewing the docs of the latest version.
   
   
     <li class="md-nav__item">
-      <a href="../../adr/ADR-9_multi-pod/" class="md-nav__link">
+      <a href="../adr/ADR-9_multi-pod/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1278,18 +1276,18 @@ You're not viewing the docs of the latest version.
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
+  <a href="#finalizer-removal" class="md-nav__link">
     <span class="md-ellipsis">
-      Configuration options
+      Finalizer removal
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
+  <a href="#starting-a-cluster-with-connaisseur-installed" class="md-nav__link">
     <span class="md-ellipsis">
-      Example
+      Starting a cluster with Connaisseur installed
     </span>
   </a>
   
@@ -1310,46 +1308,26 @@ You're not viewing the docs of the latest version.
                   
 
 
-<h1 id="automatic-unchanged-approval">Automatic Unchanged Approval<a class="headerlink" href="#automatic-unchanged-approval" title="Permanent link">⚓︎</a></h1>
-<p>With the feature <em>automatic unchanged approval</em> enabled, Connaisseur automatically approves any resource that is updated and doesn't change its image references.
-This is especially useful when handling long living resources, with potentially out-of-sync signature data, that still need to be scaled up and down.</p>
-<p>An example: When dealing with a deployment that has an image reference <code>image:tag</code>, this reference is updated by Connaisseur during signature validation to <code>image@sha256:123...</code>, to ensure the correct image is used by the deployment.
-When scaling up or down the deployment, the image reference <code>image@sha256:123...</code> is presented to Connaisseur, due to the updated definition.
-Over time the signature of the original <code>image:tag</code> may change and a new "correct" image is available at <code>image@sha256:456...</code>.
-If afterwards the deployment in scaled up or down, Connaisseur will try to validate the image reference <code>image@sha256:123...</code>, by looking for it inside the signature data it receives.
-Unfortunately this reference may no longer be present, due to signature updates and thus the whole scaling will be denied.</p>
-<p>With automatic unchanged approval enabled, this is no longer the case.
-The validation of <code>image@sha256:123...</code> will be skipped, as no different image is used.</p>
-<p>This obviously has security implications, since it's no longer guaranteed that resources that are updated, have fresh and up-to-date signatures.
-So use it with caution.
-For that reason the feature is also disabled by default.
-The creation of resources on the other hand remains unchanged and will enforce validation.</p>
-<h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>automaticUnchangedApproval</code> in <code>charts/connaisseur/values.yaml</code> under <code>application.features</code> supports the following values:</p>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Default</th>
-<th>Required</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>automaticUnchangedApproval</code></td>
-<td><code>false</code></td>
-<td>-</td>
-<td><code>true</code> or <code>false</code> ; when <code>true</code>, Connaisseur will enable automatic unchanged approval</td>
-</tr>
-</tbody>
-</table>
-<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">⚓︎</a></h2>
-<p>In <code>charts/connaisseur/values.yaml</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">application</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">features</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">automaticUnchangedApproval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</code></pre></div>
+<h1 id="advanced-information">Advanced information<a class="headerlink" href="#advanced-information" title="Permanent link">⚓︎</a></h1>
+<p>There are some edge cases or considerations for Connaisseur, which most people won't notice or care about, but which we still want to document.
+Below those are listed.</p>
+<h2 id="finalizer-removal">Finalizer removal<a class="headerlink" href="#finalizer-removal" title="Permanent link">⚓︎</a></h2>
+<p>Connaisseur used to run every single CREATE and UPDATE adminission request through its validators.
+However, in some cases this is not desired as highlighted by <a href="https://github.com/sse-secure-systems/connaisseur/issues/2053">Issue #2053</a>.
+Once a pod is marked for deletion, it's attributes cannot be changed anymore, except for <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/#:~:text=Kubernetes%20adds%20the%20deletion%20timestamp%20for%20that%20object%20and%20then%20immediately%20starts%20to%20restrict%20changes">removal of finalizers</a>.
+If finalizers cannot be removed (e.g., because the operation would be blocked by Connaisseur), resources may be kept alive indefinitely.</p>
+<p>Since no meaningful attributes (with respect to Connaisseur's mission) can be changed, it is safe for Connaisseur to allow updates to resources marked for deletion.
+This is also in line with Connaisseur allowing all DELETE admission request.
+Therefore, if Connaisseur receives an UPDATE admission request, where the previous object was already marked for deletion, we allow it without verifying image signatures according to the policy.</p>
+<h2 id="starting-a-cluster-with-connaisseur-installed">Starting a cluster with Connaisseur installed<a class="headerlink" href="#starting-a-cluster-with-connaisseur-installed" title="Permanent link">⚓︎</a></h2>
+<p>Connaisseur is a Mutating Admission Controller and as such has a <code>MutatingWebhookConfiguration</code> which specifies where requests are to be sent for mutation and admission review.
+By default, Connaisseur is configured to be a fail-closed service: If anything goes wrong, including service unavailability, resource admission will be blocked.
+This works well if Connaisseur is installed into a running cluster.
+Then the actual Connaisseur resources are deployed and then the <code>MutatingWebhookConfiguration</code> is installed, routing to the Connaisseur pods and subsequent verification can start.
+If however, the cluster is restarted with all of Connaisseur's resources in place, the <code>MutatingWebhookConfiguration</code> will require all starting resources to be verified by Connaisseur, which itself hasn't been deployed yet.
+A not-yet-running Connaisseur would need to allow itself to be started, a classical chicken-and-egg problem.</p>
+<p>There is unfortunately no good way around it, so you'll have to uninstall and reinstall Connaisseur when restarting the cluster.
+If you want all other resources properly validated, make sure that Connaisseur is deployed before restoring the remaining resources.</p>
 
 
 
@@ -1484,10 +1462,10 @@ The creation of resources on the other hand remains unchanged and will enforce v
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.60a45f97.min.js"></script>
+      <script src="../assets/javascripts/bundle.60a45f97.min.js"></script>
       
     
   </body>
