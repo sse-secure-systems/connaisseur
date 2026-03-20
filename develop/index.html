@@ -1487,7 +1487,7 @@ Based on the result, it either accepts or denies those requests.</p>
 <p>Connaisseur is developed under three core values: <em>Security</em>, <em>Usability</em>, <em>Compatibility</em>.
 It is built to be extendable and currently aims to support the following signing solutions:</p>
 <ul>
-<li><a href="https://github.com/theupdateframework/notary">Notary (V1)</a> / <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a></li>
+<li><a href="https://github.com/theupdateframework/notary">Notary</a> / <a href="https://docs.docker.com/engine/security/trust/">Docker Content Trust</a></li>
 <li><a href="https://sigstore.dev/">sigstore</a> / <a href="https://github.com/sigstore/cosign">Cosign</a></li>
 <li><a href="https://github.com/notaryproject/notation">Notation</a></li>
 </ul>
@@ -1537,7 +1537,7 @@ On a very basic level, this requires two steps:</p>
 <li>Verifying the image signatures <em>before deployment</em></li>
 </ol>
 <p>Connaisseur aims to solve step two.
-This is achieved by implementing several <em>validators</em>, i.e. configurable signature verification modules for different signing solutions (e.g. Notary V1).
+This is achieved by implementing several <em>validators</em>, i.e. configurable signature verification modules for different signing solutions (e.g. Notary).
 While the detailed security considerations mainly depend on the applied solution, Connaisseur in general verifies the signature over the container image content against a trust anchor or <em>trust root</em> (e.g. public key) and thus let's you ensure that images have not been tampered with (integrity) and come from a valid source (provenance).</p>
 <p><img alt="" src="assets/sign-verify.png" /></p>
 <h3 id="trusted-digests">Trusted digests<a class="headerlink" href="#trusted-digests" title="Permanent link">⚓︎</a></h3>
@@ -1595,8 +1595,8 @@ Otherwise, Connaisseur translates all image references in the original request t
 <li><a href="https://docs.syseleven.de/metakube">SysEleven MetaKube</a> ✅</li>
 </ul>
 <p>All registry interactions use the <a href="https://github.com/opencontainers/distribution-spec/blob/main/spec.md">OCI Distribution Specification</a> that is based on the <a href="https://docs.docker.com/registry/spec/api/">Docker Registry HTTP API V2</a> which is the standard for all common image registries.
-For using Notary (V1) as a signature solution, only some registries provide the required Notary server attached to the registry with e.g. shared authentication.
-Connaisseur has been tested with the following Notary (V1) supporting image registries:</p>
+For using Notary as a signature solution, only some registries provide the required Notary server attached to the registry with e.g. shared authentication.
+Connaisseur has been tested with the following Notary supporting image registries:</p>
 <ul>
 <li><a href="https://hub.docker.com/">Docker Hub</a> ✅</li>
 <li><a href="https://goharbor.io/">Harbor</a> ✅</li>

@@ -1540,7 +1540,7 @@ YWD/KWnAaEIcJVTYUR+21NJSZz0yL7KLGrv50H9kHai5WWVsVykOZNoZYQ<span class="o">==</sp
 <p>You will only need the actual base64 encoded part for configuring the <code>application.validators[*].trustRoots[*].key</code> in <code>charts/connaisseur/values.yaml</code> of Connaisseur to validate your images.
 How to extract the public root key for any image is described <a href="#getting-the-public-root-key">below</a>.</p>
 <h3 id="creating-signatures">Creating signatures<a class="headerlink" href="#creating-signatures" title="Permanent link">⚓︎</a></h3>
-<p>Before you can start validating images using the Notary (V1) validator, you'll first need an image which has been signed using DCT.
+<p>Before you can start validating images using the Notary validator, you'll first need an image which has been signed using DCT.
 Easiest way to do this is by pushing an image of your choice (e.g. <code>busybox:stable</code>) to your Docker Hub repository with DCT activated (either set the environment variable <code>DOCKER_CONTENT_TRUST=1</code> or use the <code>--disable-content-trust=false</code> flag).
 If you haven't created any signatures for images in the current repository yet, you'll be asked to enter a passphrase for a root key and targets key, which get generated on your machine.
 Have a look into the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a> to read more about TUF roles and their meanings.
@@ -1640,7 +1640,7 @@ Otherwise, admission is rejected.</p>
 This only occurs in some edge cases, but at this point Connaisseur cannot identify the right digest anymore and consequently has to reject.</p>
 <p>For more information on TUF roles, please refer to <a href="https://theupdateframework.io/security/">TUF's documentation</a> or checkout <a href="https://berlin-crypto.github.io/event/dockerimagesignatures.html">this introductory presentation</a> on how the trust data formats work and are validated by Connaisseur.</p>
 <h2 id="configuration-options">Configuration options<a class="headerlink" href="#configuration-options" title="Permanent link">⚓︎</a></h2>
-<p><code>.application.validators[*]</code> in <code>charts/connaisseur/values.yaml</code> supports the following keys for Notary (V1) (refer to <a href="../../basics/#validators">basics</a> for more information on default keys):</p>
+<p><code>.application.validators[*]</code> in <code>charts/connaisseur/values.yaml</code> supports the following keys for Notary (refer to <a href="../../basics/#validators">basics</a> for more information on default keys):</p>
 <table>
 <thead>
 <tr>
@@ -1713,7 +1713,7 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 </tr>
 </tbody>
 </table>
-<p><code>.application.policy[*]</code> in <code>charts/connaisseur/values.yaml</code> supports the following additional keys for Notary (V1) (refer to <a href="../../basics/#image-policy">basics</a> for more information on default keys):</p>
+<p><code>.application.policy[*]</code> in <code>charts/connaisseur/values.yaml</code> supports the following additional keys for Notary (refer to <a href="../../basics/#image-policy">basics</a> for more information on default keys):</p>
 <table>
 <thead>
 <tr>
@@ -1760,7 +1760,7 @@ This only occurs in some edge cases, but at this point Connaisseur cannot identi
 </details>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
 <h3 id="enforcing-delegations">Enforcing delegations<a class="headerlink" href="#enforcing-delegations" title="Permanent link">⚓︎</a></h3>
-<p>Notary (V1) offers the functionality to delegate trust.
+<p>Notary offers the functionality to delegate trust.
 To better understand this feature, it's best to have a basic understanding of the TUF key hierarchy, or more specifically the purpose of the root, targets and delegation keys.
 If you are more interested in this topic, please read the <a href="https://theupdateframework.github.io/specification/latest/#roles-and-pki">TUF documentation</a>.</p>
 <p>When creating the signatures of your docker images earlier, two keys were generated -- the root key and the targets key.
@@ -1815,7 +1815,8 @@ az<span class="w"> </span>ad<span class="w"> </span>sp<span class="w"> </span>cr
 <hr />
 <ol>
 <li id="fn:1">
-<p>Notary does traditionally not carry the version number. However, in differentiation to the new <a href="https://github.com/notaryproject/notaryproject">Notary V2 project</a> we decided to add a careful "(V1)" whenever we refer to the original project.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>Notary does traditionally not carry the version number. However, in differentiation to the new <a href="https://github.com/notaryproject/specifications">Notary V2 project</a> we decided to add a careful "(V1)" whenever we refered to the original project.
+Since then, the name Notation has formed for Notary V2, so we usually use only Notary and Notation, but the <code>v1</code> suffix has been kept in the config.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>There is no behavioral difference between configuring a Kubernetes secret or setting the credentials via <code>username</code> or <code>password</code>. In the latter case, a corresponding Kubernetes secret containing these credentials will be created automatically during deployment.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
