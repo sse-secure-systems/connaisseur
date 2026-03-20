@@ -11,7 +11,7 @@ Based on the result, it either accepts or denies those requests.
 Connaisseur is developed under three core values: *Security*, *Usability*, *Compatibility*.
 It is built to be extendable and currently aims to support the following signing solutions:
 
-- [Notary (V1)](https://github.com/theupdateframework/notary) / [Docker Content Trust](https://docs.docker.com/engine/security/trust/)
+- [Notary](https://github.com/theupdateframework/notary) / [Docker Content Trust](https://docs.docker.com/engine/security/trust/)
 - [sigstore](https://sigstore.dev/) / [Cosign](https://github.com/sigstore/cosign)
 - [Notation](https://github.com/notaryproject/notation)
 
@@ -86,7 +86,7 @@ On a very basic level, this requires two steps:
 2. Verifying the image signatures *before deployment*
 
 Connaisseur aims to solve step two.
-This is achieved by implementing several *validators*, i.e. configurable signature verification modules for different signing solutions (e.g. Notary V1).
+This is achieved by implementing several *validators*, i.e. configurable signature verification modules for different signing solutions (e.g. Notary).
 While the detailed security considerations mainly depend on the applied solution, Connaisseur in general verifies the signature over the container image content against a trust anchor or *trust root* (e.g. public key) and thus let's you ensure that images have not been tampered with (integrity) and come from a valid source (provenance).
 
 ![](./assets/sign-verify.png)
@@ -155,8 +155,8 @@ Connaisseur supports Kubernets v1.16 and higher. It is expected to be compatible
 - [SysEleven MetaKube](https://docs.syseleven.de/metakube) ✅
 
 All registry interactions use the [OCI Distribution Specification](https://github.com/opencontainers/distribution-spec/blob/main/spec.md) that is based on the [Docker Registry HTTP API V2](https://docs.docker.com/registry/spec/api/) which is the standard for all common image registries.
-For using Notary (V1) as a signature solution, only some registries provide the required Notary server attached to the registry with e.g. shared authentication.
-Connaisseur has been tested with the following Notary (V1) supporting image registries:
+For using Notary as a signature solution, only some registries provide the required Notary server attached to the registry with e.g. shared authentication.
+Connaisseur has been tested with the following Notary supporting image registries:
 
 - [Docker Hub](https://hub.docker.com/) ✅
 - [Harbor](https://goharbor.io/) ✅

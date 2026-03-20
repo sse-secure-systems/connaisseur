@@ -4,7 +4,8 @@
 [Docker Content Trust (DCT)](https://docs.docker.com/engine/security/trust/) is a client implementation by Docker to manage such trust data for container images like signing images or verifying the corresponding signatures.
 It is part of the standard Docker CLI (`docker`) and for example provides the [`docker trust`](https://docs.docker.com/engine/reference/commandline/trust/) commands.
 
-[^1]: Notary does traditionally not carry the version number. However, in differentiation to the new [Notary V2 project](https://github.com/notaryproject/notaryproject) we decided to add a careful "(V1)" whenever we refer to the original project.
+[^1]: Notary does traditionally not carry the version number. However, in differentiation to the new [Notary V2 project](https://github.com/notaryproject/specifications) we decided to add a careful "(V1)" whenever we refered to the original project.
+Since then, the name Notation has formed for Notary V2, so we usually use only Notary and Notation, but the `v1` suffix has been kept in the config.
 
 Using DCT, the trust data is per default pushed to the Notary server associated to the container registry.
 However, not every public container registry provides an associated Notary server and thus support for DCT must be checked for the provider in question.
@@ -47,7 +48,7 @@ How to extract the public root key for any image is described [below](#getting-t
 
 ### Creating signatures
 
-Before you can start validating images using the Notary (V1) validator, you'll first need an image which has been signed using DCT.
+Before you can start validating images using the Notary validator, you'll first need an image which has been signed using DCT.
 Easiest way to do this is by pushing an image of your choice (e.g. `busybox:stable`) to your Docker Hub repository with DCT activated (either set the environment variable `DOCKER_CONTENT_TRUST=1` or use the `--disable-content-trust=false` flag).
 If you haven't created any signatures for images in the current repository yet, you'll be asked to enter a passphrase for a root key and targets key, which get generated on your machine.
 Have a look into the [TUF documentation](https://theupdateframework.github.io/specification/latest/#roles-and-pki) to read more about TUF roles and their meanings.
@@ -175,7 +176,7 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 
 ## Configuration options
 
-`.application.validators[*]` in `charts/connaisseur/values.yaml` supports the following keys for Notary (V1) (refer to [basics](../basics.md#validators) for more information on default keys):
+`.application.validators[*]` in `charts/connaisseur/values.yaml` supports the following keys for Notary (refer to [basics](../basics.md#validators) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -190,7 +191,7 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 | `auth.password` | - | - | Password or access token to authenticate with[^2]. |
 | `cert` | - | - | Self-signed certificate of the Notary instance, if used. Certificate must be supplied in `.pem` format. |
 
-`.application.policy[*]` in `charts/connaisseur/values.yaml` supports the following additional keys for Notary (V1) (refer to [basics](../basics.md#image-policy) for more information on default keys):
+`.application.policy[*]` in `charts/connaisseur/values.yaml` supports the following additional keys for Notary (refer to [basics](../basics.md#image-policy) for more information on default keys):
 
 | Key | Default | Required | Description |
 | - | - | - | - |
@@ -230,7 +231,7 @@ For more information on TUF roles, please refer to [TUF's documentation](https:/
 
 ### Enforcing delegations
 
-Notary (V1) offers the functionality to delegate trust.
+Notary offers the functionality to delegate trust.
 To better understand this feature, it's best to have a basic understanding of the TUF key hierarchy, or more specifically the purpose of the root, targets and delegation keys.
 If you are more interested in this topic, please read the [TUF documentation](https://theupdateframework.github.io/specification/latest/#roles-and-pki).
 
