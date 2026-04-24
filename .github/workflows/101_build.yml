@@ -163,7 +163,7 @@ jobs:
         uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
         with:
           push: true
-          cache-from: type=gha
+          # cache-from: type=gha
           cache-to: type=gha,mode=max
           file: build/Dockerfile
           labels: ${{ needs.context.outputs.build_labels }}
