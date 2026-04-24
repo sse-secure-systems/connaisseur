@@ -1,7 +1,6 @@
 package testhelper
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 )
@@ -30,6 +29,6 @@ func (rctrl *RemoteCtrl) HandleRemote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().
-		Set("www-authenticate", fmt.Sprintf(`Bearer realm="http://%s/token"`, r.Host))
+		Set("www-authenticate", `Basic realm="test"`)
 	w.WriteHeader(http.StatusUnauthorized)
 }
