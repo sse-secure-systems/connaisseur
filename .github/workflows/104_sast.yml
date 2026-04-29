@@ -72,7 +72,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Analyze
-        uses: securego/gosec@223e19b8856e00f02cc67804499a83f77e208f3c # v2.25.0
+        uses: securego/gosec@4a3bd8af174872c778439083ded7adbf3747e770 # v2.26.1
         with:
           args: "-exclude-dir=test -exclude-dir=tools ${{ inputs.output == 'sarif' && '-no-fail -fmt sarif -out gosec-results.sarif' || '-fmt text' }} ./..."
       - name: Upload
