@@ -10,7 +10,7 @@ on:
         type: string
         default: "all"
     outputs:
-      chart_version: 
+      chart_version:
         description: "Connaisseur Helm chart version"
         value: ${{ jobs.context.outputs.chart_version }}
       original_registry:
@@ -35,7 +35,8 @@ on:
         description: "Workflow build tag used for testing (unique for each run)"
         value: ${{ jobs.context.outputs.build_tag }}
       build_image:
-        description: "Workflow build image used for testing, i.e. registry + repository + tag"
+        description: "Workflow build image used for testing, i.e. registry + repository
+          + tag"
         value: ${{ jobs.context.outputs.build_image }}
       build_labels:
         description: "Repository- and workflow-specific build labels"
@@ -119,8 +120,8 @@ jobs:
           BUILD_TAG="${BUILD_IMAGE//${PREFIX}/}"
           [[ ${BUILD_TAG} == "sha-"* ]] || exit 1 # check as parsing of the BUILD_TAG maybe fragile and dependent on docker/metadata-action priorities
           REF_TAGS="${REF_TAGS//${BUILD_TAG}/}"
-          
-  
+
+
           echo CHART_VERSION=${CHART_VERSION} >> ${GITHUB_OUTPUT}
           echo ORIGINAL_REGISTRY=${ORIGINAL_REGISTRY} >> ${GITHUB_OUTPUT}
           echo ORIGINAL_REPO=${ORIGINAL_REPO} >> ${GITHUB_OUTPUT}
@@ -136,7 +137,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: inputs.jobs_to_run != 'skip-all'
-    needs: [context]
+    needs: [ context ]
     permissions:
       packages: write
     steps:
@@ -158,8 +159,9 @@ jobs:
           TAGS="${PREFIX}${{ needs.context.outputs.build_tag }},$(echo ${{ needs.context.outputs.ref_tags }} | tr ' ' '\n' | awk '{print "${PREFIX}"$1}' | envsubst | tr '\n' ',')"
           echo tags=${TAGS} >> ${GITHUB_OUTPUT}
         shell: bash
-      - name: Build and push image
-        id: build
+      - name: Build and push image (with cache)
+        id: build_cached
+        continue-on-error: true
         uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
         with:
           push: true
@@ -169,7 +171,19 @@ jobs:
           labels: ${{ needs.context.outputs.build_labels }}
           tags: ${{ steps.tags.outputs.tags }}
           sbom: false
-          provenance: false  #TODO: Set to false, as resulting format is not OCI (GHCR) compliant (https://github.com/docker/build-push-action/issues/820) and causes problems with GHCR and e.g. image deletion (https://github.com/snok/container-retention-policy/issues/63)
+          provenance: false #TODO: Set to false, as resulting format is not OCI (GHCR) compliant (https://github.com/docker/build-push-action/issues/820) and causes problems with GHCR and e.g. image deletion (https://github.com/snok/container-retention-policy/issues/63)
+      - name: Build and push image (without cache)
+        id: build
+        if: steps.build_cached.outcome == 'failure'
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          push: true
+          cache-to: type=gha,scope=build-${{ github.ref_name }},mode=max
+          file: build/Dockerfile
+          labels: ${{ needs.context.outputs.build_labels }}
+          tags: ${{ steps.tags.outputs.tags }}
+          sbom: false
+          provenance: false #TODO: Set to false, as resulting format is not OCI (GHCR) compliant (https://github.com/docker/build-push-action/issues/820) and causes problems with GHCR and e.g. image deletion (https://github.com/snok/container-retention-policy/issues/63)
       - name: Show build information
         run: |
           echo "# :building_construction: Build Information" >> ${GITHUB_STEP_SUMMARY}
@@ -178,7 +192,7 @@ jobs:
           echo "<tr><td>Original image</td><td><code>${{ needs.context.outputs.original_image }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
           echo "<tr><td>Workflow image</td><td><code>${{ needs.context.outputs.build_registry }}/${{ needs.context.outputs.build_repo }}:${{ needs.context.outputs.build_tag }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
           echo "<tr><td>All images</td><td><code>$(echo ${{ steps.tags.outputs.tags }} | tr ',' '\n')</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
-          echo "<tr><td>Digest</td><td><code>${{ steps.build.outputs.digest }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
+          echo "<tr><td>Digest</td><td><code>${{ steps.build_cached.outputs.digest || steps.build.outputs.digest }}</code></td></tr>" >> ${GITHUB_STEP_SUMMARY}
           echo "</table>" >> ${GITHUB_STEP_SUMMARY}
           echo "" >> ${GITHUB_STEP_SUMMARY}
         shell: bash
