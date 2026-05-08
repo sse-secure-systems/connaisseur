@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connaisseur
+  labels:
+    app: connaisseur
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: connaisseur
+  template:
+    metadata:
+      labels:
+        app: connaisseur
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+        prometheus.io/scheme: "https"
+    spec:
+      containers:
+      - name: connaisseur
+        image: sse-secure-systems/connaisseur:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DETECTION_MODE
+          value: "1"
