@@ -47,11 +47,19 @@ Create a PR from `develop` to `master`, putting the changelog text as descriptio
 
 ## Push new Connaisseur image
 
-When the PR is approved and ready to be merged, first push the new Connaisseur image to Docker Hub, as it will be used in the release pipeline.
-Run `make docker` to build the new version of the docker image and then `DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:<new-version>` to push and sign it.
-You'll obviously need the right private key and passphrase for doing so.
-You also need to be in the list of valid signers for Connaisseur.
-If not already (you can check with `docker trust inspect securesystemsengineering/connaisseur --pretty`) you'll need to contact [Philipp Belitz](mailto:pbe@systemsecurity.com).
+When the PR is approved and ready to be merged, first push the new Connaisseur image to Docker Hub for all our supported architectures.
+This needs to be done first, as it will be used in the release pipeline.
+Run `make docker-multiarch` to build the new version of the docker image on multiple architectures.
+Note that this already includes the pushes to the registry.
+
+## Sign Connaisseur image
+
+Run `bash scripts/multi_arch_sign.sh` or execute the steps detailed in [Multi Arch Builds](#multi-arch-builds).
+For Notary, you need to be in the list of valid signers for Connaisseur (you can check with `notary -s https://notary.docker.io delegation list docker.io/securesystemsengineering/connaisseur`) and have your DockerHub credentials, TUF private key and passphrase ready.
+For Cosign, you need the SSE signing key and its passphrase.
+For Notation, you need the SSE signing key and configure it in the `signingkeys.json`.
+
+If anything is amiss, you'll need to contact [Philipp Belitz](mailto:pbe@systemsecurity.com).
 
 ## Merge PR
 
