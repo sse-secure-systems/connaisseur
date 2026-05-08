@@ -968,6 +968,15 @@ You're not viewing the docs of the latest version.
 </li>
       
         <li class="md-nav__item">
+  <a href="#sign-connaisseur-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sign Connaisseur image
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#merge-pr" class="md-nav__link">
     <span class="md-ellipsis">
       Merge PR
@@ -1444,6 +1453,15 @@ You're not viewing the docs of the latest version.
 </li>
       
         <li class="md-nav__item">
+  <a href="#sign-connaisseur-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sign Connaisseur image
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#merge-pr" class="md-nav__link">
     <span class="md-ellipsis">
       Merge PR
@@ -1594,11 +1612,16 @@ This file will include all new commits, categorized by their type (e.g. fix, fea
 <h2 id="create-pr">Create PR<a class="headerlink" href="#create-pr" title="Permanent link">⚓︎</a></h2>
 <p>Create a PR from <code>develop</code> to <code>master</code>, putting the changelog text as description and wait for someone to approve it.</p>
 <h2 id="push-new-connaisseur-image">Push new Connaisseur image<a class="headerlink" href="#push-new-connaisseur-image" title="Permanent link">⚓︎</a></h2>
-<p>When the PR is approved and ready to be merged, first push the new Connaisseur image to Docker Hub, as it will be used in the release pipeline.
-Run <code>make docker</code> to build the new version of the docker image and then <code>DOCKER_CONTENT_TRUST=1 docker image push securesystemsengineering/connaisseur:&lt;new-version&gt;</code> to push and sign it.
-You'll obviously need the right private key and passphrase for doing so.
-You also need to be in the list of valid signers for Connaisseur.
-If not already (you can check with <code>docker trust inspect securesystemsengineering/connaisseur --pretty</code>) you'll need to contact <a href="mailto:pbe@systemsecurity.com">Philipp Belitz</a>.</p>
+<p>When the PR is approved and ready to be merged, first push the new Connaisseur image to Docker Hub for all our supported architectures.
+This needs to be done first, as it will be used in the release pipeline.
+Run <code>make docker-multiarch</code> to build the new version of the docker image on multiple architectures.
+Note that this already includes the pushes to the registry.</p>
+<h2 id="sign-connaisseur-image">Sign Connaisseur image<a class="headerlink" href="#sign-connaisseur-image" title="Permanent link">⚓︎</a></h2>
+<p>Run <code>bash scripts/multi_arch_sign.sh</code> or execute the steps detailed in <a href="#multi-arch-builds">Multi Arch Builds</a>.
+For Notary, you need to be in the list of valid signers for Connaisseur (you can check with <code>notary -s https://notary.docker.io delegation list docker.io/securesystemsengineering/connaisseur</code>) and have your DockerHub credentials, TUF private key and passphrase ready.
+For Cosign, you need the SSE signing key and its passphrase.
+For Notation, you need the SSE signing key and configure it in the <code>signingkeys.json</code>.</p>
+<p>If anything is amiss, you'll need to contact <a href="mailto:pbe@systemsecurity.com">Philipp Belitz</a>.</p>
 <h2 id="merge-pr">Merge PR<a class="headerlink" href="#merge-pr" title="Permanent link">⚓︎</a></h2>
 <p>Run <code>git checkout master</code> to switch to the <code>master</code> branch and then run <code>git merge develop</code> to merge <code>develop</code> in.
 Then run <code>git push origin master --tags</code> to publish all changes and the new tag.</p>
