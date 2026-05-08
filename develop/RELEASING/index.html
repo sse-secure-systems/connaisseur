@@ -1014,6 +1014,15 @@ You're not viewing the docs of the latest version.
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#gathering-signing-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gathering Signing Values
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#notary" class="md-nav__link">
     <span class="md-ellipsis">
       Notary
@@ -1035,6 +1044,15 @@ You're not viewing the docs of the latest version.
   <a href="#notation" class="md-nav__link">
     <span class="md-ellipsis">
       Notation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-signing-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automated Signing Script
     </span>
   </a>
   
@@ -1472,6 +1490,15 @@ You're not viewing the docs of the latest version.
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#gathering-signing-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gathering Signing Values
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#notary" class="md-nav__link">
     <span class="md-ellipsis">
       Notary
@@ -1493,6 +1520,15 @@ You're not viewing the docs of the latest version.
   <a href="#notation" class="md-nav__link">
     <span class="md-ellipsis">
       Notation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-signing-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automated Signing Script
     </span>
   </a>
   
@@ -1592,18 +1628,43 @@ In that case, you can manually trigger the <a href="https://github.com/sse-secur
 <p>Multi-arch builds are optional and can be done instead of the regular single-arch Docker image push.
 To build and push multi-arch images, run <code>make docker-multiarch</code>.
 This command automatically builds the images for multiple architectures and pushes them to Docker Hub.</p>
-<p>After pushing the multi-arch images, they can be signed using one of three options:</p>
+<p>After pushing the multi-arch images, they can be signed using one of three options.</p>
+<h3 id="gathering-signing-values">Gathering Signing Values<a class="headerlink" href="#gathering-signing-values" title="Permanent link">⚓︎</a></h3>
+<p>Before signing, you need to extract the image reference, tag, size, and SHA256 digest from the multi-arch manifest. Run the following commands:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">REF</span><span class="o">=</span><span class="k">$(</span>yq<span class="w"> </span>e<span class="w"> </span><span class="s1">&#39;.kubernetes.deployment.image.repository&#39;</span><span class="w"> </span>charts/connaisseur/values.yaml<span class="k">)</span>
+<span class="nv">TAG</span><span class="o">=</span>v<span class="k">$(</span>yq<span class="w"> </span>e<span class="w"> </span><span class="s1">&#39;.appVersion&#39;</span><span class="w"> </span>charts/connaisseur/Chart.yaml<span class="k">)</span>
+<span class="nv">RAW</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>docker<span class="w"> </span>buildx<span class="w"> </span>imagetools<span class="w"> </span>inspect<span class="w"> </span>--raw<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">REF</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">TAG</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="nv">SIZE</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">RAW</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-c<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39; &#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="nv">SHA</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">RAW</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sha256sum<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;image=</span><span class="si">${</span><span class="nv">REF</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">TAG</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;size=</span><span class="si">${</span><span class="nv">SIZE</span><span class="si">}</span><span class="s2"> sha256=</span><span class="si">${</span><span class="nv">SHA</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>This will output the <code>&lt;version&gt;</code> (the tag), <code>&lt;size&gt;</code> (byte length of the raw manifest), and <code>&lt;sha256&gt;</code> (digest of the manifest) values needed for the signing commands below.</p>
 <h3 id="notary">Notary<a class="headerlink" href="#notary" title="Permanent link">⚓︎</a></h3>
-<p>Set the <code>DOCKER_CONTENT_TRUST=1</code> environment variable during the build command:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">DOCKER_CONTENT_TRUST</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>make<span class="w"> </span>docker-multiarch
+<p>Run the following command to sign with notary:</p>
+<div class="highlight"><pre><span></span><code>notary<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://notary.docker.io&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span><span class="s2">/.docker/trust&quot;</span><span class="w"> </span>addhash<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;docker.io/securesystemsengineering/connaisseur&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">TAG</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">SIZE</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sha256<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">SHA</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--roles<span class="w"> </span><span class="s2">&quot;targets/releases&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--publish
 </code></pre></div>
 <h3 id="cosign">Cosign<a class="headerlink" href="#cosign" title="Permanent link">⚓︎</a></h3>
 <p>Run the following command and enter the passphrase when prompted:</p>
-<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> </span>&lt;private-key&gt;<span class="w"> </span>docker.io/securesystemsengineering/connaisseur:v&lt;version&gt;
+<div class="highlight"><pre><span></span><code>cosign<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span><span class="s2">/.config/cosign/sse.key&quot;</span><span class="w"> </span>securesystemsengineering/connaisseur@sha256:<span class="si">${</span><span class="nv">SHA</span><span class="si">}</span>
 </code></pre></div>
+<p>For a scripted version or how the retrieve the values, see the <a href="../scripts/multi_arch_sign.sh">automation script</a>.</p>
 <h3 id="notation">Notation<a class="headerlink" href="#notation" title="Permanent link">⚓︎</a></h3>
 <p>Run the following command:</p>
-<div class="highlight"><pre><span></span><code>notation<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> </span>&lt;key-name&gt;<span class="w"> </span>--timestamp-url<span class="w"> </span><span class="s2">&quot;http://timestamp.digicert.com&quot;</span><span class="w"> </span>--timestamp-root-cert<span class="w"> </span>public-keys/digi_cert.crt<span class="w"> </span>docker.io/securesystemsengineering/connaisseur:v&lt;version&gt;
+<div class="highlight"><pre><span></span><code>notation<span class="w"> </span>sign<span class="w"> </span>--key<span class="w"> </span><span class="s2">&quot;sse&quot;</span><span class="w"> </span>docker.io/securesystemsengineering/connaisseur@sha256:<span class="si">${</span><span class="nv">SHA</span><span class="si">}</span>
+</code></pre></div>
+<h3 id="automated-signing-script">Automated Signing Script<a class="headerlink" href="#automated-signing-script" title="Permanent link">⚓︎</a></h3>
+<p>For convenience, the <a href="../scripts/multi_arch_sign.sh">scripts/multi_arch_sign.sh</a> script automates the signing process for all three signature types.
+This script automatically extracts the image reference, tag, size, and SHA256 digest from the manifest and signs the image with Notary, Cosign, and Notation (if the respective keys are available).</p>
+<p>To use the script, simply run:</p>
+<div class="highlight"><pre><span></span><code>bash<span class="w"> </span>scripts/multi_arch_sign.sh
 </code></pre></div>
 
 
