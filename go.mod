@@ -3,7 +3,7 @@ module connaisseur
 go 1.26.0
 
 require (
-	github.com/alicebob/miniredis/v2 v2.37.0
+	github.com/alicebob/miniredis/v2 v2.38.0
 	github.com/docker/cli v29.4.3+incompatible
 	github.com/docker/distribution v2.8.3+incompatible
 	github.com/docker/docker v28.5.2+incompatible
@@ -32,9 +32,9 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/theupdateframework/notary v0.7.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.36.0
-	k8s.io/apimachinery v0.36.0
-	k8s.io/client-go v0.36.0
+	k8s.io/api v0.36.1
+	k8s.io/apimachinery v0.36.1
+	k8s.io/client-go v0.36.1
 	oras.land/oras-go/v2 v2.6.0
 )
 
