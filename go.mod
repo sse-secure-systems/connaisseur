@@ -3,8 +3,8 @@ module connaisseur
 go 1.26.0
 
 require (
-	github.com/alicebob/miniredis/v2 v2.37.0
-	github.com/docker/cli v29.4.3+incompatible
+	github.com/alicebob/miniredis/v2 v2.38.0
+	github.com/docker/cli v29.5.0+incompatible
 	github.com/docker/distribution v2.8.3+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c
@@ -22,19 +22,19 @@ require (
 	github.com/redis/go-redis/v9 v9.19.0
 	github.com/sigstore/cosign/v2 v2.6.3
 	github.com/sigstore/rekor v1.5.1
-	github.com/sigstore/sigstore v1.10.5
-	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.10.5
-	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.10.5
-	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.10.5
-	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.10.5
+	github.com/sigstore/sigstore v1.10.6
+	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.10.6
+	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.10.6
+	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.10.6
+	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.10.6
 	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 	github.com/theupdateframework/notary v0.7.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.36.0
-	k8s.io/apimachinery v0.36.0
-	k8s.io/client-go v0.36.0
+	k8s.io/api v0.36.1
+	k8s.io/apimachinery v0.36.1
+	k8s.io/client-go v0.36.1
 	oras.land/oras-go/v2 v2.6.0
 )
 
