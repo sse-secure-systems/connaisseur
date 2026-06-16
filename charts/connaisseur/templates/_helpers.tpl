@@ -57,7 +57,11 @@ Create the name of the service account to use
 Create the name of the service account to use
 */}}
 {{- define "connaisseur.serviceAccountName" -}}
+{{- if .Values.kubernetes.serviceaccount.name }}
+{{- .Values.kubernetes.serviceaccount.name }}
+{{- else }}
 {{- include "connaisseur.name" . }}-serviceaccount
+{{- end }}
 {{- end }}
 
 {{/*

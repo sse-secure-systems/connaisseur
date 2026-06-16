@@ -57,7 +57,9 @@ kubernetes:
   # -----------------------------------------------------
 
   # changes to connaisseur service account
-  serviceaccount: {}
+  serviceaccount:
+    create: true
+    name: ""
   #   annotations:
   #     eks.amazonaws.com/role-arn: arn:aws:iam::XXX:role/myrole
 
