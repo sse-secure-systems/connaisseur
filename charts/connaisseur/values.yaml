@@ -56,6 +56,22 @@ kubernetes:
     port: 443
   # -----------------------------------------------------
 
+  # changes to the connaisseur ServiceMonitor (Prometheus Operator)
+  # requires the monitoring.coreos.com/v1 CRD to be installed when enabled
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+    # additional labels to attach to the ServiceMonitor; typically used to match
+    # the Prometheus instance's serviceMonitorSelector, e.g.
+    #   release: kube-prometheus-stack
+    additionalLabels: {}
+    # connaisseur serves /metrics over HTTPS using the webhook serving cert.
+    # By default the certificate is not verified; supply ca/serverName here to verify.
+    tlsConfig:
+      insecureSkipVerify: true
+  # -----------------------------------------------------
+
   # changes to connaisseur service account
   serviceaccount:
     create: true
