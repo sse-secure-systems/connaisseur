@@ -1,0 +1,35 @@
+{{- if .Values.kubernetes.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "connaisseur.serviceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "connaisseur.labels" . | nindent 4 }}
+    {{- with .Values.kubernetes.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "connaisseur.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: http
+      scheme: https
+      path: /metrics
+      interval: {{ .Values.kubernetes.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.kubernetes.serviceMonitor.scrapeTimeout }}
+      tlsConfig:
+        {{- with .Values.kubernetes.serviceMonitor.tlsConfig }}
+        {{- toYaml . | nindent 8 }}
+        {{- else }}
+        serverName: {{ printf "%s.%s.svc" (include "connaisseur.serviceName" .) .Release.Namespace }}
+        ca:
+          secret:
+            name: {{ include "connaisseur.TLSName" . }}
+            key: tls.crt
+        {{- end }}
+{{- end }}
