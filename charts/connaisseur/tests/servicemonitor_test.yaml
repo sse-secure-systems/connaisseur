@@ -1,0 +1,80 @@
+suite: servicemonitor
+templates:
+  - servicemonitor.yaml
+tests:
+  - it: renders nothing when serviceMonitor is disabled (default)
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders a ServiceMonitor when enabled
+    set:
+      kubernetes.serviceMonitor.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ServiceMonitor
+      - isAPIVersion:
+          of: monitoring.coreos.com/v1
+      - equal:
+          path: metadata.name
+          value: connaisseur-svc
+
+  - it: scrapes the http port over HTTPS at /metrics with default tlsConfig
+    set:
+      kubernetes.serviceMonitor.enabled: true
+    asserts:
+      - equal:
+          path: spec.endpoints[0].port
+          value: http
+      - equal:
+          path: spec.endpoints[0].scheme
+          value: https
+      - equal:
+          path: spec.endpoints[0].path
+          value: /metrics
+      - equal:
+          path: spec.endpoints[0].interval
+          value: 30s
+      - equal:
+          path: spec.endpoints[0].scrapeTimeout
+          value: 10s
+      - equal:
+          path: spec.endpoints[0].tlsConfig.insecureSkipVerify
+          value: true
+
+  - it: targets the connaisseur service via selector labels
+    set:
+      kubernetes.serviceMonitor.enabled: true
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/name"]
+          value: connaisseur
+      - equal:
+          path: spec.namespaceSelector.matchNames[0]
+          value: NAMESPACE
+
+  - it: merges additionalLabels into metadata labels
+    set:
+      kubernetes.serviceMonitor.enabled: true
+      kubernetes.serviceMonitor.additionalLabels:
+        release: kube-prometheus-stack
+    asserts:
+      - equal:
+          path: metadata.labels.release
+          value: kube-prometheus-stack
+
+  - it: honors a custom tlsConfig override
+    set:
+      kubernetes.serviceMonitor.enabled: true
+      kubernetes.serviceMonitor.tlsConfig:
+        serverName: connaisseur-svc.connaisseur.svc
+        insecureSkipVerify: false
+    asserts:
+      - equal:
+          path: spec.endpoints[0].tlsConfig.serverName
+          value: connaisseur-svc.connaisseur.svc
+      - equal:
+          path: spec.endpoints[0].tlsConfig.insecureSkipVerify
+          value: false
