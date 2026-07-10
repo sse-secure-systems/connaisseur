@@ -31,7 +31,7 @@ func TestLoad(t *testing.T) {
 	assert.NotEqual(t, &Config{}, cfg)
 
 	assert.Equal(t, 3, len(cfg.Validators))
-	assert.Equal(t, 11, len(cfg.Rules))
+	assert.Equal(t, 12, len(cfg.Rules))
 	assert.Equal(t, 2, len(cfg.Alerting.AdmitRequests.Receivers))
 	assert.Equal(t, 1, len(cfg.Alerting.RejectRequests.Receivers))
 }
@@ -99,6 +99,10 @@ func TestMatchingRule(t *testing.T) {
 		},
 		{"my.registry/test:tag", "my.registry/test"},
 		{"my.registry/abc:tag", "my.registry/*"},
+		{"REGISTRY.k8s.io/image", "registry.k8s.io/*:*"},
+		{"My.Registry/test:tag", "my.registry/test"},
+		{"localhost:1234/test:tag", "LoCaLhOst:1234/*"},
+		{"localhost/test:tag", "docker.io/*:*"}, // localhost without port is not considered a host by go-containerregistry
 		// {"docker.io/test:tag", "docker.io/test:*"}, // TODO: #1517
 	}
 
@@ -111,6 +115,26 @@ func TestMatchingRule(t *testing.T) {
 	_, err := cfg.MatchingRule("")
 	assert.NotNil(t, err)
 	assert.ErrorContains(t, err, "no matching rule")
+}
+
+func TestFoldHost(t *testing.T) {
+	testCases := []struct {
+		in   string
+		want string
+	}{
+		{"REGISTRY.IO/repo:Tag", "registry.io/repo:Tag"},
+		{"My.Registry/Repo:Tag", "my.registry/Repo:Tag"},
+		{"LocalHost/Repo:Tag", "localhost/Repo:Tag"},
+		{"[2001:DB8::1]:5000/repo:Tag", "[2001:db8::1]:5000/repo:Tag"},
+		{"MyOrg/image:Tag", "MyOrg/image:Tag"},
+		{"image:Tag", "image:Tag"},
+		{"*:MyTag", "*:MyTag"},
+		{"REGISTRY.io/*:*", "registry.io/*:*"},
+	}
+
+	for idx, tc := range testCases {
+		assert.Equalf(t, tc.want, foldHost(tc.in), "test case %d", idx+1)
+	}
 }
 
 func TestValidate(t *testing.T) {

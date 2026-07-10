@@ -76,13 +76,28 @@ func (c Config) Validator(key string) (*validator.Validator, error) {
 	return nil, fmt.Errorf("validator \"%s\" not found", key)
 }
 
+// foldHost lowercases only the registry host of a reference or pattern; the
+// first component counts as a host if it has "." or ":" or is "localhost".
+func foldHost(ref string) string {
+	i := strings.IndexByte(ref, '/')
+	if i < 0 {
+		return ref
+	}
+	host := ref[:i]
+	if !strings.ContainsAny(host, ".:") && !strings.EqualFold(host, "localhost") {
+		return ref
+	}
+	return strings.ToLower(host) + ref[i:]
+}
+
 // Gets the most specific matching rule for a given image from the config.
 func (c Config) MatchingRule(image string) (*policy.Rule, error) {
+	image = foldHost(image)
 	// start with empty pattern
 	bestMatch := policy.NewMatch(policy.Rule{}, "")
 
 	for _, rule := range c.Rules {
-		pattern := rule.Pattern
+		pattern := foldHost(rule.Pattern)
 
 		// prepend wildcard if not present
 		if !strings.HasPrefix(pattern, "*") {

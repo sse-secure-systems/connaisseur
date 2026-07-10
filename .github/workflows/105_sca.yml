@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Login with registry
         if: inputs.registry != ''
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ${{ inputs.registry }}
           username: ${{ inputs.repo_owner }}
@@ -64,6 +64,6 @@ jobs:
           TRIVY_JAVA_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-java-db,public.ecr.aws/aquasecurity/trivy-java-db # Workaround for https://github.com/aquasecurity/trivy-action/issues/389
       - name: Upload
         if: inputs.output == 'sarif'
-        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+        uses: github/codeql-action/upload-sarif@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4.37.0
         with:
           sarif_file: 'reports'
