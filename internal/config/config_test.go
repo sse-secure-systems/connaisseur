@@ -31,7 +31,7 @@ func TestLoad(t *testing.T) {
 	assert.NotEqual(t, &Config{}, cfg)
 
 	assert.Equal(t, 3, len(cfg.Validators))
-	assert.Equal(t, 12, len(cfg.Rules))
+	assert.Equal(t, 13, len(cfg.Rules))
 	assert.Equal(t, 2, len(cfg.Alerting.AdmitRequests.Receivers))
 	assert.Equal(t, 1, len(cfg.Alerting.RejectRequests.Receivers))
 }
@@ -101,8 +101,8 @@ func TestMatchingRule(t *testing.T) {
 		{"my.registry/abc:tag", "my.registry/*"},
 		{"REGISTRY.k8s.io/image", "registry.k8s.io/*:*"},
 		{"My.Registry/test:tag", "my.registry/test"},
-		{"localhost:1234/test:tag", "LoCaLhOst:1234/*"},
-		{"localhost/test:tag", "docker.io/*:*"}, // localhost without port is not considered a host by go-containerregistry
+		{"localhost:1234/test:tag", "localhost:1234/*:*"},
+		{"localhost/test:tag", "LoCaLhOst/*"}, // localhost without port still is valid host (https://github.com/google/go-containerregistry/pull/2316)
 		// {"docker.io/test:tag", "docker.io/test:*"}, // TODO: #1517
 	}
 

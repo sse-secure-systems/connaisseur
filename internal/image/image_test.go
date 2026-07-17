@@ -114,9 +114,9 @@ func TestNew(t *testing.T) {
 		},
 		{ // 15
 			"localhost/test-image:latest",
-			"index.docker.io/localhost/test-image",
+			"localhost/test-image",
 			"latest",
-			"index.docker.io/localhost/test-image:latest",
+			"localhost/test-image:latest",
 			false,
 		},
 	}

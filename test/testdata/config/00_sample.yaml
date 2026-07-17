@@ -30,7 +30,8 @@ policy:
   - pattern: "my.registry/*"
   - pattern: "my.registry/test"
   - pattern: "docker.io/test:*"
-  - pattern: "LoCaLhOst:1234/*"
+  - pattern: "localhost:1234/*:*"
+  - pattern: "LoCaLhOst/*"
 
 alerting:
   clusterIdentifier: example-cluster-staging-europe # defaults to "not specified"

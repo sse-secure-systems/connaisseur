@@ -13,3 +13,5 @@ helm/
 LICENSE
 Makefile
 mkdocs.yml
+# ignore hidden files/folders
+**/.?*

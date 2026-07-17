@@ -10,6 +10,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/notaryproject/notation-go"
 	"github.com/notaryproject/notation-go/log"
@@ -100,6 +101,7 @@ func (nv *NotationValidator) ValidateImage(
 			},
 		}
 	}
+	client.Client.Timeout = 30 * time.Second
 
 	if authn := nv.Auth.LookUp(image.Context().Name()); authn.Username != "" &&
 		authn.Password != "" {

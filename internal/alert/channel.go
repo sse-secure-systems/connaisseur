@@ -109,7 +109,7 @@ func (ch *Channel) Send(ctx context.Context, opts NotificationValues, errorChann
 			req.Header.Set(hKeyValue[0], hKeyValue[1])
 		}
 
-		client := &http.Client{}
+		client := &http.Client{Timeout: 30 * time.Second}
 		resp, err := client.Do(req)
 		if err != nil {
 			errOut = fmt.Errorf(
