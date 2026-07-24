@@ -1366,6 +1366,12 @@ We stick to semantic versioning, so unless the major version changes, updating C
 <td>3.11.1</td>
 <td>Prior to version 3.11.1, Cosign validators using <code>trustRoot: "*"</code> with an explicit threshold or implicit require-all policy counted valid signature layers instead of distinct validating trust roots. An attacker controlling one configured signing key could attach multiple signatures and satisfy the threshold without the intended signer quorum, allowing an image to be admitted without signatures from the other required trust roots.</td>
 </tr>
+<tr>
+<td>Notary v1 delegation silent fallback on fetch failure</td>
+<td><span>&#8804;</span> 3.11.0</td>
+<td>3.11.1</td>
+<td>Prior to version 3.11.1 Connaisseur could silently fall back to the canonical <code>targets</code> trust role when downloading a delegation role failed with an "error acquiring trust data" message and the snapshot metadata contained no hash entry for the requested delegation. This fallback was intended for the edge case where delegation signers are registered but have never signed anything. However, the guard condition did not distinguish between implicitly resolved delegations and delegations explicitly required by the operator. An adversary with control over the Notary server and the <code>targets</code> signing key could therefore bypass an explicitly configured delegation requirement by causing the delegation fetch to fail and serving an image signed only at the <code>targets</code> level. Note that an adversary already holding the <code>targets</code> key could also remap delegation key assignments directly in <code>targets.json</code>; this fallback provided a stealthier path to the same outcome without requiring a detectable metadata change. Only users of type <code>notaryv1</code> validators with explicit <code>delegations</code> configured in their policy rules are affected.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="reporting-a-vulnerability">Reporting a vulnerability<a class="headerlink" href="#reporting-a-vulnerability" title="Permanent link">⚓︎</a></h2>
