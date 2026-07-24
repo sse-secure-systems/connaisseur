@@ -45,7 +45,7 @@ kubectl run foreignsignature --image=bitnami/postgresql
 will fail.
 
 ## Discussions, support & feedback
-We hope to steer development of Connaisseur from demand of the community, are excited about your feedback and happy to help if you need support! So feel free to connect with us via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions).
+We hope to steer development of Connaisseur from demand of the community, are excited about your feedback and happy to help if you need support! So feel free to [open issues](https://github.com/sse-secure-systems/connaisseur/issues/new/choose), [contribute via pull requests](docs/CONTRIBUTING.md), or connect with us via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions).
 
 ## Contact
 

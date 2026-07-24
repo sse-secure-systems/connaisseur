@@ -12,8 +12,6 @@ A Kubernetes admission controller to integrate container image signature verific
 
 **:point_right: The full documentation is available [here](https://sse-secure-systems.github.io/connaisseur/) :book:**
 
-**:point_right: Feel free to reach out via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions) :speech_balloon:**
-
 ## What is Connaisseur?
 
 Connaisseur ensures integrity and provenance of container images in a Kubernetes cluster.
@@ -87,7 +85,7 @@ Congrats :tada: you just validated the first images in your cluster!
 To get started configuring and verifying your own images and signatures, please follow our [setup guide](https://sse-secure-systems.github.io/connaisseur/latest/getting_started/).
 
 ## Discussions, support & feedback
-We hope to steer development of Connaisseur from demand of the community, are excited about your feedback and happy to help if you need support! So feel free to connect with us via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions).
+We hope to steer development of Connaisseur from demand of the community, are excited about your feedback and happy to help if you need support! So feel free to [open issues](https://github.com/sse-secure-systems/connaisseur/issues/new/choose), [contribute via pull requests](docs/CONTRIBUTING.md), or connect with us via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions).
 
 ## Contributing
 We are always excited about direct contributions to improve the tool! Please refer to our [contributing guide](docs/CONTRIBUTING.md) to learn how to contribute to Connaisseur.

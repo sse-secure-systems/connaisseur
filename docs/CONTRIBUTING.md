@@ -8,8 +8,8 @@ We are committed to positive interactions between all contributors of the projec
 
 ## Discuss problems, raise bugs and propose feature ideas
 We are happy you made it here!
-In case you want to share your feedback, need support, want to discuss issues from using Connaisseur in your own projects, have ideas for new features or just want to connect with us, please reach out via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions).
-If you want to raise any bugs you found or make a feature request, feel free to [create an issue](https://github.com/sse-secure-systems/connaisseur/issues/new) with an informative title and description.
+In case you want to share your feedback, need support, want to discuss issues from using Connaisseur in your own projects or just want to connect with us, please reach out via [GitHub Discussions](https://github.com/sse-secure-systems/connaisseur/discussions).
+If you want to raise any bugs you found or make a feature request, feel free to [create an issue](https://github.com/sse-secure-systems/connaisseur/issues/new/choose) with an informative title and description.
 
 While issues are a great way to discuss problems, bugs and new features, a direct proposal via a pull request can sometimes say more than a thousand words.
 So be bold and contribute to the code as described in the [next section](#contribute-to-source-code)!
