@@ -10,6 +10,7 @@ kubernetes:
     pullPolicy: IfNotPresent
     replicasCount: 3
     imagePullSecrets: []
+    hostNetwork: false
     nodeSelector: {}
     tolerations: []
     resources:
