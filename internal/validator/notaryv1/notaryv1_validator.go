@@ -144,8 +144,10 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 		if err != nil {
 			// edge case: the targets role might already have delegations defined, but the actual files are missing.
 			// this happens when the delegation are added as signers, but are not used to actually sign anything.
-			// in this case, we need to take the targets role, as if no delegations were present
-			if strings.Contains(err.Error(), "error acquiring trust data") && !repo.HasDelegationHashes(targets) {
+			// in this case, we need to take the targets role, as if no delegations were present.
+			// only apply this fallback when no explicit delegations were configured; if the operator
+			// explicitly required specific delegation roles, a fetch failure is always a hard deny.
+			if len(args.Delegations) == 0 && strings.Contains(err.Error(), "error acquiring trust data") && !repo.HasDelegationHashes(targets) {
 				targets = []string{data.CanonicalTargetsRole.String()}
 			} else {
 				return "", fmt.Errorf("error during download and validation of delegations for targets: %+q", targets)

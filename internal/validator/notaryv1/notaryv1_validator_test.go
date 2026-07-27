@@ -181,7 +181,15 @@ func TestValidateImage(t *testing.T) {
 			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
 			"",
 		},
-		{ // 4: edge case, but delegations need to be used, since they are defined in the snapshot
+		{ // 4: edge case image with explicit delegation — fetch failure must be a hard deny, no fallback to targets
+			"08_never_expire_notary",
+			"edge-case-image:sign",
+			"default",
+			[]string{"releases"},
+			"",
+			"error during download and validation of delegations for targets",
+		},
+		{ // 5: edge case, but delegations need to be used, since they are defined in the snapshot
 			"08_never_expire_notary",
 			"edge-case-err-image:sign",
 			"default",
@@ -189,7 +197,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"error during download and validation of delegations for targets",
 		},
-		{ // 5: unknown key type
+		{ // 6: unknown key type
 			"10_unknown_keys",
 			"never-expire-image:sign",
 			"ed25519",
@@ -197,7 +205,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"signature was invalid", // the fact that the key type is unknown is swallowed by TUF library
 		},
-		{ // 6: key not found
+		{ // 7: key not found
 			"08_never_expire_notary",
 			"never-expire-image:sign",
 			"not-a-key",
@@ -205,7 +213,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"error getting trust root key",
 		},
-		{ // 7: download error
+		{ // 8: download error
 			"08_never_expire_notary",
 			"non-existant:image",
 			"default",
@@ -213,7 +221,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"error downloading trust data",
 		},
-		{ // 8: missing delegations
+		{ // 9: missing delegations
 			"08_never_expire_notary",
 			"never-expire-image:sign",
 			"default",
@@ -221,7 +229,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"no delegations found for validator",
 		},
-		{ // 9: delegation by tag
+		{ // 10: delegation by tag
 			"08_never_expire_notary",
 			"never-expire-with-delegations-image:sign",
 			"default",
@@ -229,7 +237,7 @@ func TestValidateImage(t *testing.T) {
 			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
 			"",
 		},
-		{ // 10: delegation by digest
+		{ // 11: delegation by digest
 			"08_never_expire_notary",
 			"never-expire-with-delegations-image@sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
 			"default",
@@ -237,7 +245,7 @@ func TestValidateImage(t *testing.T) {
 			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
 			"",
 		},
-		{ // 11: missing delegation signatures
+		{ // 12: missing delegation signatures
 			"08_never_expire_notary",
 			"never-expire-with-delegations-image:sign",
 			"default",
@@ -245,7 +253,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"validated targets don't contain reference",
 		},
-		{ // 12: required delegation, but repo has no delegation
+		{ // 13: required delegation, but repo has no delegation
 			"08_never_expire_notary",
 			"never-expire-image:sign",
 			"default",
@@ -253,7 +261,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"no delegations found for validator",
 		},
-		{ // 13: conflicting delegations
+		{ // 14: conflicting delegations
 			"08_never_expire_notary",
 			"never-expire-with-conflicting-delegations-image:sign",
 			"default",
@@ -261,7 +269,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"found 2 digests for image",
 		},
-		{ // 14: delegation by tag and matching digest
+		{ // 15: delegation by tag and matching digest
 			"08_never_expire_notary",
 			"never-expire-with-delegations-image:sign@sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
 			"default",
@@ -269,7 +277,7 @@ func TestValidateImage(t *testing.T) {
 			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
 			"",
 		},
-		{ // 15: delegation by tag and non-matching digest
+		{ // 16: delegation by tag and non-matching digest
 			"08_never_expire_notary",
 			"never-expire-with-delegations-image:v1@sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
 			"default",
@@ -277,7 +285,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"doesn't match given digest",
 		},
-		{ // 16: Root key in DER format
+		{ // 17: Root key in DER format
 			"15_DER_key_format",
 			"never-expire-image:sign",
 			"default",

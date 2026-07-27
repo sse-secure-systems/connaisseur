@@ -14,6 +14,14 @@
             "annotations": {
                 "dev.cosignproject.cosign/signature": "MEUCIQCsrBIJ5hCGEkqfGx/GlUzKM1z8V/Z3mFcNqTVnJ42z2AIgfNWzzQc+OoK8siMd683eKynMzZZ0ezfloZz58McYb8E="
             }
+        },
+        {
+            "mediaType": "application/vnd.dev.cosign.simplesigning.v1+json",
+            "size": 266,
+            "digest": "sha256:d8ee807d96efe7441b132967ad94eaffbc0172a763e69f2cd8df8f583f0ba0d4",
+            "annotations": {
+                "dev.cosignproject.cosign/signature": "MEUCIQCsrBIJ5hCGEkqfGx/GlUzKM1z8V/Z3mFcNqTVnJ42z2AIgfNWzzQc+OoK8siMd683eKynMzZZ0ezfloZz58McYb8E="
+            }
         }
     ]
 }

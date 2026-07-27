@@ -373,7 +373,14 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"validation threshold not reached",
 		},
-		{ // 7: missing required signature
+		{ // 7: repeated signatures from one trust root do not satisfy the threshold
+			"01_cosign",
+			"securesystemsengineering/testimage:multi-cosigned-alice",
+			policy.RuleOptions{TrustRoot: "*", Threshold: 2, VerifyTLog: &falseVar},
+			"",
+			"validation threshold not reached (1/2)",
+		},
+		{ // 8: missing required signature
 			"01_cosign",
 			"securesystemsengineering/testimage:multi-cosigned-alice",
 			policy.RuleOptions{
@@ -384,7 +391,7 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"missing required signatures from [bob]",
 		},
-		{ // 8: missing required signature
+		{ // 9: missing required signature
 			"01_cosign",
 			"securesystemsengineering/testimage:multi-cosigned-alice",
 			policy.RuleOptions{
@@ -395,14 +402,14 @@ func TestValidateImage(t *testing.T) {
 			"",
 			"missing required signatures from [bob]",
 		},
-		{ // 9: no signature present
+		{ // 10: no signature present
 			"01_cosign",
 			"securesystemsengineering/testimage:co-unsigned",
 			policy.RuleOptions{TrustRoot: "alice", VerifyTLog: &falseVar},
 			"",
 			"no signatures found",
 		},
-		// { // 10: missing tlog entry
+		// { // 11: missing tlog entry
 		// 	"01_cosign",
 		// 	"securesystemsengineering/testimage:multi-cosigned-alice",
 		// 	policy.RuleOptions{TrustRoot: "alice"},

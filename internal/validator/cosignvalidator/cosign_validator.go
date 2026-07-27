@@ -242,11 +242,18 @@ func (cv *CosignValidator) ValidateImage(
 	}
 
 	numberOfCheckedSignatures := len(checkedSignatures)
+	validatingTrustRootSet := map[string]struct{}{}
+	for _, trustRoot := range validatingTrustRoots {
+		if trustRoot != "" {
+			validatingTrustRootSet[trustRoot] = struct{}{}
+		}
+	}
+	numberOfValidatingTrustRoots := len(validatingTrustRootSet)
 	// check threshold
-	if threshold > 0 && numberOfCheckedSignatures < threshold {
+	if threshold > 0 && numberOfValidatingTrustRoots < threshold {
 		return "", fmt.Errorf(
 			"validation threshold not reached (%d/%d)",
-			numberOfCheckedSignatures,
+			numberOfValidatingTrustRoots,
 			threshold,
 		)
 	}

@@ -82,6 +82,7 @@ To ensure the release worked as intended, check the following artifacts are pres
 
 - [Git tag](https://github.com/sse-secure-systems/connaisseur/tags) is present
 - [Github release](https://github.com/sse-secure-systems/connaisseur/releases) is present
+- [Image with multiple architectures](https://hub.docker.com/r/securesystemsengineering/connaisseur/tags)
 - [Released docs](https://sse-secure-systems.github.io/connaisseur/latest/) point to the proper tag
 - [Released Helm chart](https://artifacthub.io/packages/helm/connaisseur/connaisseur/) exists (this can take quite some time to sync, so maybe don't wait for this)
 
