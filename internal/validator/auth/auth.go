@@ -141,7 +141,10 @@ func (a *Auth) LookUp(img string) AuthEntry {
 
 	for k := range a.AuthConfigs {
 		if len(k) > len(bestHit) {
-			if strings.HasPrefix(img, k) {
+			// require k to match img exactly or up to a "/" boundary, so e.g.
+			// "registry.example.com" doesn't match "extending" host
+			// "registry.example.com.evil.tld" (same applies to repo path extensions)
+			if img == k || strings.HasPrefix(img, k+"/") {
 				bestHit = k
 			}
 		}
