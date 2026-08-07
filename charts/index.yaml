@@ -4,8 +4,38 @@ entries:
   - annotations:
       artifacthub.io/containsSecurityUpdates: "true"
     apiVersion: v2
+    appVersion: 3.12.0
+    created: "2026-08-07T14:12:43.058709077Z"
+    description: Helm chart for Connaisseur - a Kubernetes admission controller to
+      integrate container image signature verification and trust pinning into a cluster.
+    digest: f365ce98ad3cb2b4beab53f55a722a4aa599eb0db2c3a7e604ea74d8df8fc491
+    home: https://sse-secure-systems.github.io/connaisseur/latest
+    icon: https://raw.githubusercontent.com/sse-secure-systems/connaisseur/master/docs/assets/logo.svg
+    keywords:
+    - container image
+    - signature
+    - verification
+    maintainers:
+    - email: pbe@systemsecurity.com
+      name: Philipp Belitz
+    - email: tst@systemsecurity.com
+      name: Teetje Stark
+    - email: abr@systemsecurity.com
+      name: Anneke Breust
+    - email: cfi@systemsecurity.com
+      name: Christopher Filsinger
+    name: connaisseur
+    sources:
+    - https://github.com/sse-secure-systems/connaisseur
+    type: application
+    urls:
+    - https://sse-secure-systems.github.io/connaisseur/charts/connaisseur-2.12.0.tgz
+    version: 2.12.0
+  - annotations:
+      artifacthub.io/containsSecurityUpdates: "true"
+    apiVersion: v2
     appVersion: 3.11.1
-    created: "2026-07-24T12:32:55.358863787Z"
+    created: "2026-08-07T14:12:43.057948653Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: c26a330176f65c67675899ffecc80ef4fb343360b3fcacecb7761ae13eb4a5bc
@@ -33,7 +63,7 @@ entries:
     version: 2.11.1
   - apiVersion: v2
     appVersion: 3.11.0
-    created: "2026-07-24T12:32:55.358079738Z"
+    created: "2026-08-07T14:12:43.057149681Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 4cbd6610b6614626acdd1aff60e177121744b290cd7415025f55da0b173bf49f
@@ -61,7 +91,7 @@ entries:
     version: 2.11.0
   - apiVersion: v2
     appVersion: 3.10.0
-    created: "2026-07-24T12:32:55.35730099Z"
+    created: "2026-08-07T14:12:43.056346623Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: abc4df493e2bfceb820172ee87880e8f2a3b6f9956e3647a1e62f2158c9aa5cf
@@ -89,7 +119,7 @@ entries:
     version: 2.10.0
   - apiVersion: v2
     appVersion: 3.9.1
-    created: "2026-07-24T12:32:55.377435705Z"
+    created: "2026-08-07T14:12:43.07680069Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: b7eded61ffa0d0588c243f640c7c02d990e528b9be40578a8e27c3b00a3ed4be
@@ -117,7 +147,7 @@ entries:
     version: 2.9.1
   - apiVersion: v2
     appVersion: 3.9.0
-    created: "2026-07-24T12:32:55.376682705Z"
+    created: "2026-08-07T14:12:43.07513879Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 7d1961a52f30e7629aef3ee24cf941a8f74fff63c65c8f4e1460e6a9713fed92
@@ -147,7 +177,7 @@ entries:
     version: 2.9.0
   - apiVersion: v2
     appVersion: 3.8.5
-    created: "2026-07-24T12:32:55.375869181Z"
+    created: "2026-08-07T14:12:43.074317565Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: e25f01d8ded0efb98d90ceb65540c7f38807aea31891859ca1017ec13a159759
@@ -177,7 +207,7 @@ entries:
     version: 2.8.5
   - apiVersion: v2
     appVersion: 3.8.4
-    created: "2026-07-24T12:32:55.374540388Z"
+    created: "2026-08-07T14:12:43.073551832Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 7d065e8d02627b3a9a16796a04fc2616d52e30d029dcaaf2bec25ac7bdd3164f
@@ -207,7 +237,7 @@ entries:
     version: 2.8.4
   - apiVersion: v2
     appVersion: 3.8.3
-    created: "2026-07-24T12:32:55.373460259Z"
+    created: "2026-08-07T14:12:43.072826291Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: a83ae334c5715b2366ca9c9c60e98eda7fd14cadc8780457be0820135ea97af2
@@ -237,7 +267,7 @@ entries:
     version: 2.8.3
   - apiVersion: v2
     appVersion: 3.8.2
-    created: "2026-07-24T12:32:55.372681019Z"
+    created: "2026-08-07T14:12:43.072088521Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: f4e0d66bdd94a35776448a2f0dec7feaedd0d258bf0a83aac106a384bbb6bf47
@@ -267,7 +297,7 @@ entries:
     version: 2.8.2
   - apiVersion: v2
     appVersion: 3.8.1
-    created: "2026-07-24T12:32:55.371901208Z"
+    created: "2026-08-07T14:12:43.071315558Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: fe31df4b871546814230c85f4d6da9a5d876a0f68fe84300c58678fe3cf2c01a
@@ -297,7 +327,7 @@ entries:
     version: 2.8.1
   - apiVersion: v2
     appVersion: 3.8.0
-    created: "2026-07-24T12:32:55.37084488Z"
+    created: "2026-08-07T14:12:43.07055233Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 180f79716b14dc957e5c050f1fb7d192ce8b9337491de62e549a028987548875
@@ -327,7 +357,7 @@ entries:
     version: 2.8.0
   - apiVersion: v2
     appVersion: 3.7.1
-    created: "2026-07-24T12:32:55.370087942Z"
+    created: "2026-08-07T14:12:43.069770223Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: e0a2646bfcc5b7c412417226566f02f773473046088c927dd8699c0091267566
@@ -357,7 +387,7 @@ entries:
     version: 2.7.1
   - apiVersion: v2
     appVersion: 3.7.0
-    created: "2026-07-24T12:32:55.369341844Z"
+    created: "2026-08-07T14:12:43.068077767Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 91d0b147b0939016572b6b72c8d4a9d7d4d79b7851a4e5eb3832373b187332ce
@@ -387,7 +417,7 @@ entries:
     version: 2.7.0
   - apiVersion: v2
     appVersion: 3.6.1
-    created: "2026-07-24T12:32:55.368558337Z"
+    created: "2026-08-07T14:12:43.067319165Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 80d1abed19355ac514741e608ae97db5636db6829e1ddca8ed2ee2ba8d9a9b34
@@ -417,7 +447,7 @@ entries:
     version: 2.6.1
   - apiVersion: v2
     appVersion: 3.6.0
-    created: "2026-07-24T12:32:55.367727931Z"
+    created: "2026-08-07T14:12:43.066606343Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 42a2144b4620d9ac534dcce4c70c2465fc1c81f627266b45eab5c9c2fff07ecd
@@ -447,7 +477,7 @@ entries:
     version: 2.6.0
   - apiVersion: v2
     appVersion: 3.5.0
-    created: "2026-07-24T12:32:55.365930733Z"
+    created: "2026-08-07T14:12:43.065891127Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: cbf99b585ebe6df62d8185b453e2d85d0f2d8b2f18ceb6ecfb9e8c7ea55ee3f8
@@ -477,7 +507,7 @@ entries:
     version: 2.5.0
   - apiVersion: v2
     appVersion: 3.4.0
-    created: "2026-07-24T12:32:55.365163807Z"
+    created: "2026-08-07T14:12:43.06512245Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 53f19c29a203da5f258431bb4d09c27cd85519b26e3cbf89ac72be61ac4531f1
@@ -507,7 +537,7 @@ entries:
     version: 2.4.0
   - apiVersion: v2
     appVersion: 3.3.4
-    created: "2026-07-24T12:32:55.364446623Z"
+    created: "2026-08-07T14:12:43.064321846Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: ef83d676d6baf71206acd21c84ac6bff159c71f1887afcb165ddb2d0a11a2812
@@ -533,7 +563,7 @@ entries:
     version: 2.3.4
   - apiVersion: v2
     appVersion: 3.3.3
-    created: "2026-07-24T12:32:55.363712719Z"
+    created: "2026-08-07T14:12:43.063548152Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: fba2545ae55bfbfc03fb7ab06399c92714f0d3d178d52cdc18fe77fcfe4bc19f
@@ -559,7 +589,7 @@ entries:
     version: 2.3.3
   - apiVersion: v2
     appVersion: 3.3.2
-    created: "2026-07-24T12:32:55.362970448Z"
+    created: "2026-08-07T14:12:43.06267612Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 3f88c01cfd0bcb9331650359398e2d7f856136f8304cc6754af2cbf0ad490cc9
@@ -587,7 +617,7 @@ entries:
       artifacthub.io/containsSecurityUpdates: "true"
     apiVersion: v2
     appVersion: 3.3.1
-    created: "2026-07-24T12:32:55.362224451Z"
+    created: "2026-08-07T14:12:43.060947124Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 617796e95349eecb2cf9aab97606c142a315d92935924943002487510e768c3e
@@ -613,7 +643,7 @@ entries:
     version: 2.3.1
   - apiVersion: v2
     appVersion: 3.3.0
-    created: "2026-07-24T12:32:55.361468836Z"
+    created: "2026-08-07T14:12:43.060203165Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: f38824ccb6193e07338403cdfe33c26096c474a5ba401c866b547c8f630fc622
@@ -639,7 +669,7 @@ entries:
     version: 2.3.0
   - apiVersion: v2
     appVersion: 3.2.0
-    created: "2026-07-24T12:32:55.360632639Z"
+    created: "2026-08-07T14:12:43.059455109Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 5e9ee7179dbf232b779b71608a7929c460f433a99c5a263eebd57906afa7b790
@@ -665,7 +695,7 @@ entries:
     version: 2.2.0
   - apiVersion: v2
     appVersion: 3.1.1
-    created: "2026-07-24T12:32:55.356519977Z"
+    created: "2026-08-07T14:12:43.055524426Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 5989e18aa47f0d2b25d0a628ede457bc8ed0cbc76ef7429a3fed44c42a746716
@@ -691,7 +721,7 @@ entries:
     version: 2.1.0
   - apiVersion: v2
     appVersion: 3.0.0
-    created: "2026-07-24T12:32:55.355753761Z"
+    created: "2026-08-07T14:12:43.054013737Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: f9eb4b58be588308494513dbb20a4af588593da4b25ea1b0b59198b62650fab5
@@ -717,7 +747,7 @@ entries:
     version: 2.0.0
   - apiVersion: v2
     appVersion: 2.8.1
-    created: "2026-07-24T12:32:55.354934557Z"
+    created: "2026-08-07T14:12:43.053217499Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 414617c9252a48db3639ac651a15e34bf891a6ae2ea471ca048a858b362dcc70
@@ -743,7 +773,7 @@ entries:
     version: 1.6.1
   - apiVersion: v2
     appVersion: 2.8.0
-    created: "2026-07-24T12:32:55.354185534Z"
+    created: "2026-08-07T14:12:43.052461893Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: a247b52382f922c6f2e8bd0c80ecf5a8d659000141af3cc2939bc9625deef524
@@ -769,7 +799,7 @@ entries:
     version: 1.6.0
   - apiVersion: v2
     appVersion: 2.7.0
-    created: "2026-07-24T12:32:55.353347354Z"
+    created: "2026-08-07T14:12:43.051754959Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 7974ecacdd4dfacde94bd5be1f1fc301eff3f97919a526bc62c9c1659b3f17f9
@@ -795,7 +825,7 @@ entries:
     version: 1.5.0
   - apiVersion: v2
     appVersion: 2.6.4
-    created: "2026-07-24T12:32:55.351612922Z"
+    created: "2026-08-07T14:12:43.051019413Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 360a9134f3bf8e88f0cf5e67a4a90f4c9354e9c7e9a714ed503927461c1ba5a6
@@ -821,7 +851,7 @@ entries:
     version: 1.4.4
   - apiVersion: v2
     appVersion: 2.6.3
-    created: "2026-07-24T12:32:55.350606717Z"
+    created: "2026-08-07T14:12:43.05029987Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: c1c66f0f668ed4dc5abf872d132c4cba6666955a588401e9207fcbc0487d4387
@@ -847,7 +877,7 @@ entries:
     version: 1.4.3
   - apiVersion: v2
     appVersion: 2.6.2
-    created: "2026-07-24T12:32:55.349842576Z"
+    created: "2026-08-07T14:12:43.049623622Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 4d6ffb33ef95d3ea0b370348da63671c29297d7f65c309df9f4196e44b141ea1
@@ -873,7 +903,7 @@ entries:
     version: 1.4.2
   - apiVersion: v2
     appVersion: 2.6.1
-    created: "2026-07-24T12:32:55.349112598Z"
+    created: "2026-08-07T14:12:43.048914155Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 67409d5c1a614171b4492bae2deb1a9d2e283daacb645c113f51ffea1a537760
@@ -899,7 +929,7 @@ entries:
     version: 1.4.1
   - apiVersion: v2
     appVersion: 2.6.0
-    created: "2026-07-24T12:32:55.348369065Z"
+    created: "2026-08-07T14:12:43.048165158Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 19701a66fd9d1c665cb2fd0d28e7bfb674ac421fb9c2e10bf4610b8998b47523
@@ -925,7 +955,7 @@ entries:
     version: 1.4.0
   - apiVersion: v2
     appVersion: 2.5.3
-    created: "2026-07-24T12:32:55.347633067Z"
+    created: "2026-08-07T14:12:43.047443783Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 58be2dbc52e7e37334afe70dae72dee80ea1cdef1079292b53869e68ffe604ba
@@ -951,7 +981,7 @@ entries:
     version: 1.3.3
   - apiVersion: v2
     appVersion: 2.5.2
-    created: "2026-07-24T12:32:55.346865058Z"
+    created: "2026-08-07T14:12:43.045884968Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: fe7eaf75a7c467330bed7d9f02a6cb74eb19aa6a7c6db9e855d2229a96e107f5
@@ -977,7 +1007,7 @@ entries:
     version: 1.3.2
   - apiVersion: v2
     appVersion: 2.5.1
-    created: "2026-07-24T12:32:55.346176729Z"
+    created: "2026-08-07T14:12:43.04415172Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 485ec3bb56e28ca92d479dd70f58302c099e879d52117c4e88fe01e6af880722
@@ -1003,7 +1033,7 @@ entries:
     version: 1.3.1
   - apiVersion: v2
     appVersion: 2.5.0
-    created: "2026-07-24T12:32:55.345366271Z"
+    created: "2026-08-07T14:12:43.042984219Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 2f9c1c618ac4ad9036b6697a5af8fa7c405b8f8ac87bd99228b2a6cb6db2e7c3
@@ -1029,7 +1059,7 @@ entries:
     version: 1.3.0
   - apiVersion: v2
     appVersion: 2.4.1
-    created: "2026-07-24T12:32:55.343535365Z"
+    created: "2026-08-07T14:12:43.042292148Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 0e43fc30de3927c62f10a66a5fb828f5209452b5a5496651788746ac975daa7b
@@ -1055,7 +1085,7 @@ entries:
     version: 1.2.1
   - apiVersion: v2
     appVersion: 2.4.0
-    created: "2026-07-24T12:32:55.342819293Z"
+    created: "2026-08-07T14:12:43.041618675Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 0727c9dcfe25813dcbf690fee8d849d16d7fd7d053a0e683f956a8770b4c1d9f
@@ -1081,7 +1111,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 2.3.0
-    created: "2026-07-24T12:32:55.342060211Z"
+    created: "2026-08-07T14:12:43.040922227Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 3fe6474b7c384c99ac5420932dc980c6d20f7887ce5903168162ddecaba5c7dd
@@ -1107,7 +1137,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 2.2.1
-    created: "2026-07-24T12:32:55.341254692Z"
+    created: "2026-08-07T14:12:43.040224978Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 9571292a2478241008fa3e22e95bc65b36bc1313d623a3537ce496c72edd4fa3
@@ -1133,7 +1163,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2026-07-24T12:32:55.340193985Z"
+    created: "2026-08-07T14:12:43.039406747Z"
     description: Helm chart for Connaisseur - a Kubernetes admission controller to
       integrate container image signature verification and trust pinning into a cluster.
     digest: 1e3f943e5569957d2c60d99f770c206cfe6297dd1f04c248f500c8156a9b2d23
@@ -1157,4 +1187,4 @@ entries:
     urls:
     - https://sse-secure-systems.github.io/connaisseur/charts/connaisseur-1.0.0.tgz
     version: 1.0.0
-generated: "2026-07-24T12:32:55.315761921Z"
+generated: "2026-08-07T14:12:43.020026819Z"
