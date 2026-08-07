@@ -1372,6 +1372,24 @@ We stick to semantic versioning, so unless the major version changes, updating C
 <td>3.11.1</td>
 <td>Prior to version 3.11.1 Connaisseur could silently fall back to the canonical <code>targets</code> trust role when downloading a delegation role failed with an "error acquiring trust data" message and the snapshot metadata contained no hash entry for the requested delegation. This fallback was intended for the edge case where delegation signers are registered but have never signed anything. However, the guard condition did not distinguish between implicitly resolved delegations and delegations explicitly required by the operator. An adversary with control over the Notary server and the <code>targets</code> signing key could therefore bypass an explicitly configured delegation requirement by causing the delegation fetch to fail and serving an image signed only at the <code>targets</code> level. Note that an adversary already holding the <code>targets</code> key could also remap delegation key assignments directly in <code>targets.json</code>; this fallback provided a stealthier path to the same outcome without requiring a detectable metadata change. Only users of type <code>notaryv1</code> validators with explicit <code>delegations</code> configured in their policy rules are affected.</td>
 </tr>
+<tr>
+<td>Notary reference registry confusion</td>
+<td><span>&#8804;</span> 3.11.1</td>
+<td>3.12.0</td>
+<td>Prior to version 3.12.0 Connaisseur's Notary (v1) validator would normalize the Notary registry of validated images if they started with DockerHub's default index.docker.io. This check did not ensure that index.docker.io was the actual host and thus would normalize paths for other registry hosts as well. As a consequence, the validated image reference could be faulty (on the correct Notary server). An attacker with access to the Notary server could then have served old (frozen or downgraded) images signed with the correct keys.</td>
+</tr>
+<tr>
+<td>Ignored Notary path constraints</td>
+<td><span>&#8804;</span> 3.11.1</td>
+<td>3.12.0</td>
+<td>Prior to version 3.12.0 Connaisseur's Notary (v1) validator did not respect path constraints. Notary allows scoping delegations to paths. Connaisseur would not validate that the target signed by a valid delegation of the repository was acutally in scope of the delegation.</td>
+</tr>
+<tr>
+<td>Credential leak</td>
+<td><span>&#8804;</span> 3.11.1</td>
+<td>3.12.0</td>
+<td>Prior to version 3.12.0 Connaisseur would match the registry credentials to a container registry without being host-aware. This way, an attacker could trick Connaisseur into sending the credentials for the container registry to an attacker-controlled host.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="reporting-a-vulnerability">Reporting a vulnerability<a class="headerlink" href="#reporting-a-vulnerability" title="Permanent link">⚓︎</a></h2>
