@@ -26,7 +26,7 @@ import (
 	"github.com/sigstore/cosign/v2/pkg/oci"
 	ociremote "github.com/sigstore/cosign/v2/pkg/oci/remote"
 	"github.com/sigstore/rekor/pkg/generated/client"
-	"github.com/sigstore/sigstore/pkg/tuf"
+	"github.com/sigstore/sigstore/pkg/tuf" //nolint:staticcheck // cosign's API still requires this deprecated package
 	"github.com/sirupsen/logrus"
 )
 
