@@ -270,6 +270,18 @@ func TestNotaryReference(t *testing.T) {
 			"registry.io:8080/path/to/repo/image:tag",
 			"registry.io:8080/path/to/repo/image",
 		},
+		{ // lookalike registry must not be confused for docker hub
+			"index.docker.io.attacker.example/repo:tag",
+			"index.docker.io.attacker.example/repo",
+		},
+		{ // lookalike registry with dash must not be confused for docker hub either
+			"index.docker.io-attacker.example/repo:tag",
+			"index.docker.io-attacker.example/repo",
+		},
+		{
+			"index.docker.io/library/test-image:latest",
+			"docker.io/library/test-image",
+		},
 	}
 	for _, tc := range testCases {
 		img, _ := New(tc.img)

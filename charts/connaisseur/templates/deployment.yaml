@@ -100,5 +100,8 @@ spec:
         {{- toYaml .Values.kubernetes.deployment.tolerations | nindent 8 }}
       nodeSelector:
         {{- toYaml .Values.kubernetes.deployment.nodeSelector | nindent 8 }}
+      {{- if .Values.kubernetes.deployment.hostNetwork }}
+      hostNetwork: {{ .Values.kubernetes.deployment.hostNetwork }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.kubernetes.deployment.podSecurityContext | nindent 8 }}

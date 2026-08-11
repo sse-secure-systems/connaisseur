@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/theupdateframework/notary/tuf/data"
 	"gopkg.in/yaml.v3"
 )
 
@@ -487,36 +488,122 @@ func TestToDelegationString(t *testing.T) {
 	}
 }
 
-func TestSearchTargetsForTag(t *testing.T) {
+func TestResolveAuthorizedTagInTargets(t *testing.T) {
+	// a delegation restricted to "v1" is authorized for "v1" but not "sign",
+	// even though the delegation's own targets file signs both
+	restrictedRole := &data.DelegationRole{
+		BaseRole: data.BaseRole{Name: "targets/restricted"},
+		Paths:    []string{"v1"},
+	}
+
+	// a delegation with multiple paths covering both targets is authorized for either
+	fullRole := &data.DelegationRole{
+		BaseRole: data.BaseRole{Name: "targets/full"},
+		Paths:    []string{"v1", "sign"},
+	}
+
+	// a delegation with no paths at all is authorized for nothing
+	noPathsRole := &data.DelegationRole{
+		BaseRole: data.BaseRole{Name: "targets/no-paths"},
+		Paths:    []string{},
+	}
+
+	// TUF "authorized for everything" is an explicit empty-string path,
+	// since every target name has "" as a prefix
+	wildcardRole := &data.DelegationRole{
+		BaseRole: data.BaseRole{Name: "targets/wildcard"},
+		Paths:    []string{""},
+	}
+
 	var testCases = []struct {
-		file   string
-		tag    string
-		digest string
-		err    string
+		file           string
+		tag            string
+		delegationRole *data.DelegationRole
+		digest         string
+		err            string
 	}{
 		{
 			"sample-image/targets",
 			"v1",
+			nil,
 			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
 			"",
 		},
 		{
 			"sample-image/targets",
 			"sign",
+			nil,
 			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
 			"",
 		},
 		{
 			"sample-image/targets",
 			"no_tag",
+			nil,
 			"",
 			"no tag 'no_tag' found in targets",
+		},
+		{
+			"sample-image/targets",
+			"v1",
+			restrictedRole,
+			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+			"",
+		},
+		{
+			"sample-image/targets",
+			"sign",
+			restrictedRole,
+			"",
+			"delegation targets/restricted is not authorized to sign target sign",
+		},
+		{
+			"sample-image/targets",
+			"v1",
+			fullRole,
+			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+			"",
+		},
+		{
+			"sample-image/targets",
+			"sign",
+			fullRole,
+			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			"",
+		},
+		{
+			"sample-image/targets",
+			"v1",
+			noPathsRole,
+			"",
+			"delegation targets/no-paths is not authorized to sign target v1",
+		},
+		{
+			"sample-image/targets",
+			"sign",
+			noPathsRole,
+			"",
+			"delegation targets/no-paths is not authorized to sign target sign",
+		},
+		{
+			"sample-image/targets",
+			"v1",
+			wildcardRole,
+			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+			"",
+		},
+		{
+			"sample-image/targets",
+			"sign",
+			wildcardRole,
+			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			"",
 		},
 	}
 
 	for _, tc := range testCases {
 		target, _ := testhelper.TargetData(PRE + "trust_data/" + tc.file + ".json")
-		digest, err := searchTargetsForTag(target.Signed, tc.tag)
+		digest, err := resolveAuthorizedTagInTargets(target.Signed, tc.tag, tc.delegationRole)
 
 		if tc.err != "" {
 			assert.NotNil(t, err)
@@ -528,32 +615,110 @@ func TestSearchTargetsForTag(t *testing.T) {
 	}
 }
 
-func TestSearchTargetsForDigest(t *testing.T) {
+func TestResolveAuthorizedDigestInTargets(t *testing.T) {
+	// a delegation restricted to "v1" is authorized for "v1" but not "sign",
+	// even though the delegation's own targets file signs both
+	restrictedRole := &data.DelegationRole{
+		BaseRole: data.BaseRole{Name: "targets/restricted"},
+		Paths:    []string{"v1"},
+	}
+
+	// a delegation with multiple paths covering both targets is authorized for either
+	fullRole := &data.DelegationRole{
+		BaseRole: data.BaseRole{Name: "targets/full"},
+		Paths:    []string{"v1", "sign"},
+	}
+
+	// a delegation with no paths at all is authorized for nothing
+	noPathsRole := &data.DelegationRole{
+		BaseRole: data.BaseRole{Name: "targets/no-paths"},
+		Paths:    []string{},
+	}
+
+	// TUF "authorized for everything" is an explicit empty-string path,
+	// since every target name has "" as a prefix
+	wildcardRole := &data.DelegationRole{
+		BaseRole: data.BaseRole{Name: "targets/wildcard"},
+		Paths:    []string{""},
+	}
+
 	var testCases = []struct {
-		file   string
-		digest string
-		err    string
+		file           string
+		digest         string
+		delegationRole *data.DelegationRole
+		err            string
 	}{
 		{
 			"sample-image/targets",
 			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+			nil,
 			"",
 		},
 		{
 			"sample-image/targets",
 			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			nil,
 			"",
 		},
 		{
 			"sample-image/targets",
 			"sha256:aaaaaaab8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			nil,
 			"no digest 'sha256:aaaaaaab8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf' found in targets",
+		},
+		{
+			"sample-image/targets",
+			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+			restrictedRole,
+			"",
+		},
+		{
+			"sample-image/targets",
+			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			restrictedRole,
+			"delegation targets/restricted is not authorized to sign target sign",
+		},
+		{
+			"sample-image/targets",
+			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+			fullRole,
+			"",
+		},
+		{
+			"sample-image/targets",
+			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			fullRole,
+			"",
+		},
+		{
+			"sample-image/targets",
+			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+			noPathsRole,
+			"delegation targets/no-paths is not authorized to sign target v1",
+		},
+		{
+			"sample-image/targets",
+			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			noPathsRole,
+			"delegation targets/no-paths is not authorized to sign target sign",
+		},
+		{
+			"sample-image/targets",
+			"sha256:799c0fa8aa4c9fbff5a99aef1b4b5c3abb9c2f34134345005982fad3489893c7",
+			wildcardRole,
+			"",
+		},
+		{
+			"sample-image/targets",
+			"sha256:a154797b8300165956ee1f16d98f3a1426301c1168f0462c73ce9bc03361cabf",
+			wildcardRole,
+			"",
 		},
 	}
 
 	for _, tc := range testCases {
 		target, _ := testhelper.TargetData(PRE + "trust_data/" + tc.file + ".json")
-		digest, err := searchTargetsForDigest(target.Signed, tc.digest)
+		digest, err := resolveAuthorizedDigestInTargets(target.Signed, tc.digest, tc.delegationRole)
 
 		if tc.err != "" {
 			assert.NotNil(t, err)

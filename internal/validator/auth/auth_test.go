@@ -157,6 +157,30 @@ func TestLookUp(t *testing.T) {
 			"test",
 			"test",
 		},
+		{ // 5: "extended" registry must not match as a prefix
+			"08_docker_auth",
+			"registry.io.evil.tld/image:tag",
+			"",
+			"",
+		},
+		{ // 6: "extended" registry with path must not match as a prefix
+			"08_docker_auth",
+			"registry.io.evil.tld/path/image:tag",
+			"",
+			"",
+		},
+		{ // 7: "extended" repo path must not match as a prefix
+			"08_docker_auth",
+			"registry.io/pathological/image:tag",
+			"user",
+			"pass",
+		},
+		{ // 8: subdomain of a configured registry must not match
+			"08_docker_auth",
+			"attacker.registry.io/image:tag",
+			"",
+			"",
+		},
 	}
 
 	for idx, tc := range testCases {

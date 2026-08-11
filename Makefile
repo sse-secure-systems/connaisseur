@@ -8,7 +8,7 @@ ALL_RS := all,mutatingwebhookconfigurations,clusterroles,clusterrolebindings,con
 
 # meant for local building of docker image (single platform)
 docker:
-	docker buildx build --pull -f build/Dockerfile -t $(IMAGE_REPO):v$(VERSION) .
+	docker buildx build --pull --load -f build/Dockerfile -t $(IMAGE_REPO):v$(VERSION) .
 
 # build multi-architecture docker images (amd64, arm64)
 # NOTE: buildx requires --push or --load; for multi-arch, must push to registry

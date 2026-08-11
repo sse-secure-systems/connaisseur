@@ -165,9 +165,20 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 		)
 		signedTarget := repo.Targets[target].Signed
 
+		// delegations may only vouch for targets within their path restrictions;
+		// the canonical targets role has full authority and needs no such check
+		var delegationRole *data.DelegationRole
+		if target != data.CanonicalTargetsRole.String() {
+			dr, err := repo.Targets[data.CanonicalTargetsRole.String()].BuildDelegationRole(data.RoleName(target))
+			if err != nil {
+				return "", fmt.Errorf("error building delegation role %s: %s", target, err)
+			}
+			delegationRole = &dr
+		}
+
 		// search trust data for either tag or digest
 		if image.Tag() != "" {
-			digest, digestErr = searchTargetsForTag(signedTarget, image.Tag())
+			digest, digestErr = resolveAuthorizedTagInTargets(signedTarget, image.Tag(), delegationRole)
 			if digestErr != nil {
 				return "", fmt.Errorf("validated targets don't contain reference: %s", digestErr)
 			}
@@ -178,7 +189,7 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 				return "", fmt.Errorf("digest %s resolved for tag %s doesn't match given digest %s", digest, image.Tag(), image.Digest())
 			}
 		} else {
-			digest, digestErr = searchTargetsForDigest(signedTarget, image.Digest())
+			digest, digestErr = resolveAuthorizedDigestInTargets(signedTarget, image.Digest(), delegationRole)
 			if digestErr != nil {
 				return "", fmt.Errorf("validated targets don't contain reference: %s", digestErr)
 			}
@@ -253,12 +264,16 @@ func toDelegationString(delegation string) string {
 	return fmt.Sprintf("targets/%s", delegation)
 }
 
-func searchTargetsForTag(targetFile data.Targets, tag string) (string, error) {
+func resolveAuthorizedTagInTargets(targetFile data.Targets, tag string, delegationRole *data.DelegationRole) (string, error) {
 	logrus.Debugf("searching targets for tag %s", tag)
 
 	for key, target := range targetFile.Targets {
 		if key != tag {
 			continue
+		}
+
+		if delegationRole != nil && !delegationRole.CheckPaths(key) {
+			return "", fmt.Errorf("delegation %s is not authorized to sign target %s", delegationRole.Name, key)
 		}
 
 		return dgst.NewDigestFromEncoded(
@@ -270,15 +285,19 @@ func searchTargetsForTag(targetFile data.Targets, tag string) (string, error) {
 	return "", fmt.Errorf("no tag '%s' found in targets", tag)
 }
 
-func searchTargetsForDigest(targetFile data.Targets, digest string) (string, error) {
+func resolveAuthorizedDigestInTargets(targetFile data.Targets, digest string, delegationRole *data.DelegationRole) (string, error) {
 	logrus.Debugf("searching targets for digest %s", digest)
 
-	for _, target := range targetFile.Targets {
+	for key, target := range targetFile.Targets {
 		targetDigest := dgst.NewDigestFromEncoded(
 			notary.SHA256,
 			hex.EncodeToString(target.Hashes[notary.SHA256]),
 		)
 		if targetDigest.String() == digest {
+			if delegationRole != nil && !delegationRole.CheckPaths(key) {
+				return "", fmt.Errorf("delegation %s is not authorized to sign target %s", delegationRole.Name, key)
+			}
+
 			return targetDigest.String(), nil
 		}
 	}

@@ -87,7 +87,7 @@ func (i *Image) String() string {
 // notary stores images at `docker.io/...` thus the `index.` prefix
 // needs to be removed.
 func (i *Image) NotaryReference() string {
-	if strings.HasPrefix(i.Context().String(), constants.DefaultDockerRegistry) {
+	if i.Context().RegistryStr() == constants.DefaultDockerRegistry {
 		return strings.TrimPrefix(i.Context().String(), "index.")
 	}
 	return i.Context().String()
