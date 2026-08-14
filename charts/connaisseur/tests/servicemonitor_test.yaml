@@ -41,8 +41,16 @@ tests:
           path: spec.endpoints[0].scrapeTimeout
           value: 10s
       - equal:
+          path: spec.endpoints[0].tlsConfig.serverName
+          value: connaisseur-svc.NAMESPACE.svc
+      - equal:
+          path: spec.endpoints[0].tlsConfig.ca.secret.name
+          value: connaisseur-tls
+      - equal:
+          path: spec.endpoints[0].tlsConfig.ca.secret.key
+          value: tls.crt
+      - notExists:
           path: spec.endpoints[0].tlsConfig.insecureSkipVerify
-          value: true
 
   - it: targets the connaisseur service via selector labels
     set:
@@ -65,16 +73,22 @@ tests:
           path: metadata.labels.release
           value: kube-prometheus-stack
 
-  - it: honors a custom tlsConfig override
+  - it: honors a custom tlsConfig override, replacing the defaults
     set:
       kubernetes.serviceMonitor.enabled: true
       kubernetes.serviceMonitor.tlsConfig:
         serverName: connaisseur-svc.connaisseur.svc
-        insecureSkipVerify: false
+        ca:
+          secret:
+            name: my-ca
+            key: ca.crt
     asserts:
       - equal:
           path: spec.endpoints[0].tlsConfig.serverName
           value: connaisseur-svc.connaisseur.svc
       - equal:
-          path: spec.endpoints[0].tlsConfig.insecureSkipVerify
-          value: false
+          path: spec.endpoints[0].tlsConfig.ca.secret.name
+          value: my-ca
+      - equal:
+          path: spec.endpoints[0].tlsConfig.ca.secret.key
+          value: ca.crt

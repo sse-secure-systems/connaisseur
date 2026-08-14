@@ -22,8 +22,14 @@ spec:
       path: /metrics
       interval: {{ .Values.kubernetes.serviceMonitor.interval }}
       scrapeTimeout: {{ .Values.kubernetes.serviceMonitor.scrapeTimeout }}
-      {{- with .Values.kubernetes.serviceMonitor.tlsConfig }}
       tlsConfig:
+        {{- with .Values.kubernetes.serviceMonitor.tlsConfig }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- else }}
+        serverName: {{ printf "%s.%s.svc" (include "connaisseur.serviceName" .) .Release.Namespace }}
+        ca:
+          secret:
+            name: {{ include "connaisseur.TLSName" . }}
+            key: tls.crt
+        {{- end }}
 {{- end }}
