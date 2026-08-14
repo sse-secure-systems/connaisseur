@@ -11,6 +11,18 @@ Signatures are stored as OCI artifacts in the same registry as the signed contai
 Connaisseur supports validating Notation signatures based on X.509 certificates configured as trust roots.
 The validator can verify signatures created by the Notation CLI or any compatible signing tools that implement the Notation specification.
 
+## CA-level signer trust
+
+Connaisseur intentionally configures Notation with `trustedIdentities: ["*"]` to implement CA-level signer trust.
+At the default `strict` verification level, only signing identities whose certificates chain to a trust root explicitly configured in the selected validator are accepted; the wildcard does not trust identities outside that CA hierarchy.
+The `audit` verification level only logs authenticity failures and therefore does not enforce this trust boundary, as described under [verification levels](#verification-levels).
+
+Configuring a CA certificate as a trust root delegates signer authorization to that CA.
+This allows all subordinate identities issued by the CA to sign images covered by the corresponding Connaisseur image policy without adding every certificate identity to Connaisseur separately.
+
+Connaisseur does not currently support restricting accepted identities beneath a shared CA by certificate subject or another identity attribute.
+Deployments that require signer-level separation should use dedicated, appropriately scoped CA trust roots.
+
 ## Basic usage
 
 To get started with Notation, you'll need to install the Notation CLI and create signing certificates.
