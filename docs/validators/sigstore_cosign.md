@@ -261,10 +261,10 @@ Such environment variables can be injected into Connaisseur via `deployment.envs
 ### Multi-signature verification
 
 Connaisseur can verify multiple signatures for a single image.
-It is possible to configure a threshold number and specific set of required valid signatures.
+It is possible to configure a threshold number and specific set of required valid signers.
 This allows to implement several advanced use cases (and policies):
 
-* Five maintainers of a repository are able to sign a single derived image, however at least 3 signatures are required for the image to be valid.
+* Five maintainers of a repository are able to sign a single derived image, however at least 3 signatures by different signers are required for the image to be valid.
 * In a CI pipeline, a container image is signed directly after pushing by the build job and at a later time by passing quality gates such as security scanners or integration tests, each with their own key (trust root). Validation requires all of these signatures for deployment to enforce integrity and quality gates.
 * A mixture of the above use cases whereby several specific trust roots are enforced (e.g. automation tools) and the overall number of signatures has to surpass a certain threshold (e.g. at least one of the testers admits).
 * Key rotation is possible by adding a new key as an additional key and require at least one valid signature.
@@ -309,7 +309,7 @@ The trust roots `alice`, `bob`, and `charlie` are all included for verification 
 
 As neither `threshold` nor `required` are specified, Connaisseur will require signatures of all trust roots (`alice`, `bob`, and `charlie`) and deny an image otherwise.
 If either `threshold` or `required` is specified, it takes precedence.
-For example, it is possible to configure a threshold number of required signatures via the `threshold` key:
+For example, it is possible to configure a threshold number of required signatures (by different signers) via the `threshold` key:
 
 ```yaml title="charts/connaisseur/values.yaml"
 - pattern: "*:*"
@@ -343,6 +343,9 @@ It is possible to combine `threshold` and `required` keys:
 ```
 
 Thus, at least 3 valid signatures are required and `alice` and `bob` must be among those.
+
+In any case, valid signatures by trust roots are counted as such.
+Connaisseur does not verify that any metadata associated with the signatures (e.g. a timestamp) matches with the other signatures in the multi-signature verification.
 
 
 ### Transparency log verification
