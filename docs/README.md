@@ -106,7 +106,7 @@ As a result, Connaisseur just needs to make sure that only *trusted digests* (si
 In the default `mutate` mode, Connaisseur replaces an image tag with the digest obtained from the validated signature data.
 The container runtime then verifies that the pulled image content matches this digest, completing the binding between the admitted workload and the trusted image content.
 The explicit [`insecureValidateOnly`](./basics.md#image-policy) mode opts out of this protection by leaving the mutable tag in the workload and must not be considered equivalent to digest-pinning enforcement.
-Depending on how an image for deployment is referenced, it will either attempt to translate the tag to a trusted digest or validate whether the digest is trusted.
+Depending on how an image for deployment is referenced, Connaisseur will either attempt to translate the tag to a trusted digest or validate whether the digest is trusted.
 How the digest is signed in detail, where the signature is stored, what it is verfied against and how different image distribution and updating attacks are mitigated depends on the signature solutions.
 
 ### Mutating admission controller
