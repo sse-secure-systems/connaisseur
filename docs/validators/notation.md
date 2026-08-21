@@ -131,7 +131,7 @@ kubectl run unsigned-app --image=docker.io/myrepo/myimage:unsigned
 | `name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `type` | - | :heavy_check_mark: | `notation`; the validator type must be set to `notation`. |
 | `trustRoots[*].name` | - | :heavy_check_mark: | See [basics](../basics.md#validators). |
-| `trustRoots[*].cert` | - | :heavy_check_mark: | X.509 certificate in PEM format used for signature verification. This should be the root signing certificate or a trusted CA certificate. |
+| `trustRoots[*].cert` | - | :heavy_check_mark: | X.509 certificate in PEM format used for signature verification. This should be the root signing certificate or a trusted CA certificate. See additional notes [below](#ca-level-signer-trust). |
 | `trustRoots[*].tsCert` | - | - | X.509 certificate in PEM format used for timestamp countersignature verification. |
 | `auth.` | - | - | Authentication credentials for registries with restricted access (e.g., private registries or rate limiting). See additional notes [below](#authentication). |
 | `auth.secretName` | - | - | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#dockerconfigjson). |
@@ -203,6 +203,18 @@ Since [bitnami signs all their images using notation](https://community.broadcom
     ```
 
 ## Additional notes
+
+### CA-level signer trust
+
+Connaisseur intentionally configures Notation with `trustedIdentities: ["*"]` to implement CA-level signer trust.
+At the default `strict` verification level, only signing identities whose certificates chain to a trust root explicitly configured in the selected validator are accepted; the wildcard does not trust identities outside that CA hierarchy.
+The `audit` verification level only logs authenticity failures and therefore does not enforce this trust boundary, as described under [verification levels](#verification-levels).
+
+Configuring a CA certificate as a trust root delegates signer authorization to that CA.
+This allows all subordinate identities issued by the CA to sign images covered by the corresponding Connaisseur image policy without adding every certificate identity to Connaisseur separately.
+
+Connaisseur does not currently support restricting accepted identities beneath a shared CA by certificate subject or another identity attribute.
+Deployments that require signer-level separation should use dedicated, appropriately scoped CA trust roots.
 
 ### Authentication
 
