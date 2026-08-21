@@ -128,11 +128,10 @@ func baseTransport(cert string) (*http.Transport, error) {
 		return nil, fmt.Errorf("error setting up TLS config: %s", err)
 	}
 	base := &http.Transport{
-		Dial: (&net.Dialer{
+		DialContext: (&net.Dialer{
 			Timeout:   constants.ValidationTimeoutSeconds * time.Second,
 			KeepAlive: constants.ValidationTimeoutSeconds * time.Second,
-			DualStack: true,
-		}).Dial,
+		}).DialContext,
 		TLSHandshakeTimeout: constants.TLSHandshakeTimeoutSeconds * time.Second,
 		TLSClientConfig:     cfg,
 	}
