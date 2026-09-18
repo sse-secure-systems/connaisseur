@@ -427,7 +427,7 @@ There is two rules that should remain intact in some form in order to not brick 
 | `validator` | `default` | - | Name of a validator in the `validators` list. If not provided, the validator with name `default` is used if it exists. |
 | `with` | - | - | Additional parameters to use for a validator. See more specifics in [validator section](validators/README.md). |
 |`with.trustRoot`| `default` | - | Name of a trust root, which is specified within the referenced validator. If not provided, the trust root with name `default` is used if it exists. Setting this to `"*"` implements a logical `or` and enables signature verification under any trust root in the validator. |
-|`with.mode`| `mutate` | - | Mode of operation which specifies whether or not image references should be mutated after successful image validation. If set to `mutate`, Connaisseur operates mutates image references to include digests. If set to `insecureValidateOnly`, Connaisseur will not mutate the digests. This leaves the risk of a malicious registry serving a different image under the signed tag. |
+|`with.mode`| `mutate` | - | Mode of operation which specifies whether image references are mutated after successful image validation. In the default `mutate` mode, Connaisseur replaces tags with trusted digests and relies on the container runtime to enforce those digests when pulling image content. `insecureValidateOnly` deliberately leaves mutable tags in the workload, so the runtime does not receive the trusted digest and the digest-pinning security guarantee does not apply. |
 
 #### Example
 
