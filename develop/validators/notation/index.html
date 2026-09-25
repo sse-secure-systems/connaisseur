@@ -599,6 +599,15 @@ You're not viewing the docs of the latest version.
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#ca-level-signer-trust" class="md-nav__link">
+    <span class="md-ellipsis">
+      CA-level signer trust
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       Authentication
@@ -1513,6 +1522,15 @@ You're not viewing the docs of the latest version.
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#ca-level-signer-trust" class="md-nav__link">
+    <span class="md-ellipsis">
+      CA-level signer trust
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       Authentication
@@ -1692,7 +1710,7 @@ kubectl<span class="w"> </span>run<span class="w"> </span>unsigned-app<span clas
 <td><code>trustRoots[*].cert</code></td>
 <td>-</td>
 <td><img alt="✔" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2714.svg" title=":heavy_check_mark:" /></td>
-<td>X.509 certificate in PEM format used for signature verification. This should be the root signing certificate or a trusted CA certificate.</td>
+<td>X.509 certificate in PEM format used for signature verification. This should be the root signing certificate or a trusted CA certificate. See additional notes <a href="#ca-level-signer-trust">below</a>.</td>
 </tr>
 <tr>
 <td><code>trustRoots[*].tsCert</code></td>
@@ -1802,6 +1820,14 @@ kubectl<span class="w"> </span>run<span class="w"> </span>unsigned-app<span clas
 </code></pre></div>
 </details>
 <h2 id="additional-notes">Additional notes<a class="headerlink" href="#additional-notes" title="Permanent link">⚓︎</a></h2>
+<h3 id="ca-level-signer-trust">CA-level signer trust<a class="headerlink" href="#ca-level-signer-trust" title="Permanent link">⚓︎</a></h3>
+<p>Connaisseur intentionally configures Notation with <code>trustedIdentities: ["*"]</code> to implement CA-level signer trust.
+At the default <code>strict</code> verification level, only signing identities whose certificates chain to a trust root explicitly configured in the selected validator are accepted; the wildcard does not trust identities outside that CA hierarchy.
+The <code>audit</code> verification level only logs authenticity failures and therefore does not enforce this trust boundary, as described under <a href="#verification-levels">verification levels</a>.</p>
+<p>Configuring a CA certificate as a trust root delegates signer authorization to that CA.
+This allows all subordinate identities issued by the CA to sign images covered by the corresponding Connaisseur image policy without adding every certificate identity to Connaisseur separately.</p>
+<p>Connaisseur does not currently support restricting accepted identities beneath a shared CA by certificate subject or another identity attribute.
+Deployments that require signer-level separation should use dedicated, appropriately scoped CA trust roots.</p>
 <h3 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">⚓︎</a></h3>
 <p>When using private registries, you need to provide authentication credentials to Connaisseur.</p>
 <h4 id="dockerconfigjson">dockerconfigjson<a class="headerlink" href="#dockerconfigjson" title="Permanent link">⚓︎</a></h4>
