@@ -380,16 +380,31 @@ func (cv *CosignValidator) setupOptions(
 	}
 	registryClientOpts := registryOpts.GetRegistryClientOpts(ctx)
 
-	// set self-signed certificate
 	if cv.Cert != nil {
-		registryClientOpts = append(
-			registryClientOpts,
-			remote.WithTransport(
-				&http.Transport{
-					TLSClientConfig: &tls.Config{RootCAs: cv.Cert, MinVersion: tls.VersionTLS12},
-				},
-			),
-		)
+		transport := http.DefaultTransport.(*http.Transport).Clone()
+		transport.TLSClientConfig = &tls.Config{RootCAs: cv.Cert, MinVersion: tls.VersionTLS12}
+		registryClientOpts = append(registryClientOpts, remote.WithTransport(transport))
+
+		// Cosign's reusable clients retain the transport they were constructed with and
+		// take precedence over later options. Clear them while creating replacements so
+		// they retain Cosign's options but use this verification's custom CA transport.
+		// The typed-nil Reuse options override the old clients only in these temporary
+		// option slices; without them, the constructors would return the old clients.
+		pusherOpts := append([]remote.Option{}, registryClientOpts...)
+		pusherOpts = append(pusherOpts, remote.Reuse((*remote.Pusher)(nil)))
+		pusher, err := remote.NewPusher(pusherOpts...)
+		if err != nil {
+			return nil, fmt.Errorf("error creating registry pusher: %w", err)
+		}
+		registryClientOpts = append(registryClientOpts, remote.Reuse(pusher))
+
+		pullerOpts := append([]remote.Option{}, registryClientOpts...)
+		pullerOpts = append(pullerOpts, remote.Reuse((*remote.Puller)(nil)))
+		puller, err := remote.NewPuller(pullerOpts...)
+		if err != nil {
+			return nil, fmt.Errorf("error creating registry puller: %w", err)
+		}
+		registryClientOpts = append(registryClientOpts, remote.Reuse(puller))
 	}
 
 	// apply registry client options
