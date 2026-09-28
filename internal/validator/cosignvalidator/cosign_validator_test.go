@@ -7,8 +7,11 @@ import (
 	"connaisseur/test/testhelper"
 	"context"
 	"crypto/ecdsa"
+	"crypto/x509"
 	"fmt"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
@@ -319,6 +322,52 @@ func TestSetupOptions(t *testing.T) {
 				assert.Equal(t, tc.expCTLogKeys[key], value.PubKey.(*ecdsa.PublicKey).X.Int64(), idx+1)
 			}
 		}
+	}
+}
+
+func TestSetupOptionsUsesCustomRegistryCertificate(t *testing.T) {
+	falseVar := false
+	registry := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer registry.Close()
+
+	registryHost := strings.TrimPrefix(registry.URL, "https://")
+	img, err := image.New(registryHost + "/image:tag")
+	assert.NoError(t, err)
+	ruleOptions := policy.RuleOptions{VerifyTLog: &falseVar, VerifySCT: &falseVar}
+
+	certPool := x509.NewCertPool()
+	certPool.AddCert(registry.Certificate())
+	trustedOptions, err := (&CosignValidator{Cert: certPool}).setupOptions(
+		context.Background(),
+		ruleOptions,
+		img,
+	)
+	assert.NoError(t, err)
+	untrustedOptions, err := (&CosignValidator{}).setupOptions(
+		context.Background(),
+		ruleOptions,
+		img,
+	)
+	assert.NoError(t, err)
+
+	trustedResult := make(chan error)
+	untrustedResult := make(chan error)
+	go func() {
+		_, err := remote.DigestTag(img, trustedOptions.RegistryClientOpts...)
+		trustedResult <- err
+	}()
+	go func() {
+		_, err := remote.DigestTag(img, untrustedOptions.RegistryClientOpts...)
+		untrustedResult <- err
+	}()
+
+	if err := <-trustedResult; assert.Error(t, err) {
+		assert.NotContains(t, err.Error(), "certificate signed by unknown authority")
+	}
+	if err := <-untrustedResult; assert.Error(t, err) {
+		assert.ErrorContains(t, err, "certificate signed by unknown authority")
 	}
 }
 
