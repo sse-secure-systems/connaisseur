@@ -9,6 +9,7 @@ kubernetes:
       # tag: v1.2.3
     pullPolicy: IfNotPresent
     replicasCount: 3
+    port: 5000
     imagePullSecrets: []
     hostNetwork: false
     nodeSelector: {}

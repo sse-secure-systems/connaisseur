@@ -9,7 +9,7 @@ spec:
   type: {{ .Values.kubernetes.service.type }}
   ports:
     - port: {{ .Values.kubernetes.service.port }}
-      targetPort: 5000
+      targetPort: {{ .Values.kubernetes.deployment.port }}
       protocol: TCP
       name: http
   selector:

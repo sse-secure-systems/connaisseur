@@ -19,9 +19,11 @@ const (
 	LogLevel                   = "LOG_LEVEL"
 	LogFormat                  = "LOG_FORMAT"
 	PodName                    = "POD_NAME"
+	ServerPort                 = "CONNAISSEUR_PORT"
 	DefaultAuthFile            = "secret.yaml"
 	DockerAuthFile             = ".dockerconfigjson"
 	DefaultDockerRegistry      = "index.docker.io"
+	DefaultServerPort          = 5000
 	DefaultRedisPort           = 6379
 	DefaultCacheExpirySeconds  = 30
 	CacheExpirySecondsKey      = "CACHE_EXPIRY_SECONDS"

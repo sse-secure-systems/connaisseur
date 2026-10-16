@@ -8,10 +8,12 @@ import (
 	"connaisseur/internal/handler"
 	"connaisseur/internal/utils"
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -28,7 +30,7 @@ import (
 	_ "github.com/sigstore/sigstore/pkg/signature/kms/hashivault"
 )
 
-// Start a new HTTP server on port 5000 with /health, /ready,
+// Start a new HTTP server with /health, /ready,
 // /metrics and /mutate routes. Takes a config and stores it inside
 // its context.
 func startServer(config *config.Config, alerting *alerting.Config) {
@@ -62,9 +64,11 @@ func startServer(config *config.Config, alerting *alerting.Config) {
 
 	l := logrus.StandardLogger()
 	errLog := log.New(l.WriterLevel(logrus.ErrorLevel), "", 0)
+	port := serverPort()
+	address := fmt.Sprintf(":%d", port)
 
 	server := &http.Server{
-		Addr:         ":5000",
+		Addr:         address,
 		Handler:      mux,
 		ReadTimeout:  constants.HTTPTimeoutSeconds * time.Second,
 		WriteTimeout: constants.HTTPTimeoutSeconds * time.Second,
@@ -77,10 +81,25 @@ func startServer(config *config.Config, alerting *alerting.Config) {
 	// Set log outputs of relevant third party libraries
 	utils.InitiateThirdPartyLibraryLogging()
 
-	logrus.Info("Starting server at 127.0.0.1:5000...")
+	logrus.Infof("Starting server at 127.0.0.1:%d...", port)
 	if err := server.ListenAndServeTLS(constants.CertDir+"/tls.crt", constants.CertDir+"/tls.key"); err != nil {
 		logrus.Fatal(err) // exits with code 1
 	}
+}
+
+func serverPort() int {
+	configuredPort := os.Getenv(constants.ServerPort)
+	if configuredPort == "" {
+		return constants.DefaultServerPort
+	}
+
+	port, err := strconv.Atoi(configuredPort)
+	if err != nil || port < 1 || port > 65535 {
+		logrus.Warnf("%s must be an integer between 1 and 65535, defaulting to %d", constants.ServerPort, constants.DefaultServerPort)
+		return constants.DefaultServerPort
+	}
+
+	return port
 }
 
 // Loads a Connaisseur config file from the filesystem
@@ -103,12 +122,12 @@ func loadConfigs() (*config.Config, *alerting.Config) {
 func main() {
 	// set logging
 	switch utils.ConnaisseurLogFormat() {
-		case constants.LogFormatJson:
-			logrus.SetFormatter(&logrus.JSONFormatter{})
-		default:
-			logrus.SetFormatter(&logrus.JSONFormatter{
-				PrettyPrint: true,
-			})
+	case constants.LogFormatJson:
+		logrus.SetFormatter(&logrus.JSONFormatter{})
+	default:
+		logrus.SetFormatter(&logrus.JSONFormatter{
+			PrettyPrint: true,
+		})
 	}
 	logrus.SetOutput(os.Stdout)
 	logrus.SetLevel(utils.ConnaisseurLogLevel())
