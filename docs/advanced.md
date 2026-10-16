@@ -25,3 +25,35 @@ A not-yet-running Connaisseur would need to allow itself to be started, a classi
 
 There is unfortunately no good way around it, so you'll have to uninstall and reinstall Connaisseur when restarting the cluster.
 If you want all other resources properly validated, make sure that Connaisseur is deployed before restoring the remaining resources.
+
+## Admission webhook connectivity
+
+The Kubernetes API server must be able to connect to Connaisseur's admission webhook.
+Depending on the cluster provider and network configuration, infrastructure firewalls, security groups, or network ACLs can restrict traffic from the control plane to Connaisseur pods.
+
+If the Connaisseur port is blocked, admission requests time out.
+Connaisseur does not log the admission request in this case because the request never reaches the pod.
+Changing Kubernetes NetworkPolicies does not resolve the issue when an infrastructure firewall blocks the connection.
+
+There are two possible remediations:
+
+1. Allow the configured Pod port through the relevant firewall or security rule. Restrict ingress to the control plane source range or security group and the cluster nodes on `kubernetes.deployment.port`; do not expose the port publicly.
+For example, GKE's automatically created control plane firewall rules allow connections to nodes and pods on TCP ports `443` and `10250` by default, whereas Connaisseur's default port is 5000.
+See [discussion #481](https://github.com/sse-secure-systems/connaisseur/discussions/481) for community solutions.
+2. Run Connaisseur on a port, which is already allowlisted, like `443`.
+Since `443` is a privileged port, you will need to reconfigure the default `podSecurityContext`:
+
+    ```yaml
+    kubernetes:
+        deployment:
+            port: 443
+            podSecurityContext:
+                sysctls:
+                    - name: net.ipv4.ip_unprivileged_port_start
+                        value: "0"
+    ```
+
+    Connaisseur runs as a non-root user and drops all Linux capabilities.
+    The namespaced safe sysctl allows the process to bind port `443` without granting `CAP_NET_BIND_SERVICE` or running as root.
+    This configuration requires `hostNetwork: false`.
+    See the Kubernetes documentation on [safe and unsafe sysctls](https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#safe-and-unsafe-sysctls).

@@ -33,7 +33,7 @@ spec:
           imagePullPolicy: {{ .Values.kubernetes.deployment.pullPolicy }}
           ports:
             - name: https
-              containerPort: 5000
+              containerPort: {{ .Values.kubernetes.deployment.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -76,6 +76,8 @@ spec:
               name: {{ include "connaisseur.envSecretName" . }}
           {{- end }}
           env:
+          - name: CONNAISSEUR_PORT
+            value: {{ .Values.kubernetes.deployment.port | quote }}
           {{ if gt (dig "features" "cache" "expirySeconds" 30 .Values.application | int) 0 -}}
           - name: REDIS_HOST
             value: {{ include "connaisseur.redisService" . }}
