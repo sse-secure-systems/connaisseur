@@ -1544,8 +1544,8 @@ While the detailed security considerations mainly depend on the applied solution
 <p>But what is actually verified?
 Container images can be referenced in two different ways based on their registry, repository, image name (<code>&lt;registry&gt;/&lt;repository&gt;/&lt;image name&gt;</code>) followed by either tag or digest:</p>
 <ul>
-<li>tag: <em>docker.io/library/nginx:</em><strong><em>1.20.1</em></strong></li>
-<li>digest: <em>docker.io/library/nginx@</em><strong><em>sha256:af9c...69ce</em></strong></li>
+<li>tag: *docker.io/library/nginx:*<strong><em>1.20.1</em></strong></li>
+<li>digest: *docker.io/library/nginx@*<strong><em>sha256:af9c...69ce</em></strong></li>
 </ul>
 <p>While the tag is a mutable, human readable description, the digest is an immutable, inherent property of the image, namely the SHA256 hash of its content.
 This also means that a tag can correspond to varying digests whereas digests are unique for each image.
