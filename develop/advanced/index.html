@@ -772,6 +772,15 @@ You're not viewing the docs of the latest version.
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#admission-webhook-connectivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Admission webhook connectivity
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1293,6 +1302,15 @@ You're not viewing the docs of the latest version.
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#admission-webhook-connectivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Admission webhook connectivity
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1328,6 +1346,34 @@ If however, the cluster is restarted with all of Connaisseur's resources in plac
 A not-yet-running Connaisseur would need to allow itself to be started, a classical chicken-and-egg problem.</p>
 <p>There is unfortunately no good way around it, so you'll have to uninstall and reinstall Connaisseur when restarting the cluster.
 If you want all other resources properly validated, make sure that Connaisseur is deployed before restoring the remaining resources.</p>
+<h2 id="admission-webhook-connectivity">Admission webhook connectivity<a class="headerlink" href="#admission-webhook-connectivity" title="Permanent link">⚓︎</a></h2>
+<p>The Kubernetes API server must be able to connect to Connaisseur's admission webhook.
+Depending on the cluster provider and network configuration, infrastructure firewalls, security groups, or network ACLs can restrict traffic from the control plane to Connaisseur pods.</p>
+<p>If the Connaisseur port is blocked, admission requests time out.
+Connaisseur does not log the admission request in this case because the request never reaches the pod.
+Changing Kubernetes NetworkPolicies does not resolve the issue when an infrastructure firewall blocks the connection.</p>
+<p>There are two possible remediations:</p>
+<ol>
+<li>Allow the configured Pod port through the relevant firewall or security rule. Restrict ingress to the control plane source range or security group and the cluster nodes on <code>kubernetes.deployment.port</code>; do not expose the port publicly.
+For example, GKE's automatically created control plane firewall rules allow connections to nodes and pods on TCP ports <code>443</code> and <code>10250</code> by default, whereas Connaisseur's default port is 5000.
+See <a href="https://github.com/sse-secure-systems/connaisseur/discussions/481">discussion #481</a> for community solutions.</li>
+<li>
+<p>Run Connaisseur on a port, which is already allowlisted, like <code>443</code>.
+Since <code>443</code> is a privileged port, you will need to reconfigure the default <code>podSecurityContext</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">kubernetes</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">deployment</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span>
+<span class="w">        </span><span class="nt">podSecurityContext</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">sysctls</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">net.ipv4.ip_unprivileged_port_start</span>
+<span class="w">                    </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;0&quot;</span>
+</code></pre></div>
+<p>Connaisseur runs as a non-root user and drops all Linux capabilities.
+The namespaced safe sysctl allows the process to bind port <code>443</code> without granting <code>CAP_NET_BIND_SERVICE</code> or running as root.
+This configuration requires <code>hostNetwork: false</code>.
+See the Kubernetes documentation on <a href="https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#safe-and-unsafe-sysctls">safe and unsafe sysctls</a>.</p>
+</li>
+</ol>
 
 
 
