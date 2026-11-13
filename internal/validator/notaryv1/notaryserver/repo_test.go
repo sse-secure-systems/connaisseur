@@ -98,7 +98,7 @@ func TestDownloadBaseTrustData(t *testing.T) {
 
 	for _, tc := range testCases {
 		img, _ := image.New(tc.image)
-		nc, _ := NewNotaryClient(srv.URL, "", auth.Auth{}, img)
+		nc, _ := NewNotaryClient(context.Background(), srv.URL, "", auth.Auth{}, img)
 
 		repo := &Repo{}
 		err := repo.DownloadBaseTrustData(ctx, nc)
@@ -198,7 +198,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEUaqgujac1VCdaGHKQMKoDn6/deWJ
 
 		root, _ := testhelper.RootData(PRE + "trust_data/" + tc.image + ".json")
 		repo := &Repo{Root: root}
-		err := repo.validateRoot(keys)
+		err := repo.validateRoot(context.Background(), keys)
 
 		if tc.err != "" {
 			assert.NotNil(t, err, idx+1)
@@ -255,7 +255,7 @@ func TestValidateRestOfBase(t *testing.T) {
 				PRE+"trust_data/"+tc.paths[3],
 			)
 		}
-		err := repo.validateRestOfBase()
+		err := repo.validateRestOfBase(context.Background())
 
 		if tc.err != "" {
 			assert.NotNil(t, err, idx+1)
@@ -269,7 +269,7 @@ func TestValidateRestOfBase(t *testing.T) {
 	repo := testGetRepo(t, PRE+"trust_data/never-expire-image")
 	repo.Root.Signed.Keys = map[string]data.PublicKey{"x": data.NewPublicKey("ecdsa", []byte("invalid"))}
 
-	err := repo.validateRestOfBase()
+	err := repo.validateRestOfBase(context.Background())
 	assert.NotNil(t, err, 4)
 	assert.ErrorContains(t, err, "error building base role", 4)
 }
@@ -299,25 +299,25 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEUaqgujac1VCdaGHKQMKoDn6/deWJ
 	key := []data.PublicKey{data.NewPublicKey("ecdsa", pem.Bytes)}
 
 	repo := testGetRepo(t, PRE+"trust_data/never-expire-image")
-	err := repo.ValidateBaseTrustData(key)
+	err := repo.ValidateBaseTrustData(context.Background(), key)
 	assert.Nil(t, err)
 
 	tmpTime := repo.Root.Signed.Expires
 	repo.Root.Signed.Expires = time.Now().Add(-1 * time.Hour)
-	err = repo.ValidateBaseTrustData(key)
+	err = repo.ValidateBaseTrustData(context.Background(), key)
 	assert.NotNil(t, err)
 	assert.ErrorContains(t, err, "error validating root")
 
 	repo.Root.Signed.Expires = tmpTime
 	tmpTime = repo.Snapshot.Signed.Expires
 	repo.Snapshot.Signed.Expires = time.Now().Add(-1 * time.Hour)
-	err = repo.ValidateBaseTrustData(key)
+	err = repo.ValidateBaseTrustData(context.Background(), key)
 	assert.NotNil(t, err)
 	assert.ErrorContains(t, err, "error validating base trust data")
 
 	repo.Snapshot.Signed.Expires = tmpTime
 	delete(repo.notCheckedChecksums, data.CanonicalRootRole.String())
-	err = repo.ValidateBaseTrustData(key)
+	err = repo.ValidateBaseTrustData(context.Background(), key)
 	assert.NotNil(t, err)
 	assert.ErrorContains(t, err, "error validating base trust data checksums")
 }
@@ -354,7 +354,7 @@ func TestDownloadAndValidateDelegations(t *testing.T) {
 
 	for _, tc := range testCases {
 		img, _ := image.New(tc.img)
-		nc, _ := NewNotaryClient(srv.URL, "", auth.Auth{}, img)
+		nc, _ := NewNotaryClient(context.Background(), srv.URL, "", auth.Auth{}, img)
 		repo := testGetRepo(t, PRE+"trust_data/"+tc.img)
 
 		err := repo.DownloadAndValidateDelegations(ctx, nc, tc.delegations)

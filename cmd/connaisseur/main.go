@@ -56,7 +56,7 @@ func startServer(config *config.Config, alerting *alerting.Config) {
 	}
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, constants.Logger, *logrus.StandardLogger())
+	ctx = context.WithValue(ctx, constants.Logger, logrus.NewEntry(logrus.StandardLogger()))
 	ctx = context.WithValue(ctx, constants.ConnaisseurConfig, config)
 	ctx = context.WithValue(ctx, constants.AlertingConfig, alerting)
 	ctx = context.WithValue(ctx, constants.Cache, cache)

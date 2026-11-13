@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	admission "k8s.io/api/admission/v1"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -35,6 +34,7 @@ func handleMutate(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		contentType := r.Header.Get("Content-Type")
 		if contentType != "application/json" {
 			handleError(
+				ctx,
 				w,
 				fmt.Sprintf("wrong content type: expected json, got %s", contentType),
 				http.StatusBadRequest,
@@ -46,9 +46,8 @@ func handleMutate(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		var body []byte
 		if data, err := io.ReadAll(r.Body); err == nil {
 			body = data
-			logrus.Debugf("request body: %s", string(body))
 		} else {
-			handleError(w, fmt.Sprintf("error reading request body: %v", err), http.StatusInternalServerError)
+			handleError(ctx, w, fmt.Sprintf("error reading request body: %v", err), http.StatusInternalServerError)
 			return
 		}
 
@@ -58,12 +57,17 @@ func handleMutate(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		)
 		ar := admission.AdmissionReview{}
 		// transform request into AdmissionReview
-		if err := json.Unmarshal(body, &ar); err != nil {
-			handleError(w, fmt.Sprintf("received invalid json: %v", err), http.StatusBadRequest)
+		err := json.Unmarshal(body, &ar)
+		if err == nil && ar.Request != nil && ar.Request.UID != "" {
+			ctx = context.WithValue(ctx, constants.RequestId, string(ar.Request.UID))
+		}
+		utils.Logger(ctx).Debugf("request body: %s", string(body))
+		if err != nil {
+			handleError(ctx, w, fmt.Sprintf("received invalid json: %v", err), http.StatusBadRequest)
 			return
 		} else {
 			if ar.Request == nil {
-				handleError(w, "received empty admission request", http.StatusBadRequest)
+				handleError(ctx, w, "received empty admission request", http.StatusBadRequest)
 				return
 			}
 
@@ -72,9 +76,9 @@ func handleMutate(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 
 		alerting := ctx.Value(constants.AlertingConfig).(*alerting.Config)
-		err := alerting.EvalAndSendNotifications(ctx, notificationValues)
+		err = alerting.EvalAndSendNotifications(ctx, notificationValues)
 		if err != nil {
-			logrus.Errorf("error sending notifications: %v", err)
+			utils.Logger(ctx).Errorf("error sending notifications: %v", err)
 			reviewResponse.Allowed = false
 			reviewResponse.Result = &meta.Status{
 				Message: fmt.Sprintf(
@@ -134,6 +138,7 @@ func handleMutate(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		respBytes, err := json.Marshal(response)
 		if err != nil {
 			handleError(
+				ctx,
 				w,
 				fmt.Sprintf("error marshalling response: %v", err),
 				http.StatusInternalServerError,
@@ -142,10 +147,11 @@ func handleMutate(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		if _, err := w.Write(respBytes); err != nil {
-			logrus.Errorf("error writing respons: %v", err)
+			utils.Logger(ctx).Errorf("error writing respons: %v", err)
 		}
 	default:
 		handleError(
+			ctx,
 			w,
 			fmt.Sprintf("%s: %s", constants.MethodNotAllowed, r.Method),
 			http.StatusMethodNotAllowed,
@@ -154,8 +160,8 @@ func handleMutate(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 }
 
 // Writes an error message to the response and logs it.
-func handleError(w http.ResponseWriter, msg string, code int) {
-	logrus.Error(msg)
+func handleError(ctx context.Context, w http.ResponseWriter, msg string, code int) {
+	utils.Logger(ctx).Error(msg)
 	http.Error(w, msg, code)
 }
 
@@ -171,7 +177,7 @@ func mutateReview(ctx context.Context, ar admission.AdmissionReview) (*admission
 	aro, err := kubernetes.NewAdmissionRequestObjects(ar.Request)
 	if err != nil {
 		notificationValues.Result = constants.NotificationResultInvalid
-		logrus.Errorf("error creating admission request objects: %v", err)
+		utils.Logger(ctx).Errorf("error creating admission request objects: %v", err)
 		return &admission.AdmissionResponse{
 			UID: ar.Request.UID,
 			Result: &meta.Status{
@@ -188,14 +194,13 @@ func mutateReview(ctx context.Context, ar admission.AdmissionReview) (*admission
 	// since users likely want to remove unsigned resources from their cluster, this could
 	// become a problem, see https://github.com/sse-secure-systems/connaisseur/issues/2053
 	if aro.OldObj.Deleted {
-		logrus.Infof("skipped validation on update request for %s resource '%s' already marked for deletion", aro.OldObj.Kind, aro.OldObj.Name)
+		utils.Logger(ctx).Infof("skipped validation on update request for %s resource '%s' already marked for deletion", aro.OldObj.Kind, aro.OldObj.Name)
 		notificationValues.Result = constants.NotificationResultSuccess
 		return &admission.AdmissionResponse{
 			UID:     ar.Request.UID,
 			Allowed: true,
 		}, notificationValues
 	}
-	ctx = context.WithValue(ctx, constants.RequestId, ar.Request.UID)
 	// do validation
 	validationChannel := validation.ValidateWorkloadObject(
 		ctx,
@@ -224,7 +229,7 @@ func mutateReview(ctx context.Context, ar admission.AdmissionReview) (*admission
 			// return error, if validation failed or any
 			// other error occurred
 			if valOut.Error != nil {
-				logrus.Errorf(
+				utils.Logger(ctx).Errorf(
 					"error validating %s %s: %v",
 					aro.NewObj.Kind,
 					aro.NewObj.Name,

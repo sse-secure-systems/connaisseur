@@ -3,6 +3,7 @@ package auth
 import (
 	"connaisseur/internal/constants"
 	"connaisseur/internal/image"
+	"context"
 	"os"
 	"testing"
 
@@ -189,7 +190,7 @@ func TestLookUp(t *testing.T) {
 		i, _ := image.New(tc.img)
 		authBytes, _ := os.ReadFile(constants.SecretsDir + tc.file + ".yaml")
 		_ = yaml.Unmarshal(authBytes, &auth)
-		ae := auth.LookUp(i.Context().String())
+		ae := auth.LookUp(context.Background(), i.Context().String())
 
 		assert.Equal(t, tc.user, ae.Username, idx+1)
 		assert.Equal(t, tc.pass, ae.Password, idx+1)

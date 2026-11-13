@@ -4,12 +4,12 @@ import (
 	"connaisseur/internal/constants"
 	"connaisseur/internal/image"
 	"connaisseur/internal/utils"
+	"context"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/docker/cli/cli/config/configfile"
-	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -136,7 +136,7 @@ func readDockerAuthFile(filePath string) (map[string]AuthEntry, error) {
 	return authCfgs, nil
 }
 
-func (a *Auth) LookUp(img string) AuthEntry {
+func (a *Auth) LookUp(ctx context.Context, img string) AuthEntry {
 	bestHit := ""
 
 	for k := range a.AuthConfigs {
@@ -156,7 +156,7 @@ func (a *Auth) LookUp(img string) AuthEntry {
 
 	// only warn if there are actually credentials defined
 	if len(a.AuthConfigs) > 0 {
-		logrus.Warnf("no credentials found for %s", img)
+		utils.Logger(ctx).Warnf("no credentials found for %s", img)
 	}
 
 	return AuthEntry{}

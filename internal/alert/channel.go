@@ -13,8 +13,6 @@ import (
 	"strings"
 
 	"text/template"
-
-	"github.com/sirupsen/logrus"
 )
 
 type Channel struct {
@@ -42,7 +40,7 @@ func (ch *Channel) Send(ctx context.Context, opts NotificationValues, errorChann
 
 	defer func() {
 		if errOut != nil {
-			logrus.Error(errOut)
+			utils.Logger(ctx).Error(errOut)
 		}
 
 		select {
@@ -71,13 +69,13 @@ func (ch *Channel) Send(ctx context.Context, opts NotificationValues, errorChann
 	buf, err := ch.generateNotificationMessage(opts)
 	if err != nil {
 		errOut = err
-		logrus.Warnf("couldn't generate alert message: %s", errOut)
+		utils.Logger(ctx).Warnf("couldn't generate alert message: %s", errOut)
 		return
 	}
 
 	// only send notification if the message isn't empty
 	if buf.String() != "" {
-		logrus.Debugf(
+		utils.Logger(ctx).Debugf(
 			"sending notification for receiver %s to %s",
 			ch.ChannelName,
 			ch.URL,
@@ -117,7 +115,7 @@ func (ch *Channel) Send(ctx context.Context, opts NotificationValues, errorChann
 				ch.ChannelName,
 				err,
 			)
-			logrus.Warn(errOut)
+			utils.Logger(ctx).Warn(errOut)
 			return
 		}
 
@@ -128,11 +126,11 @@ func (ch *Channel) Send(ctx context.Context, opts NotificationValues, errorChann
 				ch.ChannelName,
 				string(body),
 			)
-			logrus.Warn(errOut)
+			utils.Logger(ctx).Warn(errOut)
 			return
 		}
 	} else {
-		logrus.Warnf("skipping notification for receiver %s as message is empty", ch.ChannelName)
+		utils.Logger(ctx).Warnf("skipping notification for receiver %s as message is empty", ch.ChannelName)
 	}
 }
 

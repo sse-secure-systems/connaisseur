@@ -27,7 +27,6 @@ import (
 	ociremote "github.com/sigstore/cosign/v2/pkg/oci/remote"
 	"github.com/sigstore/rekor/pkg/generated/client"
 	"github.com/sigstore/sigstore/pkg/tuf" //nolint:staticcheck // cosign's API still requires this deprecated package
-	"github.com/sirupsen/logrus"
 )
 
 type CosignValidator struct {
@@ -260,7 +259,7 @@ func (cv *CosignValidator) ValidateImage(
 
 	// check required signatures
 	if len(args.Required) > 0 {
-		logrus.Debugf("required signatures: %s", args.Required)
+		utils.Logger(ctx).Debugf("required signatures: %s", args.Required)
 		// find missing required signatures
 		missing := utils.SetSubstract(args.Required, validatingTrustRoots)
 		if len(missing) != 0 {
@@ -268,7 +267,7 @@ func (cv *CosignValidator) ValidateImage(
 		}
 	}
 
-	logrus.Debugf(
+	utils.Logger(ctx).Debugf(
 		"num signatures: %d/%d by validating trust root names: %+v",
 		numberOfCheckedSignatures,
 		numberOfTrustRoots,
@@ -331,7 +330,7 @@ func (cv *CosignValidator) validateWithVerifier(
 		opts.Identities = append(opts.Identities, verifier.KeylessVerifier)
 	}
 
-	logrus.Debugf("validating image %s with trust root %s", imageRef, verifier.Name)
+	utils.Logger(ctx).Debugf("validating image %s with trust root %s", imageRef, verifier.Name)
 	// do cosign validation on image
 	validSignatures, _, err := cosign.VerifyImageSignatures(
 		ctx,
@@ -342,11 +341,11 @@ func (cv *CosignValidator) validateWithVerifier(
 		// short-circuit if the image doesn't exist
 		if strings.HasPrefix(err.Error(), "image tag not found:") {
 			msg := fmt.Sprintf("image %s does not exist: %s", imageRef, err)
-			logrus.Info(msg)
+			utils.Logger(ctx).Info(msg)
 			verifierOutputChannel <- verifierOutput{nil, errors.New(msg), nil, ""}
 			return
 		}
-		logrus.Debugf("error verifying signatures with verifier for trust root %s: %s", verifier.Name, err)
+		utils.Logger(ctx).Debugf("error verifying signatures with verifier for trust root %s: %s", verifier.Name, err)
 		verifierOutputChannel <- verifierOutput{nil, nil, err, ""}
 		return
 	}
@@ -371,7 +370,7 @@ func (cv *CosignValidator) setupOptions(
 	opts := &cosign.CheckOpts{IgnoreTlog: !verifyTlog, IgnoreSCT: !verifySCT}
 
 	// set authentication
-	auth := cv.Auth.LookUp(img.Context().String())
+	auth := cv.Auth.LookUp(ctx, img.Context().String())
 	registryOpts := options.RegistryOptions{
 		AllowInsecure:      false,
 		AllowHTTPRegistry:  false,
