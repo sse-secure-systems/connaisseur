@@ -40,7 +40,7 @@ func Skip(
 
 	digest, cacheErr, err := getCachedDigest(ctx, image)
 	if err != nil {
-		logrus.Debugf("error getting cached digest: %s", err)
+		utils.Logger(ctx).Debugf("error getting cached digest: %s", err)
 		return false, "", "", nil
 	}
 
@@ -81,7 +81,7 @@ func automaticChildApproval(ctx context.Context, img *image.Image, parentImageFu
 
 		parentImages := parentImageFunc(ctx)
 
-		logrus.Debugf("parent container images: %+v", parentImages)
+		utils.Logger(ctx).Debugf("parent container images: %+v", parentImages)
 		for _, pImg := range parentImages {
 			if pImg == img.OriginalString() {
 				return true
@@ -109,7 +109,7 @@ func getCachedDigest(
 	val, err := cache.Get(ctx, img.OriginalString())
 	if err != nil {
 		if strings.Contains(err.Error(), "dial tcp") {
-			logrus.Warnf("error connecting to cache: %s", err)
+			utils.Logger(ctx).Warnf("error connecting to cache: %s", err)
 		}
 		return "", nil, fmt.Errorf("cache miss for image %s: %s", img.OriginalString(), err)
 	}

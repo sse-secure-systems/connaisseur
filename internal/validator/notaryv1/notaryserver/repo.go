@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/docker/go/canonical/json"
-	"github.com/sirupsen/logrus"
 	"github.com/theupdateframework/notary/tuf/data"
 	"github.com/theupdateframework/notary/tuf/signed"
 )
@@ -50,7 +49,7 @@ func (r *Repo) DownloadBaseTrustData(ctx context.Context, nc *NotaryClient) erro
 				)
 			}
 
-			logrus.Debugf("got trust data for %s", trustData.Role)
+			utils.Logger(ctx).Debugf("got trust data for %s", trustData.Role)
 
 			switch trustData.Role {
 			case data.CanonicalRootRole.String():
@@ -67,7 +66,7 @@ func (r *Repo) DownloadBaseTrustData(ctx context.Context, nc *NotaryClient) erro
 			}
 
 			if errOut != nil {
-				logrus.Debugf("error parsing trust data for %s: %s", trustData.Role, errOut)
+				utils.Logger(ctx).Debugf("error parsing trust data for %s: %s", trustData.Role, errOut)
 				return fmt.Errorf("error parsing trust data for %s: %s", trustData.Role, errOut)
 			}
 			r.notCheckedChecksums[trustData.Role] = trustData.Raw
@@ -78,7 +77,7 @@ func (r *Repo) DownloadBaseTrustData(ctx context.Context, nc *NotaryClient) erro
 }
 
 // Validates the root trust data against the given keys.
-func (r *Repo) validateRoot(keys []data.PublicKey) error {
+func (r *Repo) validateRoot(ctx context.Context, keys []data.PublicKey) error {
 	// need to transform root to signed object to verify signature
 	signedRoot, err := r.Root.ToSigned()
 	if err != nil {
@@ -107,10 +106,10 @@ func (r *Repo) validateRoot(keys []data.PublicKey) error {
 
 		for _, sig := range r.Root.Signatures {
 			sig := sig
-			logrus.Debugf("verifying root signature with key %s", key.ID())
+			utils.Logger(ctx).Debugf("verifying root signature with key %s", key.ID())
 
 			if err = signed.VerifySignature(msg, &sig, key); err == nil && sig.IsValid {
-				logrus.Debugf("root signature verified with key %s", key.ID())
+				utils.Logger(ctx).Debugf("root signature verified with key %s", key.ID())
 				verified = true
 				break
 			}
@@ -130,7 +129,7 @@ func (r *Repo) validateRoot(keys []data.PublicKey) error {
 }
 
 // Validates the rest of the base trust data against the root trust data.
-func (r *Repo) validateRestOfBase() error {
+func (r *Repo) validateRestOfBase(ctx context.Context) error {
 
 	for _, role := range data.BaseRoles {
 		var (
@@ -162,19 +161,19 @@ func (r *Repo) validateRestOfBase() error {
 			return fmt.Errorf("error building base role %s: %s", role, err)
 		}
 
-		logrus.Debugf("verifying %s signatures", role)
+		utils.Logger(ctx).Debugf("verifying %s signatures", role)
 		// validate signatures
 		if signed.VerifySignatures(signedObj, verifyRole) != nil {
 			return fmt.Errorf("error validating %s signatures", role)
 		}
 
-		logrus.Debugf("verifying %s expiry", role)
+		utils.Logger(ctx).Debugf("verifying %s expiry", role)
 		//validate expiry
 		if signed.VerifyExpiry(signedCommon, role) != nil {
 			return fmt.Errorf("%s trust data expired", role)
 		}
 
-		logrus.Debugf("successful validation of %s", role)
+		utils.Logger(ctx).Debugf("successful validation of %s", role)
 	}
 
 	return nil
@@ -217,12 +216,12 @@ func (r *Repo) validateBaseChecksums() error {
 // Validates the root trust data first, then validates the rest of the base trust data
 // (targets, snapshot, timestamp), and finally validates the checksums for the base trust
 // data.
-func (r *Repo) ValidateBaseTrustData(keys []data.PublicKey) error {
-	if err := r.validateRoot(keys); err != nil {
+func (r *Repo) ValidateBaseTrustData(ctx context.Context, keys []data.PublicKey) error {
+	if err := r.validateRoot(ctx, keys); err != nil {
 		return fmt.Errorf("error validating root: %s", err)
 	}
 
-	if err := r.validateRestOfBase(); err != nil {
+	if err := r.validateRestOfBase(ctx); err != nil {
 		return fmt.Errorf("error validating base trust data: %s", err)
 	}
 
@@ -258,7 +257,7 @@ func (r *Repo) DownloadAndValidateDelegations(
 	trustDataChannel := make(chan TrustData, len(delegations))
 	availableDelegationRoles := r.Targets[data.CanonicalTargetsRole.String()].Signed.Delegations.Roles
 
-	logrus.Debugf(
+	utils.Logger(ctx).Debugf(
 		"available delegation roles: %s",
 		utils.Map[*data.Role, string](
 			availableDelegationRoles,
@@ -315,7 +314,7 @@ func (r *Repo) DownloadAndValidateDelegations(
 	}
 
 	// validate the delegations
-	logrus.Debugf("validating delegations: %+v", delegations)
+	utils.Logger(ctx).Debugf("validating delegations: %+v", delegations)
 	errOut = r.validateDelegations(delegations)
 
 	return errOut

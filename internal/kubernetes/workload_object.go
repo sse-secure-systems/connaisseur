@@ -2,11 +2,11 @@ package kubernetes
 
 import (
 	"connaisseur/internal/constants"
+	"connaisseur/internal/utils"
 	"context"
 	"fmt"
 	"strings"
 
-	"github.com/sirupsen/logrus"
 	apps "k8s.io/api/apps/v1"
 	batch "k8s.io/api/batch/v1"
 	core "k8s.io/api/core/v1"
@@ -274,7 +274,7 @@ func (wlo *WorkloadObject) ContainerPathFormatString() string {
 func (wlo WorkloadObject) ParentContainerImagesFromKubeAPI(ctx context.Context) []string {
 	client, ok := ctx.Value(constants.KubeAPI).(dynamic.Interface)
 	if !ok || client == nil {
-		logrus.Warnf("missing expected reference to kube API, unable to get parent container images")
+		utils.Logger(ctx).Warnf("missing expected reference to kube API, unable to get parent container images")
 		return []string{}
 	}
 
@@ -302,24 +302,24 @@ func (wlo WorkloadObject) ParentContainerImagesFromKubeAPI(ctx context.Context) 
 			owner.Name,
 		)
 		if err != nil {
-			logrus.Infof("error getting kube resource: %s", err)
+			utils.Logger(ctx).Infof("error getting kube resource: %s", err)
 			continue
 		}
 
 		if parent.GetUID() != owner.UID {
-			logrus.Warnf("non matching UIDs")
+			utils.Logger(ctx).Warnf("non matching UIDs")
 			continue
 		}
 
 		parentBytes, err := parent.MarshalJSON()
 		if err != nil {
-			logrus.Warnf("can't marshal parent: %s", err)
+			utils.Logger(ctx).Warnf("can't marshal parent: %s", err)
 			continue
 		}
 
 		parentWLO, err := NewWorkloadObjectFromBytes(parentBytes, parent.GroupVersionKind(), wlo.Namespace)
 		if err != nil {
-			logrus.Warnf("error creating parent workload object: %s", err)
+			utils.Logger(ctx).Warnf("error creating parent workload object: %s", err)
 			continue
 		}
 

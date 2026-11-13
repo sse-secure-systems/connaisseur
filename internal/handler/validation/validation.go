@@ -9,8 +9,6 @@ import (
 	"connaisseur/internal/utils"
 	"context"
 	"fmt"
-
-	"github.com/sirupsen/logrus"
 )
 
 type ValidationInput struct {
@@ -147,7 +145,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 		errOut = err
 		return
 	}
-	logrus.Debugf("matched rule %s for image %s", rule.Pattern, img.Name())
+	utils.Logger(ctx).Debugf("matched rule %s for image %s", rule.Pattern, img.Name())
 
 	// get validator
 	validator, err := config.Validator(rule.Validator)
@@ -157,7 +155,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 	}
 	validatorType = validator.Type
 	validatorName = validator.Name
-	logrus.Debugf("validator: %s", validatorName)
+	utils.Logger(ctx).Debugf("validator: %s", validatorName)
 
 	// get validation mode
 	switch rule.With.ValidationMode {
@@ -183,7 +181,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 		} else {
 			oldImg = img.Name()
 			newImg = img.SetDigest(digest).Name()
-			logrus.Infof("static allow for image %s using rule %s", img.OriginalString(), rule.Pattern)
+			utils.Logger(ctx).Infof("static allow for image %s using rule %s", img.OriginalString(), rule.Pattern)
 		}
 		return
 	}
@@ -195,7 +193,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 		errOut = err
 		oldImg = img.Name()
 		newImg = img.SetDigest(digest).Name()
-		logrus.Infof("skipped validation: %s for image %s", reason, img.OriginalString())
+		utils.Logger(ctx).Infof("skipped validation: %s for image %s", reason, img.OriginalString())
 		return
 	}
 
@@ -217,7 +215,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 	} else {
 		oldImg = img.Name()
 		newImg = img.SetDigest(digest).Name()
-		logrus.Infof(
+		utils.Logger(ctx).Infof(
 			"successfully validated image %s using rule %s and validator %s. Result is %s.",
 			img.OriginalString(),
 			rule.Pattern,
@@ -247,7 +245,7 @@ func ValidateImage(ctx context.Context, in ValidationInput, out chan<- Validatio
 			),
 		)
 		if err != nil {
-			logrus.Warnf("error caching digest: %v", err)
+			utils.Logger(ctx).Warnf("error caching digest: %v", err)
 		}
 	}
 }

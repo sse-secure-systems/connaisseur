@@ -99,7 +99,7 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 	image *image.Image,
 	args policy.RuleOptions,
 ) (string, error) {
-	nc, err := notaryserver.NewNotaryClient(nv1v.Host, nv1v.Cert, nv1v.Auth, image)
+	nc, err := notaryserver.NewNotaryClient(ctx, nv1v.Host, nv1v.Cert, nv1v.Auth, image)
 	if err != nil {
 		return "", fmt.Errorf("error creating notary client: %s", err)
 	}
@@ -110,7 +110,7 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 	if err != nil {
 		return "", fmt.Errorf("error downloading trust data: %s", err)
 	}
-	logrus.Debug("Successfully downloaded trust data")
+	utils.Logger(ctx).Debug("Successfully downloaded trust data")
 
 	// get root keys
 	rootKeys, err := nv1v.trustRootKeys(args.TrustRoot)
@@ -119,7 +119,7 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 	}
 
 	// validate all base trust data
-	err = repo.ValidateBaseTrustData(rootKeys)
+	err = repo.ValidateBaseTrustData(ctx, rootKeys)
 	if err != nil {
 		return "", fmt.Errorf("error validating trust data: %s", err)
 	}
@@ -156,7 +156,7 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 	}
 
 	// look for digest in targets
-	logrus.Debugf("Searching in %+v for digest for image %s", targets, image.OriginalString())
+	utils.Logger(ctx).Debugf("Searching in %+v for digest for image %s", targets, image.OriginalString())
 	digests := map[string]struct{}{}
 	for _, target := range targets {
 		var (
@@ -178,7 +178,7 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 
 		// search trust data for either tag or digest
 		if image.Tag() != "" {
-			digest, digestErr = resolveAuthorizedTagInTargets(signedTarget, image.Tag(), delegationRole)
+			digest, digestErr = resolveAuthorizedTagInTargets(ctx, signedTarget, image.Tag(), delegationRole)
 			if digestErr != nil {
 				return "", fmt.Errorf("validated targets don't contain reference: %s", digestErr)
 			}
@@ -189,13 +189,13 @@ func (nv1v *NotaryV1Validator) ValidateImage(
 				return "", fmt.Errorf("digest %s resolved for tag %s doesn't match given digest %s", digest, image.Tag(), image.Digest())
 			}
 		} else {
-			digest, digestErr = resolveAuthorizedDigestInTargets(signedTarget, image.Digest(), delegationRole)
+			digest, digestErr = resolveAuthorizedDigestInTargets(ctx, signedTarget, image.Digest(), delegationRole)
 			if digestErr != nil {
 				return "", fmt.Errorf("validated targets don't contain reference: %s", digestErr)
 			}
 		}
 
-		logrus.Debugf("Found digest %s for image %s", digest, image.String())
+		utils.Logger(ctx).Debugf("Found digest %s for image %s", digest, image.String())
 		digests[digest] = struct{}{}
 	}
 
@@ -264,8 +264,8 @@ func toDelegationString(delegation string) string {
 	return fmt.Sprintf("targets/%s", delegation)
 }
 
-func resolveAuthorizedTagInTargets(targetFile data.Targets, tag string, delegationRole *data.DelegationRole) (string, error) {
-	logrus.Debugf("searching targets for tag %s", tag)
+func resolveAuthorizedTagInTargets(ctx context.Context, targetFile data.Targets, tag string, delegationRole *data.DelegationRole) (string, error) {
+	utils.Logger(ctx).Debugf("searching targets for tag %s", tag)
 
 	for key, target := range targetFile.Targets {
 		if key != tag {
@@ -285,8 +285,8 @@ func resolveAuthorizedTagInTargets(targetFile data.Targets, tag string, delegati
 	return "", fmt.Errorf("no tag '%s' found in targets", tag)
 }
 
-func resolveAuthorizedDigestInTargets(targetFile data.Targets, digest string, delegationRole *data.DelegationRole) (string, error) {
-	logrus.Debugf("searching targets for digest %s", digest)
+func resolveAuthorizedDigestInTargets(ctx context.Context, targetFile data.Targets, digest string, delegationRole *data.DelegationRole) (string, error) {
+	utils.Logger(ctx).Debugf("searching targets for digest %s", digest)
 
 	for key, target := range targetFile.Targets {
 		targetDigest := dgst.NewDigestFromEncoded(

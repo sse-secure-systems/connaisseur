@@ -18,7 +18,6 @@ import (
 	"github.com/notaryproject/notation-go/verifier"
 	"github.com/notaryproject/notation-go/verifier/trustpolicy"
 	"github.com/notaryproject/notation-go/verifier/truststore"
-	"github.com/sirupsen/logrus"
 	"oras.land/oras-go/v2/registry/remote"
 	orasAuth "oras.land/oras-go/v2/registry/remote/auth"
 )
@@ -103,10 +102,10 @@ func (nv *NotationValidator) ValidateImage(
 	}
 	client.Client.Timeout = 30 * time.Second
 
-	if authn := nv.Auth.LookUp(image.Context().Name()); authn.Username != "" &&
+	if authn := nv.Auth.LookUp(ctx, image.Context().Name()); authn.Username != "" &&
 		authn.Password != "" {
 		client.Credential = func(notation_ctx context.Context, registry string) (orasAuth.Credential, error) {
-			logrus.Debugf("requesting credentials for %s", registry)
+			utils.Logger(notation_ctx).Debugf("requesting credentials for %s", registry)
 			if registry == image.Context().RegistryStr() {
 				return orasAuth.Credential{
 					Username: authn.Username,
@@ -127,7 +126,7 @@ func (nv *NotationValidator) ValidateImage(
 		if err != nil {
 			return "", fmt.Errorf("failed to resolve image tag: %s", err)
 		}
-		logrus.Debugf("resolved digest: %s", desc.Digest.String())
+		utils.Logger(ctx).Debugf("resolved digest: %s", desc.Digest.String())
 		image.SetDigest(desc.Digest.String())
 	}
 
@@ -136,7 +135,7 @@ func (nv *NotationValidator) ValidateImage(
 		MaxSignatureAttempts: 10,
 	}
 
-	notation_ctx := log.WithLogger(ctx, logrus.StandardLogger())
+	notation_ctx := log.WithLogger(ctx, utils.Logger(ctx))
 	digest, _, err := notation.Verify(notation_ctx, verifier, remoteRegisty, verifyOptions)
 	if err != nil {
 		return "", fmt.Errorf("failed to verify image: %s", err)
