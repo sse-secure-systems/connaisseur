@@ -73,7 +73,7 @@ func (a *Config) EvalAndSendNotifications(ctx context.Context, opts *Notificatio
 		if sender.FailOnError() {
 			alertContext = ctx
 		} else {
-			alertContext = context.Background()
+			alertContext = context.WithoutCancel(ctx)
 		}
 		go sender.Send(alertContext, *opts, errorChannel)
 	}

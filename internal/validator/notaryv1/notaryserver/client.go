@@ -3,6 +3,7 @@ package notaryserver
 import (
 	"connaisseur/internal/constants"
 	"connaisseur/internal/image"
+	"connaisseur/internal/utils"
 	auth1 "connaisseur/internal/validator/auth"
 	"context"
 	"crypto/tls"
@@ -20,7 +21,6 @@ import (
 	registrytypes "github.com/docker/docker/api/types/registry"
 	"github.com/docker/docker/registry"
 	"github.com/docker/go-connections/tlsconfig"
-	"github.com/sirupsen/logrus"
 	"github.com/theupdateframework/notary/tuf/data"
 )
 
@@ -44,22 +44,24 @@ type HttpClient interface {
 type pingClientGetter func(*http.Transport) HttpClient
 
 func NewNotaryClient(
+	ctx context.Context,
 	host string,
 	cert string,
 	authConf auth1.Auth,
 	imageRef *image.Image,
 ) (*NotaryClient, error) {
-	return newNotaryClient(getPingClient, host, cert, authConf, imageRef)
+	return newNotaryClient(ctx, getPingClient, host, cert, authConf, imageRef)
 }
 
 func newNotaryClient(
+	ctx context.Context,
 	getPingClientFunc pingClientGetter,
 	host string,
 	cert string,
 	authCreds auth1.Auth,
 	imageRef *image.Image,
 ) (*NotaryClient, error) {
-	logrus.Debugf("creating new notary client for %s with host %s", imageRef.OriginalString(), host)
+	utils.Logger(ctx).Debugf("creating new notary client for %s with host %s", imageRef.OriginalString(), host)
 
 	notaryRef := imageRef.NotaryReference()
 
@@ -90,6 +92,7 @@ func newNotaryClient(
 			return nil, fmt.Errorf("error adding challenge response: %s", err)
 		}
 		roundTripper = buildAuthTransport(
+			ctx,
 			clientTransport,
 			host,
 			authCreds,
@@ -101,7 +104,7 @@ func newNotaryClient(
 	}
 
 	// create notary client
-	logrus.Debug("creating notary client")
+	utils.Logger(ctx).Debug("creating notary client")
 	notaryClient := &http.Client{
 		Transport: roundTripper,
 		Timeout:   10 * time.Second,
@@ -140,6 +143,7 @@ func baseTransport(cert string) (*http.Transport, error) {
 }
 
 func buildAuthTransport(
+	ctx context.Context,
 	base *http.Transport,
 	host string,
 	authConf auth1.Auth,
@@ -151,7 +155,7 @@ func buildAuthTransport(
 
 	// now create authentication transport
 	// set everything up for authentication
-	authCreds := authConf.LookUp(rr.String())
+	authCreds := authConf.LookUp(ctx, rr.String())
 	scope := auth.RepositoryScope{
 		Repository: img,
 		Actions:    []string{"pull"},
@@ -199,7 +203,7 @@ func (nc *NotaryClient) FetchTrustData(
 		rawData    []byte
 	)
 
-	logrus.Debugf("getting trust data for %s", role)
+	utils.Logger(ctx).Debugf("getting trust data for %s", role)
 
 	defer func() {
 		// wait for context to be cancelled or for data to be acquired
