@@ -135,7 +135,7 @@ spec:
     - port: 6379
       targetPort: 6379
       protocol: TCP
-      name: http
+      name: redis
   selector:
     {{- include "connaisseur.redisSelectorLabels" . | nindent 4 }}
 {{- end -}}
