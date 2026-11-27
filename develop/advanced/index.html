@@ -1330,13 +1330,12 @@ You're not viewing the docs of the latest version.
 <p>There are some edge cases or considerations for Connaisseur, which most people won't notice or care about, but which we still want to document.
 Below those are listed.</p>
 <h2 id="finalizer-removal">Finalizer removal<a class="headerlink" href="#finalizer-removal" title="Permanent link">⚓︎</a></h2>
-<p>Connaisseur used to run every single CREATE and UPDATE adminission request through its validators.
-However, in some cases this is not desired as highlighted by <a href="https://github.com/sse-secure-systems/connaisseur/issues/2053">Issue #2053</a>.
-Once a pod is marked for deletion, it's attributes cannot be changed anymore, except for <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/#:~:text=Kubernetes%20adds%20the%20deletion%20timestamp%20for%20that%20object%20and%20then%20immediately%20starts%20to%20restrict%20changes">removal of finalizers</a>.
-If finalizers cannot be removed (e.g., because the operation would be blocked by Connaisseur), resources may be kept alive indefinitely.</p>
-<p>Since no meaningful attributes (with respect to Connaisseur's mission) can be changed, it is safe for Connaisseur to allow updates to resources marked for deletion.
-This is also in line with Connaisseur allowing all DELETE admission request.
-Therefore, if Connaisseur receives an UPDATE admission request, where the previous object was already marked for deletion, we allow it without verifying image signatures according to the policy.</p>
+<p>If finalizers cannot be removed (e.g., because an existing image is no longer trusted and the operation would be blocked by Connaisseur), resources may be kept alive indefinitely; see <a href="https://github.com/sse-secure-systems/connaisseur/issues/2053">Issue #2053</a>.
+Kubernetes restricts some resource changes, but does not generally prevent updates, in particular image updates; see <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/">Finalizers</a>.</p>
+<p>For an UPDATE whose previous object was already marked for deletion, Connaisseur skips validation only if container, init container, and ephemeral container image references are unchanged by type and name.
+This allows finalizer removal without revalidating existing images.
+If an image reference is added, removed, or changed, Connaisseur processes all images through its normal validation path, including any configured automatic approvals and caching.
+If an image fails validation during such an update, remove the finalizer in a separate update without image changes.</p>
 <h2 id="starting-a-cluster-with-connaisseur-installed">Starting a cluster with Connaisseur installed<a class="headerlink" href="#starting-a-cluster-with-connaisseur-installed" title="Permanent link">⚓︎</a></h2>
 <p>Connaisseur is a Mutating Admission Controller and as such has a <code>MutatingWebhookConfiguration</code> which specifies where requests are to be sent for mutation and admission review.
 By default, Connaisseur is configured to be a fail-closed service: If anything goes wrong, including service unavailability, resource admission will be blocked.
