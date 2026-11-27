@@ -111,6 +111,7 @@ func TestNewNotaryClient(t *testing.T) {
 	for _, tc := range testCases {
 		if tc.validHost == true {
 			notaryClient, err = newNotaryClient(
+				context.Background(),
 				tc.getPingClientFunc,
 				srv.URL,
 				tc.cert,
@@ -118,7 +119,7 @@ func TestNewNotaryClient(t *testing.T) {
 				img,
 			)
 		} else {
-			notaryClient, err = newNotaryClient(tc.getPingClientFunc, "%%..invalid.URL!", tc.cert, auth.Auth{}, img)
+			notaryClient, err = newNotaryClient(context.Background(), tc.getPingClientFunc, "%%..invalid.URL!", tc.cert, auth.Auth{}, img)
 		}
 		if tc.err != "" {
 			assert.NotNil(t, err)
@@ -135,7 +136,7 @@ func TestNewNotaryClientWithoutAuth(t *testing.T) {
 	srv := testhelper.NotaryMock(BASE, false)
 	defer srv.Close()
 	img, _ := image.New("sample-image")
-	notaryClient, err = newNotaryClient(getPingClient, srv.URL, "", auth.Auth{}, img)
+	notaryClient, err = newNotaryClient(context.Background(), getPingClient, srv.URL, "", auth.Auth{}, img)
 	assert.Equal(t, "docker.io/library/sample-image", notaryClient.repo)
 }
 
@@ -241,6 +242,7 @@ func TestFetchTrustData(t *testing.T) {
 		img, _ := image.New(tc.image)
 		rr, _ := image.NewRegistryRepo(srv.URL)
 		notaryClient, err = NewNotaryClient(
+			ctx,
 			srv.URL,
 			"",
 			auth.Auth{

@@ -603,7 +603,7 @@ func TestResolveAuthorizedTagInTargets(t *testing.T) {
 
 	for _, tc := range testCases {
 		target, _ := testhelper.TargetData(PRE + "trust_data/" + tc.file + ".json")
-		digest, err := resolveAuthorizedTagInTargets(target.Signed, tc.tag, tc.delegationRole)
+		digest, err := resolveAuthorizedTagInTargets(context.Background(), target.Signed, tc.tag, tc.delegationRole)
 
 		if tc.err != "" {
 			assert.NotNil(t, err)
@@ -718,7 +718,7 @@ func TestResolveAuthorizedDigestInTargets(t *testing.T) {
 
 	for _, tc := range testCases {
 		target, _ := testhelper.TargetData(PRE + "trust_data/" + tc.file + ".json")
-		digest, err := resolveAuthorizedDigestInTargets(target.Signed, tc.digest, tc.delegationRole)
+		digest, err := resolveAuthorizedDigestInTargets(context.Background(), target.Signed, tc.digest, tc.delegationRole)
 
 		if tc.err != "" {
 			assert.NotNil(t, err)

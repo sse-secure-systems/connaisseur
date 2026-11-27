@@ -2,12 +2,25 @@ package utils
 
 import (
 	"connaisseur/internal/constants"
+	"context"
 	"os"
 	"strings"
 
 	"github.com/google/go-containerregistry/pkg/logs"
 	"github.com/sirupsen/logrus"
 )
+
+// Logger returns a log entry enriched with the admission request ID, when present.
+func Logger(ctx context.Context) *logrus.Entry {
+	logger, ok := ctx.Value(constants.Logger).(*logrus.Entry)
+	if !ok {
+		logger = logrus.NewEntry(logrus.StandardLogger())
+	}
+	if requestID, ok := ctx.Value(constants.RequestId).(string); ok && requestID != "" {
+		return logger.WithField("request_id", requestID)
+	}
+	return logger
+}
 
 // Returns the log level for the given string. If no valid value is given, "info" is returned.
 func LogLevel(logLevel string) logrus.Level {
