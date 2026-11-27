@@ -1624,7 +1624,7 @@ You're not viewing the docs of the latest version.
 
 <h1 id="adr-7-wsgi-server">ADR 7: WSGI Server<a class="headerlink" href="#adr-7-wsgi-server" title="Permanent link">⚓︎</a></h1>
 <h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">⚓︎</a></h2>
-<p>Accepted</p>
+<p>Deprecated as of <a href="../ADR-8_go-transition/">ADR-8</a>.</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">⚓︎</a></h2>
 <p>We were running the Flask WSGI application with the built-in Flask server, which is not meant for production. Problems are mainly due to potential debug shell on the server and single thread in default configuration. Both were mitigated in our setup, but we decided to test a proper WSGI server at some point. Especially the log entry</p>
 <p><div class="highlight"><pre><span></span><code> * Serving Flask app &#39;connaisseur.flask_server&#39; (lazy loading)
