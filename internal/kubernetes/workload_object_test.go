@@ -100,6 +100,76 @@ func TestConsolidatedContainers(t *testing.T) {
 	}
 }
 
+func TestHasSameContainerImages(t *testing.T) {
+	var testCases = []struct {
+		old      WorkloadObject
+		new      WorkloadObject
+		expected bool
+	}{
+		{ // Identical images across all container types
+			WorkloadObject{
+				Containers:          []core.Container{{Name: "main", Image: "one"}},
+				InitContainers:      []core.Container{{Name: "init", Image: "two"}},
+				EphemeralContainers: []core.EphemeralContainer{{EphemeralContainerCommon: core.EphemeralContainerCommon{Name: "debug", Image: "three"}}},
+			},
+			WorkloadObject{
+				Containers:          []core.Container{{Name: "main", Image: "one"}},
+				InitContainers:      []core.Container{{Name: "init", Image: "two"}},
+				EphemeralContainers: []core.EphemeralContainer{{EphemeralContainerCommon: core.EphemeralContainerCommon{Name: "debug", Image: "three"}}},
+			},
+			true,
+		},
+		{ // Reordering containers does not change their images
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}, {Name: "b", Image: "two"}}},
+			WorkloadObject{Containers: []core.Container{{Name: "b", Image: "two"}, {Name: "a", Image: "one"}}},
+			true,
+		},
+		{ // Changing a non-image field does not change the images
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}}},
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one", Command: []string{"changed"}}}},
+			true,
+		},
+		{ // Swapping images changes both containers
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}, {Name: "b", Image: "two"}}},
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "two"}, {Name: "b", Image: "one"}}},
+			false,
+		},
+		{ // Adding another container with an existing image is a change
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}}},
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}, {Name: "new", Image: "one"}}},
+			false,
+		},
+		{ // Duplicate entries must not be collapsed
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}}},
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}, {Name: "a", Image: "one"}}},
+			false,
+		},
+		{ // Removing an init container is a change
+			WorkloadObject{InitContainers: []core.Container{{Name: "init", Image: "one"}}},
+			WorkloadObject{},
+			false,
+		},
+		{ // Changing an ephemeral container image is a change
+			WorkloadObject{EphemeralContainers: []core.EphemeralContainer{{EphemeralContainerCommon: core.EphemeralContainerCommon{Name: "debug", Image: "two"}}}},
+			WorkloadObject{EphemeralContainers: []core.EphemeralContainer{{EphemeralContainerCommon: core.EphemeralContainerCommon{Name: "debug", Image: "three"}}}},
+			false,
+		},
+		{ // Renaming a container is a change
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}}},
+			WorkloadObject{Containers: []core.Container{{Name: "new", Image: "one"}}},
+			false,
+		},
+		{ // Changing container type is a change
+			WorkloadObject{Containers: []core.Container{{Name: "a", Image: "one"}}},
+			WorkloadObject{InitContainers: []core.Container{{Name: "a", Image: "one"}}},
+			false,
+		},
+	}
+	for i, tc := range testCases {
+		assert.Equal(t, tc.expected, tc.old.HasSameContainerImages(&tc.new), "test case %d", i+1)
+	}
+}
+
 func TestImageSet(t *testing.T) {
 	var testCases = []struct {
 		wlo      WorkloadObject

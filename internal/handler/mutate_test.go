@@ -411,7 +411,7 @@ func TestMutateReview(t *testing.T) {
 			"",
 			constants.NotificationResultSuccess,
 		},
-		{ // 8: Denies a create request with resource marked for deletion
+		{ // 8: Denies a create request for unsigned image with resource marked for deletion
 			"27_deleted_deployment",
 			false,
 			"",
@@ -420,7 +420,7 @@ func TestMutateReview(t *testing.T) {
 			"unabled to find signed digest for image docker.io/library/busybox:latest",
 			constants.NotificationResultError,
 		},
-		{ // 9: Admits an update request, where the old workload object was already marked for deletion
+		{ // 9: Admits an update with unchanged, unsigned images when the old workload object was already marked for deletion
 			"28_deleted_deployment_updated",
 			true,
 			"",
@@ -429,7 +429,7 @@ func TestMutateReview(t *testing.T) {
 			"",
 			constants.NotificationResultSuccess,
 		},
-		{ // 10: Denies an update request, where the old workload object wasn't marked for deletion, but the new one is
+		{ // 10: Denies an update request for unsigned image, where the old workload object wasn't marked for deletion, but the new one is
 			"29_deleted_deployment_update_for_delete",
 			false,
 			"",
@@ -437,6 +437,51 @@ func TestMutateReview(t *testing.T) {
 			"{\"digest\":\"\",\"error\":\"error during mock validation of image busybox: unabled to find signed digest for image docker.io/library/busybox:latest\"}",
 			"unabled to find signed digest for image docker.io/library/busybox:latest",
 			constants.NotificationResultError,
+		},
+		{ // 11: Denies a changed, unsigned image on a deleting deployment
+			"30_deleted_deployment_changed_deny",
+			false,
+			"",
+			"",
+			"",
+			"static deny",
+			constants.NotificationResultError,
+		},
+		{ // 12: Validates and mutates an allowed changed image on a deleting deployment
+			"31_deleted_deployment_changed_signed",
+			true,
+			`[{"op":"replace","path":"/spec/template/spec/containers/0/image","value":"index.docker.io/securesystemsengineering/alice-image:test@sha256:1234567890123456123456789012345612345678901234561234567890123456"}]`,
+			"securesystemsengineering/alice-image:test",
+			"{\"digest\":\"sha256:1234567890123456123456789012345612345678901234561234567890123456\",\"error\":\"\"}",
+			"",
+			constants.NotificationResultSuccess,
+		},
+		{ // 13: Denies an added init container image on a deleting deployment
+			"32_deleted_deployment_added_deny",
+			false,
+			"",
+			"",
+			"",
+			"static deny",
+			constants.NotificationResultError,
+		},
+		{ // 14: Validates the unchanged, unsigned image when another image is added, even though the added image would be allowed
+			"33_deleted_deployment_unchanged_deny_added_signed",
+			false,
+			"",
+			"",
+			"",
+			"static deny",
+			constants.NotificationResultError,
+		},
+		{ // 15: Validates and mutates an added allowed ephemeral container image
+			"34_deleted_pod_unchanged_signed_added_signed",
+			true,
+			`[{"op":"replace","path":"/spec/ephemeralContainers/0/image","value":"index.docker.io/securesystemsengineering/alice-image:test@sha256:1234567890123456123456789012345612345678901234561234567890123456"}]`,
+			"securesystemsengineering/alice-image:test",
+			"{\"digest\":\"sha256:1234567890123456123456789012345612345678901234561234567890123456\",\"error\":\"\"}",
+			"",
+			constants.NotificationResultSuccess,
 		},
 	}
 

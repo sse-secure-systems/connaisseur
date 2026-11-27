@@ -4,6 +4,7 @@ import (
 	"connaisseur/internal/constants"
 	"context"
 	"fmt"
+	"maps"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -254,6 +255,29 @@ func (wlo *WorkloadObject) ImageSet() []string {
 		imageSet = append(imageSet, i)
 	}
 	return imageSet
+}
+
+// HasSameContainerImages compares image references by container type and name.
+func (wlo *WorkloadObject) HasSameContainerImages(other *WorkloadObject) bool {
+	type containerImage struct {
+		containerType string
+		name          string
+		image         string
+	}
+	images := func(w *WorkloadObject) map[containerImage]int {
+		result := make(map[containerImage]int)
+		for _, c := range w.Containers {
+			result[containerImage{"containers", c.Name, c.Image}]++
+		}
+		for _, c := range w.InitContainers {
+			result[containerImage{"initContainers", c.Name, c.Image}]++
+		}
+		for _, c := range w.EphemeralContainers {
+			result[containerImage{"ephemeralContainers", c.Name, c.Image}]++
+		}
+		return result
+	}
+	return maps.Equal(images(wlo), images(other))
 }
 
 // Returns the container path, used for the JSON patch, which

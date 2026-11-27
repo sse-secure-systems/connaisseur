@@ -5,14 +5,13 @@ Below those are listed.
 
 ## Finalizer removal
 
-Connaisseur used to run every single CREATE and UPDATE adminission request through its validators.
-However, in some cases this is not desired as highlighted by [Issue #2053](https://github.com/sse-secure-systems/connaisseur/issues/2053).
-Once a pod is marked for deletion, it's attributes cannot be changed anymore, except for [removal of finalizers](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/#:~:text=Kubernetes%20adds%20the%20deletion%20timestamp%20for%20that%20object%20and%20then%20immediately%20starts%20to%20restrict%20changes).
-If finalizers cannot be removed (e.g., because the operation would be blocked by Connaisseur), resources may be kept alive indefinitely.
+If finalizers cannot be removed (e.g., because an existing image is no longer trusted and the operation would be blocked by Connaisseur), resources may be kept alive indefinitely; see [Issue #2053](https://github.com/sse-secure-systems/connaisseur/issues/2053).
+Kubernetes restricts some resource changes, but does not generally prevent updates, in particular image updates; see [Finalizers](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/).
 
-Since no meaningful attributes (with respect to Connaisseur's mission) can be changed, it is safe for Connaisseur to allow updates to resources marked for deletion.
-This is also in line with Connaisseur allowing all DELETE admission request.
-Therefore, if Connaisseur receives an UPDATE admission request, where the previous object was already marked for deletion, we allow it without verifying image signatures according to the policy.
+For an UPDATE whose previous object was already marked for deletion, Connaisseur skips validation only if container, init container, and ephemeral container image references are unchanged by type and name.
+This allows finalizer removal without revalidating existing images.
+If an image reference is added, removed, or changed, Connaisseur processes all images through its normal validation path, including any configured automatic approvals and caching.
+If an image fails validation during such an update, remove the finalizer in a separate update without image changes.
 
 ## Starting a cluster with Connaisseur installed
 

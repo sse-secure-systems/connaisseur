@@ -1,0 +1,26 @@
+{
+  "kind": "AdmissionReview",
+  "apiVersion": "admission.k8s.io/v1",
+  "request": {
+    "uid": "deletion-test",
+    "kind": {"group": "apps", "version": "v1", "kind": "Deployment"},
+    "resource": {"group": "apps", "version": "v1", "resource": "deployments"},
+    "namespace": "test-connaisseur",
+    "operation": "UPDATE",
+    "oldObject": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {"name": "test", "deletionTimestamp": "2026-03-06T12:34:56Z", "finalizers": ["example.com/test"]},
+      "spec": {"template": {"spec": {"containers": [{"name": "main", "image": "my.reg/deny-me@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff"}]}}}
+    },
+    "object": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {"name": "test", "deletionTimestamp": "2026-03-06T12:34:56Z"},
+      "spec": {"template": {"spec": {"containers": [
+        {"name": "main", "image": "my.reg/deny-me@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff"},
+        {"name": "another", "image": "my.reg/allow-me@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff"}
+      ]}}}
+    }
+  }
+}

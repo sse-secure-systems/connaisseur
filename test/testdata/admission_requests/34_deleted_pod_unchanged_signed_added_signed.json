@@ -1,0 +1,27 @@
+{
+  "kind": "AdmissionReview",
+  "apiVersion": "admission.k8s.io/v1",
+  "request": {
+    "uid": "deletion-test",
+    "kind": {"version": "v1", "kind": "Pod"},
+    "resource": {"version": "v1", "resource": "pods"},
+    "subResource": "ephemeralcontainers",
+    "namespace": "test-connaisseur",
+    "operation": "UPDATE",
+    "oldObject": {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {"name": "test", "deletionTimestamp": "2026-03-06T12:34:56Z", "finalizers": ["example.com/test"]},
+      "spec": {"containers": [{"name": "main", "image": "my.reg/allow-me@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff"}]}
+    },
+    "object": {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {"name": "test", "deletionTimestamp": "2026-03-06T12:34:56Z", "finalizers": ["example.com/test"]},
+      "spec": {
+        "containers": [{"name": "main", "image": "my.reg/allow-me@sha256:91ac9b26df583762234c1cdb2fc930364754ccc59bc752a2bfe298d2ea68f9ff"}],
+        "ephemeralContainers": [{"name": "debug", "image": "securesystemsengineering/alice-image:test"}]
+      }
+    }
+  }
+}
