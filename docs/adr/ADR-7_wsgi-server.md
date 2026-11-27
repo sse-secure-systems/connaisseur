@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Deprecated as of [ADR-8](ADR-8_go-transition.md).
 
 ## Context
 
